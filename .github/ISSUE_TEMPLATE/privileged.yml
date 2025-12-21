@@ -1,19 +1,19 @@
-name: Privileged
-description: You are @tiangolo or he asked you directly to create an issue here. If not, check the other options. 👇
+name: Direct Issue
+description: Create an issue directly (for project maintainers or contributors)
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for your interest in this project! 🚀
+        Thanks for your interest in LearningEndToEnd! 🚀
 
-        If you are not @tiangolo or he didn't ask you directly to create an issue here, please start the conversation in a [Question in GitHub Discussions](https://github.com/tiangolo/full-stack-fastapi-template/discussions/categories/questions) instead.
+        If you have a question or want to discuss something, please start with a [Question in GitHub Discussions](https://github.com/mkkasana/LearningEndToEnd/discussions/categories/questions) instead.
   - type: checkboxes
-    id: privileged
+    id: direct-issue
     attributes:
-      label: Privileged issue
-      description: Confirm that you are allowed to create an issue here.
+      label: Direct Issue
+      description: Confirm that this is a bug report or feature request.
       options:
-        - label: I'm @tiangolo or he asked me directly to create an issue here.
+        - label: I have checked existing issues and discussions before creating this.
           required: true
   - type: textarea
     id: content
