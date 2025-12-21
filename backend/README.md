@@ -1,31 +1,90 @@
-# FastAPI Project - Backend
+# LearningEndToEnd - Backend
 
 ## Requirements
 
-* [Docker](https://www.docker.com/).
+* [Docker](https://www.docker.com/) (for running tests with database).
 * [uv](https://docs.astral.sh/uv/) for Python package and environment management.
+* [hatch](https://hatch.pypa.io/) for building packages (optional, can use `python -m build`).
 
-## Docker Compose
+## Quick Start
 
-Start the local development environment with Docker Compose following the guide in [../development.md](../development.md).
+### Install Dependencies
 
-## General Workflow
+From `./backend/` directory:
 
-By default, the dependencies are managed with [uv](https://docs.astral.sh/uv/), go there and install it.
-
-From `./backend/` you can install all the dependencies with:
-
-```console
-$ uv sync
+```bash
+uv sync
 ```
 
-Then you can activate the virtual environment with:
+### Activate Virtual Environment
 
-```console
-$ source .venv/bin/activate
+```bash
+source .venv/bin/activate
 ```
 
 Make sure your editor is using the correct Python virtual environment, with the interpreter at `backend/.venv/bin/python`.
+
+## Building the Package
+
+### Build with Quality Checks (Recommended)
+
+This runs type checking, linting, format checking, and builds the package:
+
+```bash
+bash scripts/build.sh
+```
+
+**Note:** The build script skips unit tests by default since they require a PostgreSQL database. See the "Running Tests" section below if you want to include tests in the build.
+
+### Build Output
+
+The build creates two artifacts in `dist/`:
+- `app-0.1.0-py3-none-any.whl` - Wheel package
+- `app-0.1.0.tar.gz` - Source distribution
+
+### Manual Build Steps
+
+If you prefer to run each step individually:
+
+```bash
+# Type checking
+mypy app
+
+# Linting
+ruff check app
+
+# Format checking
+ruff format app --check
+
+# Build package
+hatch build
+```
+
+### Build with Tests
+
+To include unit tests in the build process, you need a running PostgreSQL database:
+
+1. Start the database with Docker Compose:
+```bash
+cd ..  # Go to project root
+docker compose up -d db
+cd backend
+```
+
+2. Edit `scripts/build.sh` and uncomment the test lines:
+```bash
+# Uncomment these lines in scripts/build.sh:
+coverage run -m pytest tests/
+coverage report --fail-under=80
+coverage html --title "coverage"
+```
+
+3. Run the build:
+```bash
+bash scripts/build.sh
+```
+
+## Development
 
 Modify or add SQLModel models for data and SQL tables in `./backend/app/models.py`, API endpoints in `./backend/app/api/`, CRUD (Create, Read, Update, Delete) utils in `./backend/app/crud.py`.
 
@@ -89,29 +148,35 @@ Nevertheless, if it doesn't detect a change but a syntax error, it will just sto
 
 ...this previous detail is what makes it useful to have the container alive doing nothing and then, in a Bash session, make it run the live reload server.
 
-## Backend tests
+## Running Tests
 
-To test the backend run:
+**Important:** Tests require a PostgreSQL database to run.
 
-```console
-$ bash ./scripts/test.sh
+### Option 1: Using Docker Compose (Recommended)
+
+Start the full stack with Docker Compose following the guide in [../development.md](../development.md).
+
+```bash
+# From project root
+docker compose up -d
+
+# Run tests inside the container
+docker compose exec backend bash scripts/tests-start.sh
+```
+
+### Option 2: Local Testing
+
+If your stack is already up and you just want to run the tests:
+
+```bash
+bash ./scripts/test.sh
 ```
 
 The tests run with Pytest, modify and add tests to `./backend/tests/`.
 
-If you use GitHub Actions the tests will run automatically.
+### Test with Specific Options
 
-### Test running stack
-
-If your stack is already up and you just want to run the tests, you can use:
-
-```bash
-docker compose exec backend bash scripts/tests-start.sh
-```
-
-That `/app/scripts/tests-start.sh` script just calls `pytest` after making sure that the rest of the stack is running. If you need to pass extra arguments to `pytest`, you can pass them to that command and they will be forwarded.
-
-For example, to stop on first error:
+To stop on first error:
 
 ```bash
 docker compose exec backend bash scripts/tests-start.sh -x
@@ -120,6 +185,31 @@ docker compose exec backend bash scripts/tests-start.sh -x
 ### Test Coverage
 
 When the tests are run, a file `htmlcov/index.html` is generated, you can open it in your browser to see the coverage of the tests.
+
+## Code Quality
+
+### Linting
+
+```bash
+bash scripts/lint.sh
+```
+
+This runs:
+- `mypy` for type checking
+- `ruff check` for linting
+- `ruff format --check` for format checking
+
+### Auto-formatting
+
+```bash
+bash scripts/format.sh
+```
+
+This automatically fixes linting issues and formats code with `ruff`.
+
+## Docker Compose
+
+Start the local development environment with Docker Compose following the guide in [../development.md](../development.md).
 
 ## Migrations
 
