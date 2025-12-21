@@ -1,115 +1,201 @@
-# FastAPI Project - Frontend
+# LearningEndToEnd - Frontend
 
 The frontend is built with [Vite](https://vitejs.dev/), [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/), [TanStack Query](https://tanstack.com/query), [TanStack Router](https://tanstack.com/router) and [Tailwind CSS](https://tailwindcss.com/).
 
-## Frontend development
+## Requirements
 
-Before you begin, ensure that you have either the Node Version Manager (nvm) or Fast Node Manager (fnm) installed on your system.
+* **Node.js 20.19+ or 22.12+** (Node 24 recommended)
+* **npm** (comes with Node.js)
 
-* To install fnm follow the [official fnm guide](https://github.com/Schniz/fnm#installation). If you prefer nvm, you can install it using the [official nvm guide](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Quick Start
 
-* After installing either nvm or fnm, proceed to the `frontend` directory:
+### 1. Install Node.js
+
+The project requires Node.js version 24 (specified in `.nvmrc`).
+
+If you're using `mise`:
 
 ```bash
 cd frontend
+mise use node@24
 ```
-* If the Node.js version specified in the `.nvmrc` file isn't installed on your system, you can install it using the appropriate command:
+
+If you're using `nvm`:
 
 ```bash
-# If using fnm
-fnm install
-
-# If using nvm
+cd frontend
 nvm install
-```
-
-* Once the installation is complete, switch to the installed version:
-
-```bash
-# If using fnm
-fnm use
-
-# If using nvm
 nvm use
 ```
 
-* Within the `frontend` directory, install the necessary NPM packages:
+If you're using `fnm`:
+
+```bash
+cd frontend
+fnm install
+fnm use
+```
+
+Verify your Node.js version:
+
+```bash
+node --version  # Should show v24.x.x or v22.12+
+```
+
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-* And start the live server with the following `npm` script:
+### 3. Start Development Server
 
 ```bash
 npm run dev
 ```
 
-* Then open your browser at http://localhost:5173/.
+Then open your browser at http://localhost:5173/.
 
-Notice that this live server is not running inside Docker, it's for local development, and that is the recommended workflow. Once you are happy with your frontend, you can build the frontend Docker image and start it, to test it in a production-like environment. But building the image at every change will not be as productive as running the local development server with live reload.
+## Building the Frontend
 
-Check the file `package.json` to see other available options.
+### Build with Quality Checks (Recommended)
 
-### Removing the frontend
-
-If you are developing an API-only app and want to remove the frontend, you can do it easily:
-
-* Remove the `./frontend` directory.
-
-* In the `docker-compose.yml` file, remove the whole service / section `frontend`.
-
-* In the `docker-compose.override.yml` file, remove the whole service / section `frontend` and `playwright`.
-
-Done, you have a frontend-less (api-only) app. 🤓
-
----
-
-If you want, you can also remove the `FRONTEND` environment variables from:
-
-* `.env`
-* `./scripts/*.sh`
-
-But it would be only to clean them up, leaving them won't really have any effect either way.
-
-## Generate Client
-
-### Automatically
-
-* Activate the backend virtual environment.
-* From the top level project directory, run the script:
+This runs linting, type checking, and builds the production bundle:
 
 ```bash
-./scripts/generate-client.sh
+bash scripts/build.sh
 ```
 
-* Commit the changes.
+### Build Output
 
-### Manually
+The build creates optimized static files in `dist/`:
+- `dist/index.html` - Entry point
+- `dist/assets/` - JavaScript, CSS, and static assets
 
-* Start the Docker Compose stack.
+Total size: ~864KB (optimized and minified)
 
-* Download the OpenAPI JSON file from `http://localhost/api/v1/openapi.json` and copy it to a new file `openapi.json` at the root of the `frontend` directory.
+### Manual Build Steps
 
-* To generate the frontend client, run:
+If you prefer to run each step individually:
 
 ```bash
-npm run generate-client
+# Install dependencies
+npm install
+
+# Run linter and auto-fix issues
+npm run lint
+
+# Build for production (TypeScript check + Vite build)
+npm run build
+
+# Preview production build locally
+npm run preview
 ```
 
-* Commit the changes.
+## Available Scripts
 
-Notice that everytime the backend changes (changing the OpenAPI schema), you should follow these steps again to update the frontend client.
+```bash
+npm run dev              # Start development server (http://localhost:5173)
+npm run build            # Build for production (TypeScript + Vite)
+npm run lint             # Lint and format code with Biome
+npm run preview          # Preview production build locally
+npm run generate-client  # Generate API client from OpenAPI spec
+```
 
-## Using a Remote API
+## Development Workflow
 
-If you want to use a remote API, you can set the environment variable `VITE_API_URL` to the URL of the remote API. For example, you can set it in the `frontend/.env` file:
+The recommended workflow is to use the local development server (not Docker) for fast iteration with hot module replacement (HMR).
+
+```bash
+npm run dev
+```
+
+This provides:
+- ⚡ Instant hot module replacement
+- 🔍 Better error messages
+- 🚀 Faster development cycle
+
+Once you're happy with your changes, build the production version to test performance and bundle size.
+
+## Docker Build
+
+To build a production Docker image:
+
+```bash
+docker build -t learning-end-to-end-frontend:latest .
+```
+
+The Dockerfile uses a multi-stage build:
+1. **Build stage**: Compiles TypeScript and bundles with Vite
+2. **Production stage**: Serves static files with Nginx
+
+## Configuration
+
+### Environment Variables
+
+The frontend uses environment variables prefixed with `VITE_`:
+
+- `VITE_API_URL` - Backend API URL (default: `http://localhost:8000`)
+
+Set these in `frontend/.env`:
+
+```env
+VITE_API_URL=http://localhost:8000
+```
+
+For production builds, pass as build arguments:
+
+```bash
+docker build --build-arg VITE_API_URL=https://api.yourdomain.com -t frontend .
+```
+
+### Using a Remote API
+
+To connect to a remote backend API, update `frontend/.env`:
 
 ```env
 VITE_API_URL=https://api.my-domain.example.com
 ```
 
-Then, when you run the frontend, it will use that URL as the base URL for the API.
+## Generate API Client
+
+The frontend uses an auto-generated TypeScript client based on the backend's OpenAPI specification.
+
+### Automatically (Recommended)
+
+From the project root:
+
+```bash
+bash scripts/generate-client.sh
+```
+
+This script:
+1. Starts the backend
+2. Downloads the OpenAPI spec
+3. Generates the TypeScript client
+4. Updates `frontend/src/client/`
+
+### Manually
+
+1. Start the backend:
+```bash
+docker compose up -d backend
+```
+
+2. Download the OpenAPI spec:
+```bash
+curl http://localhost:8000/api/v1/openapi.json -o frontend/openapi.json
+```
+
+3. Generate the client:
+```bash
+cd frontend
+npm run generate-client
+```
+
+4. Commit the changes
+
+**Note:** Regenerate the client whenever the backend API changes.
 
 ## Code Structure
 

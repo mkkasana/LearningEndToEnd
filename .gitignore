@@ -4,3 +4,20 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Build outputs
+backend/dist/
+frontend/dist/
+
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/*.pyc
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.coverage
+backend/htmlcov/
+
+# Local environment configs
+.mise.toml
+.tool-versions
