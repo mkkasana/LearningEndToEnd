@@ -2,10 +2,12 @@ import uuid
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from sqlmodel import func, select
 
 from app.api.deps import CurrentUser, SessionDep
-from app.models import Item, ItemCreate, ItemPublic, ItemsPublic, ItemUpdate, Message
+from app.core.exceptions import PermissionDeniedError, ResourceNotFoundError
+from app.schemas.common import Message
+from app.schemas.item import ItemCreate, ItemPublic, ItemsPublic, ItemUpdate
+from app.services.item_service import ItemService
 
 router = APIRouter(prefix="/items", tags=["items"])
 
@@ -17,27 +19,8 @@ def read_items(
     """
     Retrieve items.
     """
-
-    if current_user.is_superuser:
-        count_statement = select(func.count()).select_from(Item)
-        count = session.exec(count_statement).one()
-        statement = select(Item).offset(skip).limit(limit)
-        items = session.exec(statement).all()
-    else:
-        count_statement = (
-            select(func.count())
-            .select_from(Item)
-            .where(Item.owner_id == current_user.id)
-        )
-        count = session.exec(count_statement).one()
-        statement = (
-            select(Item)
-            .where(Item.owner_id == current_user.id)
-            .offset(skip)
-            .limit(limit)
-        )
-        items = session.exec(statement).all()
-
+    item_service = ItemService(session)
+    items, count = item_service.get_items(current_user, skip=skip, limit=limit)
     return ItemsPublic(data=items, count=count)
 
 
@@ -46,11 +29,15 @@ def read_item(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> 
     """
     Get item by ID.
     """
-    item = session.get(Item, id)
+    item_service = ItemService(session)
+    item = item_service.get_item_by_id(id)
+    
     if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not current_user.is_superuser and (item.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
+        raise ResourceNotFoundError("Item")
+    
+    if not item_service.user_can_access_item(current_user, item):
+        raise PermissionDeniedError()
+    
     return item
 
 
@@ -61,10 +48,8 @@ def create_item(
     """
     Create new item.
     """
-    item = Item.model_validate(item_in, update={"owner_id": current_user.id})
-    session.add(item)
-    session.commit()
-    session.refresh(item)
+    item_service = ItemService(session)
+    item = item_service.create_item(item_in, current_user.id)
     return item
 
 
@@ -79,16 +64,16 @@ def update_item(
     """
     Update an item.
     """
-    item = session.get(Item, id)
+    item_service = ItemService(session)
+    item = item_service.get_item_by_id(id)
+    
     if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not current_user.is_superuser and (item.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    update_dict = item_in.model_dump(exclude_unset=True)
-    item.sqlmodel_update(update_dict)
-    session.add(item)
-    session.commit()
-    session.refresh(item)
+        raise ResourceNotFoundError("Item")
+    
+    if not item_service.user_can_access_item(current_user, item):
+        raise PermissionDeniedError()
+    
+    item = item_service.update_item(item, item_in)
     return item
 
 
@@ -99,11 +84,14 @@ def delete_item(
     """
     Delete an item.
     """
-    item = session.get(Item, id)
+    item_service = ItemService(session)
+    item = item_service.get_item_by_id(id)
+    
     if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not current_user.is_superuser and (item.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    session.delete(item)
-    session.commit()
+        raise ResourceNotFoundError("Item")
+    
+    if not item_service.user_can_access_item(current_user, item):
+        raise PermissionDeniedError()
+    
+    item_service.delete_item(item)
     return Message(message="Item deleted successfully")
