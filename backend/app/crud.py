@@ -1,10 +1,16 @@
+# Legacy CRUD file - kept for backward compatibility
+# New code should use services and repositories
+
 import uuid
 from typing import Any
 
 from sqlmodel import Session, select
 
 from app.core.security import get_password_hash, verify_password
-from app.models import Item, ItemCreate, User, UserCreate, UserUpdate
+from app.db_models.item import Item
+from app.db_models.user import User
+from app.schemas.item import ItemCreate
+from app.schemas.user import UserCreate, UserUpdate
 
 
 def create_user(*, session: Session, user_create: UserCreate) -> User:

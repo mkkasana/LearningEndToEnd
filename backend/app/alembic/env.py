@@ -18,8 +18,12 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 
-from app.models import SQLModel  # noqa
-from app.core.config import settings # noqa
+from sqlmodel import SQLModel  # noqa
+
+from app.core.config import settings  # noqa
+# Import all models so alembic can detect them
+from app.db_models.user import User  # noqa
+from app.db_models.item import Item  # noqa
 
 target_metadata = SQLModel.metadata
 

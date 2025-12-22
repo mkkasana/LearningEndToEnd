@@ -84,9 +84,54 @@ coverage html --title "coverage"
 bash scripts/build.sh
 ```
 
+## Architecture
+
+This backend follows a **Clean Architecture** pattern with clear separation of concerns:
+
+```
+api/          → HTTP routes (thin controllers)
+services/     → Business logic
+repositories/ → Data access layer
+schemas/      → API contracts (DTOs)
+models/       → Database entities
+```
+
+### 📚 Documentation
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Complete architecture overview
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick start guide and templates
+- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - Migration from legacy structure
+- **[ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md)** - Visual diagrams
+- **[REFACTORING_SUMMARY.md](REFACTORING_SUMMARY.md)** - What changed and why
+
+### Adding New Features
+
+Follow the 5-step pattern:
+
+1. **Model** (`models/`) - Database entity
+2. **Schemas** (`schemas/`) - API contracts
+3. **Repository** (`repositories/`) - Data access
+4. **Service** (`services/`) - Business logic
+5. **Routes** (`api/routes/`) - HTTP endpoints
+
+See [QUICK_REFERENCE.md](QUICK_REFERENCE.md) for templates and examples.
+
 ## Development
 
-Modify or add SQLModel models for data and SQL tables in `./backend/app/models.py`, API endpoints in `./backend/app/api/`, CRUD (Create, Read, Update, Delete) utils in `./backend/app/crud.py`.
+### Current Structure
+
+**New Architecture (Recommended):**
+- Models: `./backend/app/models/`
+- Schemas: `./backend/app/schemas/`
+- Repositories: `./backend/app/repositories/`
+- Services: `./backend/app/services/`
+- API Routes: `./backend/app/api/routes/`
+
+**Legacy Files (Backward Compatible):**
+- `./backend/app/models.py` - Now imports from new structure
+- `./backend/app/crud.py` - Still available for compatibility
+
+New features should use the new architecture. See documentation above for details.
 
 ## VS Code
 
