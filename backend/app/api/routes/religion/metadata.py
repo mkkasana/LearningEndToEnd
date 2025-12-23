@@ -23,7 +23,11 @@ from app.services.religion import (
     ReligionSubCategoryService,
 )
 
-router = APIRouter(prefix="/religion", tags=["religion-metadata"])
+router = APIRouter(
+    prefix="/religion",
+    tags=["religion-metadata"],
+    responses={404: {"description": "Not found"}},
+)
 
 
 # ============================================================================

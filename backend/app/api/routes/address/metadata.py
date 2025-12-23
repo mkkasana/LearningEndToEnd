@@ -29,7 +29,11 @@ from app.services.address import (
     SubDistrictService,
 )
 
-router = APIRouter(prefix="/address", tags=["address-metadata"])
+router = APIRouter(
+    prefix="/address",
+    tags=["address-metadata"],
+    responses={404: {"description": "Not found"}},
+)
 
 
 # ============================================================================
