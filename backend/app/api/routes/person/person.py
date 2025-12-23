@@ -11,10 +11,17 @@ from app.schemas.person import (
     PersonAddressPublic,
     PersonAddressUpdate,
     PersonCreate,
+    PersonProfessionCreate,
+    PersonProfessionPublic,
+    PersonProfessionUpdate,
     PersonPublic,
     PersonUpdate,
 )
-from app.services.person import PersonAddressService, PersonService
+from app.services.person import (
+    PersonAddressService,
+    PersonProfessionService,
+    PersonService,
+)
 
 router = APIRouter()
 
@@ -276,3 +283,137 @@ def delete_my_address(
 
     address_service.delete_address(address)
     return {"message": "Address deleted successfully"}
+
+
+# ============================================================================
+# Person Profession Endpoints
+# ============================================================================
+
+
+@router.get("/me/professions", response_model=list[PersonProfessionPublic])
+def get_my_professions(session: SessionDep, current_user: CurrentUser) -> Any:
+    """
+    Get all professions for current user's person profile.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    profession_service = PersonProfessionService(session)
+    professions = profession_service.get_professions_by_person(person.user_id)
+    return professions
+
+
+@router.post("/me/professions", response_model=PersonProfessionPublic)
+def create_my_profession(
+    session: SessionDep, current_user: CurrentUser, profession_in: PersonProfessionCreate
+) -> Any:
+    """
+    Create new profession for current user's person profile.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    profession_service = PersonProfessionService(session)
+    profession = profession_service.create_profession(person.user_id, profession_in)
+    return profession
+
+
+@router.get("/me/professions/{profession_id}", response_model=PersonProfessionPublic)
+def get_my_profession(
+    session: SessionDep, current_user: CurrentUser, profession_id: uuid.UUID
+) -> Any:
+    """
+    Get specific profession by ID for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    profession_service = PersonProfessionService(session)
+    profession = profession_service.get_profession_by_id(profession_id)
+
+    if not profession or profession.person_id != person.user_id:
+        raise HTTPException(
+            status_code=404,
+            detail="Profession not found",
+        )
+
+    return profession
+
+
+@router.patch("/me/professions/{profession_id}", response_model=PersonProfessionPublic)
+def update_my_profession(
+    session: SessionDep,
+    current_user: CurrentUser,
+    profession_id: uuid.UUID,
+    profession_in: PersonProfessionUpdate,
+) -> Any:
+    """
+    Update profession for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    profession_service = PersonProfessionService(session)
+    profession = profession_service.get_profession_by_id(profession_id)
+
+    if not profession or profession.person_id != person.user_id:
+        raise HTTPException(
+            status_code=404,
+            detail="Profession not found",
+        )
+
+    updated_profession = profession_service.update_profession(profession, profession_in)
+    return updated_profession
+
+
+@router.delete("/me/professions/{profession_id}")
+def delete_my_profession(
+    session: SessionDep, current_user: CurrentUser, profession_id: uuid.UUID
+) -> Any:
+    """
+    Delete profession for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    profession_service = PersonProfessionService(session)
+    profession = profession_service.get_profession_by_id(profession_id)
+
+    if not profession or profession.person_id != person.user_id:
+        raise HTTPException(
+            status_code=404,
+            detail="Profession not found",
+        )
+
+    profession_service.delete_profession(profession)
+    return {"message": "Profession deleted successfully"}

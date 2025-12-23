@@ -12,6 +12,11 @@ from app.schemas.person.person_address import (
     PersonAddressPublic,
     PersonAddressUpdate,
 )
+from app.schemas.person.person_profession import (
+    PersonProfessionCreate,
+    PersonProfessionPublic,
+    PersonProfessionUpdate,
+)
 from app.schemas.person.profession import (
     ProfessionCreate,
     ProfessionDetailPublic,
@@ -28,6 +33,9 @@ __all__ = [
     "PersonAddressPublic",
     "PersonAddressUpdate",
     "PersonCreate",
+    "PersonProfessionCreate",
+    "PersonProfessionPublic",
+    "PersonProfessionUpdate",
     "PersonPublic",
     "PersonUpdate",
     "ProfessionCreate",

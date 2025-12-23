@@ -7,6 +7,7 @@ Tests all CRUD operations for:
 - Genders (metadata)
 - Person profiles
 - Person addresses
+- Person professions
 
 Usage:
     python3 backend/tests/integration_scripts/test_person_metadata_integration.py [port]
@@ -474,6 +475,157 @@ def test_person_addresses(headers: dict[str, str]) -> None:
         fail_test(str(e))
 
 
+def test_person_professions(headers: dict[str, str]) -> None:
+    print_header("PERSON PROFESSIONS - CRUD Operations")
+
+    # Get profession metadata
+    print_test("GET profession metadata")
+    try:
+        response = requests.get(f"{BASE_URL}/metadata/person/professions")
+        response.raise_for_status()
+        professions = response.json()
+        if not professions:
+            # Create one
+            response = requests.post(
+                f"{BASE_URL}/metadata/person/professions",
+                json={"name": "Test Engineer", "weight": 100, "is_active": True},
+                headers=headers,
+            )
+            response.raise_for_status()
+            professions = [response.json()]
+        profession_id = professions[0]["professionId"]
+        pass_test(f"Using profession: {profession_id}")
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # CREATE profession association
+    print_test("CREATE profession association")
+    try:
+        response = requests.post(
+            f"{BASE_URL}/person/me/professions",
+            json={
+                "profession_id": profession_id,
+                "start_date": "2024-01-01",
+                "is_current": True,
+            },
+            headers=headers,
+        )
+        response.raise_for_status()
+        prof_assoc = response.json()
+        assert prof_assoc["is_current"] is True
+        prof_assoc_id = prof_assoc["id"]
+        pass_test(f"ID: {prof_assoc_id}")
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # READ all professions
+    print_test("READ all professions")
+    try:
+        response = requests.get(f"{BASE_URL}/person/me/professions", headers=headers)
+        response.raise_for_status()
+        prof_assocs = response.json()
+        assert len(prof_assocs) == 1
+        pass_test(f"Found {len(prof_assocs)} profession")
+    except Exception as e:
+        fail_test(str(e))
+
+    # READ profession by ID
+    print_test("READ profession by ID")
+    try:
+        response = requests.get(
+            f"{BASE_URL}/person/me/professions/{prof_assoc_id}", headers=headers
+        )
+        response.raise_for_status()
+        prof_assoc = response.json()
+        assert prof_assoc["id"] == prof_assoc_id
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # UPDATE profession
+    print_test("UPDATE profession")
+    try:
+        response = requests.patch(
+            f"{BASE_URL}/person/me/professions/{prof_assoc_id}",
+            json={"end_date": "2024-12-31"},
+            headers=headers,
+        )
+        response.raise_for_status()
+        prof_assoc = response.json()
+        assert prof_assoc["end_date"] == "2024-12-31"
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # CREATE second profession (should clear is_current from first)
+    print_test("CREATE second profession (auto-clear is_current)")
+    try:
+        response = requests.post(
+            f"{BASE_URL}/person/me/professions",
+            json={
+                "profession_id": profession_id,
+                "start_date": "2025-01-01",
+                "is_current": True,
+            },
+            headers=headers,
+        )
+        response.raise_for_status()
+        prof_assoc2 = response.json()
+        assert prof_assoc2["is_current"] is True
+        prof_assoc2_id = prof_assoc2["id"]
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # Verify first profession is no longer current
+    print_test("VERIFY first profession is_current cleared")
+    try:
+        response = requests.get(
+            f"{BASE_URL}/person/me/professions/{prof_assoc_id}", headers=headers
+        )
+        response.raise_for_status()
+        prof_assoc = response.json()
+        assert prof_assoc["is_current"] is False
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # DELETE professions
+    print_test("DELETE first profession")
+    try:
+        response = requests.delete(
+            f"{BASE_URL}/person/me/professions/{prof_assoc_id}", headers=headers
+        )
+        response.raise_for_status()
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    print_test("DELETE second profession")
+    try:
+        response = requests.delete(
+            f"{BASE_URL}/person/me/professions/{prof_assoc2_id}", headers=headers
+        )
+        response.raise_for_status()
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # VERIFY empty
+    print_test("VERIFY professions deleted")
+    try:
+        response = requests.get(f"{BASE_URL}/person/me/professions", headers=headers)
+        response.raise_for_status()
+        prof_assocs = response.json()
+        assert len(prof_assocs) == 0
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+
 def main() -> None:
     print_header("PERSON API - INTEGRATION TEST")
     print(f"Testing against: {BASE_URL}")
@@ -486,6 +638,7 @@ def main() -> None:
     test_validations(headers)
     test_person_profile(headers)
     test_person_addresses(headers)
+    test_person_professions(headers)
 
     print_header("TEST SUMMARY")
     total_tests = tests_passed + tests_failed
