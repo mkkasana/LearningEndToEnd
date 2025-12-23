@@ -61,3 +61,7 @@ class DistrictService:
         if exclude_district_id and existing_district.id == exclude_district_id:
             return False
         return True
+
+    def delete_district(self, district: District) -> None:
+        """Delete a district"""
+        self.district_repo.delete(district)

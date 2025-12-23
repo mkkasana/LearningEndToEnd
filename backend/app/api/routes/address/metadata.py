@@ -125,6 +125,29 @@ def update_country(
     return updated_country
 
 
+@router.delete(
+    "/countries/{country_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def delete_country(session: SessionDep, country_id: uuid.UUID) -> Any:
+    """
+    Delete a country.
+    Requires superuser authentication.
+    """
+    country_service = CountryService(session)
+
+    # Get existing country
+    country = country_service.get_country_by_id(country_id)
+    if not country:
+        raise HTTPException(
+            status_code=404,
+            detail="Country not found",
+        )
+
+    country_service.delete_country(country)
+    return {"message": "Country deleted successfully"}
+
+
 # ============================================================================
 # States Endpoints
 # ============================================================================
@@ -237,6 +260,29 @@ def update_state(
 
     updated_state = state_service.update_state(state, state_in)
     return updated_state
+
+
+@router.delete(
+    "/states/{state_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def delete_state(session: SessionDep, state_id: uuid.UUID) -> Any:
+    """
+    Delete a state.
+    Requires superuser authentication.
+    """
+    state_service = StateService(session)
+
+    # Get existing state
+    state = state_service.get_state_by_id(state_id)
+    if not state:
+        raise HTTPException(
+            status_code=404,
+            detail="State not found",
+        )
+
+    state_service.delete_state(state)
+    return {"message": "State deleted successfully"}
 
 
 # ============================================================================
@@ -353,6 +399,29 @@ def update_district(
 
     updated_district = district_service.update_district(district, district_in)
     return updated_district
+
+
+@router.delete(
+    "/districts/{district_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def delete_district(session: SessionDep, district_id: uuid.UUID) -> Any:
+    """
+    Delete a district.
+    Requires superuser authentication.
+    """
+    district_service = DistrictService(session)
+
+    # Get existing district
+    district = district_service.get_district_by_id(district_id)
+    if not district:
+        raise HTTPException(
+            status_code=404,
+            detail="District not found",
+        )
+
+    district_service.delete_district(district)
+    return {"message": "District deleted successfully"}
 
 
 # ============================================================================
@@ -475,6 +544,29 @@ def update_sub_district(
     return updated_sub_district
 
 
+@router.delete(
+    "/sub-districts/{sub_district_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def delete_sub_district(session: SessionDep, sub_district_id: uuid.UUID) -> Any:
+    """
+    Delete a sub-district (tehsil/county).
+    Requires superuser authentication.
+    """
+    sub_district_service = SubDistrictService(session)
+
+    # Get existing sub-district
+    sub_district = sub_district_service.get_sub_district_by_id(sub_district_id)
+    if not sub_district:
+        raise HTTPException(
+            status_code=404,
+            detail="Sub-district not found",
+        )
+
+    sub_district_service.delete_sub_district(sub_district)
+    return {"message": "Sub-district deleted successfully"}
+
+
 # ============================================================================
 # Localities (Villages) Endpoints
 # ============================================================================
@@ -595,3 +687,26 @@ def update_locality(
 
     updated_locality = locality_service.update_locality(locality, locality_in)
     return updated_locality
+
+
+@router.delete(
+    "/localities/{locality_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def delete_locality(session: SessionDep, locality_id: uuid.UUID) -> Any:
+    """
+    Delete a locality (village).
+    Requires superuser authentication.
+    """
+    locality_service = LocalityService(session)
+
+    # Get existing locality
+    locality = locality_service.get_locality_by_id(locality_id)
+    if not locality:
+        raise HTTPException(
+            status_code=404,
+            detail="Locality not found",
+        )
+
+    locality_service.delete_locality(locality)
+    return {"message": "Locality deleted successfully"}

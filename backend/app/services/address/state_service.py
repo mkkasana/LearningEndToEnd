@@ -58,3 +58,7 @@ class StateService:
         if exclude_state_id and existing_state.id == exclude_state_id:
             return False
         return True
+
+    def delete_state(self, state: State) -> None:
+        """Delete a state"""
+        self.state_repo.delete(state)

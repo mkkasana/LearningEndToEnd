@@ -73,3 +73,7 @@ class SubDistrictService:
         ):
             return False
         return True
+
+    def delete_sub_district(self, sub_district: SubDistrict) -> None:
+        """Delete a sub-district"""
+        self.sub_district_repo.delete(sub_district)

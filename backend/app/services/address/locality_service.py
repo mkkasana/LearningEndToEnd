@@ -70,3 +70,7 @@ class LocalityService:
         if exclude_locality_id and existing_locality.id == exclude_locality_id:
             return False
         return True
+
+    def delete_locality(self, locality: Locality) -> None:
+        """Delete a locality"""
+        self.locality_repo.delete(locality)

@@ -58,3 +58,7 @@ class CountryService:
         if exclude_country_id and existing_country.id == exclude_country_id:
             return False
         return True
+
+    def delete_country(self, country: Country) -> None:
+        """Delete a country"""
+        self.country_repo.delete(country)
