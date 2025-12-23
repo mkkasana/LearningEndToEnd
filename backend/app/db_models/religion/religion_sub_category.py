@@ -8,12 +8,6 @@ from sqlmodel import Field, SQLModel
 class ReligionSubCategory(SQLModel, table=True):
     """
     Religion Sub-Category model - Third level of religious demographics hierarchy.
-    
-    Examples:
-    - For Hindu Brahmin: Iyer, Iyengar, Gaur, Kanyakubja, etc. (Sub-castes)
-    - For Sunni Islam: Hanafi, Maliki, Shafi'i, Hanbali, etc. (Schools of jurisprudence)
-    - For Catholic: Roman Catholic, Eastern Catholic, etc. (Rites)
-    - For Theravada Buddhism: Thai Forest, Sri Lankan, Burmese, etc. (Traditions)
     """
 
     __tablename__ = "religion_sub_category"

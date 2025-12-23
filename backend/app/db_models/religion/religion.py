@@ -8,8 +8,6 @@ from sqlmodel import Field, SQLModel
 class Religion(SQLModel, table=True):
     """
     Religion model - Top level of religious demographics hierarchy.
-    
-    Examples: Hinduism, Islam, Christianity, Buddhism, Sikhism, Judaism, etc.
     """
 
     __tablename__ = "religion"

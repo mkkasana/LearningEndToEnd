@@ -8,12 +8,6 @@ from sqlmodel import Field, SQLModel
 class ReligionCategory(SQLModel, table=True):
     """
     Religion Category model - Second level of religious demographics hierarchy.
-    
-    Examples:
-    - For Hinduism: Brahmin, Kshatriya, Vaishya, Shudra, etc. (Castes)
-    - For Islam: Sunni, Shia, Ahmadiyya, etc. (Sects)
-    - For Christianity: Catholic, Protestant, Orthodox, etc. (Denominations)
-    - For Buddhism: Theravada, Mahayana, Vajrayana, etc. (Schools)
     """
 
     __tablename__ = "religion_category"
