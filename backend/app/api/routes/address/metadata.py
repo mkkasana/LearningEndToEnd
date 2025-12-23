@@ -8,11 +8,14 @@ from app.schemas.address import (
     CountryCreate,
     CountryDetailPublic,
     CountryUpdate,
+    DistrictCreate,
+    DistrictDetailPublic,
+    DistrictUpdate,
     StateCreate,
     StateDetailPublic,
     StateUpdate,
 )
-from app.services.address import CountryService, StateService
+from app.services.address import CountryService, DistrictService, StateService
 
 router = APIRouter(prefix="/address", tags=["address-metadata"])
 
@@ -222,3 +225,119 @@ def update_state(
 
     updated_state = state_service.update_state(state, state_in)
     return updated_state
+
+
+# ============================================================================
+# Districts Endpoints
+# ============================================================================
+
+
+@router.get("/state/{state_id}/districts")
+def get_districts_by_state(session: SessionDep, state_id: uuid.UUID) -> Any:
+    """
+    Get list of districts for a specific state.
+    Public endpoint - no authentication required.
+    """
+    # Verify state exists
+    state_service = StateService(session)
+    state = state_service.get_state_by_id(state_id)
+    if not state:
+        raise HTTPException(
+            status_code=404,
+            detail="State not found",
+        )
+
+    # Get districts for the state
+    district_service = DistrictService(session)
+    districts = district_service.get_districts_by_state(state_id)
+    return districts
+
+
+@router.get("/districts/{district_id}", response_model=DistrictDetailPublic)
+def get_district_by_id(session: SessionDep, district_id: uuid.UUID) -> Any:
+    """
+    Get a specific district by ID.
+    Public endpoint - no authentication required.
+    """
+    district_service = DistrictService(session)
+    district = district_service.get_district_by_id(district_id)
+
+    if not district:
+        raise HTTPException(
+            status_code=404,
+            detail="District not found",
+        )
+
+    return district
+
+
+@router.post(
+    "/districts",
+    response_model=DistrictDetailPublic,
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def create_district(session: SessionDep, district_in: DistrictCreate) -> Any:
+    """
+    Create a new district.
+    Requires superuser authentication.
+    """
+    # Verify state exists
+    state_service = StateService(session)
+    state = state_service.get_state_by_id(district_in.state_id)
+    if not state:
+        raise HTTPException(
+            status_code=404,
+            detail="State not found",
+        )
+
+    district_service = DistrictService(session)
+
+    # Check if district code already exists in this state
+    if district_in.code and district_service.code_exists(
+        district_in.code, district_in.state_id
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=f"District with code '{district_in.code.upper()}' already exists in this state",
+        )
+
+    district = district_service.create_district(district_in)
+    return district
+
+
+@router.patch(
+    "/districts/{district_id}",
+    response_model=DistrictDetailPublic,
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def update_district(
+    session: SessionDep,
+    district_id: uuid.UUID,
+    district_in: DistrictUpdate,
+) -> Any:
+    """
+    Update a district.
+    Requires superuser authentication.
+    """
+    district_service = DistrictService(session)
+
+    # Get existing district
+    district = district_service.get_district_by_id(district_id)
+    if not district:
+        raise HTTPException(
+            status_code=404,
+            detail="District not found",
+        )
+
+    # Check if new code conflicts with existing district in the same state
+    if district_in.code:
+        if district_service.code_exists(
+            district_in.code, district.state_id, exclude_district_id=district_id
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail=f"District with code '{district_in.code.upper()}' already exists in this state",
+            )
+
+    updated_district = district_service.update_district(district, district_in)
+    return updated_district

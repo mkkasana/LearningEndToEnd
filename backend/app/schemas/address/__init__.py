@@ -6,6 +6,13 @@ from .country import (
     CountryPublic,
     CountryUpdate,
 )
+from .district import (
+    DistrictBase,
+    DistrictCreate,
+    DistrictDetailPublic,
+    DistrictPublic,
+    DistrictUpdate,
+)
 from .state import (
     StateBase,
     StateCreate,
@@ -25,4 +32,9 @@ __all__ = [
     "StateUpdate",
     "StatePublic",
     "StateDetailPublic",
+    "DistrictBase",
+    "DistrictCreate",
+    "DistrictUpdate",
+    "DistrictPublic",
+    "DistrictDetailPublic",
 ]
