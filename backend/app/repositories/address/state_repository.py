@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
-from app.db_models.state import State
+from app.db_models.address import State
 from app.repositories.base import BaseRepository
 
 

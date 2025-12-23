@@ -2,9 +2,9 @@ from uuid import UUID
 
 from sqlmodel import Session
 
-from app.db_models.state import State
-from app.repositories.state_repository import StateRepository
-from app.schemas.state import StateCreate, StatePublic, StateUpdate
+from app.db_models.address import State
+from app.repositories.address import StateRepository
+from app.schemas.address import StateCreate, StatePublic, StateUpdate
 
 
 class StateService:

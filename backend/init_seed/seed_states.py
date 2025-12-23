@@ -10,8 +10,7 @@ import uuid
 from sqlmodel import Session, select
 
 from app.core.db import engine
-from app.db_models.country import Country
-from app.db_models.state import State
+from app.db_models.address import Country, State
 
 
 def seed_indian_states() -> None:

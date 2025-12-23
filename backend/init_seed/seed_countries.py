@@ -10,7 +10,7 @@ import uuid
 from sqlmodel import Session, select
 
 from app.core.db import engine
-from app.db_models.country import Country
+from app.db_models.address import Country
 
 
 def seed_countries() -> None:

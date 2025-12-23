@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from app.db_models.country import Country
+from app.db_models.address import Country
 from app.repositories.base import BaseRepository
 
 

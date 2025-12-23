@@ -26,27 +26,37 @@ backend/
 │   │   ├── db.py                 # Database setup
 │   │   └── security.py           # Security utilities
 │   ├── db_models/                # SQLModel database models
+│   │   ├── address/              # Address-related models
+│   │   │   ├── __init__.py
+│   │   │   ├── country.py
+│   │   │   └── state.py
 │   │   ├── user.py
-│   │   ├── item.py
-│   │   ├── country.py
-│   │   └── state.py
+│   │   └── item.py
 │   ├── schemas/                  # Pydantic schemas (API contracts)
+│   │   ├── address/              # Address-related schemas
+│   │   │   ├── __init__.py
+│   │   │   ├── country.py
+│   │   │   └── state.py
 │   │   ├── user.py
 │   │   ├── item.py
-│   │   ├── country.py
-│   │   └── state.py
+│   │   ├── auth.py
+│   │   └── common.py
 │   ├── repositories/             # Data access layer
+│   │   ├── address/              # Address-related repositories
+│   │   │   ├── __init__.py
+│   │   │   ├── country_repository.py
+│   │   │   └── state_repository.py
 │   │   ├── base.py
 │   │   ├── user_repository.py
-│   │   ├── item_repository.py
-│   │   ├── country_repository.py
-│   │   └── state_repository.py
+│   │   └── item_repository.py
 │   ├── services/                 # Business logic layer
+│   │   ├── address/              # Address-related services
+│   │   │   ├── __init__.py
+│   │   │   ├── country_service.py
+│   │   │   └── state_service.py
 │   │   ├── user_service.py
 │   │   ├── item_service.py
-│   │   ├── auth_service.py
-│   │   ├── country_service.py
-│   │   └── state_service.py
+│   │   └── auth_service.py
 │   ├── alembic/                  # Database migrations
 │   │   └── versions/
 │   │       ├── e2412789c190_initialize_models.py
@@ -281,7 +291,7 @@ alembic upgrade head
 ### 3. Create Schemas
 
 ```python
-# app/schemas/city.py
+# app/schemas/address/city.py
 class CityCreate(SQLModel):
     name: str
     state_id: uuid.UUID
@@ -294,7 +304,7 @@ class CityPublic(SQLModel):
 ### 4. Create Repository
 
 ```python
-# app/repositories/city_repository.py
+# app/repositories/address/city_repository.py
 class CityRepository(BaseRepository[City]):
     def get_by_state(self, state_id: UUID):
         return self.session.exec(
@@ -305,7 +315,7 @@ class CityRepository(BaseRepository[City]):
 ### 5. Create Service
 
 ```python
-# app/services/city_service.py
+# app/services/address/city_service.py
 class CityService:
     def __init__(self, session: Session):
         self.city_repo = CityRepository(session)
@@ -319,6 +329,8 @@ class CityService:
 
 ```python
 # app/api/routes/address/metadata.py
+from app.services.address import CityService
+
 @router.get("/state/{state_id}/cities")
 def get_cities(session: SessionDep, state_id: uuid.UUID):
     service = CityService(session)

@@ -2,9 +2,9 @@ from uuid import UUID
 
 from sqlmodel import Session
 
-from app.db_models.country import Country
-from app.repositories.country_repository import CountryRepository
-from app.schemas.country import CountryCreate, CountryPublic, CountryUpdate
+from app.db_models.address import Country
+from app.repositories.address import CountryRepository
+from app.schemas.address import CountryCreate, CountryPublic, CountryUpdate
 
 
 class CountryService:

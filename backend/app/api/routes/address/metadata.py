@@ -4,10 +4,15 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.deps import SessionDep, get_current_active_superuser
-from app.schemas.country import CountryCreate, CountryDetailPublic, CountryUpdate
-from app.schemas.state import StateCreate, StateDetailPublic, StateUpdate
-from app.services.country_service import CountryService
-from app.services.state_service import StateService
+from app.schemas.address import (
+    CountryCreate,
+    CountryDetailPublic,
+    CountryUpdate,
+    StateCreate,
+    StateDetailPublic,
+    StateUpdate,
+)
+from app.services.address import CountryService, StateService
 
 router = APIRouter(prefix="/address", tags=["address-metadata"])
 
