@@ -8,6 +8,7 @@ Tests all CRUD operations for:
 - Person profiles
 - Person addresses
 - Person professions
+- Person relationships
 
 Usage:
     python3 backend/tests/integration_scripts/test_person_metadata_integration.py [port]
@@ -626,6 +627,106 @@ def test_person_professions(headers: dict[str, str]) -> None:
         fail_test(str(e))
 
 
+def test_person_relationships(headers: dict[str, str]) -> None:
+    print_header("PERSON RELATIONSHIPS - CRUD Operations")
+
+    # Get current user ID for related person
+    print_test("GET current user for related person")
+    try:
+        response = requests.get(f"{BASE_URL}/users/me", headers=headers)
+        response.raise_for_status()
+        user = response.json()
+        related_person_id = user["id"]
+        pass_test(f"Using person: {related_person_id}")
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # CREATE relationship
+    print_test("CREATE relationship")
+    try:
+        response = requests.post(
+            f"{BASE_URL}/person/me/relationships",
+            json={
+                "related_person_id": related_person_id,
+                "relationship_type": "rel-6a0ede824d107",  # SPOUSE
+                "start_date": "2020-01-01",
+                "is_active": True,
+            },
+            headers=headers,
+        )
+        response.raise_for_status()
+        relationship = response.json()
+        assert relationship["is_active"] is True
+        relationship_id = relationship["id"]
+        pass_test(f"ID: {relationship_id}")
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # READ all relationships
+    print_test("READ all relationships")
+    try:
+        response = requests.get(f"{BASE_URL}/person/me/relationships", headers=headers)
+        response.raise_for_status()
+        relationships = response.json()
+        assert len(relationships) == 1
+        pass_test(f"Found {len(relationships)} relationship")
+    except Exception as e:
+        fail_test(str(e))
+
+    # READ relationship by ID
+    print_test("READ relationship by ID")
+    try:
+        response = requests.get(
+            f"{BASE_URL}/person/me/relationships/{relationship_id}", headers=headers
+        )
+        response.raise_for_status()
+        relationship = response.json()
+        assert relationship["id"] == relationship_id
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # UPDATE relationship
+    print_test("UPDATE relationship")
+    try:
+        response = requests.patch(
+            f"{BASE_URL}/person/me/relationships/{relationship_id}",
+            json={"end_date": "2024-12-31", "is_active": False},
+            headers=headers,
+        )
+        response.raise_for_status()
+        relationship = response.json()
+        assert relationship["end_date"] == "2024-12-31"
+        assert relationship["is_active"] is False
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # DELETE relationship
+    print_test("DELETE relationship")
+    try:
+        response = requests.delete(
+            f"{BASE_URL}/person/me/relationships/{relationship_id}", headers=headers
+        )
+        response.raise_for_status()
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # VERIFY empty
+    print_test("VERIFY relationships deleted")
+    try:
+        response = requests.get(f"{BASE_URL}/person/me/relationships", headers=headers)
+        response.raise_for_status()
+        relationships = response.json()
+        assert len(relationships) == 0
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+
 def main() -> None:
     print_header("PERSON API - INTEGRATION TEST")
     print(f"Testing against: {BASE_URL}")
@@ -639,6 +740,7 @@ def main() -> None:
     test_person_profile(headers)
     test_person_addresses(headers)
     test_person_professions(headers)
+    test_person_relationships(headers)
 
     print_header("TEST SUMMARY")
     total_tests = tests_passed + tests_failed
