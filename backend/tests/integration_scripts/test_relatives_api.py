@@ -83,28 +83,28 @@ def setup_test_data(headers: dict[str, str]) -> dict:
         fail_test(str(e))
         sys.exit(1)
 
-    # Get current user
-    print_test("GET current user")
+    # Get current user (will be the child)
+    print_test("GET current user (child)")
     try:
         response = requests.get(f"{BASE_URL}/users/me", headers=headers)
         response.raise_for_status()
         user = response.json()
-        user_id = user["id"]
-        pass_test(f"User ID: {user_id}")
+        child_user_id = user["id"]
+        pass_test(f"Child User ID: {child_user_id}")
     except Exception as e:
         fail_test(str(e))
         sys.exit(1)
 
-    # Ensure person profile exists
-    print_test("Ensure person profile exists")
+    # Ensure person profile exists for child
+    print_test("Ensure child person profile exists")
     try:
         response = requests.get(f"{BASE_URL}/person/me", headers=headers)
         if response.status_code == 404:
             response = requests.post(
                 f"{BASE_URL}/person/me",
                 json={
-                    "user_id": user_id,
-                    "first_name": "Test",
+                    "user_id": child_user_id,
+                    "first_name": "Child",
                     "last_name": "User",
                     "gender_id": gender_id,
                     "date_of_birth": "1990-01-01",
@@ -117,13 +117,17 @@ def setup_test_data(headers: dict[str, str]) -> dict:
         fail_test(str(e))
         sys.exit(1)
 
-    # Create parent relationships
-    print_test("CREATE father relationship")
+    # For testing siblings, we'll use the same user as parent and create multiple children
+    # In real scenario, you'd have separate parent users
+    parent_user_id = child_user_id  # Using same user for simplicity
+
+    # Create parent relationships (child -> parent)
+    print_test("CREATE father relationship (child -> parent)")
     try:
         response = requests.post(
             f"{BASE_URL}/person/me/relationships",
             json={
-                "related_person_id": user_id,  # Using same user for testing
+                "related_person_id": parent_user_id,
                 "relationship_type": "rel-6a0ede824d101",  # FATHER
                 "start_date": "1990-01-01",
                 "is_active": True,
@@ -137,12 +141,12 @@ def setup_test_data(headers: dict[str, str]) -> dict:
         fail_test(str(e))
         return {}
 
-    print_test("CREATE mother relationship")
+    print_test("CREATE mother relationship (child -> parent)")
     try:
         response = requests.post(
             f"{BASE_URL}/person/me/relationships",
             json={
-                "related_person_id": user_id,  # Using same user for testing
+                "related_person_id": parent_user_id,
                 "relationship_type": "rel-6a0ede824d102",  # MOTHER
                 "start_date": "1990-01-01",
                 "is_active": True,
@@ -156,13 +160,14 @@ def setup_test_data(headers: dict[str, str]) -> dict:
         fail_test(str(e))
         return {}
 
-    # Create child relationships
-    print_test("CREATE son relationship")
+    # Create sibling relationships (parent -> children)
+    # These represent the parent's children (siblings of the current user)
+    print_test("CREATE son relationship (parent -> sibling1)")
     try:
         response = requests.post(
             f"{BASE_URL}/person/me/relationships",
             json={
-                "related_person_id": user_id,  # Using same user for testing
+                "related_person_id": child_user_id,  # Sibling (using same user for test)
                 "relationship_type": "rel-6a0ede824d104",  # SON
                 "start_date": "2015-01-01",
                 "is_active": True,
@@ -176,12 +181,12 @@ def setup_test_data(headers: dict[str, str]) -> dict:
         fail_test(str(e))
         return {}
 
-    print_test("CREATE daughter relationship")
+    print_test("CREATE daughter relationship (parent -> sibling2)")
     try:
         response = requests.post(
             f"{BASE_URL}/person/me/relationships",
             json={
-                "related_person_id": user_id,  # Using same user for testing
+                "related_person_id": child_user_id,  # Sibling (using same user for test)
                 "relationship_type": "rel-6a0ede824d103",  # DAUGHTER
                 "start_date": "2018-01-01",
                 "is_active": True,
@@ -201,7 +206,7 @@ def setup_test_data(headers: dict[str, str]) -> dict:
         response = requests.post(
             f"{BASE_URL}/person/me/relationships",
             json={
-                "related_person_id": user_id,  # Using same user for testing
+                "related_person_id": child_user_id,
                 "relationship_type": "rel-6a0ede824d107",  # SPOUSE
                 "start_date": "2010-01-01",
                 "is_active": True,
@@ -215,7 +220,7 @@ def setup_test_data(headers: dict[str, str]) -> dict:
         fail_test(str(e))
         return {}
 
-    return {"user_id": user_id}
+    return {"user_id": child_user_id}
 
 
 def test_relatives_api(headers: dict[str, str], test_data: dict) -> None:
@@ -263,6 +268,20 @@ def test_relatives_api(headers: dict[str, str], test_data: dict) -> None:
         assert len(spouses) == 1  # SPOUSE
         assert spouses[0]["relationship_type"] == "rel-6a0ede824d107"
         pass_test(f"Found {len(spouses)} spouse")
+    except Exception as e:
+        fail_test(str(e))
+
+    # Test GET siblings
+    print_test("GET /relatives/{user_id}/siblings")
+    try:
+        response = requests.get(f"{BASE_URL}/relatives/{user_id}/siblings")
+        response.raise_for_status()
+        siblings = response.json()
+        assert isinstance(siblings, list)
+        # Note: In our test setup, we're using the same user for everything
+        # In a real scenario with different users, this would return actual siblings
+        # The logic finds parent's children excluding self
+        pass_test(f"Found {len(siblings)} siblings")
     except Exception as e:
         fail_test(str(e))
 

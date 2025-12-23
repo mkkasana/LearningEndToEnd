@@ -72,3 +72,34 @@ class PersonRelationshipService:
             RelationshipType.WIFE,
         ]
         return self.relationship_repo.get_by_relationship_types(person_id, spouse_types)
+
+    def get_siblings(self, person_id: uuid.UUID) -> list[PersonRelationship]:
+        """
+        Get all siblings for a person.
+        
+        Logic:
+        1. Get all parents of the person
+        2. For each parent, get all their children
+        3. Exclude the person themselves from the results
+        4. Remove duplicates (same sibling from both parents)
+        """
+        # Get all parents
+        parents = self.get_parents(person_id)
+        
+        if not parents:
+            return []
+        
+        # Collect all siblings from all parents
+        siblings_dict = {}  # Use dict to avoid duplicates
+        
+        for parent in parents:
+            parent_person_id = parent.related_person_id
+            # Get all children of this parent
+            children = self.get_children(parent_person_id)
+            
+            for child in children:
+                # Exclude self and avoid duplicates
+                if child.related_person_id != person_id:
+                    siblings_dict[child.related_person_id] = child
+        
+        return list(siblings_dict.values())
