@@ -11,6 +11,9 @@ from app.schemas.person import (
     PersonAddressPublic,
     PersonAddressUpdate,
     PersonCreate,
+    PersonMetadataCreate,
+    PersonMetadataPublic,
+    PersonMetadataUpdate,
     PersonProfessionCreate,
     PersonProfessionPublic,
     PersonProfessionUpdate,
@@ -22,6 +25,7 @@ from app.schemas.person import (
 )
 from app.services.person import (
     PersonAddressService,
+    PersonMetadataService,
     PersonProfessionService,
     PersonRelationshipService,
     PersonService,
@@ -559,3 +563,120 @@ def delete_my_relationship(
 
     relationship_service.delete_relationship(relationship)
     return {"message": "Relationship deleted successfully"}
+
+
+# ============================================================================
+# Person Metadata Endpoints
+# ============================================================================
+
+
+@router.get("/me/metadata", response_model=PersonMetadataPublic)
+def get_my_metadata(session: SessionDep, current_user: CurrentUser) -> Any:
+    """
+    Get metadata for current user's person profile.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    metadata_service = PersonMetadataService(session)
+    metadata = metadata_service.get_metadata_by_person(person.user_id)
+
+    if not metadata:
+        raise HTTPException(
+            status_code=404,
+            detail="Person metadata not found",
+        )
+
+    return metadata
+
+
+@router.post("/me/metadata", response_model=PersonMetadataPublic)
+def create_my_metadata(
+    session: SessionDep, current_user: CurrentUser, metadata_in: PersonMetadataCreate
+) -> Any:
+    """
+    Create metadata for current user's person profile.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    metadata_service = PersonMetadataService(session)
+
+    # Check if metadata already exists
+    existing = metadata_service.get_metadata_by_person(person.user_id)
+    if existing:
+        raise HTTPException(
+            status_code=400,
+            detail="Person metadata already exists",
+        )
+
+    metadata = metadata_service.create_metadata(person.user_id, metadata_in)
+    return metadata
+
+
+@router.patch("/me/metadata", response_model=PersonMetadataPublic)
+def update_my_metadata(
+    session: SessionDep, current_user: CurrentUser, metadata_in: PersonMetadataUpdate
+) -> Any:
+    """
+    Update metadata for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    metadata_service = PersonMetadataService(session)
+    metadata = metadata_service.get_metadata_by_person(person.user_id)
+
+    if not metadata:
+        raise HTTPException(
+            status_code=404,
+            detail="Person metadata not found",
+        )
+
+    updated_metadata = metadata_service.update_metadata(metadata, metadata_in)
+    return updated_metadata
+
+
+@router.delete("/me/metadata")
+def delete_my_metadata(session: SessionDep, current_user: CurrentUser) -> Any:
+    """
+    Delete metadata for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    metadata_service = PersonMetadataService(session)
+    metadata = metadata_service.get_metadata_by_person(person.user_id)
+
+    if not metadata:
+        raise HTTPException(
+            status_code=404,
+            detail="Person metadata not found",
+        )
+
+    metadata_service.delete_metadata(metadata)
+    return {"message": "Person metadata deleted successfully"}

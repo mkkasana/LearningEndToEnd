@@ -12,6 +12,11 @@ from app.schemas.person.person_address import (
     PersonAddressPublic,
     PersonAddressUpdate,
 )
+from app.schemas.person.person_metadata import (
+    PersonMetadataCreate,
+    PersonMetadataPublic,
+    PersonMetadataUpdate,
+)
 from app.schemas.person.person_profession import (
     PersonProfessionCreate,
     PersonProfessionPublic,
@@ -38,6 +43,9 @@ __all__ = [
     "PersonAddressPublic",
     "PersonAddressUpdate",
     "PersonCreate",
+    "PersonMetadataCreate",
+    "PersonMetadataPublic",
+    "PersonMetadataUpdate",
     "PersonProfessionCreate",
     "PersonProfessionPublic",
     "PersonProfessionUpdate",
