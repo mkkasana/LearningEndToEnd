@@ -14,8 +14,16 @@ from app.schemas.address import (
     StateCreate,
     StateDetailPublic,
     StateUpdate,
+    SubDistrictCreate,
+    SubDistrictDetailPublic,
+    SubDistrictUpdate,
 )
-from app.services.address import CountryService, DistrictService, StateService
+from app.services.address import (
+    CountryService,
+    DistrictService,
+    StateService,
+    SubDistrictService,
+)
 
 router = APIRouter(prefix="/address", tags=["address-metadata"])
 
@@ -341,3 +349,123 @@ def update_district(
 
     updated_district = district_service.update_district(district, district_in)
     return updated_district
+
+
+# ============================================================================
+# Sub-Districts (Tehsils) Endpoints
+# ============================================================================
+
+
+@router.get("/district/{district_id}/sub-districts")
+def get_sub_districts_by_district(session: SessionDep, district_id: uuid.UUID) -> Any:
+    """
+    Get list of sub-districts (tehsils/counties) for a specific district.
+    Public endpoint - no authentication required.
+    """
+    # Verify district exists
+    district_service = DistrictService(session)
+    district = district_service.get_district_by_id(district_id)
+    if not district:
+        raise HTTPException(
+            status_code=404,
+            detail="District not found",
+        )
+
+    # Get sub-districts for the district
+    sub_district_service = SubDistrictService(session)
+    sub_districts = sub_district_service.get_sub_districts_by_district(district_id)
+    return sub_districts
+
+
+@router.get("/sub-districts/{sub_district_id}", response_model=SubDistrictDetailPublic)
+def get_sub_district_by_id(session: SessionDep, sub_district_id: uuid.UUID) -> Any:
+    """
+    Get a specific sub-district by ID.
+    Public endpoint - no authentication required.
+    """
+    sub_district_service = SubDistrictService(session)
+    sub_district = sub_district_service.get_sub_district_by_id(sub_district_id)
+
+    if not sub_district:
+        raise HTTPException(
+            status_code=404,
+            detail="Sub-district not found",
+        )
+
+    return sub_district
+
+
+@router.post(
+    "/sub-districts",
+    response_model=SubDistrictDetailPublic,
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def create_sub_district(session: SessionDep, sub_district_in: SubDistrictCreate) -> Any:
+    """
+    Create a new sub-district (tehsil/county).
+    Requires superuser authentication.
+    """
+    # Verify district exists
+    district_service = DistrictService(session)
+    district = district_service.get_district_by_id(sub_district_in.district_id)
+    if not district:
+        raise HTTPException(
+            status_code=404,
+            detail="District not found",
+        )
+
+    sub_district_service = SubDistrictService(session)
+
+    # Check if sub-district code already exists in this district
+    if sub_district_in.code and sub_district_service.code_exists(
+        sub_district_in.code, sub_district_in.district_id
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Sub-district with code '{sub_district_in.code.upper()}' already exists in this district",
+        )
+
+    sub_district = sub_district_service.create_sub_district(sub_district_in)
+    return sub_district
+
+
+@router.patch(
+    "/sub-districts/{sub_district_id}",
+    response_model=SubDistrictDetailPublic,
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def update_sub_district(
+    session: SessionDep,
+    sub_district_id: uuid.UUID,
+    sub_district_in: SubDistrictUpdate,
+) -> Any:
+    """
+    Update a sub-district (tehsil/county).
+    Requires superuser authentication.
+    """
+    sub_district_service = SubDistrictService(session)
+
+    # Get existing sub-district
+    sub_district = sub_district_service.get_sub_district_by_id(sub_district_id)
+    if not sub_district:
+        raise HTTPException(
+            status_code=404,
+            detail="Sub-district not found",
+        )
+
+    # Check if new code conflicts with existing sub-district in the same district
+    if sub_district_in.code:
+        if sub_district_service.code_exists(
+            sub_district_in.code,
+            sub_district.district_id,
+            exclude_sub_district_id=sub_district_id,
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Sub-district with code '{sub_district_in.code.upper()}' already exists in this district",
+            )
+
+    updated_sub_district = sub_district_service.update_sub_district(
+        sub_district, sub_district_in
+    )
+    return updated_sub_district
