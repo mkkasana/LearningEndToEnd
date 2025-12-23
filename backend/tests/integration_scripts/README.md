@@ -14,9 +14,39 @@ These scripts are for:
 
 ## Available Scripts
 
+### test_address_full_integration.py
+
+**⭐ RECOMMENDED** - Comprehensive integration test for all address metadata APIs.
+
+**Usage:**
+```bash
+# Default port (8000)
+python3 backend/tests/integration_scripts/test_address_full_integration.py
+
+# Custom port
+python3 backend/tests/integration_scripts/test_address_full_integration.py 8001
+```
+
+**What it tests:**
+- **Countries**: Full CRUD (Create, Read, Update, Delete)
+- **States**: Full CRUD + hierarchical relationships
+- **Districts**: Full CRUD + hierarchical relationships
+- **Sub-Districts**: Full CRUD + hierarchical relationships
+- **Localities**: Full CRUD + hierarchical relationships
+- **Authentication**: Superuser requirements for write operations
+- **Validation**: Duplicate code prevention, 404 handling
+- **Error Handling**: Invalid IDs, missing parent entities
+
+**Features:**
+- Tests all 25+ endpoints
+- Validates hierarchical data integrity
+- Tests cascade deletion
+- Clear pass/fail indicators
+- Detailed test summary with success rate
+
 ### test_countries_api.sh
 
-Tests the countries metadata API endpoints.
+Simple shell script to test countries endpoint.
 
 **Usage:**
 ```bash
@@ -32,6 +62,20 @@ Tests the countries metadata API endpoints.
 - Validates HTTP 200 response
 - Checks JSON format
 - Counts total countries returned
+
+### test_delete.py
+
+Tests DELETE operations for address components.
+
+**Usage:**
+```bash
+python3 backend/tests/integration_scripts/test_delete.py
+```
+
+**What it tests:**
+- DELETE endpoints for all address components
+- Cascade deletion verification
+- Error handling (404, 401)
 
 ## Requirements
 
