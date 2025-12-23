@@ -7,11 +7,14 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.deps import SessionDep, get_current_active_superuser
 from app.schemas.person import (
+    GenderCreate,
+    GenderDetailPublic,
+    GenderUpdate,
     ProfessionCreate,
     ProfessionDetailPublic,
     ProfessionUpdate,
 )
-from app.services.person import ProfessionService
+from app.services.person import GenderService, ProfessionService
 
 router = APIRouter(
     prefix="/person",
@@ -136,3 +139,119 @@ def delete_profession(session: SessionDep, profession_id: uuid.UUID) -> Any:
 
     profession_service.delete_profession(profession)
     return {"message": "Profession deleted successfully"}
+
+
+# ============================================================================
+# Genders Endpoints
+# ============================================================================
+
+
+@router.get("/genders")
+def get_genders(session: SessionDep) -> Any:
+    """
+    Get list of genders for dropdown options.
+    Public endpoint - no authentication required.
+    """
+    gender_service = GenderService(session)
+    genders = gender_service.get_genders()
+    return genders
+
+
+@router.get("/genders/{gender_id}", response_model=GenderDetailPublic)
+def get_gender_by_id(session: SessionDep, gender_id: uuid.UUID) -> Any:
+    """
+    Get a specific gender by ID.
+    Public endpoint - no authentication required.
+    """
+    gender_service = GenderService(session)
+    gender = gender_service.get_gender_by_id(gender_id)
+
+    if not gender:
+        raise HTTPException(
+            status_code=404,
+            detail="Gender not found",
+        )
+
+    return gender
+
+
+@router.post(
+    "/genders",
+    response_model=GenderDetailPublic,
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def create_gender(session: SessionDep, gender_in: GenderCreate) -> Any:
+    """
+    Create a new gender.
+    Requires superuser authentication.
+    """
+    gender_service = GenderService(session)
+
+    # Check if gender code already exists
+    if gender_service.code_exists(gender_in.code):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Gender with code '{gender_in.code.upper()}' already exists",
+        )
+
+    gender = gender_service.create_gender(gender_in)
+    return gender
+
+
+@router.patch(
+    "/genders/{gender_id}",
+    response_model=GenderDetailPublic,
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def update_gender(
+    session: SessionDep,
+    gender_id: uuid.UUID,
+    gender_in: GenderUpdate,
+) -> Any:
+    """
+    Update a gender.
+    Requires superuser authentication.
+    """
+    gender_service = GenderService(session)
+
+    # Get existing gender
+    gender = gender_service.get_gender_by_id(gender_id)
+    if not gender:
+        raise HTTPException(
+            status_code=404,
+            detail="Gender not found",
+        )
+
+    # Check if new code conflicts with existing gender
+    if gender_in.code:
+        if gender_service.code_exists(gender_in.code, exclude_gender_id=gender_id):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Gender with code '{gender_in.code.upper()}' already exists",
+            )
+
+    updated_gender = gender_service.update_gender(gender, gender_in)
+    return updated_gender
+
+
+@router.delete(
+    "/genders/{gender_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def delete_gender(session: SessionDep, gender_id: uuid.UUID) -> Any:
+    """
+    Delete a gender.
+    Requires superuser authentication.
+    """
+    gender_service = GenderService(session)
+
+    # Get existing gender
+    gender = gender_service.get_gender_by_id(gender_id)
+    if not gender:
+        raise HTTPException(
+            status_code=404,
+            detail="Gender not found",
+        )
+
+    gender_service.delete_gender(gender)
+    return {"message": "Gender deleted successfully"}

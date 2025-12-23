@@ -1,5 +1,6 @@
 """Person database models."""
 
+from app.db_models.person.gender import Gender
 from app.db_models.person.profession import Profession
 
-__all__ = ["Profession"]
+__all__ = ["Gender", "Profession"]
