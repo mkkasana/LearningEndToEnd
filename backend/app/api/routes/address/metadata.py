@@ -33,6 +33,24 @@ def get_countries(session: SessionDep) -> Any:
     return countries
 
 
+@router.get("/countries/{country_id}", response_model=CountryDetailPublic)
+def get_country_by_id(session: SessionDep, country_id: uuid.UUID) -> Any:
+    """
+    Get a specific country by ID.
+    Public endpoint - no authentication required.
+    """
+    country_service = CountryService(session)
+    country = country_service.get_country_by_id(country_id)
+    
+    if not country:
+        raise HTTPException(
+            status_code=404,
+            detail="Country not found",
+        )
+    
+    return country
+
+
 @router.post(
     "/countries",
     response_model=CountryDetailPublic,
@@ -116,6 +134,24 @@ def get_states_by_country(session: SessionDep, country_id: uuid.UUID) -> Any:
     state_service = StateService(session)
     states = state_service.get_states_by_country(country_id)
     return states
+
+
+@router.get("/states/{state_id}", response_model=StateDetailPublic)
+def get_state_by_id(session: SessionDep, state_id: uuid.UUID) -> Any:
+    """
+    Get a specific state by ID.
+    Public endpoint - no authentication required.
+    """
+    state_service = StateService(session)
+    state = state_service.get_state_by_id(state_id)
+    
+    if not state:
+        raise HTTPException(
+            status_code=404,
+            detail="State not found",
+        )
+    
+    return state
 
 
 @router.post(

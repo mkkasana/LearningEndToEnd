@@ -15,9 +15,11 @@ http://localhost:8000/api/v1/metadata/address
 | Method | Endpoint | Auth | Purpose |
 |--------|----------|------|---------|
 | GET | `/countries` | None | Get all active countries |
+| GET | `/countries/{id}` | None | Get country by ID |
 | POST | `/countries` | Admin | Create new country |
 | PATCH | `/countries/{id}` | Admin | Update country |
 | GET | `/country/{id}/states` | None | Get states for country |
+| GET | `/states/{id}` | None | Get state by ID |
 | POST | `/states` | Admin | Create new state |
 | PATCH | `/states/{id}` | Admin | Update state |
 
