@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Comprehensive Integration Test for Person Metadata API
+Comprehensive Integration Test for Person API
 
 Tests all CRUD operations for:
-- Professions
-- Genders
+- Professions (metadata)
+- Genders (metadata)
+- Person profiles
 
 Usage:
     python3 backend/tests/integration_scripts/test_person_metadata_integration.py [port]
@@ -237,8 +238,104 @@ def test_validations(headers: dict[str, str]) -> None:
         fail_test(str(e))
 
 
+def test_person_profile(headers: dict[str, str]) -> None:
+    print_header("PERSON PROFILE - CRUD Operations")
+
+    # Get gender for person creation
+    print_test("GET gender for person")
+    try:
+        response = requests.get(f"{BASE_URL}/metadata/person/genders")
+        response.raise_for_status()
+        genders = response.json()
+        assert len(genders) > 0
+        gender_id = genders[0]["genderId"]
+        pass_test(f"Using gender: {gender_id}")
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # Get current user
+    print_test("GET current user")
+    try:
+        response = requests.get(f"{BASE_URL}/users/me", headers=headers)
+        response.raise_for_status()
+        user = response.json()
+        user_id = user["id"]
+        pass_test(f"User ID: {user_id}")
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # CREATE person profile
+    print_test("CREATE person profile")
+    try:
+        response = requests.post(
+            f"{BASE_URL}/person/me",
+            json={
+                "user_id": user_id,
+                "first_name": "Test",
+                "middle_name": "Integration",
+                "last_name": "User",
+                "gender_id": gender_id,
+                "date_of_birth": "1990-01-01",
+            },
+            headers=headers,
+        )
+        response.raise_for_status()
+        person = response.json()
+        assert person["first_name"] == "Test"
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # READ person profile
+    print_test("READ person profile")
+    try:
+        response = requests.get(f"{BASE_URL}/person/me", headers=headers)
+        response.raise_for_status()
+        person = response.json()
+        assert person["first_name"] == "Test"
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # UPDATE person profile
+    print_test("UPDATE person profile")
+    try:
+        response = requests.patch(
+            f"{BASE_URL}/person/me",
+            json={"middle_name": "Updated"},
+            headers=headers,
+        )
+        response.raise_for_status()
+        person = response.json()
+        assert person["middle_name"] == "Updated"
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # DELETE person profile
+    print_test("DELETE person profile")
+    try:
+        response = requests.delete(f"{BASE_URL}/person/me", headers=headers)
+        response.raise_for_status()
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # VERIFY deletion
+    print_test("VERIFY deletion (404)")
+    try:
+        response = requests.get(f"{BASE_URL}/person/me", headers=headers)
+        assert response.status_code == 404
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+
 def main() -> None:
-    print_header("PERSON METADATA API - INTEGRATION TEST")
+    print_header("PERSON API - INTEGRATION TEST")
     print(f"Testing against: {BASE_URL}")
 
     token = get_auth_token()
@@ -247,6 +344,7 @@ def main() -> None:
     test_professions(headers)
     test_genders(headers)
     test_validations(headers)
+    test_person_profile(headers)
 
     print_header("TEST SUMMARY")
     total_tests = tests_passed + tests_failed
