@@ -6,6 +6,7 @@ from datetime import datetime
 from sqlmodel import Session
 
 from app.db_models.person.person_relationship import PersonRelationship
+from app.enums import RelationshipType
 from app.repositories.person.person_relationship_repository import (
     PersonRelationshipRepository,
 )
@@ -52,3 +53,22 @@ class PersonRelationshipService:
     def delete_relationship(self, relationship: PersonRelationship) -> None:
         """Delete a relationship."""
         self.relationship_repo.delete(relationship)
+
+    def get_parents(self, person_id: uuid.UUID) -> list[PersonRelationship]:
+        """Get all parents (father and mother) for a person."""
+        parent_types = [RelationshipType.FATHER, RelationshipType.MOTHER]
+        return self.relationship_repo.get_by_relationship_types(person_id, parent_types)
+
+    def get_children(self, person_id: uuid.UUID) -> list[PersonRelationship]:
+        """Get all children (sons and daughters) for a person."""
+        children_types = [RelationshipType.SON, RelationshipType.DAUGHTER]
+        return self.relationship_repo.get_by_relationship_types(person_id, children_types)
+
+    def get_spouses(self, person_id: uuid.UUID) -> list[PersonRelationship]:
+        """Get all spouses for a person."""
+        spouse_types = [
+            RelationshipType.SPOUSE,
+            RelationshipType.HUSBAND,
+            RelationshipType.WIFE,
+        ]
+        return self.relationship_repo.get_by_relationship_types(person_id, spouse_types)
