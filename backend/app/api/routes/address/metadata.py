@@ -9,10 +9,15 @@ from app.schemas.state import StateCreate, StateDetailPublic, StateUpdate
 from app.services.country_service import CountryService
 from app.services.state_service import StateService
 
-router = APIRouter(prefix="/metadata", tags=["metadata"])
+router = APIRouter(prefix="/address", tags=["address-metadata"])
 
 
-@router.get("/address/countries")
+# ============================================================================
+# Countries Endpoints
+# ============================================================================
+
+
+@router.get("/countries")
 def get_countries(session: SessionDep) -> Any:
     """
     Get list of countries for dropdown options.
@@ -24,7 +29,7 @@ def get_countries(session: SessionDep) -> Any:
 
 
 @router.post(
-    "/address/countries",
+    "/countries",
     response_model=CountryDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
@@ -34,20 +39,20 @@ def create_country(session: SessionDep, country_in: CountryCreate) -> Any:
     Requires superuser authentication.
     """
     country_service = CountryService(session)
-    
+
     # Check if country code already exists
     if country_service.code_exists(country_in.code):
         raise HTTPException(
             status_code=400,
             detail=f"Country with code '{country_in.code.upper()}' already exists",
         )
-    
+
     country = country_service.create_country(country_in)
     return country
 
 
 @router.patch(
-    "/address/countries/{country_id}",
+    "/countries/{country_id}",
     response_model=CountryDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
@@ -61,7 +66,7 @@ def update_country(
     Requires superuser authentication.
     """
     country_service = CountryService(session)
-    
+
     # Get existing country
     country = country_service.get_country_by_id(country_id)
     if not country:
@@ -69,7 +74,7 @@ def update_country(
             status_code=404,
             detail="Country not found",
         )
-    
+
     # Check if new code conflicts with existing country
     if country_in.code:
         if country_service.code_exists(country_in.code, exclude_country_id=country_id):
@@ -77,7 +82,7 @@ def update_country(
                 status_code=400,
                 detail=f"Country with code '{country_in.code.upper()}' already exists",
             )
-    
+
     updated_country = country_service.update_country(country, country_in)
     return updated_country
 
@@ -87,7 +92,7 @@ def update_country(
 # ============================================================================
 
 
-@router.get("/address/country/{country_id}/states")
+@router.get("/country/{country_id}/states")
 def get_states_by_country(session: SessionDep, country_id: uuid.UUID) -> Any:
     """
     Get list of states for a specific country.
@@ -109,7 +114,7 @@ def get_states_by_country(session: SessionDep, country_id: uuid.UUID) -> Any:
 
 
 @router.post(
-    "/address/states",
+    "/states",
     response_model=StateDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
@@ -141,7 +146,7 @@ def create_state(session: SessionDep, state_in: StateCreate) -> Any:
 
 
 @router.patch(
-    "/address/states/{state_id}",
+    "/states/{state_id}",
     response_model=StateDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
