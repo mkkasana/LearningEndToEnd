@@ -24,6 +24,16 @@ from app.core.config import settings  # noqa
 # Import all models so alembic can detect them
 from app.db_models.user import User  # noqa
 from app.db_models.item import Item  # noqa
+# Address models
+from app.db_models.address.country import Country  # noqa
+from app.db_models.address.state import State  # noqa
+from app.db_models.address.district import District  # noqa
+from app.db_models.address.sub_district import SubDistrict  # noqa
+from app.db_models.address.locality import Locality  # noqa
+# Religion models
+from app.db_models.religion.religion import Religion  # noqa
+from app.db_models.religion.religion_category import ReligionCategory  # noqa
+from app.db_models.religion.religion_sub_category import ReligionSubCategory  # noqa
 
 target_metadata = SQLModel.metadata
 
