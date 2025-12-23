@@ -6,6 +6,7 @@ Tests all CRUD operations for:
 - Professions (metadata)
 - Genders (metadata)
 - Person profiles
+- Person addresses
 
 Usage:
     python3 backend/tests/integration_scripts/test_person_metadata_integration.py [port]
@@ -266,6 +267,17 @@ def test_person_profile(headers: dict[str, str]) -> None:
         fail_test(str(e))
         return
 
+    # Delete existing person if any
+    print_test("DELETE existing person (if any)")
+    try:
+        response = requests.delete(f"{BASE_URL}/person/me", headers=headers)
+        if response.status_code in [200, 404]:
+            pass_test()
+        else:
+            fail_test(f"Unexpected status: {response.status_code}")
+    except Exception as e:
+        fail_test(str(e))
+
     # CREATE person profile
     print_test("CREATE person profile")
     try:
@@ -315,20 +327,148 @@ def test_person_profile(headers: dict[str, str]) -> None:
     except Exception as e:
         fail_test(str(e))
 
-    # DELETE person profile
-    print_test("DELETE person profile")
+
+def test_person_addresses(headers: dict[str, str]) -> None:
+    print_header("PERSON ADDRESSES - CRUD Operations")
+
+    # Get country for address
+    print_test("GET country for address")
     try:
-        response = requests.delete(f"{BASE_URL}/person/me", headers=headers)
+        response = requests.get(f"{BASE_URL}/metadata/address/countries")
+        response.raise_for_status()
+        countries = response.json()
+        assert len(countries) > 0
+        country_id = countries[0]["countryId"]
+        pass_test(f"Using country: {country_id}")
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # CREATE address
+    print_test("CREATE address")
+    try:
+        response = requests.post(
+            f"{BASE_URL}/person/me/addresses",
+            json={
+                "country_id": country_id,
+                "address_line": "123 Test Street",
+                "start_date": "2024-01-01",
+                "is_current": True,
+            },
+            headers=headers,
+        )
+        response.raise_for_status()
+        address = response.json()
+        assert address["address_line"] == "123 Test Street"
+        assert address["is_current"] is True
+        address_id = address["id"]
+        pass_test(f"ID: {address_id}")
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # READ all addresses
+    print_test("READ all addresses")
+    try:
+        response = requests.get(f"{BASE_URL}/person/me/addresses", headers=headers)
+        response.raise_for_status()
+        addresses = response.json()
+        assert len(addresses) == 1
+        pass_test(f"Found {len(addresses)} address")
+    except Exception as e:
+        fail_test(str(e))
+
+    # READ address by ID
+    print_test("READ address by ID")
+    try:
+        response = requests.get(
+            f"{BASE_URL}/person/me/addresses/{address_id}", headers=headers
+        )
+        response.raise_for_status()
+        address = response.json()
+        assert address["id"] == address_id
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # UPDATE address
+    print_test("UPDATE address")
+    try:
+        response = requests.patch(
+            f"{BASE_URL}/person/me/addresses/{address_id}",
+            json={"address_line": "456 Updated Street"},
+            headers=headers,
+        )
+        response.raise_for_status()
+        address = response.json()
+        assert address["address_line"] == "456 Updated Street"
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # CREATE second address (should clear is_current from first)
+    print_test("CREATE second address (auto-clear is_current)")
+    try:
+        response = requests.post(
+            f"{BASE_URL}/person/me/addresses",
+            json={
+                "country_id": country_id,
+                "address_line": "789 New Street",
+                "start_date": "2024-06-01",
+                "is_current": True,
+            },
+            headers=headers,
+        )
+        response.raise_for_status()
+        address2 = response.json()
+        assert address2["is_current"] is True
+        address2_id = address2["id"]
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+        return
+
+    # Verify first address is no longer current
+    print_test("VERIFY first address is_current cleared")
+    try:
+        response = requests.get(
+            f"{BASE_URL}/person/me/addresses/{address_id}", headers=headers
+        )
+        response.raise_for_status()
+        address = response.json()
+        assert address["is_current"] is False
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # DELETE addresses
+    print_test("DELETE first address")
+    try:
+        response = requests.delete(
+            f"{BASE_URL}/person/me/addresses/{address_id}", headers=headers
+        )
         response.raise_for_status()
         pass_test()
     except Exception as e:
         fail_test(str(e))
 
-    # VERIFY deletion
-    print_test("VERIFY deletion (404)")
+    print_test("DELETE second address")
     try:
-        response = requests.get(f"{BASE_URL}/person/me", headers=headers)
-        assert response.status_code == 404
+        response = requests.delete(
+            f"{BASE_URL}/person/me/addresses/{address2_id}", headers=headers
+        )
+        response.raise_for_status()
+        pass_test()
+    except Exception as e:
+        fail_test(str(e))
+
+    # VERIFY empty
+    print_test("VERIFY addresses deleted")
+    try:
+        response = requests.get(f"{BASE_URL}/person/me/addresses", headers=headers)
+        response.raise_for_status()
+        addresses = response.json()
+        assert len(addresses) == 0
         pass_test()
     except Exception as e:
         fail_test(str(e))
@@ -345,6 +485,7 @@ def main() -> None:
     test_genders(headers)
     test_validations(headers)
     test_person_profile(headers)
+    test_person_addresses(headers)
 
     print_header("TEST SUMMARY")
     total_tests = tests_passed + tests_failed

@@ -7,6 +7,11 @@ from app.schemas.person.gender import (
     GenderUpdate,
 )
 from app.schemas.person.person import PersonCreate, PersonPublic, PersonUpdate
+from app.schemas.person.person_address import (
+    PersonAddressCreate,
+    PersonAddressPublic,
+    PersonAddressUpdate,
+)
 from app.schemas.person.profession import (
     ProfessionCreate,
     ProfessionDetailPublic,
@@ -19,6 +24,9 @@ __all__ = [
     "GenderDetailPublic",
     "GenderPublic",
     "GenderUpdate",
+    "PersonAddressCreate",
+    "PersonAddressPublic",
+    "PersonAddressUpdate",
     "PersonCreate",
     "PersonPublic",
     "PersonUpdate",

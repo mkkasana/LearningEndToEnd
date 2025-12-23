@@ -1,7 +1,13 @@
 """Person repositories."""
 
 from app.repositories.person.gender_repository import GenderRepository
+from app.repositories.person.person_address_repository import PersonAddressRepository
 from app.repositories.person.person_repository import PersonRepository
 from app.repositories.person.profession_repository import ProfessionRepository
 
-__all__ = ["GenderRepository", "PersonRepository", "ProfessionRepository"]
+__all__ = [
+    "GenderRepository",
+    "PersonAddressRepository",
+    "PersonRepository",
+    "ProfessionRepository",
+]
