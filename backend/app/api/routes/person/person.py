@@ -15,11 +15,15 @@ from app.schemas.person import (
     PersonProfessionPublic,
     PersonProfessionUpdate,
     PersonPublic,
+    PersonRelationshipCreate,
+    PersonRelationshipPublic,
+    PersonRelationshipUpdate,
     PersonUpdate,
 )
 from app.services.person import (
     PersonAddressService,
     PersonProfessionService,
+    PersonRelationshipService,
     PersonService,
 )
 
@@ -417,3 +421,141 @@ def delete_my_profession(
 
     profession_service.delete_profession(profession)
     return {"message": "Profession deleted successfully"}
+
+
+# ============================================================================
+# Person Relationship Endpoints
+# ============================================================================
+
+
+@router.get("/me/relationships", response_model=list[PersonRelationshipPublic])
+def get_my_relationships(session: SessionDep, current_user: CurrentUser) -> Any:
+    """
+    Get all relationships for current user's person profile.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    relationship_service = PersonRelationshipService(session)
+    relationships = relationship_service.get_relationships_by_person(person.user_id)
+    return relationships
+
+
+@router.post("/me/relationships", response_model=PersonRelationshipPublic)
+def create_my_relationship(
+    session: SessionDep,
+    current_user: CurrentUser,
+    relationship_in: PersonRelationshipCreate,
+) -> Any:
+    """
+    Create new relationship for current user's person profile.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    relationship_service = PersonRelationshipService(session)
+    relationship = relationship_service.create_relationship(person.user_id, relationship_in)
+    return relationship
+
+
+@router.get("/me/relationships/{relationship_id}", response_model=PersonRelationshipPublic)
+def get_my_relationship(
+    session: SessionDep, current_user: CurrentUser, relationship_id: uuid.UUID
+) -> Any:
+    """
+    Get specific relationship by ID for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    relationship_service = PersonRelationshipService(session)
+    relationship = relationship_service.get_relationship_by_id(relationship_id)
+
+    if not relationship or relationship.person_id != person.user_id:
+        raise HTTPException(
+            status_code=404,
+            detail="Relationship not found",
+        )
+
+    return relationship
+
+
+@router.patch("/me/relationships/{relationship_id}", response_model=PersonRelationshipPublic)
+def update_my_relationship(
+    session: SessionDep,
+    current_user: CurrentUser,
+    relationship_id: uuid.UUID,
+    relationship_in: PersonRelationshipUpdate,
+) -> Any:
+    """
+    Update relationship for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    relationship_service = PersonRelationshipService(session)
+    relationship = relationship_service.get_relationship_by_id(relationship_id)
+
+    if not relationship or relationship.person_id != person.user_id:
+        raise HTTPException(
+            status_code=404,
+            detail="Relationship not found",
+        )
+
+    updated_relationship = relationship_service.update_relationship(
+        relationship, relationship_in
+    )
+    return updated_relationship
+
+
+@router.delete("/me/relationships/{relationship_id}")
+def delete_my_relationship(
+    session: SessionDep, current_user: CurrentUser, relationship_id: uuid.UUID
+) -> Any:
+    """
+    Delete relationship for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    relationship_service = PersonRelationshipService(session)
+    relationship = relationship_service.get_relationship_by_id(relationship_id)
+
+    if not relationship or relationship.person_id != person.user_id:
+        raise HTTPException(
+            status_code=404,
+            detail="Relationship not found",
+        )
+
+    relationship_service.delete_relationship(relationship)
+    return {"message": "Relationship deleted successfully"}

@@ -17,6 +17,11 @@ from app.schemas.person.person_profession import (
     PersonProfessionPublic,
     PersonProfessionUpdate,
 )
+from app.schemas.person.person_relationship import (
+    PersonRelationshipCreate,
+    PersonRelationshipPublic,
+    PersonRelationshipUpdate,
+)
 from app.schemas.person.profession import (
     ProfessionCreate,
     ProfessionDetailPublic,
@@ -37,6 +42,9 @@ __all__ = [
     "PersonProfessionPublic",
     "PersonProfessionUpdate",
     "PersonPublic",
+    "PersonRelationshipCreate",
+    "PersonRelationshipPublic",
+    "PersonRelationshipUpdate",
     "PersonUpdate",
     "ProfessionCreate",
     "ProfessionDetailPublic",

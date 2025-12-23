@@ -5,6 +5,9 @@ from app.repositories.person.person_address_repository import PersonAddressRepos
 from app.repositories.person.person_profession_repository import (
     PersonProfessionRepository,
 )
+from app.repositories.person.person_relationship_repository import (
+    PersonRelationshipRepository,
+)
 from app.repositories.person.person_repository import PersonRepository
 from app.repositories.person.profession_repository import ProfessionRepository
 
@@ -12,6 +15,7 @@ __all__ = [
     "GenderRepository",
     "PersonAddressRepository",
     "PersonProfessionRepository",
+    "PersonRelationshipRepository",
     "PersonRepository",
     "ProfessionRepository",
 ]
