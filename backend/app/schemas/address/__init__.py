@@ -13,6 +13,13 @@ from .district import (
     DistrictPublic,
     DistrictUpdate,
 )
+from .locality import (
+    LocalityBase,
+    LocalityCreate,
+    LocalityDetailPublic,
+    LocalityPublic,
+    LocalityUpdate,
+)
 from .state import (
     StateBase,
     StateCreate,
@@ -49,4 +56,9 @@ __all__ = [
     "SubDistrictUpdate",
     "SubDistrictPublic",
     "SubDistrictDetailPublic",
+    "LocalityBase",
+    "LocalityCreate",
+    "LocalityUpdate",
+    "LocalityPublic",
+    "LocalityDetailPublic",
 ]

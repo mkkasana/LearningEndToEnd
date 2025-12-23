@@ -11,6 +11,9 @@ from app.schemas.address import (
     DistrictCreate,
     DistrictDetailPublic,
     DistrictUpdate,
+    LocalityCreate,
+    LocalityDetailPublic,
+    LocalityUpdate,
     StateCreate,
     StateDetailPublic,
     StateUpdate,
@@ -21,6 +24,7 @@ from app.schemas.address import (
 from app.services.address import (
     CountryService,
     DistrictService,
+    LocalityService,
     StateService,
     SubDistrictService,
 )
@@ -469,3 +473,125 @@ def update_sub_district(
         sub_district, sub_district_in
     )
     return updated_sub_district
+
+
+# ============================================================================
+# Localities (Villages) Endpoints
+# ============================================================================
+
+
+@router.get("/sub-district/{sub_district_id}/localities")
+def get_localities_by_sub_district(
+    session: SessionDep, sub_district_id: uuid.UUID
+) -> Any:
+    """
+    Get list of localities (villages) for a specific sub-district.
+    Public endpoint - no authentication required.
+    """
+    # Verify sub-district exists
+    sub_district_service = SubDistrictService(session)
+    sub_district = sub_district_service.get_sub_district_by_id(sub_district_id)
+    if not sub_district:
+        raise HTTPException(
+            status_code=404,
+            detail="Sub-district not found",
+        )
+
+    # Get localities for the sub-district
+    locality_service = LocalityService(session)
+    localities = locality_service.get_localities_by_sub_district(sub_district_id)
+    return localities
+
+
+@router.get("/localities/{locality_id}", response_model=LocalityDetailPublic)
+def get_locality_by_id(session: SessionDep, locality_id: uuid.UUID) -> Any:
+    """
+    Get a specific locality by ID.
+    Public endpoint - no authentication required.
+    """
+    locality_service = LocalityService(session)
+    locality = locality_service.get_locality_by_id(locality_id)
+
+    if not locality:
+        raise HTTPException(
+            status_code=404,
+            detail="Locality not found",
+        )
+
+    return locality
+
+
+@router.post(
+    "/localities",
+    response_model=LocalityDetailPublic,
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def create_locality(session: SessionDep, locality_in: LocalityCreate) -> Any:
+    """
+    Create a new locality (village).
+    Requires superuser authentication.
+    """
+    # Verify sub-district exists
+    sub_district_service = SubDistrictService(session)
+    sub_district = sub_district_service.get_sub_district_by_id(
+        locality_in.sub_district_id
+    )
+    if not sub_district:
+        raise HTTPException(
+            status_code=404,
+            detail="Sub-district not found",
+        )
+
+    locality_service = LocalityService(session)
+
+    # Check if locality code already exists in this sub-district
+    if locality_in.code and locality_service.code_exists(
+        locality_in.code, locality_in.sub_district_id
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Locality with code '{locality_in.code.upper()}' already exists in this sub-district",
+        )
+
+    locality = locality_service.create_locality(locality_in)
+    return locality
+
+
+@router.patch(
+    "/localities/{locality_id}",
+    response_model=LocalityDetailPublic,
+    dependencies=[Depends(get_current_active_superuser)],
+)
+def update_locality(
+    session: SessionDep,
+    locality_id: uuid.UUID,
+    locality_in: LocalityUpdate,
+) -> Any:
+    """
+    Update a locality (village).
+    Requires superuser authentication.
+    """
+    locality_service = LocalityService(session)
+
+    # Get existing locality
+    locality = locality_service.get_locality_by_id(locality_id)
+    if not locality:
+        raise HTTPException(
+            status_code=404,
+            detail="Locality not found",
+        )
+
+    # Check if new code conflicts with existing locality in the same sub-district
+    if locality_in.code:
+        if locality_service.code_exists(
+            locality_in.code,
+            locality.sub_district_id,
+            exclude_locality_id=locality_id,
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Locality with code '{locality_in.code.upper()}' already exists in this sub-district",
+            )
+
+    updated_locality = locality_service.update_locality(locality, locality_in)
+    return updated_locality
