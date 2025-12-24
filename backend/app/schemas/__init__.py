@@ -1,6 +1,7 @@
 from app.schemas.auth import NewPassword, Token, TokenPayload
 from app.schemas.common import Message
 from app.schemas.item import ItemCreate, ItemPublic, ItemsPublic, ItemUpdate
+from app.schemas.post import PostCreate, PostPublic, PostsPublic, PostUpdate
 from app.schemas.user import (
     UpdatePassword,
     UserCreate,
@@ -29,6 +30,11 @@ __all__ = [
     "ItemPublic",
     "ItemsPublic",
     "ItemUpdate",
+    # Post
+    "PostCreate",
+    "PostPublic",
+    "PostsPublic",
+    "PostUpdate",
     # Common
     "Message",
 ]

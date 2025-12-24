@@ -1736,6 +1736,140 @@ export const PersonUpdateSchema = {
     description: 'Schema for updating a person (all fields optional).'
 } as const;
 
+export const PostCreateSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Title',
+            description: 'Post title'
+        },
+        content: {
+            type: 'string',
+            title: 'Content',
+            description: 'Post content'
+        },
+        is_published: {
+            type: 'boolean',
+            title: 'Is Published',
+            description: 'Whether post is published',
+            default: true
+        }
+    },
+    type: 'object',
+    required: ['title', 'content'],
+    title: 'PostCreate',
+    description: 'Schema for creating a new post.'
+} as const;
+
+export const PostPublicSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Title',
+            description: 'Post title'
+        },
+        content: {
+            type: 'string',
+            title: 'Content',
+            description: 'Post content'
+        },
+        is_published: {
+            type: 'boolean',
+            title: 'Is Published',
+            description: 'Whether post is published',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        user_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'User Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['title', 'content', 'id', 'user_id', 'created_at', 'updated_at'],
+    title: 'PostPublic',
+    description: 'Post response schema.'
+} as const;
+
+export const PostUpdateSchema = {
+    properties: {
+        title: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title'
+        },
+        content: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Content'
+        },
+        is_published: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Published'
+        }
+    },
+    type: 'object',
+    title: 'PostUpdate',
+    description: 'Schema for updating a post (all fields optional).'
+} as const;
+
+export const PostsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/PostPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'PostsPublic',
+    description: 'List of posts response.'
+} as const;
+
 export const PrivateUserCreateSchema = {
     properties: {
         email: {

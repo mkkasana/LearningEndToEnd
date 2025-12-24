@@ -612,6 +612,63 @@ export type PersonUpdate = {
     date_of_death?: (string | null);
 };
 
+/**
+ * Schema for creating a new post.
+ */
+export type PostCreate = {
+    /**
+     * Post title
+     */
+    title: string;
+    /**
+     * Post content
+     */
+    content: string;
+    /**
+     * Whether post is published
+     */
+    is_published?: boolean;
+};
+
+/**
+ * Post response schema.
+ */
+export type PostPublic = {
+    /**
+     * Post title
+     */
+    title: string;
+    /**
+     * Post content
+     */
+    content: string;
+    /**
+     * Whether post is published
+     */
+    is_published?: boolean;
+    id: string;
+    user_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * List of posts response.
+ */
+export type PostsPublic = {
+    data: Array<PostPublic>;
+    count: number;
+};
+
+/**
+ * Schema for updating a post (all fields optional).
+ */
+export type PostUpdate = {
+    title?: (string | null);
+    content?: (string | null);
+    is_published?: (boolean | null);
+};
+
 export type PrivateUserCreate = {
     email: string;
     password: string;
@@ -1433,6 +1490,45 @@ export type PersonMetadataDeleteGenderData = {
 };
 
 export type PersonMetadataDeleteGenderResponse = (unknown);
+
+export type PostsGetPublishedPostsData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type PostsGetPublishedPostsResponse = (PostsPublic);
+
+export type PostsCreatePostData = {
+    requestBody: PostCreate;
+};
+
+export type PostsCreatePostResponse = (PostPublic);
+
+export type PostsGetMyPostsData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type PostsGetMyPostsResponse = (PostsPublic);
+
+export type PostsGetPostData = {
+    postId: string;
+};
+
+export type PostsGetPostResponse = (PostPublic);
+
+export type PostsUpdatePostData = {
+    postId: string;
+    requestBody: PostUpdate;
+};
+
+export type PostsUpdatePostResponse = (PostPublic);
+
+export type PostsDeletePostData = {
+    postId: string;
+};
+
+export type PostsDeletePostResponse = (Message);
 
 export type PrivateCreateUserData = {
     requestBody: PrivateUserCreate;

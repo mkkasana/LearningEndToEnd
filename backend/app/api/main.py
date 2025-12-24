@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.routes import auth, items, private, users, utils
+from app.api.routes import auth, items, posts, private, users, utils
 from app.api.routes.address import metadata as address_metadata
 from app.api.routes.person import metadata as person_metadata
 from app.api.routes.person import person as person_routes
@@ -14,6 +14,7 @@ api_router = APIRouter()
 api_router.include_router(auth.router)
 api_router.include_router(users.router)
 api_router.include_router(items.router)
+api_router.include_router(posts.router)
 api_router.include_router(utils.router)
 
 # Metadata routes
