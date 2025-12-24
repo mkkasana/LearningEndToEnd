@@ -22,9 +22,13 @@ class UserCreate(UserBase):
 class UserRegister(SQLModel):
     """Properties for user self-registration"""
 
+    first_name: str = Field(max_length=100)
+    middle_name: str | None = Field(default=None, max_length=100)
+    last_name: str = Field(max_length=100)
+    gender: str = Field(description="Gender: MALE or FEMALE")
+    date_of_birth: str = Field(description="Date of birth in YYYY-MM-DD format")
     email: EmailStr = Field(max_length=255)
     password: str = Field(min_length=8, max_length=128)
-    full_name: str | None = Field(default=None, max_length=255)
 
 
 class UserUpdate(UserBase):

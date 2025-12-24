@@ -18,12 +18,25 @@ import {
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 
 const formSchema = z
   .object({
-    email: z.email(),
-    full_name: z.string().min(1, { message: "Full Name is required" }),
+    first_name: z.string().min(1, { message: "First name is required" }),
+    middle_name: z.string().optional(),
+    last_name: z.string().min(1, { message: "Last name is required" }),
+    gender: z.enum(["MALE", "FEMALE"], {
+      message: "Please select a gender",
+    }),
+    date_of_birth: z.string().min(1, { message: "Date of birth is required" }),
+    email: z.string().email({ message: "Invalid email address" }),
     password: z
       .string()
       .min(1, { message: "Password is required" })
@@ -64,8 +77,12 @@ function SignUp() {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      gender: undefined,
+      date_of_birth: "",
       email: "",
-      full_name: "",
       password: "",
       confirm_password: "",
     },
@@ -91,16 +108,56 @@ function SignUp() {
           </div>
 
           <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="first_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        data-testid="first-name-input"
+                        placeholder="John"
+                        type="text"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="last_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        data-testid="last-name-input"
+                        placeholder="Doe"
+                        type="text"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
-              name="full_name"
+              name="middle_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>Middle Name (Optional)</FormLabel>
                   <FormControl>
                     <Input
-                      data-testid="full-name-input"
-                      placeholder="User"
+                      data-testid="middle-name-input"
+                      placeholder="Middle name"
                       type="text"
                       {...field}
                     />
@@ -109,6 +166,51 @@ function SignUp() {
                 </FormItem>
               )}
             />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Gender</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger data-testid="gender-select">
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="MALE">Male</SelectItem>
+                        <SelectItem value="FEMALE">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="date_of_birth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date of Birth</FormLabel>
+                    <FormControl>
+                      <Input
+                        data-testid="date-of-birth-input"
+                        type="date"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}

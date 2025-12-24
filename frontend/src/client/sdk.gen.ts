@@ -3,7 +3,588 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { AddressMetadataGetCountriesResponse, AddressMetadataCreateCountryData, AddressMetadataCreateCountryResponse, AddressMetadataGetCountryByIdData, AddressMetadataGetCountryByIdResponse, AddressMetadataUpdateCountryData, AddressMetadataUpdateCountryResponse, AddressMetadataDeleteCountryData, AddressMetadataDeleteCountryResponse, AddressMetadataGetStatesByCountryData, AddressMetadataGetStatesByCountryResponse, AddressMetadataGetStateByIdData, AddressMetadataGetStateByIdResponse, AddressMetadataUpdateStateData, AddressMetadataUpdateStateResponse, AddressMetadataDeleteStateData, AddressMetadataDeleteStateResponse, AddressMetadataCreateStateData, AddressMetadataCreateStateResponse, AddressMetadataGetDistrictsByStateData, AddressMetadataGetDistrictsByStateResponse, AddressMetadataGetDistrictByIdData, AddressMetadataGetDistrictByIdResponse, AddressMetadataUpdateDistrictData, AddressMetadataUpdateDistrictResponse, AddressMetadataDeleteDistrictData, AddressMetadataDeleteDistrictResponse, AddressMetadataCreateDistrictData, AddressMetadataCreateDistrictResponse, AddressMetadataGetSubDistrictsByDistrictData, AddressMetadataGetSubDistrictsByDistrictResponse, AddressMetadataGetSubDistrictByIdData, AddressMetadataGetSubDistrictByIdResponse, AddressMetadataUpdateSubDistrictData, AddressMetadataUpdateSubDistrictResponse, AddressMetadataDeleteSubDistrictData, AddressMetadataDeleteSubDistrictResponse, AddressMetadataCreateSubDistrictData, AddressMetadataCreateSubDistrictResponse, AddressMetadataGetLocalitiesBySubDistrictData, AddressMetadataGetLocalitiesBySubDistrictResponse, AddressMetadataGetLocalityByIdData, AddressMetadataGetLocalityByIdResponse, AddressMetadataUpdateLocalityData, AddressMetadataUpdateLocalityResponse, AddressMetadataDeleteLocalityData, AddressMetadataDeleteLocalityResponse, AddressMetadataCreateLocalityData, AddressMetadataCreateLocalityResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PersonGetMyPersonResponse, PersonCreateMyPersonData, PersonCreateMyPersonResponse, PersonDeleteMyPersonResponse, PersonUpdateMyPersonData, PersonUpdateMyPersonResponse, PersonGetPersonByUserIdData, PersonGetPersonByUserIdResponse, PersonDeletePersonByUserIdData, PersonDeletePersonByUserIdResponse, PersonGetMyAddressesResponse, PersonCreateMyAddressData, PersonCreateMyAddressResponse, PersonGetMyAddressData, PersonGetMyAddressResponse, PersonUpdateMyAddressData, PersonUpdateMyAddressResponse, PersonDeleteMyAddressData, PersonDeleteMyAddressResponse, PersonGetMyProfessionsResponse, PersonCreateMyProfessionData, PersonCreateMyProfessionResponse, PersonGetMyProfessionData, PersonGetMyProfessionResponse, PersonUpdateMyProfessionData, PersonUpdateMyProfessionResponse, PersonDeleteMyProfessionData, PersonDeleteMyProfessionResponse, PersonGetMyRelationshipsResponse, PersonCreateMyRelationshipData, PersonCreateMyRelationshipResponse, PersonGetMyRelationshipData, PersonGetMyRelationshipResponse, PersonUpdateMyRelationshipData, PersonUpdateMyRelationshipResponse, PersonDeleteMyRelationshipData, PersonDeleteMyRelationshipResponse, PersonGetMyMetadataResponse, PersonCreateMyMetadataData, PersonCreateMyMetadataResponse, PersonDeleteMyMetadataResponse, PersonUpdateMyMetadataData, PersonUpdateMyMetadataResponse, PersonMetadataGetProfessionsResponse, PersonMetadataCreateProfessionData, PersonMetadataCreateProfessionResponse, PersonMetadataGetProfessionByIdData, PersonMetadataGetProfessionByIdResponse, PersonMetadataUpdateProfessionData, PersonMetadataUpdateProfessionResponse, PersonMetadataDeleteProfessionData, PersonMetadataDeleteProfessionResponse, PersonMetadataGetGendersResponse, PersonMetadataCreateGenderData, PersonMetadataCreateGenderResponse, PersonMetadataGetGenderByIdData, PersonMetadataGetGenderByIdResponse, PersonMetadataUpdateGenderData, PersonMetadataUpdateGenderResponse, PersonMetadataDeleteGenderData, PersonMetadataDeleteGenderResponse, PrivateCreateUserData, PrivateCreateUserResponse, RelativesGetParentsData, RelativesGetParentsResponse, RelativesGetChildrenData, RelativesGetChildrenResponse, RelativesGetSpousesData, RelativesGetSpousesResponse, RelativesGetSiblingsData, RelativesGetSiblingsResponse, ReligionMetadataGetReligionsResponse, ReligionMetadataCreateReligionData, ReligionMetadataCreateReligionResponse, ReligionMetadataGetReligionByIdData, ReligionMetadataGetReligionByIdResponse, ReligionMetadataUpdateReligionData, ReligionMetadataUpdateReligionResponse, ReligionMetadataDeleteReligionData, ReligionMetadataDeleteReligionResponse, ReligionMetadataGetCategoriesByReligionData, ReligionMetadataGetCategoriesByReligionResponse, ReligionMetadataGetCategoryByIdData, ReligionMetadataGetCategoryByIdResponse, ReligionMetadataUpdateCategoryData, ReligionMetadataUpdateCategoryResponse, ReligionMetadataDeleteCategoryData, ReligionMetadataDeleteCategoryResponse, ReligionMetadataCreateCategoryData, ReligionMetadataCreateCategoryResponse, ReligionMetadataGetSubCategoriesByCategoryData, ReligionMetadataGetSubCategoriesByCategoryResponse, ReligionMetadataGetSubCategoryByIdData, ReligionMetadataGetSubCategoryByIdResponse, ReligionMetadataUpdateSubCategoryData, ReligionMetadataUpdateSubCategoryResponse, ReligionMetadataDeleteSubCategoryData, ReligionMetadataDeleteSubCategoryResponse, ReligionMetadataCreateSubCategoryData, ReligionMetadataCreateSubCategoryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+
+export class AddressMetadataService {
+    /**
+     * Get Countries
+     * Get list of countries for dropdown options.
+     * Public endpoint - no authentication required.
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getCountries(): CancelablePromise<AddressMetadataGetCountriesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/countries',
+            errors: {
+                404: 'Not found'
+            }
+        });
+    }
+    
+    /**
+     * Create Country
+     * Create a new country.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns CountryDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createCountry(data: AddressMetadataCreateCountryData): CancelablePromise<AddressMetadataCreateCountryResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/address/countries',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Country By Id
+     * Get a specific country by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.countryId
+     * @returns CountryDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getCountryById(data: AddressMetadataGetCountryByIdData): CancelablePromise<AddressMetadataGetCountryByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/countries/{country_id}',
+            path: {
+                country_id: data.countryId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Country
+     * Update a country.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.countryId
+     * @param data.requestBody
+     * @returns CountryDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateCountry(data: AddressMetadataUpdateCountryData): CancelablePromise<AddressMetadataUpdateCountryResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/address/countries/{country_id}',
+            path: {
+                country_id: data.countryId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Country
+     * Delete a country.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.countryId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteCountry(data: AddressMetadataDeleteCountryData): CancelablePromise<AddressMetadataDeleteCountryResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/address/countries/{country_id}',
+            path: {
+                country_id: data.countryId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get States By Country
+     * Get list of states for a specific country.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.countryId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getStatesByCountry(data: AddressMetadataGetStatesByCountryData): CancelablePromise<AddressMetadataGetStatesByCountryResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/country/{country_id}/states',
+            path: {
+                country_id: data.countryId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get State By Id
+     * Get a specific state by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.stateId
+     * @returns StateDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getStateById(data: AddressMetadataGetStateByIdData): CancelablePromise<AddressMetadataGetStateByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/states/{state_id}',
+            path: {
+                state_id: data.stateId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update State
+     * Update a state.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.stateId
+     * @param data.requestBody
+     * @returns StateDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateState(data: AddressMetadataUpdateStateData): CancelablePromise<AddressMetadataUpdateStateResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/address/states/{state_id}',
+            path: {
+                state_id: data.stateId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete State
+     * Delete a state.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.stateId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteState(data: AddressMetadataDeleteStateData): CancelablePromise<AddressMetadataDeleteStateResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/address/states/{state_id}',
+            path: {
+                state_id: data.stateId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create State
+     * Create a new state.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns StateDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createState(data: AddressMetadataCreateStateData): CancelablePromise<AddressMetadataCreateStateResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/address/states',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Districts By State
+     * Get list of districts for a specific state.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.stateId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getDistrictsByState(data: AddressMetadataGetDistrictsByStateData): CancelablePromise<AddressMetadataGetDistrictsByStateResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/state/{state_id}/districts',
+            path: {
+                state_id: data.stateId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get District By Id
+     * Get a specific district by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.districtId
+     * @returns DistrictDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getDistrictById(data: AddressMetadataGetDistrictByIdData): CancelablePromise<AddressMetadataGetDistrictByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/districts/{district_id}',
+            path: {
+                district_id: data.districtId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update District
+     * Update a district.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.districtId
+     * @param data.requestBody
+     * @returns DistrictDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateDistrict(data: AddressMetadataUpdateDistrictData): CancelablePromise<AddressMetadataUpdateDistrictResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/address/districts/{district_id}',
+            path: {
+                district_id: data.districtId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete District
+     * Delete a district.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.districtId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteDistrict(data: AddressMetadataDeleteDistrictData): CancelablePromise<AddressMetadataDeleteDistrictResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/address/districts/{district_id}',
+            path: {
+                district_id: data.districtId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create District
+     * Create a new district.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns DistrictDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createDistrict(data: AddressMetadataCreateDistrictData): CancelablePromise<AddressMetadataCreateDistrictResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/address/districts',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Sub Districts By District
+     * Get list of sub-districts (tehsils/counties) for a specific district.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.districtId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getSubDistrictsByDistrict(data: AddressMetadataGetSubDistrictsByDistrictData): CancelablePromise<AddressMetadataGetSubDistrictsByDistrictResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/district/{district_id}/sub-districts',
+            path: {
+                district_id: data.districtId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Sub District By Id
+     * Get a specific sub-district by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.subDistrictId
+     * @returns SubDistrictDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getSubDistrictById(data: AddressMetadataGetSubDistrictByIdData): CancelablePromise<AddressMetadataGetSubDistrictByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/sub-districts/{sub_district_id}',
+            path: {
+                sub_district_id: data.subDistrictId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Sub District
+     * Update a sub-district (tehsil/county).
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.subDistrictId
+     * @param data.requestBody
+     * @returns SubDistrictDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateSubDistrict(data: AddressMetadataUpdateSubDistrictData): CancelablePromise<AddressMetadataUpdateSubDistrictResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/address/sub-districts/{sub_district_id}',
+            path: {
+                sub_district_id: data.subDistrictId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Sub District
+     * Delete a sub-district (tehsil/county).
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.subDistrictId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteSubDistrict(data: AddressMetadataDeleteSubDistrictData): CancelablePromise<AddressMetadataDeleteSubDistrictResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/address/sub-districts/{sub_district_id}',
+            path: {
+                sub_district_id: data.subDistrictId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Sub District
+     * Create a new sub-district (tehsil/county).
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns SubDistrictDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createSubDistrict(data: AddressMetadataCreateSubDistrictData): CancelablePromise<AddressMetadataCreateSubDistrictResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/address/sub-districts',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Localities By Sub District
+     * Get list of localities (villages) for a specific sub-district.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.subDistrictId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getLocalitiesBySubDistrict(data: AddressMetadataGetLocalitiesBySubDistrictData): CancelablePromise<AddressMetadataGetLocalitiesBySubDistrictResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/sub-district/{sub_district_id}/localities',
+            path: {
+                sub_district_id: data.subDistrictId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Locality By Id
+     * Get a specific locality by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.localityId
+     * @returns LocalityDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getLocalityById(data: AddressMetadataGetLocalityByIdData): CancelablePromise<AddressMetadataGetLocalityByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/address/localities/{locality_id}',
+            path: {
+                locality_id: data.localityId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Locality
+     * Update a locality (village).
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.localityId
+     * @param data.requestBody
+     * @returns LocalityDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateLocality(data: AddressMetadataUpdateLocalityData): CancelablePromise<AddressMetadataUpdateLocalityResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/address/localities/{locality_id}',
+            path: {
+                locality_id: data.localityId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Locality
+     * Delete a locality (village).
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.localityId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteLocality(data: AddressMetadataDeleteLocalityData): CancelablePromise<AddressMetadataDeleteLocalityResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/address/localities/{locality_id}',
+            path: {
+                locality_id: data.localityId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Locality
+     * Create a new locality (village).
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns LocalityDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createLocality(data: AddressMetadataCreateLocalityData): CancelablePromise<AddressMetadataCreateLocalityResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/address/localities',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+}
 
 export class ItemsService {
     /**
@@ -213,6 +794,703 @@ export class LoginService {
     }
 }
 
+export class PersonService {
+    /**
+     * Get My Person
+     * Get current user's person profile.
+     * @returns PersonPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyPerson(): CancelablePromise<PersonGetMyPersonResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/me'
+        });
+    }
+    
+    /**
+     * Create My Person
+     * Create person profile for current user.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PersonPublic Successful Response
+     * @throws ApiError
+     */
+    public static createMyPerson(data: PersonCreateMyPersonData): CancelablePromise<PersonCreateMyPersonResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/me',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete My Person
+     * Delete current user's person profile.
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteMyPerson(): CancelablePromise<PersonDeleteMyPersonResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/me'
+        });
+    }
+    
+    /**
+     * Update My Person
+     * Update current user's person profile.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PersonPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateMyPerson(data: PersonUpdateMyPersonData): CancelablePromise<PersonUpdateMyPersonResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/person/me',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Person By User Id
+     * Get person by user ID (admin only).
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns PersonPublic Successful Response
+     * @throws ApiError
+     */
+    public static getPersonByUserId(data: PersonGetPersonByUserIdData): CancelablePromise<PersonGetPersonByUserIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/{user_id}',
+            path: {
+                user_id: data.userId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Person By User Id
+     * Delete person by user ID (admin only).
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deletePersonByUserId(data: PersonDeletePersonByUserIdData): CancelablePromise<PersonDeletePersonByUserIdResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/{user_id}',
+            path: {
+                user_id: data.userId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Addresses
+     * Get all addresses for current user's person profile.
+     * @returns PersonAddressPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyAddresses(): CancelablePromise<PersonGetMyAddressesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/me/addresses'
+        });
+    }
+    
+    /**
+     * Create My Address
+     * Create new address for current user's person profile.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PersonAddressPublic Successful Response
+     * @throws ApiError
+     */
+    public static createMyAddress(data: PersonCreateMyAddressData): CancelablePromise<PersonCreateMyAddressResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/me/addresses',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Address
+     * Get specific address by ID for current user.
+     * @param data The data for the request.
+     * @param data.addressId
+     * @returns PersonAddressPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyAddress(data: PersonGetMyAddressData): CancelablePromise<PersonGetMyAddressResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/me/addresses/{address_id}',
+            path: {
+                address_id: data.addressId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update My Address
+     * Update address for current user.
+     * @param data The data for the request.
+     * @param data.addressId
+     * @param data.requestBody
+     * @returns PersonAddressPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateMyAddress(data: PersonUpdateMyAddressData): CancelablePromise<PersonUpdateMyAddressResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/person/me/addresses/{address_id}',
+            path: {
+                address_id: data.addressId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete My Address
+     * Delete address for current user.
+     * @param data The data for the request.
+     * @param data.addressId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteMyAddress(data: PersonDeleteMyAddressData): CancelablePromise<PersonDeleteMyAddressResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/me/addresses/{address_id}',
+            path: {
+                address_id: data.addressId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Professions
+     * Get all professions for current user's person profile.
+     * @returns PersonProfessionPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyProfessions(): CancelablePromise<PersonGetMyProfessionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/me/professions'
+        });
+    }
+    
+    /**
+     * Create My Profession
+     * Create new profession for current user's person profile.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PersonProfessionPublic Successful Response
+     * @throws ApiError
+     */
+    public static createMyProfession(data: PersonCreateMyProfessionData): CancelablePromise<PersonCreateMyProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/me/professions',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Profession
+     * Get specific profession by ID for current user.
+     * @param data The data for the request.
+     * @param data.professionId
+     * @returns PersonProfessionPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyProfession(data: PersonGetMyProfessionData): CancelablePromise<PersonGetMyProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/me/professions/{profession_id}',
+            path: {
+                profession_id: data.professionId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update My Profession
+     * Update profession for current user.
+     * @param data The data for the request.
+     * @param data.professionId
+     * @param data.requestBody
+     * @returns PersonProfessionPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateMyProfession(data: PersonUpdateMyProfessionData): CancelablePromise<PersonUpdateMyProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/person/me/professions/{profession_id}',
+            path: {
+                profession_id: data.professionId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete My Profession
+     * Delete profession for current user.
+     * @param data The data for the request.
+     * @param data.professionId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteMyProfession(data: PersonDeleteMyProfessionData): CancelablePromise<PersonDeleteMyProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/me/professions/{profession_id}',
+            path: {
+                profession_id: data.professionId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Relationships
+     * Get all relationships for current user's person profile.
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyRelationships(): CancelablePromise<PersonGetMyRelationshipsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/me/relationships'
+        });
+    }
+    
+    /**
+     * Create My Relationship
+     * Create new relationship for current user's person profile.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static createMyRelationship(data: PersonCreateMyRelationshipData): CancelablePromise<PersonCreateMyRelationshipResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/me/relationships',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Relationship
+     * Get specific relationship by ID for current user.
+     * @param data The data for the request.
+     * @param data.relationshipId
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyRelationship(data: PersonGetMyRelationshipData): CancelablePromise<PersonGetMyRelationshipResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/me/relationships/{relationship_id}',
+            path: {
+                relationship_id: data.relationshipId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update My Relationship
+     * Update relationship for current user.
+     * @param data The data for the request.
+     * @param data.relationshipId
+     * @param data.requestBody
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateMyRelationship(data: PersonUpdateMyRelationshipData): CancelablePromise<PersonUpdateMyRelationshipResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/person/me/relationships/{relationship_id}',
+            path: {
+                relationship_id: data.relationshipId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete My Relationship
+     * Delete relationship for current user.
+     * @param data The data for the request.
+     * @param data.relationshipId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteMyRelationship(data: PersonDeleteMyRelationshipData): CancelablePromise<PersonDeleteMyRelationshipResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/me/relationships/{relationship_id}',
+            path: {
+                relationship_id: data.relationshipId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Metadata
+     * Get metadata for current user's person profile.
+     * @returns PersonMetadataPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyMetadata(): CancelablePromise<PersonGetMyMetadataResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/me/metadata'
+        });
+    }
+    
+    /**
+     * Create My Metadata
+     * Create metadata for current user's person profile.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PersonMetadataPublic Successful Response
+     * @throws ApiError
+     */
+    public static createMyMetadata(data: PersonCreateMyMetadataData): CancelablePromise<PersonCreateMyMetadataResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/me/metadata',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete My Metadata
+     * Delete metadata for current user.
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteMyMetadata(): CancelablePromise<PersonDeleteMyMetadataResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/me/metadata'
+        });
+    }
+    
+    /**
+     * Update My Metadata
+     * Update metadata for current user.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PersonMetadataPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateMyMetadata(data: PersonUpdateMyMetadataData): CancelablePromise<PersonUpdateMyMetadataResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/person/me/metadata',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class PersonMetadataService {
+    /**
+     * Get Professions
+     * Get list of professions for dropdown options.
+     * Public endpoint - no authentication required.
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getProfessions(): CancelablePromise<PersonMetadataGetProfessionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/person/professions',
+            errors: {
+                404: 'Not found'
+            }
+        });
+    }
+    
+    /**
+     * Create Profession
+     * Create a new profession.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns ProfessionDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createProfession(data: PersonMetadataCreateProfessionData): CancelablePromise<PersonMetadataCreateProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/person/professions',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Profession By Id
+     * Get a specific profession by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.professionId
+     * @returns ProfessionDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getProfessionById(data: PersonMetadataGetProfessionByIdData): CancelablePromise<PersonMetadataGetProfessionByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/person/professions/{profession_id}',
+            path: {
+                profession_id: data.professionId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Profession
+     * Update a profession.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.professionId
+     * @param data.requestBody
+     * @returns ProfessionDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateProfession(data: PersonMetadataUpdateProfessionData): CancelablePromise<PersonMetadataUpdateProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/person/professions/{profession_id}',
+            path: {
+                profession_id: data.professionId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Profession
+     * Delete a profession.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.professionId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteProfession(data: PersonMetadataDeleteProfessionData): CancelablePromise<PersonMetadataDeleteProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/person/professions/{profession_id}',
+            path: {
+                profession_id: data.professionId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Genders
+     * Get list of genders for dropdown options.
+     * Public endpoint - no authentication required.
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getGenders(): CancelablePromise<PersonMetadataGetGendersResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/person/genders',
+            errors: {
+                404: 'Not found'
+            }
+        });
+    }
+    
+    /**
+     * Create Gender
+     * Create a new gender.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns GenderDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createGender(data: PersonMetadataCreateGenderData): CancelablePromise<PersonMetadataCreateGenderResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/person/genders',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Gender By Id
+     * Get a specific gender by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.genderId
+     * @returns GenderDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getGenderById(data: PersonMetadataGetGenderByIdData): CancelablePromise<PersonMetadataGetGenderByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/person/genders/{gender_id}',
+            path: {
+                gender_id: data.genderId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Gender
+     * Update a gender.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.genderId
+     * @param data.requestBody
+     * @returns GenderDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateGender(data: PersonMetadataUpdateGenderData): CancelablePromise<PersonMetadataUpdateGenderResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/person/genders/{gender_id}',
+            path: {
+                gender_id: data.genderId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Gender
+     * Delete a gender.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.genderId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteGender(data: PersonMetadataDeleteGenderData): CancelablePromise<PersonMetadataDeleteGenderResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/person/genders/{gender_id}',
+            path: {
+                gender_id: data.genderId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
 export class PrivateService {
     /**
      * Create User
@@ -229,6 +1507,445 @@ export class PrivateService {
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class RelativesService {
+    /**
+     * Get Parents
+     * Get all parents (father and mother) for a person.
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static getParents(data: RelativesGetParentsData): CancelablePromise<RelativesGetParentsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/relatives/{user_id}/parents',
+            path: {
+                user_id: data.userId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Children
+     * Get all children (sons and daughters) for a person.
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static getChildren(data: RelativesGetChildrenData): CancelablePromise<RelativesGetChildrenResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/relatives/{user_id}/children',
+            path: {
+                user_id: data.userId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Spouses
+     * Get all spouses for a person.
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static getSpouses(data: RelativesGetSpousesData): CancelablePromise<RelativesGetSpousesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/relatives/{user_id}/spouses',
+            path: {
+                user_id: data.userId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Siblings
+     * Get all siblings for a person.
+     *
+     * Finds siblings by:
+     * 1. Getting all parents of the person
+     * 2. For each parent, getting all their children
+     * 3. Excluding the person themselves
+     * 4. Removing duplicates (same sibling from both parents)
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static getSiblings(data: RelativesGetSiblingsData): CancelablePromise<RelativesGetSiblingsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/relatives/{user_id}/siblings',
+            path: {
+                user_id: data.userId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class ReligionMetadataService {
+    /**
+     * Get Religions
+     * Get list of religions for dropdown options.
+     * Public endpoint - no authentication required.
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getReligions(): CancelablePromise<ReligionMetadataGetReligionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/religion/religions',
+            errors: {
+                404: 'Not found'
+            }
+        });
+    }
+    
+    /**
+     * Create Religion
+     * Create a new religion.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns ReligionDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createReligion(data: ReligionMetadataCreateReligionData): CancelablePromise<ReligionMetadataCreateReligionResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/religion/religions',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Religion By Id
+     * Get a specific religion by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.religionId
+     * @returns ReligionDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getReligionById(data: ReligionMetadataGetReligionByIdData): CancelablePromise<ReligionMetadataGetReligionByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/religion/religions/{religion_id}',
+            path: {
+                religion_id: data.religionId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Religion
+     * Update a religion.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.religionId
+     * @param data.requestBody
+     * @returns ReligionDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateReligion(data: ReligionMetadataUpdateReligionData): CancelablePromise<ReligionMetadataUpdateReligionResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/religion/religions/{religion_id}',
+            path: {
+                religion_id: data.religionId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Religion
+     * Delete a religion.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.religionId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteReligion(data: ReligionMetadataDeleteReligionData): CancelablePromise<ReligionMetadataDeleteReligionResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/religion/religions/{religion_id}',
+            path: {
+                religion_id: data.religionId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Categories By Religion
+     * Get list of categories for a specific religion.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.religionId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getCategoriesByReligion(data: ReligionMetadataGetCategoriesByReligionData): CancelablePromise<ReligionMetadataGetCategoriesByReligionResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/religion/religion/{religion_id}/categories',
+            path: {
+                religion_id: data.religionId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Category By Id
+     * Get a specific category by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.categoryId
+     * @returns ReligionCategoryDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getCategoryById(data: ReligionMetadataGetCategoryByIdData): CancelablePromise<ReligionMetadataGetCategoryByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/religion/categories/{category_id}',
+            path: {
+                category_id: data.categoryId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Category
+     * Update a religion category.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.categoryId
+     * @param data.requestBody
+     * @returns ReligionCategoryDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateCategory(data: ReligionMetadataUpdateCategoryData): CancelablePromise<ReligionMetadataUpdateCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/religion/categories/{category_id}',
+            path: {
+                category_id: data.categoryId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Category
+     * Delete a religion category.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.categoryId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteCategory(data: ReligionMetadataDeleteCategoryData): CancelablePromise<ReligionMetadataDeleteCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/religion/categories/{category_id}',
+            path: {
+                category_id: data.categoryId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Category
+     * Create a new religion category.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns ReligionCategoryDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createCategory(data: ReligionMetadataCreateCategoryData): CancelablePromise<ReligionMetadataCreateCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/religion/categories',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Sub Categories By Category
+     * Get list of sub-categories for a specific category.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.categoryId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getSubCategoriesByCategory(data: ReligionMetadataGetSubCategoriesByCategoryData): CancelablePromise<ReligionMetadataGetSubCategoriesByCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/religion/category/{category_id}/sub-categories',
+            path: {
+                category_id: data.categoryId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Sub Category By Id
+     * Get a specific sub-category by ID.
+     * Public endpoint - no authentication required.
+     * @param data The data for the request.
+     * @param data.subCategoryId
+     * @returns ReligionSubCategoryDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static getSubCategoryById(data: ReligionMetadataGetSubCategoryByIdData): CancelablePromise<ReligionMetadataGetSubCategoryByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/metadata/religion/sub-categories/{sub_category_id}',
+            path: {
+                sub_category_id: data.subCategoryId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Sub Category
+     * Update a religion sub-category.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.subCategoryId
+     * @param data.requestBody
+     * @returns ReligionSubCategoryDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateSubCategory(data: ReligionMetadataUpdateSubCategoryData): CancelablePromise<ReligionMetadataUpdateSubCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/metadata/religion/sub-categories/{sub_category_id}',
+            path: {
+                sub_category_id: data.subCategoryId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Sub Category
+     * Delete a religion sub-category.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.subCategoryId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteSubCategory(data: ReligionMetadataDeleteSubCategoryData): CancelablePromise<ReligionMetadataDeleteSubCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/metadata/religion/sub-categories/{sub_category_id}',
+            path: {
+                sub_category_id: data.subCategoryId
+            },
+            errors: {
+                404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Sub Category
+     * Create a new religion sub-category.
+     * Requires superuser authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns ReligionSubCategoryDetailPublic Successful Response
+     * @throws ApiError
+     */
+    public static createSubCategory(data: ReligionMetadataCreateSubCategoryData): CancelablePromise<ReligionMetadataCreateSubCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/metadata/religion/sub-categories',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: 'Not found',
                 422: 'Validation Error'
             }
         });
@@ -348,6 +2065,7 @@ export class UsersService {
     /**
      * Register User
      * Create new user without the need to be logged in.
+     * Creates both User and Person records.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns UserPublic Successful Response

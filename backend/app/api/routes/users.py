@@ -134,17 +134,70 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
 def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     """
     Create new user without the need to be logged in.
+    Creates both User and Person records.
     """
-    user_service = UserService(session)
+    from datetime import datetime
     
+    from app.schemas.person import PersonCreate
+    from app.services.person.gender_service import GenderService
+    from app.services.person.person_service import PersonService
+    
+    user_service = UserService(session)
+    gender_service = GenderService(session)
+    person_service = PersonService(session)
+    
+    # Check if email already exists
     if user_service.email_exists(user_in.email):
         raise HTTPException(
             status_code=400,
             detail="The user with this email already exists in the system",
         )
     
-    user_create = UserCreate.model_validate(user_in)
+    # Get gender by code
+    gender = gender_service.get_gender_by_code(user_in.gender)
+    if not gender:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid gender: {user_in.gender}. Must be MALE or FEMALE",
+        )
+    
+    # Parse date of birth
+    try:
+        dob = datetime.strptime(user_in.date_of_birth, "%Y-%m-%d").date()
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid date format. Use YYYY-MM-DD",
+        )
+    
+    # Create full_name from first, middle, last names
+    full_name_parts = [user_in.first_name]
+    if user_in.middle_name:
+        full_name_parts.append(user_in.middle_name)
+    full_name_parts.append(user_in.last_name)
+    full_name = " ".join(full_name_parts)
+    
+    # Create user
+    user_create = UserCreate(
+        email=user_in.email,
+        password=user_in.password,
+        full_name=full_name,
+        is_active=True,
+        is_superuser=False,
+    )
     user = user_service.create_user(user_create)
+    
+    # Create person
+    person_create = PersonCreate(
+        user_id=user.id,
+        first_name=user_in.first_name,
+        middle_name=user_in.middle_name,
+        last_name=user_in.last_name,
+        gender_id=gender.id,
+        date_of_birth=dob,
+    )
+    person_service.create_person(person_create)
+    
     return user
 
 

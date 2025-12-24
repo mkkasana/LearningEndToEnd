@@ -21,6 +21,11 @@ class GenderRepository(BaseRepository[Gender]):
         )
         return list(self.session.exec(statement).all())
 
+    def get_by_code(self, code: str) -> Gender | None:
+        """Get gender by code."""
+        statement = select(Gender).where(Gender.code == code.upper())
+        return self.session.exec(statement).first()
+
     def code_exists(
         self, code: str, exclude_gender_id: uuid.UUID | None = None
     ) -> bool:

@@ -9,15 +9,173 @@ export type Body_login_login_access_token = {
     client_secret?: (string | null);
 };
 
+/**
+ * Schema for creating a new country
+ */
+export type CountryCreate = {
+    /**
+     * Country name
+     */
+    name: string;
+    /**
+     * ISO country code (3 letters)
+     */
+    code: string;
+    /**
+     * Whether country is active
+     */
+    is_active?: boolean;
+};
+
+/**
+ * Detailed country response with all fields
+ */
+export type CountryDetailPublic = {
+    /**
+     * Country name
+     */
+    name: string;
+    /**
+     * ISO country code (3 letters)
+     */
+    code: string;
+    /**
+     * Whether country is active
+     */
+    is_active?: boolean;
+    id: string;
+};
+
+/**
+ * Schema for updating a country (all fields optional)
+ */
+export type CountryUpdate = {
+    name?: (string | null);
+    code?: (string | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * Schema for creating a new district
+ */
+export type DistrictCreate = {
+    /**
+     * District name
+     */
+    name: string;
+    /**
+     * District code
+     */
+    code?: (string | null);
+    /**
+     * Whether district is active
+     */
+    is_active?: boolean;
+    /**
+     * State ID this district belongs to
+     */
+    state_id: string;
+};
+
+/**
+ * Detailed district response with all fields
+ */
+export type DistrictDetailPublic = {
+    /**
+     * District name
+     */
+    name: string;
+    /**
+     * District code
+     */
+    code?: (string | null);
+    /**
+     * Whether district is active
+     */
+    is_active?: boolean;
+    id: string;
+    state_id: string;
+};
+
+/**
+ * Schema for updating a district (all fields optional)
+ */
+export type DistrictUpdate = {
+    name?: (string | null);
+    code?: (string | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * Schema for creating a new gender.
+ */
+export type GenderCreate = {
+    /**
+     * Gender name
+     */
+    name: string;
+    /**
+     * Gender code
+     */
+    code: string;
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Whether gender is active
+     */
+    is_active?: boolean;
+};
+
+/**
+ * Detailed gender response with all fields.
+ */
+export type GenderDetailPublic = {
+    /**
+     * Gender name
+     */
+    name: string;
+    /**
+     * Gender code
+     */
+    code: string;
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Whether gender is active
+     */
+    is_active?: boolean;
+    id: string;
+};
+
+/**
+ * Schema for updating a gender (all fields optional).
+ */
+export type GenderUpdate = {
+    name?: (string | null);
+    code?: (string | null);
+    description?: (string | null);
+    is_active?: (boolean | null);
+};
+
 export type HTTPValidationError = {
     detail?: Array<ValidationError>;
 };
 
+/**
+ * Properties to receive on item creation
+ */
 export type ItemCreate = {
     title: string;
     description?: (string | null);
 };
 
+/**
+ * Properties to return via API
+ */
 export type ItemPublic = {
     title: string;
     description?: (string | null);
@@ -25,23 +183,433 @@ export type ItemPublic = {
     owner_id: string;
 };
 
+/**
+ * List of items response
+ */
 export type ItemsPublic = {
     data: Array<ItemPublic>;
     count: number;
 };
 
+/**
+ * Properties to receive on item update
+ */
 export type ItemUpdate = {
     title?: (string | null);
     description?: (string | null);
 };
 
+/**
+ * Schema for creating a new locality
+ */
+export type LocalityCreate = {
+    /**
+     * Locality/Village name
+     */
+    name: string;
+    /**
+     * Locality code
+     */
+    code?: (string | null);
+    /**
+     * Whether locality is active
+     */
+    is_active?: boolean;
+    /**
+     * Sub-district ID this locality belongs to
+     */
+    sub_district_id: string;
+};
+
+/**
+ * Detailed locality response with all fields
+ */
+export type LocalityDetailPublic = {
+    /**
+     * Locality/Village name
+     */
+    name: string;
+    /**
+     * Locality code
+     */
+    code?: (string | null);
+    /**
+     * Whether locality is active
+     */
+    is_active?: boolean;
+    id: string;
+    sub_district_id: string;
+};
+
+/**
+ * Schema for updating a locality (all fields optional)
+ */
+export type LocalityUpdate = {
+    name?: (string | null);
+    code?: (string | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * Generic message response
+ */
 export type Message = {
     message: string;
 };
 
+/**
+ * Password reset request
+ */
 export type NewPassword = {
     token: string;
     new_password: string;
+};
+
+/**
+ * Schema for creating a new person address.
+ */
+export type PersonAddressCreate = {
+    /**
+     * Country reference
+     */
+    country_id: string;
+    /**
+     * State reference
+     */
+    state_id?: (string | null);
+    /**
+     * District reference
+     */
+    district_id?: (string | null);
+    /**
+     * Sub-district reference
+     */
+    sub_district_id?: (string | null);
+    /**
+     * Locality reference
+     */
+    locality_id?: (string | null);
+    /**
+     * Additional address details
+     */
+    address_line?: (string | null);
+    /**
+     * Address start date
+     */
+    start_date: string;
+    /**
+     * Address end date
+     */
+    end_date?: (string | null);
+    /**
+     * Is this the current address
+     */
+    is_current?: boolean;
+};
+
+/**
+ * Person address response schema.
+ */
+export type PersonAddressPublic = {
+    /**
+     * Country reference
+     */
+    country_id: string;
+    /**
+     * State reference
+     */
+    state_id?: (string | null);
+    /**
+     * District reference
+     */
+    district_id?: (string | null);
+    /**
+     * Sub-district reference
+     */
+    sub_district_id?: (string | null);
+    /**
+     * Locality reference
+     */
+    locality_id?: (string | null);
+    /**
+     * Additional address details
+     */
+    address_line?: (string | null);
+    /**
+     * Address start date
+     */
+    start_date: string;
+    /**
+     * Address end date
+     */
+    end_date?: (string | null);
+    /**
+     * Is this the current address
+     */
+    is_current?: boolean;
+    id: string;
+    person_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Schema for updating a person address (all fields optional).
+ */
+export type PersonAddressUpdate = {
+    country_id?: (string | null);
+    state_id?: (string | null);
+    district_id?: (string | null);
+    sub_district_id?: (string | null);
+    locality_id?: (string | null);
+    address_line?: (string | null);
+    start_date?: (string | null);
+    end_date?: (string | null);
+    is_current?: (boolean | null);
+};
+
+/**
+ * Schema for creating a new person.
+ */
+export type PersonCreate = {
+    /**
+     * First name
+     */
+    first_name: string;
+    /**
+     * Middle name
+     */
+    middle_name?: (string | null);
+    /**
+     * Last name
+     */
+    last_name: string;
+    /**
+     * Gender reference
+     */
+    gender_id: string;
+    /**
+     * Date of birth
+     */
+    date_of_birth: string;
+    /**
+     * Date of death
+     */
+    date_of_death?: (string | null);
+    /**
+     * User account reference
+     */
+    user_id: string;
+};
+
+/**
+ * Schema for creating person metadata.
+ */
+export type PersonMetadataCreate = {
+    /**
+     * Profile image URL
+     */
+    profile_image_url?: (string | null);
+    /**
+     * Person biography
+     */
+    bio?: (string | null);
+};
+
+/**
+ * Person metadata response schema.
+ */
+export type PersonMetadataPublic = {
+    /**
+     * Profile image URL
+     */
+    profile_image_url?: (string | null);
+    /**
+     * Person biography
+     */
+    bio?: (string | null);
+    id: string;
+    person_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Schema for updating person metadata (all fields optional).
+ */
+export type PersonMetadataUpdate = {
+    profile_image_url?: (string | null);
+    bio?: (string | null);
+};
+
+/**
+ * Schema for creating a new person profession.
+ */
+export type PersonProfessionCreate = {
+    /**
+     * Profession reference
+     */
+    profession_id: string;
+    /**
+     * Profession start date
+     */
+    start_date: string;
+    /**
+     * Profession end date
+     */
+    end_date?: (string | null);
+    /**
+     * Is this the current profession
+     */
+    is_current?: boolean;
+};
+
+/**
+ * Person profession response schema.
+ */
+export type PersonProfessionPublic = {
+    /**
+     * Profession reference
+     */
+    profession_id: string;
+    /**
+     * Profession start date
+     */
+    start_date: string;
+    /**
+     * Profession end date
+     */
+    end_date?: (string | null);
+    /**
+     * Is this the current profession
+     */
+    is_current?: boolean;
+    id: string;
+    person_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Schema for updating a person profession (all fields optional).
+ */
+export type PersonProfessionUpdate = {
+    profession_id?: (string | null);
+    start_date?: (string | null);
+    end_date?: (string | null);
+    is_current?: (boolean | null);
+};
+
+/**
+ * Person response schema.
+ */
+export type PersonPublic = {
+    /**
+     * First name
+     */
+    first_name: string;
+    /**
+     * Middle name
+     */
+    middle_name?: (string | null);
+    /**
+     * Last name
+     */
+    last_name: string;
+    /**
+     * Gender reference
+     */
+    gender_id: string;
+    /**
+     * Date of birth
+     */
+    date_of_birth: string;
+    /**
+     * Date of death
+     */
+    date_of_death?: (string | null);
+    user_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Schema for creating a new person relationship.
+ */
+export type PersonRelationshipCreate = {
+    /**
+     * Related person reference
+     */
+    related_person_id: string;
+    /**
+     * Relationship type
+     */
+    relationship_type: RelationshipType;
+    /**
+     * Relationship start date
+     */
+    start_date?: (string | null);
+    /**
+     * Relationship end date
+     */
+    end_date?: (string | null);
+    /**
+     * Is relationship active
+     */
+    is_active?: boolean;
+};
+
+/**
+ * Person relationship response schema.
+ */
+export type PersonRelationshipPublic = {
+    /**
+     * Related person reference
+     */
+    related_person_id: string;
+    /**
+     * Relationship type
+     */
+    relationship_type: RelationshipType;
+    /**
+     * Relationship start date
+     */
+    start_date?: (string | null);
+    /**
+     * Relationship end date
+     */
+    end_date?: (string | null);
+    /**
+     * Is relationship active
+     */
+    is_active?: boolean;
+    id: string;
+    person_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Schema for updating a person relationship (all fields optional).
+ */
+export type PersonRelationshipUpdate = {
+    related_person_id?: (string | null);
+    relationship_type?: (RelationshipType | null);
+    start_date?: (string | null);
+    end_date?: (string | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * Schema for updating a person (all fields optional).
+ */
+export type PersonUpdate = {
+    first_name?: (string | null);
+    middle_name?: (string | null);
+    last_name?: (string | null);
+    gender_id?: (string | null);
+    date_of_birth?: (string | null);
+    date_of_death?: (string | null);
 };
 
 export type PrivateUserCreate = {
@@ -51,16 +619,362 @@ export type PrivateUserCreate = {
     is_verified?: boolean;
 };
 
+/**
+ * Schema for creating a new profession.
+ */
+export type ProfessionCreate = {
+    /**
+     * Profession name
+     */
+    name: string;
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Weight for sorting/priority
+     */
+    weight?: number;
+    /**
+     * Whether profession is active
+     */
+    is_active?: boolean;
+};
+
+/**
+ * Detailed profession response with all fields.
+ */
+export type ProfessionDetailPublic = {
+    /**
+     * Profession name
+     */
+    name: string;
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Weight for sorting/priority
+     */
+    weight?: number;
+    /**
+     * Whether profession is active
+     */
+    is_active?: boolean;
+    id: string;
+};
+
+/**
+ * Schema for updating a profession (all fields optional).
+ */
+export type ProfessionUpdate = {
+    name?: (string | null);
+    description?: (string | null);
+    weight?: (number | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * Relationship types between persons with unique identifiers.
+ */
+export type RelationshipType = 'rel-6a0ede824d101' | 'rel-6a0ede824d102' | 'rel-6a0ede824d103' | 'rel-6a0ede824d104' | 'rel-6a0ede824d105' | 'rel-6a0ede824d106' | 'rel-6a0ede824d107';
+
+/**
+ * Schema for creating a new religion category.
+ */
+export type ReligionCategoryCreate = {
+    /**
+     * Category name (e.g., Caste, Sect, Denomination)
+     */
+    name: string;
+    /**
+     * Category code
+     */
+    code?: (string | null);
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Whether category is active
+     */
+    is_active?: boolean;
+    /**
+     * Religion ID this category belongs to
+     */
+    religion_id: string;
+};
+
+/**
+ * Detailed religion category response with all fields.
+ */
+export type ReligionCategoryDetailPublic = {
+    /**
+     * Category name (e.g., Caste, Sect, Denomination)
+     */
+    name: string;
+    /**
+     * Category code
+     */
+    code?: (string | null);
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Whether category is active
+     */
+    is_active?: boolean;
+    id: string;
+    religion_id: string;
+};
+
+/**
+ * Schema for updating a religion category (all fields optional).
+ */
+export type ReligionCategoryUpdate = {
+    name?: (string | null);
+    code?: (string | null);
+    description?: (string | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * Schema for creating a new religion.
+ */
+export type ReligionCreate = {
+    /**
+     * Religion name
+     */
+    name: string;
+    /**
+     * Religion code
+     */
+    code: string;
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Whether religion is active
+     */
+    is_active?: boolean;
+};
+
+/**
+ * Detailed religion response with all fields.
+ */
+export type ReligionDetailPublic = {
+    /**
+     * Religion name
+     */
+    name: string;
+    /**
+     * Religion code
+     */
+    code: string;
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Whether religion is active
+     */
+    is_active?: boolean;
+    id: string;
+};
+
+/**
+ * Schema for creating a new religion sub-category.
+ */
+export type ReligionSubCategoryCreate = {
+    /**
+     * Sub-category name (e.g., Sub-caste, Sub-sect)
+     */
+    name: string;
+    /**
+     * Sub-category code
+     */
+    code?: (string | null);
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Whether sub-category is active
+     */
+    is_active?: boolean;
+    /**
+     * Category ID this sub-category belongs to
+     */
+    category_id: string;
+};
+
+/**
+ * Detailed religion sub-category response with all fields.
+ */
+export type ReligionSubCategoryDetailPublic = {
+    /**
+     * Sub-category name (e.g., Sub-caste, Sub-sect)
+     */
+    name: string;
+    /**
+     * Sub-category code
+     */
+    code?: (string | null);
+    /**
+     * Optional description
+     */
+    description?: (string | null);
+    /**
+     * Whether sub-category is active
+     */
+    is_active?: boolean;
+    id: string;
+    category_id: string;
+};
+
+/**
+ * Schema for updating a religion sub-category (all fields optional).
+ */
+export type ReligionSubCategoryUpdate = {
+    name?: (string | null);
+    code?: (string | null);
+    description?: (string | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * Schema for updating a religion (all fields optional).
+ */
+export type ReligionUpdate = {
+    name?: (string | null);
+    code?: (string | null);
+    description?: (string | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * Schema for creating a new state
+ */
+export type StateCreate = {
+    /**
+     * State name
+     */
+    name: string;
+    /**
+     * State code
+     */
+    code?: (string | null);
+    /**
+     * Whether state is active
+     */
+    is_active?: boolean;
+    /**
+     * Country ID this state belongs to
+     */
+    country_id: string;
+};
+
+/**
+ * Detailed state response with all fields
+ */
+export type StateDetailPublic = {
+    /**
+     * State name
+     */
+    name: string;
+    /**
+     * State code
+     */
+    code?: (string | null);
+    /**
+     * Whether state is active
+     */
+    is_active?: boolean;
+    id: string;
+    country_id: string;
+};
+
+/**
+ * Schema for updating a state (all fields optional)
+ */
+export type StateUpdate = {
+    name?: (string | null);
+    code?: (string | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * Schema for creating a new sub-district
+ */
+export type SubDistrictCreate = {
+    /**
+     * Sub-district/Tehsil name
+     */
+    name: string;
+    /**
+     * Sub-district code
+     */
+    code?: (string | null);
+    /**
+     * Whether sub-district is active
+     */
+    is_active?: boolean;
+    /**
+     * District ID this sub-district belongs to
+     */
+    district_id: string;
+};
+
+/**
+ * Detailed sub-district response with all fields
+ */
+export type SubDistrictDetailPublic = {
+    /**
+     * Sub-district/Tehsil name
+     */
+    name: string;
+    /**
+     * Sub-district code
+     */
+    code?: (string | null);
+    /**
+     * Whether sub-district is active
+     */
+    is_active?: boolean;
+    id: string;
+    district_id: string;
+};
+
+/**
+ * Schema for updating a sub-district (all fields optional)
+ */
+export type SubDistrictUpdate = {
+    name?: (string | null);
+    code?: (string | null);
+    is_active?: (boolean | null);
+};
+
+/**
+ * JSON payload containing access token
+ */
 export type Token = {
     access_token: string;
     token_type?: string;
 };
 
+/**
+ * Password update request
+ */
 export type UpdatePassword = {
     current_password: string;
     new_password: string;
 };
 
+/**
+ * Properties to receive via API on creation
+ */
 export type UserCreate = {
     email: string;
     is_active?: boolean;
@@ -69,6 +983,9 @@ export type UserCreate = {
     password: string;
 };
 
+/**
+ * Properties to return via API
+ */
 export type UserPublic = {
     email: string;
     is_active?: boolean;
@@ -77,17 +994,36 @@ export type UserPublic = {
     id: string;
 };
 
+/**
+ * Properties for user self-registration
+ */
 export type UserRegister = {
+    first_name: string;
+    middle_name?: (string | null);
+    last_name: string;
+    /**
+     * Gender: MALE or FEMALE
+     */
+    gender: string;
+    /**
+     * Date of birth in YYYY-MM-DD format
+     */
+    date_of_birth: string;
     email: string;
     password: string;
-    full_name?: (string | null);
 };
 
+/**
+ * List of users response
+ */
 export type UsersPublic = {
     data: Array<UserPublic>;
     count: number;
 };
 
+/**
+ * Properties to receive via API on update, all are optional
+ */
 export type UserUpdate = {
     email?: (string | null);
     is_active?: boolean;
@@ -96,6 +1032,9 @@ export type UserUpdate = {
     password?: (string | null);
 };
 
+/**
+ * Properties for user self-update
+ */
 export type UserUpdateMe = {
     full_name?: (string | null);
     email?: (string | null);
@@ -106,6 +1045,157 @@ export type ValidationError = {
     msg: string;
     type: string;
 };
+
+export type AddressMetadataGetCountriesResponse = (unknown);
+
+export type AddressMetadataCreateCountryData = {
+    requestBody: CountryCreate;
+};
+
+export type AddressMetadataCreateCountryResponse = (CountryDetailPublic);
+
+export type AddressMetadataGetCountryByIdData = {
+    countryId: string;
+};
+
+export type AddressMetadataGetCountryByIdResponse = (CountryDetailPublic);
+
+export type AddressMetadataUpdateCountryData = {
+    countryId: string;
+    requestBody: CountryUpdate;
+};
+
+export type AddressMetadataUpdateCountryResponse = (CountryDetailPublic);
+
+export type AddressMetadataDeleteCountryData = {
+    countryId: string;
+};
+
+export type AddressMetadataDeleteCountryResponse = (unknown);
+
+export type AddressMetadataGetStatesByCountryData = {
+    countryId: string;
+};
+
+export type AddressMetadataGetStatesByCountryResponse = (unknown);
+
+export type AddressMetadataGetStateByIdData = {
+    stateId: string;
+};
+
+export type AddressMetadataGetStateByIdResponse = (StateDetailPublic);
+
+export type AddressMetadataUpdateStateData = {
+    requestBody: StateUpdate;
+    stateId: string;
+};
+
+export type AddressMetadataUpdateStateResponse = (StateDetailPublic);
+
+export type AddressMetadataDeleteStateData = {
+    stateId: string;
+};
+
+export type AddressMetadataDeleteStateResponse = (unknown);
+
+export type AddressMetadataCreateStateData = {
+    requestBody: StateCreate;
+};
+
+export type AddressMetadataCreateStateResponse = (StateDetailPublic);
+
+export type AddressMetadataGetDistrictsByStateData = {
+    stateId: string;
+};
+
+export type AddressMetadataGetDistrictsByStateResponse = (unknown);
+
+export type AddressMetadataGetDistrictByIdData = {
+    districtId: string;
+};
+
+export type AddressMetadataGetDistrictByIdResponse = (DistrictDetailPublic);
+
+export type AddressMetadataUpdateDistrictData = {
+    districtId: string;
+    requestBody: DistrictUpdate;
+};
+
+export type AddressMetadataUpdateDistrictResponse = (DistrictDetailPublic);
+
+export type AddressMetadataDeleteDistrictData = {
+    districtId: string;
+};
+
+export type AddressMetadataDeleteDistrictResponse = (unknown);
+
+export type AddressMetadataCreateDistrictData = {
+    requestBody: DistrictCreate;
+};
+
+export type AddressMetadataCreateDistrictResponse = (DistrictDetailPublic);
+
+export type AddressMetadataGetSubDistrictsByDistrictData = {
+    districtId: string;
+};
+
+export type AddressMetadataGetSubDistrictsByDistrictResponse = (unknown);
+
+export type AddressMetadataGetSubDistrictByIdData = {
+    subDistrictId: string;
+};
+
+export type AddressMetadataGetSubDistrictByIdResponse = (SubDistrictDetailPublic);
+
+export type AddressMetadataUpdateSubDistrictData = {
+    requestBody: SubDistrictUpdate;
+    subDistrictId: string;
+};
+
+export type AddressMetadataUpdateSubDistrictResponse = (SubDistrictDetailPublic);
+
+export type AddressMetadataDeleteSubDistrictData = {
+    subDistrictId: string;
+};
+
+export type AddressMetadataDeleteSubDistrictResponse = (unknown);
+
+export type AddressMetadataCreateSubDistrictData = {
+    requestBody: SubDistrictCreate;
+};
+
+export type AddressMetadataCreateSubDistrictResponse = (SubDistrictDetailPublic);
+
+export type AddressMetadataGetLocalitiesBySubDistrictData = {
+    subDistrictId: string;
+};
+
+export type AddressMetadataGetLocalitiesBySubDistrictResponse = (unknown);
+
+export type AddressMetadataGetLocalityByIdData = {
+    localityId: string;
+};
+
+export type AddressMetadataGetLocalityByIdResponse = (LocalityDetailPublic);
+
+export type AddressMetadataUpdateLocalityData = {
+    localityId: string;
+    requestBody: LocalityUpdate;
+};
+
+export type AddressMetadataUpdateLocalityResponse = (LocalityDetailPublic);
+
+export type AddressMetadataDeleteLocalityData = {
+    localityId: string;
+};
+
+export type AddressMetadataDeleteLocalityResponse = (unknown);
+
+export type AddressMetadataCreateLocalityData = {
+    requestBody: LocalityCreate;
+};
+
+export type AddressMetadataCreateLocalityResponse = (LocalityDetailPublic);
 
 export type ItemsReadItemsData = {
     limit?: number;
@@ -165,11 +1255,303 @@ export type LoginRecoverPasswordHtmlContentData = {
 
 export type LoginRecoverPasswordHtmlContentResponse = (string);
 
+export type PersonGetMyPersonResponse = (PersonPublic);
+
+export type PersonCreateMyPersonData = {
+    requestBody: PersonCreate;
+};
+
+export type PersonCreateMyPersonResponse = (PersonPublic);
+
+export type PersonDeleteMyPersonResponse = (unknown);
+
+export type PersonUpdateMyPersonData = {
+    requestBody: PersonUpdate;
+};
+
+export type PersonUpdateMyPersonResponse = (PersonPublic);
+
+export type PersonGetPersonByUserIdData = {
+    userId: string;
+};
+
+export type PersonGetPersonByUserIdResponse = (PersonPublic);
+
+export type PersonDeletePersonByUserIdData = {
+    userId: string;
+};
+
+export type PersonDeletePersonByUserIdResponse = (unknown);
+
+export type PersonGetMyAddressesResponse = (Array<PersonAddressPublic>);
+
+export type PersonCreateMyAddressData = {
+    requestBody: PersonAddressCreate;
+};
+
+export type PersonCreateMyAddressResponse = (PersonAddressPublic);
+
+export type PersonGetMyAddressData = {
+    addressId: string;
+};
+
+export type PersonGetMyAddressResponse = (PersonAddressPublic);
+
+export type PersonUpdateMyAddressData = {
+    addressId: string;
+    requestBody: PersonAddressUpdate;
+};
+
+export type PersonUpdateMyAddressResponse = (PersonAddressPublic);
+
+export type PersonDeleteMyAddressData = {
+    addressId: string;
+};
+
+export type PersonDeleteMyAddressResponse = (unknown);
+
+export type PersonGetMyProfessionsResponse = (Array<PersonProfessionPublic>);
+
+export type PersonCreateMyProfessionData = {
+    requestBody: PersonProfessionCreate;
+};
+
+export type PersonCreateMyProfessionResponse = (PersonProfessionPublic);
+
+export type PersonGetMyProfessionData = {
+    professionId: string;
+};
+
+export type PersonGetMyProfessionResponse = (PersonProfessionPublic);
+
+export type PersonUpdateMyProfessionData = {
+    professionId: string;
+    requestBody: PersonProfessionUpdate;
+};
+
+export type PersonUpdateMyProfessionResponse = (PersonProfessionPublic);
+
+export type PersonDeleteMyProfessionData = {
+    professionId: string;
+};
+
+export type PersonDeleteMyProfessionResponse = (unknown);
+
+export type PersonGetMyRelationshipsResponse = (Array<PersonRelationshipPublic>);
+
+export type PersonCreateMyRelationshipData = {
+    requestBody: PersonRelationshipCreate;
+};
+
+export type PersonCreateMyRelationshipResponse = (PersonRelationshipPublic);
+
+export type PersonGetMyRelationshipData = {
+    relationshipId: string;
+};
+
+export type PersonGetMyRelationshipResponse = (PersonRelationshipPublic);
+
+export type PersonUpdateMyRelationshipData = {
+    relationshipId: string;
+    requestBody: PersonRelationshipUpdate;
+};
+
+export type PersonUpdateMyRelationshipResponse = (PersonRelationshipPublic);
+
+export type PersonDeleteMyRelationshipData = {
+    relationshipId: string;
+};
+
+export type PersonDeleteMyRelationshipResponse = (unknown);
+
+export type PersonGetMyMetadataResponse = (PersonMetadataPublic);
+
+export type PersonCreateMyMetadataData = {
+    requestBody: PersonMetadataCreate;
+};
+
+export type PersonCreateMyMetadataResponse = (PersonMetadataPublic);
+
+export type PersonDeleteMyMetadataResponse = (unknown);
+
+export type PersonUpdateMyMetadataData = {
+    requestBody: PersonMetadataUpdate;
+};
+
+export type PersonUpdateMyMetadataResponse = (PersonMetadataPublic);
+
+export type PersonMetadataGetProfessionsResponse = (unknown);
+
+export type PersonMetadataCreateProfessionData = {
+    requestBody: ProfessionCreate;
+};
+
+export type PersonMetadataCreateProfessionResponse = (ProfessionDetailPublic);
+
+export type PersonMetadataGetProfessionByIdData = {
+    professionId: string;
+};
+
+export type PersonMetadataGetProfessionByIdResponse = (ProfessionDetailPublic);
+
+export type PersonMetadataUpdateProfessionData = {
+    professionId: string;
+    requestBody: ProfessionUpdate;
+};
+
+export type PersonMetadataUpdateProfessionResponse = (ProfessionDetailPublic);
+
+export type PersonMetadataDeleteProfessionData = {
+    professionId: string;
+};
+
+export type PersonMetadataDeleteProfessionResponse = (unknown);
+
+export type PersonMetadataGetGendersResponse = (unknown);
+
+export type PersonMetadataCreateGenderData = {
+    requestBody: GenderCreate;
+};
+
+export type PersonMetadataCreateGenderResponse = (GenderDetailPublic);
+
+export type PersonMetadataGetGenderByIdData = {
+    genderId: string;
+};
+
+export type PersonMetadataGetGenderByIdResponse = (GenderDetailPublic);
+
+export type PersonMetadataUpdateGenderData = {
+    genderId: string;
+    requestBody: GenderUpdate;
+};
+
+export type PersonMetadataUpdateGenderResponse = (GenderDetailPublic);
+
+export type PersonMetadataDeleteGenderData = {
+    genderId: string;
+};
+
+export type PersonMetadataDeleteGenderResponse = (unknown);
+
 export type PrivateCreateUserData = {
     requestBody: PrivateUserCreate;
 };
 
 export type PrivateCreateUserResponse = (UserPublic);
+
+export type RelativesGetParentsData = {
+    userId: string;
+};
+
+export type RelativesGetParentsResponse = (Array<PersonRelationshipPublic>);
+
+export type RelativesGetChildrenData = {
+    userId: string;
+};
+
+export type RelativesGetChildrenResponse = (Array<PersonRelationshipPublic>);
+
+export type RelativesGetSpousesData = {
+    userId: string;
+};
+
+export type RelativesGetSpousesResponse = (Array<PersonRelationshipPublic>);
+
+export type RelativesGetSiblingsData = {
+    userId: string;
+};
+
+export type RelativesGetSiblingsResponse = (Array<PersonRelationshipPublic>);
+
+export type ReligionMetadataGetReligionsResponse = (unknown);
+
+export type ReligionMetadataCreateReligionData = {
+    requestBody: ReligionCreate;
+};
+
+export type ReligionMetadataCreateReligionResponse = (ReligionDetailPublic);
+
+export type ReligionMetadataGetReligionByIdData = {
+    religionId: string;
+};
+
+export type ReligionMetadataGetReligionByIdResponse = (ReligionDetailPublic);
+
+export type ReligionMetadataUpdateReligionData = {
+    religionId: string;
+    requestBody: ReligionUpdate;
+};
+
+export type ReligionMetadataUpdateReligionResponse = (ReligionDetailPublic);
+
+export type ReligionMetadataDeleteReligionData = {
+    religionId: string;
+};
+
+export type ReligionMetadataDeleteReligionResponse = (unknown);
+
+export type ReligionMetadataGetCategoriesByReligionData = {
+    religionId: string;
+};
+
+export type ReligionMetadataGetCategoriesByReligionResponse = (unknown);
+
+export type ReligionMetadataGetCategoryByIdData = {
+    categoryId: string;
+};
+
+export type ReligionMetadataGetCategoryByIdResponse = (ReligionCategoryDetailPublic);
+
+export type ReligionMetadataUpdateCategoryData = {
+    categoryId: string;
+    requestBody: ReligionCategoryUpdate;
+};
+
+export type ReligionMetadataUpdateCategoryResponse = (ReligionCategoryDetailPublic);
+
+export type ReligionMetadataDeleteCategoryData = {
+    categoryId: string;
+};
+
+export type ReligionMetadataDeleteCategoryResponse = (unknown);
+
+export type ReligionMetadataCreateCategoryData = {
+    requestBody: ReligionCategoryCreate;
+};
+
+export type ReligionMetadataCreateCategoryResponse = (ReligionCategoryDetailPublic);
+
+export type ReligionMetadataGetSubCategoriesByCategoryData = {
+    categoryId: string;
+};
+
+export type ReligionMetadataGetSubCategoriesByCategoryResponse = (unknown);
+
+export type ReligionMetadataGetSubCategoryByIdData = {
+    subCategoryId: string;
+};
+
+export type ReligionMetadataGetSubCategoryByIdResponse = (ReligionSubCategoryDetailPublic);
+
+export type ReligionMetadataUpdateSubCategoryData = {
+    requestBody: ReligionSubCategoryUpdate;
+    subCategoryId: string;
+};
+
+export type ReligionMetadataUpdateSubCategoryResponse = (ReligionSubCategoryDetailPublic);
+
+export type ReligionMetadataDeleteSubCategoryData = {
+    subCategoryId: string;
+};
+
+export type ReligionMetadataDeleteSubCategoryResponse = (unknown);
+
+export type ReligionMetadataCreateSubCategoryData = {
+    requestBody: ReligionSubCategoryCreate;
+};
+
+export type ReligionMetadataCreateSubCategoryResponse = (ReligionSubCategoryDetailPublic);
 
 export type UsersReadUsersData = {
     limit?: number;

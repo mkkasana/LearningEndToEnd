@@ -6,7 +6,7 @@ export const Body_login_login_access_tokenSchema = {
             anyOf: [
                 {
                     type: 'string',
-                    pattern: 'password'
+                    pattern: '^password$'
                 },
                 {
                     type: 'null'
@@ -20,6 +20,7 @@ export const Body_login_login_access_tokenSchema = {
         },
         password: {
             type: 'string',
+            format: 'password',
             title: 'Password'
         },
         scope: {
@@ -47,12 +48,382 @@ export const Body_login_login_access_tokenSchema = {
                     type: 'null'
                 }
             ],
+            format: 'password',
             title: 'Client Secret'
         }
     },
     type: 'object',
     required: ['username', 'password'],
     title: 'Body_login-login_access_token'
+} as const;
+
+export const CountryCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Country name'
+        },
+        code: {
+            type: 'string',
+            maxLength: 3,
+            title: 'Code',
+            description: 'ISO country code (3 letters)'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether country is active',
+            default: true
+        }
+    },
+    type: 'object',
+    required: ['name', 'code'],
+    title: 'CountryCreate',
+    description: 'Schema for creating a new country'
+} as const;
+
+export const CountryDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Country name'
+        },
+        code: {
+            type: 'string',
+            maxLength: 3,
+            title: 'Code',
+            description: 'ISO country code (3 letters)'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether country is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'code', 'id'],
+    title: 'CountryDetailPublic',
+    description: 'Detailed country response with all fields'
+} as const;
+
+export const CountryUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 3
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'CountryUpdate',
+    description: 'Schema for updating a country (all fields optional)'
+} as const;
+
+export const DistrictCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'District name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'District code'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether district is active',
+            default: true
+        },
+        state_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'State Id',
+            description: 'State ID this district belongs to'
+        }
+    },
+    type: 'object',
+    required: ['name', 'state_id'],
+    title: 'DistrictCreate',
+    description: 'Schema for creating a new district'
+} as const;
+
+export const DistrictDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'District name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'District code'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether district is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        state_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'State Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id', 'state_id'],
+    title: 'DistrictDetailPublic',
+    description: 'Detailed district response with all fields'
+} as const;
+
+export const DistrictUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'DistrictUpdate',
+    description: 'Schema for updating a district (all fields optional)'
+} as const;
+
+export const GenderCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'Name',
+            description: 'Gender name'
+        },
+        code: {
+            type: 'string',
+            maxLength: 10,
+            title: 'Code',
+            description: 'Gender code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether gender is active',
+            default: true
+        }
+    },
+    type: 'object',
+    required: ['name', 'code'],
+    title: 'GenderCreate',
+    description: 'Schema for creating a new gender.'
+} as const;
+
+export const GenderDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'Name',
+            description: 'Gender name'
+        },
+        code: {
+            type: 'string',
+            maxLength: 10,
+            title: 'Code',
+            description: 'Gender code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether gender is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'code', 'id'],
+    title: 'GenderDetailPublic',
+    description: 'Detailed gender response with all fields.'
+} as const;
+
+export const GenderUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'GenderUpdate',
+    description: 'Schema for updating a gender (all fields optional).'
 } as const;
 
 export const HTTPValidationErrorSchema = {
@@ -92,7 +463,8 @@ export const ItemCreateSchema = {
     },
     type: 'object',
     required: ['title'],
-    title: 'ItemCreate'
+    title: 'ItemCreate',
+    description: 'Properties to receive on item creation'
 } as const;
 
 export const ItemPublicSchema = {
@@ -128,7 +500,8 @@ export const ItemPublicSchema = {
     },
     type: 'object',
     required: ['title', 'id', 'owner_id'],
-    title: 'ItemPublic'
+    title: 'ItemPublic',
+    description: 'Properties to return via API'
 } as const;
 
 export const ItemUpdateSchema = {
@@ -160,7 +533,8 @@ export const ItemUpdateSchema = {
         }
     },
     type: 'object',
-    title: 'ItemUpdate'
+    title: 'ItemUpdate',
+    description: 'Properties to receive on item update'
 } as const;
 
 export const ItemsPublicSchema = {
@@ -179,7 +553,135 @@ export const ItemsPublicSchema = {
     },
     type: 'object',
     required: ['data', 'count'],
-    title: 'ItemsPublic'
+    title: 'ItemsPublic',
+    description: 'List of items response'
+} as const;
+
+export const LocalityCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Locality/Village name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'Locality code'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether locality is active',
+            default: true
+        },
+        sub_district_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Sub District Id',
+            description: 'Sub-district ID this locality belongs to'
+        }
+    },
+    type: 'object',
+    required: ['name', 'sub_district_id'],
+    title: 'LocalityCreate',
+    description: 'Schema for creating a new locality'
+} as const;
+
+export const LocalityDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Locality/Village name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'Locality code'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether locality is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        sub_district_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Sub District Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id', 'sub_district_id'],
+    title: 'LocalityDetailPublic',
+    description: 'Detailed locality response with all fields'
+} as const;
+
+export const LocalityUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'LocalityUpdate',
+    description: 'Schema for updating a locality (all fields optional)'
 } as const;
 
 export const MessageSchema = {
@@ -191,7 +693,8 @@ export const MessageSchema = {
     },
     type: 'object',
     required: ['message'],
-    title: 'Message'
+    title: 'Message',
+    description: 'Generic message response'
 } as const;
 
 export const NewPasswordSchema = {
@@ -209,7 +712,1028 @@ export const NewPasswordSchema = {
     },
     type: 'object',
     required: ['token', 'new_password'],
-    title: 'NewPassword'
+    title: 'NewPassword',
+    description: 'Password reset request'
+} as const;
+
+export const PersonAddressCreateSchema = {
+    properties: {
+        country_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Country Id',
+            description: 'Country reference'
+        },
+        state_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State Id',
+            description: 'State reference'
+        },
+        district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'District Id',
+            description: 'District reference'
+        },
+        sub_district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub District Id',
+            description: 'Sub-district reference'
+        },
+        locality_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Id',
+            description: 'Locality reference'
+        },
+        address_line: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Address Line',
+            description: 'Additional address details'
+        },
+        start_date: {
+            type: 'string',
+            format: 'date',
+            title: 'Start Date',
+            description: 'Address start date'
+        },
+        end_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'End Date',
+            description: 'Address end date'
+        },
+        is_current: {
+            type: 'boolean',
+            title: 'Is Current',
+            description: 'Is this the current address',
+            default: false
+        }
+    },
+    type: 'object',
+    required: ['country_id', 'start_date'],
+    title: 'PersonAddressCreate',
+    description: 'Schema for creating a new person address.'
+} as const;
+
+export const PersonAddressPublicSchema = {
+    properties: {
+        country_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Country Id',
+            description: 'Country reference'
+        },
+        state_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State Id',
+            description: 'State reference'
+        },
+        district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'District Id',
+            description: 'District reference'
+        },
+        sub_district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub District Id',
+            description: 'Sub-district reference'
+        },
+        locality_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Id',
+            description: 'Locality reference'
+        },
+        address_line: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Address Line',
+            description: 'Additional address details'
+        },
+        start_date: {
+            type: 'string',
+            format: 'date',
+            title: 'Start Date',
+            description: 'Address start date'
+        },
+        end_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'End Date',
+            description: 'Address end date'
+        },
+        is_current: {
+            type: 'boolean',
+            title: 'Is Current',
+            description: 'Is this the current address',
+            default: false
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['country_id', 'start_date', 'id', 'person_id', 'created_at', 'updated_at'],
+    title: 'PersonAddressPublic',
+    description: 'Person address response schema.'
+} as const;
+
+export const PersonAddressUpdateSchema = {
+    properties: {
+        country_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Country Id'
+        },
+        state_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State Id'
+        },
+        district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'District Id'
+        },
+        sub_district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub District Id'
+        },
+        locality_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Id'
+        },
+        address_line: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Address Line'
+        },
+        start_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Start Date'
+        },
+        end_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'End Date'
+        },
+        is_current: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Current'
+        }
+    },
+    type: 'object',
+    title: 'PersonAddressUpdate',
+    description: 'Schema for updating a person address (all fields optional).'
+} as const;
+
+export const PersonCreateSchema = {
+    properties: {
+        first_name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'First Name',
+            description: 'First name'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name',
+            description: 'Middle name'
+        },
+        last_name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'Last Name',
+            description: 'Last name'
+        },
+        gender_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Gender Id',
+            description: 'Gender reference'
+        },
+        date_of_birth: {
+            type: 'string',
+            format: 'date',
+            title: 'Date Of Birth',
+            description: 'Date of birth'
+        },
+        date_of_death: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date Of Death',
+            description: 'Date of death'
+        },
+        user_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'User Id',
+            description: 'User account reference'
+        }
+    },
+    type: 'object',
+    required: ['first_name', 'last_name', 'gender_id', 'date_of_birth', 'user_id'],
+    title: 'PersonCreate',
+    description: 'Schema for creating a new person.'
+} as const;
+
+export const PersonMetadataCreateSchema = {
+    properties: {
+        profile_image_url: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Url',
+            description: 'Profile image URL'
+        },
+        bio: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Bio',
+            description: 'Person biography'
+        }
+    },
+    type: 'object',
+    title: 'PersonMetadataCreate',
+    description: 'Schema for creating person metadata.'
+} as const;
+
+export const PersonMetadataPublicSchema = {
+    properties: {
+        profile_image_url: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Url',
+            description: 'Profile image URL'
+        },
+        bio: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Bio',
+            description: 'Person biography'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['id', 'person_id', 'created_at', 'updated_at'],
+    title: 'PersonMetadataPublic',
+    description: 'Person metadata response schema.'
+} as const;
+
+export const PersonMetadataUpdateSchema = {
+    properties: {
+        profile_image_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Url'
+        },
+        bio: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Bio'
+        }
+    },
+    type: 'object',
+    title: 'PersonMetadataUpdate',
+    description: 'Schema for updating person metadata (all fields optional).'
+} as const;
+
+export const PersonProfessionCreateSchema = {
+    properties: {
+        profession_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Profession Id',
+            description: 'Profession reference'
+        },
+        start_date: {
+            type: 'string',
+            format: 'date',
+            title: 'Start Date',
+            description: 'Profession start date'
+        },
+        end_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'End Date',
+            description: 'Profession end date'
+        },
+        is_current: {
+            type: 'boolean',
+            title: 'Is Current',
+            description: 'Is this the current profession',
+            default: false
+        }
+    },
+    type: 'object',
+    required: ['profession_id', 'start_date'],
+    title: 'PersonProfessionCreate',
+    description: 'Schema for creating a new person profession.'
+} as const;
+
+export const PersonProfessionPublicSchema = {
+    properties: {
+        profession_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Profession Id',
+            description: 'Profession reference'
+        },
+        start_date: {
+            type: 'string',
+            format: 'date',
+            title: 'Start Date',
+            description: 'Profession start date'
+        },
+        end_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'End Date',
+            description: 'Profession end date'
+        },
+        is_current: {
+            type: 'boolean',
+            title: 'Is Current',
+            description: 'Is this the current profession',
+            default: false
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['profession_id', 'start_date', 'id', 'person_id', 'created_at', 'updated_at'],
+    title: 'PersonProfessionPublic',
+    description: 'Person profession response schema.'
+} as const;
+
+export const PersonProfessionUpdateSchema = {
+    properties: {
+        profession_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profession Id'
+        },
+        start_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Start Date'
+        },
+        end_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'End Date'
+        },
+        is_current: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Current'
+        }
+    },
+    type: 'object',
+    title: 'PersonProfessionUpdate',
+    description: 'Schema for updating a person profession (all fields optional).'
+} as const;
+
+export const PersonPublicSchema = {
+    properties: {
+        first_name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'First Name',
+            description: 'First name'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name',
+            description: 'Middle name'
+        },
+        last_name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'Last Name',
+            description: 'Last name'
+        },
+        gender_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Gender Id',
+            description: 'Gender reference'
+        },
+        date_of_birth: {
+            type: 'string',
+            format: 'date',
+            title: 'Date Of Birth',
+            description: 'Date of birth'
+        },
+        date_of_death: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date Of Death',
+            description: 'Date of death'
+        },
+        user_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'User Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['first_name', 'last_name', 'gender_id', 'date_of_birth', 'user_id', 'created_at', 'updated_at'],
+    title: 'PersonPublic',
+    description: 'Person response schema.'
+} as const;
+
+export const PersonRelationshipCreateSchema = {
+    properties: {
+        related_person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Related Person Id',
+            description: 'Related person reference'
+        },
+        relationship_type: {
+            '$ref': '#/components/schemas/RelationshipType',
+            description: 'Relationship type'
+        },
+        start_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Start Date',
+            description: 'Relationship start date'
+        },
+        end_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'End Date',
+            description: 'Relationship end date'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Is relationship active',
+            default: true
+        }
+    },
+    type: 'object',
+    required: ['related_person_id', 'relationship_type'],
+    title: 'PersonRelationshipCreate',
+    description: 'Schema for creating a new person relationship.'
+} as const;
+
+export const PersonRelationshipPublicSchema = {
+    properties: {
+        related_person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Related Person Id',
+            description: 'Related person reference'
+        },
+        relationship_type: {
+            '$ref': '#/components/schemas/RelationshipType',
+            description: 'Relationship type'
+        },
+        start_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Start Date',
+            description: 'Relationship start date'
+        },
+        end_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'End Date',
+            description: 'Relationship end date'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Is relationship active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['related_person_id', 'relationship_type', 'id', 'person_id', 'created_at', 'updated_at'],
+    title: 'PersonRelationshipPublic',
+    description: 'Person relationship response schema.'
+} as const;
+
+export const PersonRelationshipUpdateSchema = {
+    properties: {
+        related_person_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Related Person Id'
+        },
+        relationship_type: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/RelationshipType'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        start_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Start Date'
+        },
+        end_date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'End Date'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'PersonRelationshipUpdate',
+    description: 'Schema for updating a person relationship (all fields optional).'
+} as const;
+
+export const PersonUpdateSchema = {
+    properties: {
+        first_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'First Name'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name'
+        },
+        last_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Last Name'
+        },
+        gender_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Gender Id'
+        },
+        date_of_birth: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date Of Birth'
+        },
+        date_of_death: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date Of Death'
+        }
+    },
+    type: 'object',
+    title: 'PersonUpdate',
+    description: 'Schema for updating a person (all fields optional).'
 } as const;
 
 export const PrivateUserCreateSchema = {
@@ -237,6 +1761,876 @@ export const PrivateUserCreateSchema = {
     title: 'PrivateUserCreate'
 } as const;
 
+export const ProfessionCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Profession name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        weight: {
+            type: 'integer',
+            title: 'Weight',
+            description: 'Weight for sorting/priority',
+            default: 0
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether profession is active',
+            default: true
+        }
+    },
+    type: 'object',
+    required: ['name'],
+    title: 'ProfessionCreate',
+    description: 'Schema for creating a new profession.'
+} as const;
+
+export const ProfessionDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Profession name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        weight: {
+            type: 'integer',
+            title: 'Weight',
+            description: 'Weight for sorting/priority',
+            default: 0
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether profession is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id'],
+    title: 'ProfessionDetailPublic',
+    description: 'Detailed profession response with all fields.'
+} as const;
+
+export const ProfessionUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        weight: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Weight'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'ProfessionUpdate',
+    description: 'Schema for updating a profession (all fields optional).'
+} as const;
+
+export const RelationshipTypeSchema = {
+    type: 'string',
+    enum: ['rel-6a0ede824d101', 'rel-6a0ede824d102', 'rel-6a0ede824d103', 'rel-6a0ede824d104', 'rel-6a0ede824d105', 'rel-6a0ede824d106', 'rel-6a0ede824d107'],
+    title: 'RelationshipType',
+    description: 'Relationship types between persons with unique identifiers.'
+} as const;
+
+export const ReligionCategoryCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Category name (e.g., Caste, Sect, Denomination)'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'Category code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether category is active',
+            default: true
+        },
+        religion_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Religion Id',
+            description: 'Religion ID this category belongs to'
+        }
+    },
+    type: 'object',
+    required: ['name', 'religion_id'],
+    title: 'ReligionCategoryCreate',
+    description: 'Schema for creating a new religion category.'
+} as const;
+
+export const ReligionCategoryDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Category name (e.g., Caste, Sect, Denomination)'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'Category code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether category is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        religion_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Religion Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id', 'religion_id'],
+    title: 'ReligionCategoryDetailPublic',
+    description: 'Detailed religion category response with all fields.'
+} as const;
+
+export const ReligionCategoryUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'ReligionCategoryUpdate',
+    description: 'Schema for updating a religion category (all fields optional).'
+} as const;
+
+export const ReligionCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Religion name'
+        },
+        code: {
+            type: 'string',
+            maxLength: 10,
+            title: 'Code',
+            description: 'Religion code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether religion is active',
+            default: true
+        }
+    },
+    type: 'object',
+    required: ['name', 'code'],
+    title: 'ReligionCreate',
+    description: 'Schema for creating a new religion.'
+} as const;
+
+export const ReligionDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Religion name'
+        },
+        code: {
+            type: 'string',
+            maxLength: 10,
+            title: 'Code',
+            description: 'Religion code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether religion is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'code', 'id'],
+    title: 'ReligionDetailPublic',
+    description: 'Detailed religion response with all fields.'
+} as const;
+
+export const ReligionSubCategoryCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Sub-category name (e.g., Sub-caste, Sub-sect)'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'Sub-category code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether sub-category is active',
+            default: true
+        },
+        category_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Category Id',
+            description: 'Category ID this sub-category belongs to'
+        }
+    },
+    type: 'object',
+    required: ['name', 'category_id'],
+    title: 'ReligionSubCategoryCreate',
+    description: 'Schema for creating a new religion sub-category.'
+} as const;
+
+export const ReligionSubCategoryDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Sub-category name (e.g., Sub-caste, Sub-sect)'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'Sub-category code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Optional description'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether sub-category is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        category_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Category Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id', 'category_id'],
+    title: 'ReligionSubCategoryDetailPublic',
+    description: 'Detailed religion sub-category response with all fields.'
+} as const;
+
+export const ReligionSubCategoryUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'ReligionSubCategoryUpdate',
+    description: 'Schema for updating a religion sub-category (all fields optional).'
+} as const;
+
+export const ReligionUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'ReligionUpdate',
+    description: 'Schema for updating a religion (all fields optional).'
+} as const;
+
+export const StateCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'State name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'State code'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether state is active',
+            default: true
+        },
+        country_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Country Id',
+            description: 'Country ID this state belongs to'
+        }
+    },
+    type: 'object',
+    required: ['name', 'country_id'],
+    title: 'StateCreate',
+    description: 'Schema for creating a new state'
+} as const;
+
+export const StateDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'State name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'State code'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether state is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        country_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Country Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id', 'country_id'],
+    title: 'StateDetailPublic',
+    description: 'Detailed state response with all fields'
+} as const;
+
+export const StateUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'StateUpdate',
+    description: 'Schema for updating a state (all fields optional)'
+} as const;
+
+export const SubDistrictCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Sub-district/Tehsil name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'Sub-district code'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether sub-district is active',
+            default: true
+        },
+        district_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'District Id',
+            description: 'District ID this sub-district belongs to'
+        }
+    },
+    type: 'object',
+    required: ['name', 'district_id'],
+    title: 'SubDistrictCreate',
+    description: 'Schema for creating a new sub-district'
+} as const;
+
+export const SubDistrictDetailPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Name',
+            description: 'Sub-district/Tehsil name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code',
+            description: 'Sub-district code'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether sub-district is active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        district_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'District Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id', 'district_id'],
+    title: 'SubDistrictDetailPublic',
+    description: 'Detailed sub-district response with all fields'
+} as const;
+
+export const SubDistrictUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        code: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 10
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Code'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'SubDistrictUpdate',
+    description: 'Schema for updating a sub-district (all fields optional)'
+} as const;
+
 export const TokenSchema = {
     properties: {
         access_token: {
@@ -251,7 +2645,8 @@ export const TokenSchema = {
     },
     type: 'object',
     required: ['access_token'],
-    title: 'Token'
+    title: 'Token',
+    description: 'JSON payload containing access token'
 } as const;
 
 export const UpdatePasswordSchema = {
@@ -271,7 +2666,8 @@ export const UpdatePasswordSchema = {
     },
     type: 'object',
     required: ['current_password', 'new_password'],
-    title: 'UpdatePassword'
+    title: 'UpdatePassword',
+    description: 'Password update request'
 } as const;
 
 export const UserCreateSchema = {
@@ -280,7 +2676,9 @@ export const UserCreateSchema = {
             type: 'string',
             maxLength: 255,
             format: 'email',
-            title: 'Email'
+            title: 'Email',
+            index: true,
+            unique: true
         },
         is_active: {
             type: 'boolean',
@@ -313,7 +2711,8 @@ export const UserCreateSchema = {
     },
     type: 'object',
     required: ['email', 'password'],
-    title: 'UserCreate'
+    title: 'UserCreate',
+    description: 'Properties to receive via API on creation'
 } as const;
 
 export const UserPublicSchema = {
@@ -322,7 +2721,9 @@ export const UserPublicSchema = {
             type: 'string',
             maxLength: 255,
             format: 'email',
-            title: 'Email'
+            title: 'Email',
+            index: true,
+            unique: true
         },
         is_active: {
             type: 'boolean',
@@ -354,11 +2755,44 @@ export const UserPublicSchema = {
     },
     type: 'object',
     required: ['email', 'id'],
-    title: 'UserPublic'
+    title: 'UserPublic',
+    description: 'Properties to return via API'
 } as const;
 
 export const UserRegisterSchema = {
     properties: {
+        first_name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'First Name'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name'
+        },
+        last_name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'Last Name'
+        },
+        gender: {
+            type: 'string',
+            title: 'Gender',
+            description: 'Gender: MALE or FEMALE'
+        },
+        date_of_birth: {
+            type: 'string',
+            title: 'Date Of Birth',
+            description: 'Date of birth in YYYY-MM-DD format'
+        },
         email: {
             type: 'string',
             maxLength: 255,
@@ -370,23 +2804,12 @@ export const UserRegisterSchema = {
             maxLength: 128,
             minLength: 8,
             title: 'Password'
-        },
-        full_name: {
-            anyOf: [
-                {
-                    type: 'string',
-                    maxLength: 255
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Full Name'
         }
     },
     type: 'object',
-    required: ['email', 'password'],
-    title: 'UserRegister'
+    required: ['first_name', 'last_name', 'gender', 'date_of_birth', 'email', 'password'],
+    title: 'UserRegister',
+    description: 'Properties for user self-registration'
 } as const;
 
 export const UserUpdateSchema = {
@@ -441,7 +2864,8 @@ export const UserUpdateSchema = {
         }
     },
     type: 'object',
-    title: 'UserUpdate'
+    title: 'UserUpdate',
+    description: 'Properties to receive via API on update, all are optional'
 } as const;
 
 export const UserUpdateMeSchema = {
@@ -473,7 +2897,8 @@ export const UserUpdateMeSchema = {
         }
     },
     type: 'object',
-    title: 'UserUpdateMe'
+    title: 'UserUpdateMe',
+    description: 'Properties for user self-update'
 } as const;
 
 export const UsersPublicSchema = {
@@ -492,7 +2917,8 @@ export const UsersPublicSchema = {
     },
     type: 'object',
     required: ['data', 'count'],
-    title: 'UsersPublic'
+    title: 'UsersPublic',
+    description: 'List of users response'
 } as const;
 
 export const ValidationErrorSchema = {

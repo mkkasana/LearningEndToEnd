@@ -27,6 +27,10 @@ class GenderService:
         """Get gender by ID."""
         return self.gender_repo.get_by_id(gender_id)
 
+    def get_gender_by_code(self, code: str) -> Gender | None:
+        """Get gender by code."""
+        return self.gender_repo.get_by_code(code)
+
     def create_gender(self, gender_create: GenderCreate) -> Gender:
         """Create a new gender."""
         gender = Gender(**gender_create.model_dump())
