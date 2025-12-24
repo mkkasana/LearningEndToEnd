@@ -22,114 +22,124 @@ def seed_religions():
     religions_data = [
         {
             "name": "Hinduism",
+            "code": "HIN",
             "categories": [
                 {
                     "name": "Vaishnavism",
-                    "sub_categories": ["ISKCON", "Swaminarayan", "Other"]
+                    "code": "VAIS",
+                    "sub_categories": [
+                        {"name": "ISKCON", "code": "ISK"},
+                        {"name": "Swaminarayan", "code": "SWA"},
+                        {"name": "Other", "code": "OTH"}
+                    ]
                 },
                 {
                     "name": "Shaivism",
-                    "sub_categories": ["Kashmir Shaivism", "Lingayat", "Other"]
+                    "code": "SHAI",
+                    "sub_categories": [
+                        {"name": "Kashmir Shaivism", "code": "KAS"},
+                        {"name": "Lingayat", "code": "LIN"},
+                        {"name": "Other", "code": "OTH"}
+                    ]
                 },
-                {
-                    "name": "Shaktism",
-                    "sub_categories": []
-                },
-                {
-                    "name": "Smartism",
-                    "sub_categories": []
-                },
+                {"name": "Shaktism", "code": "SHAK"},
+                {"name": "Smartism", "code": "SMAR"},
             ]
         },
         {
             "name": "Islam",
+            "code": "ISL",
             "categories": [
                 {
                     "name": "Sunni",
-                    "sub_categories": ["Hanafi", "Maliki", "Shafi'i", "Hanbali"]
+                    "code": "SUN",
+                    "sub_categories": [
+                        {"name": "Hanafi", "code": "HAN"},
+                        {"name": "Maliki", "code": "MAL"},
+                        {"name": "Shafi'i", "code": "SHA"},
+                        {"name": "Hanbali", "code": "HNB"}
+                    ]
                 },
                 {
                     "name": "Shia",
-                    "sub_categories": ["Twelver", "Ismaili", "Zaidi"]
+                    "code": "SHI",
+                    "sub_categories": [
+                        {"name": "Twelver", "code": "TWE"},
+                        {"name": "Ismaili", "code": "ISM"},
+                        {"name": "Zaidi", "code": "ZAI"}
+                    ]
                 },
-                {
-                    "name": "Sufi",
-                    "sub_categories": []
-                },
+                {"name": "Sufi", "code": "SUF"},
             ]
         },
         {
             "name": "Christianity",
+            "code": "CHR",
             "categories": [
                 {
                     "name": "Catholic",
-                    "sub_categories": ["Roman Catholic", "Eastern Catholic"]
+                    "code": "CAT",
+                    "sub_categories": [
+                        {"name": "Roman Catholic", "code": "ROM"},
+                        {"name": "Eastern Catholic", "code": "EAS"}
+                    ]
                 },
                 {
                     "name": "Protestant",
-                    "sub_categories": ["Baptist", "Methodist", "Lutheran", "Presbyterian"]
+                    "code": "PRO",
+                    "sub_categories": [
+                        {"name": "Baptist", "code": "BAP"},
+                        {"name": "Methodist", "code": "MET"},
+                        {"name": "Lutheran", "code": "LUT"},
+                        {"name": "Presbyterian", "code": "PRE"}
+                    ]
                 },
                 {
                     "name": "Orthodox",
-                    "sub_categories": ["Eastern Orthodox", "Oriental Orthodox"]
+                    "code": "ORT",
+                    "sub_categories": [
+                        {"name": "Eastern Orthodox", "code": "EOR"},
+                        {"name": "Oriental Orthodox", "code": "OOR"}
+                    ]
                 },
             ]
         },
-        {
-            "name": "Sikhism",
-            "categories": []
-        },
+        {"name": "Sikhism", "code": "SIK"},
         {
             "name": "Buddhism",
+            "code": "BUD",
             "categories": [
-                {
-                    "name": "Theravada",
-                    "sub_categories": []
-                },
+                {"name": "Theravada", "code": "THE"},
                 {
                     "name": "Mahayana",
-                    "sub_categories": ["Zen", "Pure Land", "Tibetan"]
+                    "code": "MAH",
+                    "sub_categories": [
+                        {"name": "Zen", "code": "ZEN"},
+                        {"name": "Pure Land", "code": "PUR"},
+                        {"name": "Tibetan", "code": "TIB"}
+                    ]
                 },
-                {
-                    "name": "Vajrayana",
-                    "sub_categories": []
-                },
+                {"name": "Vajrayana", "code": "VAJ"},
             ]
         },
         {
             "name": "Jainism",
+            "code": "JAI",
             "categories": [
-                {
-                    "name": "Digambara",
-                    "sub_categories": []
-                },
-                {
-                    "name": "Svetambara",
-                    "sub_categories": []
-                },
+                {"name": "Digambara", "code": "DIG"},
+                {"name": "Svetambara", "code": "SVE"},
             ]
         },
         {
             "name": "Judaism",
+            "code": "JUD",
             "categories": [
-                {
-                    "name": "Orthodox",
-                    "sub_categories": []
-                },
-                {
-                    "name": "Conservative",
-                    "sub_categories": []
-                },
-                {
-                    "name": "Reform",
-                    "sub_categories": []
-                },
+                {"name": "Orthodox", "code": "ORT"},
+                {"name": "Conservative", "code": "CON"},
+                {"name": "Reform", "code": "REF"},
             ]
         },
-        {
-            "name": "Other",
-            "categories": []
-        },
+        {"name": "Other", "code": "OTH"},
     ]
     
     with Session(engine) as session:
@@ -143,7 +153,10 @@ def seed_religions():
         
         for religion_data in religions_data:
             # Create religion
-            religion = Religion(name=religion_data["name"])
+            religion = Religion(
+                name=religion_data["name"],
+                code=religion_data["code"]
+            )
             session.add(religion)
             session.flush()  # Get the ID
             
@@ -153,6 +166,7 @@ def seed_religions():
             for category_data in religion_data.get("categories", []):
                 category = ReligionCategory(
                     name=category_data["name"],
+                    code=category_data.get("code"),
                     religion_id=religion.id
                 )
                 session.add(category)
@@ -161,10 +175,11 @@ def seed_religions():
                 print(f"    ✓ Created category: {category.name}")
                 
                 # Create sub-categories
-                for sub_category_name in category_data.get("sub_categories", []):
+                for sub_category_data in category_data.get("sub_categories", []):
                     sub_category = ReligionSubCategory(
-                        name=sub_category_name,
-                        religion_category_id=category.id
+                        name=sub_category_data["name"],
+                        code=sub_category_data.get("code"),
+                        category_id=category.id
                     )
                     session.add(sub_category)
                     print(f"      ✓ Created sub-category: {sub_category.name}")

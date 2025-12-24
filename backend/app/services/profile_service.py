@@ -27,11 +27,6 @@ class ProfileService:
         person = self.person_repo.get_by_user_id(user_id)
         has_person = person is not None
         
-        print(f"[DEBUG] User ID: {user_id}")
-        print(f"[DEBUG] Person exists: {has_person}")
-        if has_person:
-            print(f"[DEBUG] Person ID: {person.id}")
-        
         if not has_person:
             missing_fields.append("person")
         
@@ -40,8 +35,6 @@ class ProfileService:
         if has_person:
             addresses = self.address_repo.get_by_person_id(person.id)  # Use person.id
             has_address = len(addresses) > 0
-            print(f"[DEBUG] Addresses found: {len(addresses)}")
-            print(f"[DEBUG] Has address: {has_address}")
             
             if not has_address:
                 missing_fields.append("address")
@@ -52,7 +45,6 @@ class ProfileService:
         has_religion = False
         if has_person:
             has_religion = self.religion_repo.person_has_religion(person.id)  # Use person.id
-            print(f"[DEBUG] Has religion: {has_religion}")
             
             if not has_religion:
                 missing_fields.append("religion")
@@ -60,9 +52,6 @@ class ProfileService:
             missing_fields.append("religion")
         
         is_complete = has_person and has_address and has_religion
-        
-        print(f"[DEBUG] Profile complete: {is_complete}")
-        print(f"[DEBUG] Missing fields: {missing_fields}")
         
         return ProfileCompletionStatus(
             is_complete=is_complete,
