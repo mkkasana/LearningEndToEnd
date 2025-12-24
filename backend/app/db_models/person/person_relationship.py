@@ -15,10 +15,10 @@ class PersonRelationship(SQLModel, table=True):
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     person_id: uuid.UUID = Field(
-        foreign_key="person.user_id", index=True, description="Person reference"
+        foreign_key="person.id", index=True, description="Person reference"
     )
     related_person_id: uuid.UUID = Field(
-        foreign_key="person.user_id", description="Related person reference"
+        foreign_key="person.id", description="Related person reference"
     )
     relationship_type: RelationshipType = Field(description="Relationship type")
     start_date: date | None = Field(default=None, description="Relationship start date")

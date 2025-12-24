@@ -179,7 +179,7 @@ def get_my_addresses(session: SessionDep, current_user: CurrentUser) -> Any:
         )
 
     address_service = PersonAddressService(session)
-    addresses = address_service.get_addresses_by_person(person.user_id)
+    addresses = address_service.get_addresses_by_person(person.id)
     return addresses
 
 
@@ -200,7 +200,7 @@ def create_my_address(
         )
 
     address_service = PersonAddressService(session)
-    address = address_service.create_address(person.user_id, address_in)
+    address = address_service.create_address(person.id, address_in)  # Use person.id, not person.id
     return address
 
 
@@ -223,7 +223,7 @@ def get_my_address(
     address_service = PersonAddressService(session)
     address = address_service.get_address_by_id(address_id)
 
-    if not address or address.person_id != person.user_id:
+    if not address or address.person_id != person.id:
         raise HTTPException(
             status_code=404,
             detail="Address not found",
@@ -254,7 +254,7 @@ def update_my_address(
     address_service = PersonAddressService(session)
     address = address_service.get_address_by_id(address_id)
 
-    if not address or address.person_id != person.user_id:
+    if not address or address.person_id != person.id:
         raise HTTPException(
             status_code=404,
             detail="Address not found",
@@ -283,7 +283,7 @@ def delete_my_address(
     address_service = PersonAddressService(session)
     address = address_service.get_address_by_id(address_id)
 
-    if not address or address.person_id != person.user_id:
+    if not address or address.person_id != person.id:
         raise HTTPException(
             status_code=404,
             detail="Address not found",
@@ -313,7 +313,7 @@ def get_my_professions(session: SessionDep, current_user: CurrentUser) -> Any:
         )
 
     profession_service = PersonProfessionService(session)
-    professions = profession_service.get_professions_by_person(person.user_id)
+    professions = profession_service.get_professions_by_person(person.id)
     return professions
 
 
@@ -334,7 +334,7 @@ def create_my_profession(
         )
 
     profession_service = PersonProfessionService(session)
-    profession = profession_service.create_profession(person.user_id, profession_in)
+    profession = profession_service.create_profession(person.id, profession_in)
     return profession
 
 
@@ -357,7 +357,7 @@ def get_my_profession(
     profession_service = PersonProfessionService(session)
     profession = profession_service.get_profession_by_id(profession_id)
 
-    if not profession or profession.person_id != person.user_id:
+    if not profession or profession.person_id != person.id:
         raise HTTPException(
             status_code=404,
             detail="Profession not found",
@@ -388,7 +388,7 @@ def update_my_profession(
     profession_service = PersonProfessionService(session)
     profession = profession_service.get_profession_by_id(profession_id)
 
-    if not profession or profession.person_id != person.user_id:
+    if not profession or profession.person_id != person.id:
         raise HTTPException(
             status_code=404,
             detail="Profession not found",
@@ -417,7 +417,7 @@ def delete_my_profession(
     profession_service = PersonProfessionService(session)
     profession = profession_service.get_profession_by_id(profession_id)
 
-    if not profession or profession.person_id != person.user_id:
+    if not profession or profession.person_id != person.id:
         raise HTTPException(
             status_code=404,
             detail="Profession not found",
@@ -447,7 +447,7 @@ def get_my_relationships(session: SessionDep, current_user: CurrentUser) -> Any:
         )
 
     relationship_service = PersonRelationshipService(session)
-    relationships = relationship_service.get_relationships_by_person(person.user_id)
+    relationships = relationship_service.get_relationships_by_person(person.id)
     return relationships
 
 
@@ -470,7 +470,7 @@ def create_my_relationship(
         )
 
     relationship_service = PersonRelationshipService(session)
-    relationship = relationship_service.create_relationship(person.user_id, relationship_in)
+    relationship = relationship_service.create_relationship(person.id, relationship_in)
     return relationship
 
 
@@ -493,7 +493,7 @@ def get_my_relationship(
     relationship_service = PersonRelationshipService(session)
     relationship = relationship_service.get_relationship_by_id(relationship_id)
 
-    if not relationship or relationship.person_id != person.user_id:
+    if not relationship or relationship.person_id != person.id:
         raise HTTPException(
             status_code=404,
             detail="Relationship not found",
@@ -524,7 +524,7 @@ def update_my_relationship(
     relationship_service = PersonRelationshipService(session)
     relationship = relationship_service.get_relationship_by_id(relationship_id)
 
-    if not relationship or relationship.person_id != person.user_id:
+    if not relationship or relationship.person_id != person.id:
         raise HTTPException(
             status_code=404,
             detail="Relationship not found",
@@ -555,7 +555,7 @@ def delete_my_relationship(
     relationship_service = PersonRelationshipService(session)
     relationship = relationship_service.get_relationship_by_id(relationship_id)
 
-    if not relationship or relationship.person_id != person.user_id:
+    if not relationship or relationship.person_id != person.id:
         raise HTTPException(
             status_code=404,
             detail="Relationship not found",
@@ -585,7 +585,7 @@ def get_my_metadata(session: SessionDep, current_user: CurrentUser) -> Any:
         )
 
     metadata_service = PersonMetadataService(session)
-    metadata = metadata_service.get_metadata_by_person(person.user_id)
+    metadata = metadata_service.get_metadata_by_person(person.id)
 
     if not metadata:
         raise HTTPException(
@@ -615,14 +615,14 @@ def create_my_metadata(
     metadata_service = PersonMetadataService(session)
 
     # Check if metadata already exists
-    existing = metadata_service.get_metadata_by_person(person.user_id)
+    existing = metadata_service.get_metadata_by_person(person.id)
     if existing:
         raise HTTPException(
             status_code=400,
             detail="Person metadata already exists",
         )
 
-    metadata = metadata_service.create_metadata(person.user_id, metadata_in)
+    metadata = metadata_service.create_metadata(person.id, metadata_in)
     return metadata
 
 
@@ -643,7 +643,7 @@ def update_my_metadata(
         )
 
     metadata_service = PersonMetadataService(session)
-    metadata = metadata_service.get_metadata_by_person(person.user_id)
+    metadata = metadata_service.get_metadata_by_person(person.id)
 
     if not metadata:
         raise HTTPException(
@@ -670,7 +670,7 @@ def delete_my_metadata(session: SessionDep, current_user: CurrentUser) -> Any:
         )
 
     metadata_service = PersonMetadataService(session)
-    metadata = metadata_service.get_metadata_by_person(person.user_id)
+    metadata = metadata_service.get_metadata_by_person(person.id)
 
     if not metadata:
         raise HTTPException(

@@ -22,7 +22,12 @@ class PersonBase(SQLModel):
 class PersonCreate(PersonBase):
     """Schema for creating a new person."""
 
-    user_id: uuid.UUID = Field(description="User account reference")
+    user_id: uuid.UUID | None = Field(
+        default=None, description="User account reference (optional for family members)"
+    )
+    is_primary: bool = Field(
+        default=False, description="Is this the primary person for the user"
+    )
 
 
 class PersonUpdate(SQLModel):
@@ -42,6 +47,9 @@ class PersonUpdate(SQLModel):
 class PersonPublic(PersonBase):
     """Person response schema."""
 
-    user_id: uuid.UUID
+    id: uuid.UUID
+    user_id: uuid.UUID | None
+    created_by_user_id: uuid.UUID
+    is_primary: bool
     created_at: datetime
     updated_at: datetime

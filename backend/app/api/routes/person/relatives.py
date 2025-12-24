@@ -27,7 +27,7 @@ def get_parents(session: SessionDep, user_id: uuid.UUID) -> Any:
         )
 
     relationship_service = PersonRelationshipService(session)
-    parents = relationship_service.get_parents(person.user_id)
+    parents = relationship_service.get_parents(person.id)
     return parents
 
 
@@ -46,7 +46,7 @@ def get_children(session: SessionDep, user_id: uuid.UUID) -> Any:
         )
 
     relationship_service = PersonRelationshipService(session)
-    children = relationship_service.get_children(person.user_id)
+    children = relationship_service.get_children(person.id)
     return children
 
 
@@ -65,7 +65,7 @@ def get_spouses(session: SessionDep, user_id: uuid.UUID) -> Any:
         )
 
     relationship_service = PersonRelationshipService(session)
-    spouses = relationship_service.get_spouses(person.user_id)
+    spouses = relationship_service.get_spouses(person.id)
     return spouses
 
 
@@ -90,5 +90,5 @@ def get_siblings(session: SessionDep, user_id: uuid.UUID) -> Any:
         )
 
     relationship_service = PersonRelationshipService(session)
-    siblings = relationship_service.get_siblings(person.user_id)
+    siblings = relationship_service.get_siblings(person.id)
     return siblings

@@ -138,6 +138,7 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     """
     from datetime import datetime
     
+    from app.db_models.person.person import Person
     from app.schemas.person import PersonCreate
     from app.services.person.gender_service import GenderService
     from app.services.person.person_service import PersonService
@@ -195,8 +196,16 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
         last_name=user_in.last_name,
         gender_id=gender.id,
         date_of_birth=dob,
+        is_primary=True,  # This is the user's own profile
     )
-    person_service.create_person(person_create)
+    
+    # Create the person with created_by_user_id set to the user's own ID
+    person = Person(
+        **person_create.model_dump(),
+        created_by_user_id=user.id  # User creates their own person record
+    )
+    session.add(person)
+    session.commit()
     
     return user
 

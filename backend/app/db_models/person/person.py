@@ -7,13 +7,38 @@ from sqlmodel import Field, SQLModel
 
 
 class Person(SQLModel, table=True):
-    """Person model - Core person information linked to user account."""
+    """Person model - Core person information. Can be linked to a user or standalone for family tree."""
 
     __tablename__ = "person"
 
-    user_id: uuid.UUID = Field(
-        foreign_key="user.id", primary_key=True, description="User account reference"
+    # Primary key - unique identifier for each person
+    id: uuid.UUID = Field(
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        description="Unique person identifier"
     )
+    
+    # Optional link to user account (nullable for family members without accounts)
+    user_id: uuid.UUID | None = Field(
+        default=None,
+        foreign_key="user.id",
+        index=True,
+        description="User account reference (nullable for non-users)"
+    )
+    
+    # Track who created this person record
+    created_by_user_id: uuid.UUID = Field(
+        foreign_key="user.id",
+        index=True,
+        description="User who created this person record"
+    )
+    
+    # Is this the primary person for the user account?
+    is_primary: bool = Field(
+        default=False,
+        description="Is this the primary person for the user account"
+    )
+    
     first_name: str = Field(max_length=100, description="First name")
     middle_name: str | None = Field(
         default=None, max_length=100, description="Middle name"
