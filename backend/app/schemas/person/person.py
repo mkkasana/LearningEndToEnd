@@ -34,6 +34,9 @@ class PersonUpdate(SQLModel):
     gender_id: uuid.UUID | None = None
     date_of_birth: date | None = None
     date_of_death: date | None = None
+    religion_id: uuid.UUID | None = None
+    religion_category_id: uuid.UUID | None = None
+    religion_sub_category_id: uuid.UUID | None = None
 
 
 class PersonPublic(PersonBase):

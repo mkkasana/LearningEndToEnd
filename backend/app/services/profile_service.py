@@ -5,6 +5,7 @@ import uuid
 from sqlmodel import Session
 
 from app.repositories.person.person_address_repository import PersonAddressRepository
+from app.repositories.person.person_religion_repository import PersonReligionRepository
 from app.repositories.person.person_repository import PersonRepository
 from app.schemas.profile import ProfileCompletionStatus
 
@@ -16,6 +17,7 @@ class ProfileService:
         self.session = session
         self.person_repo = PersonRepository(session)
         self.address_repo = PersonAddressRepository(session)
+        self.religion_repo = PersonReligionRepository(session)
 
     def check_profile_completion(self, user_id: uuid.UUID) -> ProfileCompletionStatus:
         """Check if user has completed their profile."""
@@ -39,11 +41,22 @@ class ProfileService:
         else:
             missing_fields.append("address")
         
-        is_complete = has_person and has_address
+        # Check if religion exists
+        has_religion = False
+        if has_person:
+            has_religion = self.religion_repo.person_has_religion(user_id)
+            
+            if not has_religion:
+                missing_fields.append("religion")
+        else:
+            missing_fields.append("religion")
+        
+        is_complete = has_person and has_address and has_religion
         
         return ProfileCompletionStatus(
             is_complete=is_complete,
             has_person=has_person,
             has_address=has_address,
+            has_religion=has_religion,
             missing_fields=missing_fields,
         )

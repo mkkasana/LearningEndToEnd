@@ -9,4 +9,5 @@ class ProfileCompletionStatus(SQLModel):
     is_complete: bool
     has_person: bool
     has_address: bool
+    has_religion: bool
     missing_fields: list[str]

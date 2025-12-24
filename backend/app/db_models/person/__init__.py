@@ -6,6 +6,7 @@ from app.db_models.person.person_address import PersonAddress
 from app.db_models.person.person_metadata import PersonMetadata
 from app.db_models.person.person_profession import PersonProfession
 from app.db_models.person.person_relationship import PersonRelationship
+from app.db_models.person.person_religion import PersonReligion
 from app.db_models.person.profession import Profession
 
 __all__ = [
@@ -15,5 +16,6 @@ __all__ = [
     "PersonMetadata",
     "PersonProfession",
     "PersonRelationship",
+    "PersonReligion",
     "Profession",
 ]
