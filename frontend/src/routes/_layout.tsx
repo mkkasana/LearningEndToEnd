@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
 
 import { Footer } from "@/components/Common/Footer"
 import AppSidebar from "@/components/Sidebar/AppSidebar"
@@ -8,6 +9,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { isLoggedIn } from "@/hooks/useAuth"
+import { ProfileService } from "@/client"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
@@ -21,6 +23,18 @@ export const Route = createFileRoute("/_layout")({
 })
 
 function Layout() {
+  // Check profile completion status
+  const { data: profileStatus } = useQuery({
+    queryKey: ["profileCompletion"],
+    queryFn: () => ProfileService.getProfileCompletionStatus(),
+  })
+
+  // Redirect to complete-profile if profile is incomplete
+  if (profileStatus && !profileStatus.is_complete) {
+    window.location.href = "/complete-profile"
+    return null
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -2034,6 +2034,34 @@ export const ProfessionUpdateSchema = {
     description: 'Schema for updating a profession (all fields optional).'
 } as const;
 
+export const ProfileCompletionStatusSchema = {
+    properties: {
+        is_complete: {
+            type: 'boolean',
+            title: 'Is Complete'
+        },
+        has_person: {
+            type: 'boolean',
+            title: 'Has Person'
+        },
+        has_address: {
+            type: 'boolean',
+            title: 'Has Address'
+        },
+        missing_fields: {
+            items: {
+                type: 'string'
+            },
+            type: 'array',
+            title: 'Missing Fields'
+        }
+    },
+    type: 'object',
+    required: ['is_complete', 'has_person', 'has_address', 'missing_fields'],
+    title: 'ProfileCompletionStatus',
+    description: 'Profile completion status response.'
+} as const;
+
 export const RelationshipTypeSchema = {
     type: 'string',
     enum: ['rel-6a0ede824d101', 'rel-6a0ede824d102', 'rel-6a0ede824d103', 'rel-6a0ede824d104', 'rel-6a0ede824d105', 'rel-6a0ede824d106', 'rel-6a0ede824d107'],

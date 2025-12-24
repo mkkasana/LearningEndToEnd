@@ -732,6 +732,16 @@ export type ProfessionUpdate = {
 };
 
 /**
+ * Profile completion status response.
+ */
+export type ProfileCompletionStatus = {
+    is_complete: boolean;
+    has_person: boolean;
+    has_address: boolean;
+    missing_fields: Array<(string)>;
+};
+
+/**
  * Relationship types between persons with unique identifiers.
  */
 export type RelationshipType = 'rel-6a0ede824d101' | 'rel-6a0ede824d102' | 'rel-6a0ede824d103' | 'rel-6a0ede824d104' | 'rel-6a0ede824d105' | 'rel-6a0ede824d106' | 'rel-6a0ede824d107';
@@ -1535,6 +1545,8 @@ export type PrivateCreateUserData = {
 };
 
 export type PrivateCreateUserResponse = (UserPublic);
+
+export type ProfileGetProfileCompletionStatusResponse = (ProfileCompletionStatus);
 
 export type RelativesGetParentsData = {
     userId: string;

@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router"
 import {
   type Body_login_login_access_token as AccessToken,
   LoginService,
+  ProfileService,
   type UserPublic,
   type UserRegister,
   UsersService,
@@ -48,8 +49,19 @@ const useAuth = () => {
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
-      navigate({ to: "/" })
+    onSuccess: async () => {
+      // Check profile completion before redirecting
+      try {
+        const profileStatus = await ProfileService.getProfileCompletionStatus()
+        if (!profileStatus.is_complete) {
+          window.location.href = "/complete-profile"
+        } else {
+          navigate({ to: "/" })
+        }
+      } catch {
+        // If check fails, go to dashboard anyway
+        navigate({ to: "/" })
+      }
     },
     onError: handleError.bind(showErrorToast),
   })
