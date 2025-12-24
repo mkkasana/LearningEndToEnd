@@ -1656,6 +1656,152 @@ export const PersonRelationshipUpdateSchema = {
     description: 'Schema for updating a person relationship (all fields optional).'
 } as const;
 
+export const PersonReligionCreateSchema = {
+    properties: {
+        religion_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Religion Id',
+            description: 'Religion reference'
+        },
+        religion_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Category Id',
+            description: 'Religion category reference'
+        },
+        religion_sub_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Sub Category Id',
+            description: 'Religion sub-category reference'
+        }
+    },
+    type: 'object',
+    required: ['religion_id'],
+    title: 'PersonReligionCreate',
+    description: 'Schema for creating person religion.'
+} as const;
+
+export const PersonReligionPublicSchema = {
+    properties: {
+        religion_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Religion Id',
+            description: 'Religion reference'
+        },
+        religion_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Category Id',
+            description: 'Religion category reference'
+        },
+        religion_sub_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Sub Category Id',
+            description: 'Religion sub-category reference'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['religion_id', 'id', 'person_id', 'created_at', 'updated_at'],
+    title: 'PersonReligionPublic',
+    description: 'Person religion response schema.'
+} as const;
+
+export const PersonReligionUpdateSchema = {
+    properties: {
+        religion_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Id'
+        },
+        religion_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Category Id'
+        },
+        religion_sub_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Sub Category Id'
+        }
+    },
+    type: 'object',
+    title: 'PersonReligionUpdate',
+    description: 'Schema for updating person religion (all fields optional).'
+} as const;
+
 export const PersonUpdateSchema = {
     properties: {
         first_name: {
@@ -1729,6 +1875,42 @@ export const PersonUpdateSchema = {
                 }
             ],
             title: 'Date Of Death'
+        },
+        religion_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Id'
+        },
+        religion_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Category Id'
+        },
+        religion_sub_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Sub Category Id'
         }
     },
     type: 'object',
@@ -2048,6 +2230,10 @@ export const ProfileCompletionStatusSchema = {
             type: 'boolean',
             title: 'Has Address'
         },
+        has_religion: {
+            type: 'boolean',
+            title: 'Has Religion'
+        },
         missing_fields: {
             items: {
                 type: 'string'
@@ -2057,7 +2243,7 @@ export const ProfileCompletionStatusSchema = {
         }
     },
     type: 'object',
-    required: ['is_complete', 'has_person', 'has_address', 'missing_fields'],
+    required: ['is_complete', 'has_person', 'has_address', 'has_religion', 'missing_fields'],
     title: 'ProfileCompletionStatus',
     description: 'Profile completion status response.'
 } as const;

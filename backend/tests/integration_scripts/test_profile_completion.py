@@ -62,6 +62,7 @@ def test_profile_completion():
     print(f"   - Is Complete: {status['is_complete']}")
     print(f"   - Has Person: {status['has_person']}")
     print(f"   - Has Address: {status['has_address']}")
+    print(f"   - Has Religion: {status['has_religion']}")
     print(f"   - Missing Fields: {status['missing_fields']}")
     
     # Verify person exists (created during signup)
@@ -72,9 +73,14 @@ def test_profile_completion():
     assert status["has_address"] == False, "Address should not exist yet!"
     print(f"   ✓ Address not yet added")
     
+    # Verify religion doesn't exist yet
+    assert status["has_religion"] == False, "Religion should not exist yet!"
+    print(f"   ✓ Religion not yet added")
+    
     # Verify profile is incomplete
     assert status["is_complete"] == False, "Profile should be incomplete!"
     assert "address" in status["missing_fields"], "Address should be in missing fields!"
+    assert "religion" in status["missing_fields"], "Religion should be in missing fields!"
     print(f"   ✓ Profile correctly marked as incomplete")
     
     # Step 4: Add an address
@@ -107,7 +113,7 @@ def test_profile_completion():
     assert response.status_code == 200, f"Add address failed: {response.text}"
     print(f"   ✓ Address added successfully")
     
-    # Step 5: Check profile completion status again (should be complete now)
+    # Step 5: Check profile completion (should still be incomplete - missing religion)
     print("\n5. Checking profile completion status after adding address...")
     response = requests.get(f"{BASE_URL}/profile/completion-status", headers=headers)
     assert response.status_code == 200, f"Get status failed: {response.text}"
@@ -117,11 +123,59 @@ def test_profile_completion():
     print(f"   - Is Complete: {status['is_complete']}")
     print(f"   - Has Person: {status['has_person']}")
     print(f"   - Has Address: {status['has_address']}")
+    print(f"   - Has Religion: {status['has_religion']}")
+    print(f"   - Missing Fields: {status['missing_fields']}")
+    
+    # Verify address exists but profile still incomplete
+    assert status["has_address"] == True, "Address should now exist!"
+    assert status["has_religion"] == False, "Religion should not exist yet!"
+    assert status["is_complete"] == False, "Profile should still be incomplete!"
+    assert "religion" in status["missing_fields"], "Religion should be in missing fields!"
+    print(f"   ✓ Address added but profile still incomplete (missing religion)")
+    
+    # Step 6: Add religion
+    print("\n6. Adding religion...")
+    
+    # Get religions
+    response = requests.get(f"{BASE_URL}/metadata/religion/religions")
+    religions = response.json()
+    
+    if not religions:
+        print("   ⚠ No religions found, skipping religion test")
+        print("\n" + "=" * 60)
+        print("PARTIAL TEST PASSED! ✓")
+        print("=" * 60)
+        return
+    
+    religion_data = {
+        "religion_id": religions[0]["religionId"],
+    }
+    
+    response = requests.post(
+        f"{BASE_URL}/person-religion/",
+        json=religion_data,
+        headers=headers,
+    )
+    assert response.status_code == 201, f"Add religion failed: {response.text}"
+    print(f"   ✓ Religion added successfully")
+    
+    # Step 7: Check profile completion status again (should be complete now)
+    print("\n7. Checking profile completion status after adding religion...")
+    response = requests.get(f"{BASE_URL}/profile/completion-status", headers=headers)
+    assert response.status_code == 200, f"Get status failed: {response.text}"
+    status = response.json()
+    
+    print(f"   Profile Status:")
+    print(f"   - Is Complete: {status['is_complete']}")
+    print(f"   - Has Person: {status['has_person']}")
+    print(f"   - Has Address: {status['has_address']}")
+    print(f"   - Has Religion: {status['has_religion']}")
     print(f"   - Missing Fields: {status['missing_fields']}")
     
     # Verify profile is now complete
     assert status["has_person"] == True, "Person should still exist!"
-    assert status["has_address"] == True, "Address should now exist!"
+    assert status["has_address"] == True, "Address should still exist!"
+    assert status["has_religion"] == True, "Religion should now exist!"
     assert status["is_complete"] == True, "Profile should be complete!"
     assert len(status["missing_fields"]) == 0, "No fields should be missing!"
     print(f"   ✓ Profile is now complete!")
@@ -131,9 +185,9 @@ def test_profile_completion():
     print("=" * 60)
     print("\nSummary:")
     print("  - User signup creates Person record automatically")
-    print("  - Profile incomplete without address")
+    print("  - Profile incomplete without address and religion")
     print("  - Profile completion status API works correctly")
-    print("  - Profile becomes complete after adding address")
+    print("  - Profile becomes complete after adding both address and religion")
     print("\n")
 
 

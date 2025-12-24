@@ -601,6 +601,55 @@ export type PersonRelationshipUpdate = {
 };
 
 /**
+ * Schema for creating person religion.
+ */
+export type PersonReligionCreate = {
+    /**
+     * Religion reference
+     */
+    religion_id: string;
+    /**
+     * Religion category reference
+     */
+    religion_category_id?: (string | null);
+    /**
+     * Religion sub-category reference
+     */
+    religion_sub_category_id?: (string | null);
+};
+
+/**
+ * Person religion response schema.
+ */
+export type PersonReligionPublic = {
+    /**
+     * Religion reference
+     */
+    religion_id: string;
+    /**
+     * Religion category reference
+     */
+    religion_category_id?: (string | null);
+    /**
+     * Religion sub-category reference
+     */
+    religion_sub_category_id?: (string | null);
+    id: string;
+    person_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Schema for updating person religion (all fields optional).
+ */
+export type PersonReligionUpdate = {
+    religion_id?: (string | null);
+    religion_category_id?: (string | null);
+    religion_sub_category_id?: (string | null);
+};
+
+/**
  * Schema for updating a person (all fields optional).
  */
 export type PersonUpdate = {
@@ -610,6 +659,9 @@ export type PersonUpdate = {
     gender_id?: (string | null);
     date_of_birth?: (string | null);
     date_of_death?: (string | null);
+    religion_id?: (string | null);
+    religion_category_id?: (string | null);
+    religion_sub_category_id?: (string | null);
 };
 
 /**
@@ -738,6 +790,7 @@ export type ProfileCompletionStatus = {
     is_complete: boolean;
     has_person: boolean;
     has_address: boolean;
+    has_religion: boolean;
     missing_fields: Array<(string)>;
 };
 
@@ -1500,6 +1553,22 @@ export type PersonMetadataDeleteGenderData = {
 };
 
 export type PersonMetadataDeleteGenderResponse = (unknown);
+
+export type PersonReligionCreateMyReligionData = {
+    requestBody: PersonReligionCreate;
+};
+
+export type PersonReligionCreateMyReligionResponse = (PersonReligionPublic);
+
+export type PersonReligionGetMyReligionResponse = (PersonReligionPublic);
+
+export type PersonReligionUpdateMyReligionData = {
+    requestBody: PersonReligionUpdate;
+};
+
+export type PersonReligionUpdateMyReligionResponse = (PersonReligionPublic);
+
+export type PersonReligionDeleteMyReligionResponse = (void);
 
 export type PostsGetPublishedPostsData = {
     limit?: number;

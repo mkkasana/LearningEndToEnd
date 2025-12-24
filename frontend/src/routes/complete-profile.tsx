@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card"
 import { CheckCircle2, Circle } from "lucide-react"
 import { AddAddressDialog } from "@/components/Profile/AddAddressDialog"
+import { AddReligionDialog } from "@/components/Profile/AddReligionDialog"
 
 export const Route = createFileRoute("/complete-profile" as any)({
   component: CompleteProfile,
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/complete-profile" as any)({
 
 function CompleteProfile() {
   const [showAddressDialog, setShowAddressDialog] = useState(false)
+  const [showReligionDialog, setShowReligionDialog] = useState(false)
 
   const { data: profileStatus, isLoading, refetch } = useQuery({
     queryKey: ["profileCompletion"],
@@ -40,6 +42,10 @@ function CompleteProfile() {
   }
 
   const handleAddressSuccess = () => {
+    refetch()
+  }
+
+  const handleReligionSuccess = () => {
     refetch()
   }
 
@@ -107,6 +113,37 @@ function CompleteProfile() {
                   </span>
                 )}
               </div>
+
+              {/* Religion Step */}
+              <div className="flex items-start gap-4 p-4 border rounded-lg">
+                <div className="mt-1">
+                  {profileStatus?.has_religion ? (
+                    <CheckCircle2 className="h-6 w-6 text-green-500" />
+                  ) : (
+                    <Circle className="h-6 w-6 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold">Religion Information</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Add your religion details
+                  </p>
+                </div>
+                {!profileStatus?.has_religion && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowReligionDialog(true)}
+                  >
+                    Add Religion
+                  </Button>
+                )}
+                {profileStatus?.has_religion && (
+                  <span className="text-sm text-green-600 font-medium">
+                    Complete
+                  </span>
+                )}
+              </div>
             </div>
 
             {profileStatus?.is_complete && (
@@ -125,6 +162,12 @@ function CompleteProfile() {
         open={showAddressDialog}
         onOpenChange={setShowAddressDialog}
         onSuccess={handleAddressSuccess}
+      />
+
+      <AddReligionDialog
+        open={showReligionDialog}
+        onOpenChange={setShowReligionDialog}
+        onSuccess={handleReligionSuccess}
       />
     </>
   )
