@@ -2,6 +2,7 @@
 
 import uuid
 from datetime import date, datetime
+from typing import Any
 
 from sqlmodel import Field, SQLModel
 
@@ -41,3 +42,28 @@ class PersonRelationshipPublic(PersonRelationshipBase):
     person_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+
+
+# Inline person details to avoid circular import
+class PersonDetails(SQLModel):
+    """Person details for relationship response."""
+
+    id: uuid.UUID
+    first_name: str
+    middle_name: str | None = None
+    last_name: str
+    gender_id: uuid.UUID
+    date_of_birth: date
+    date_of_death: date | None = None
+    user_id: uuid.UUID | None = None
+    created_by_user_id: uuid.UUID
+    is_primary: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class PersonRelationshipWithDetails(SQLModel):
+    """Person relationship with full person details."""
+
+    relationship: PersonRelationshipPublic
+    person: PersonDetails

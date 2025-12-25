@@ -1136,6 +1136,92 @@ export const PersonCreateSchema = {
     description: 'Schema for creating a new person.'
 } as const;
 
+export const PersonDetailsSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        first_name: {
+            type: 'string',
+            title: 'First Name'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name'
+        },
+        last_name: {
+            type: 'string',
+            title: 'Last Name'
+        },
+        gender_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Gender Id'
+        },
+        date_of_birth: {
+            type: 'string',
+            format: 'date',
+            title: 'Date Of Birth'
+        },
+        date_of_death: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date Of Death'
+        },
+        user_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'User Id'
+        },
+        created_by_user_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Created By User Id'
+        },
+        is_primary: {
+            type: 'boolean',
+            title: 'Is Primary'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['id', 'first_name', 'last_name', 'gender_id', 'date_of_birth', 'created_by_user_id', 'is_primary', 'created_at', 'updated_at'],
+    title: 'PersonDetails',
+    description: 'Person details for relationship response.'
+} as const;
+
 export const PersonMetadataCreateSchema = {
     properties: {
         profile_image_url: {
@@ -1688,6 +1774,21 @@ export const PersonRelationshipUpdateSchema = {
     type: 'object',
     title: 'PersonRelationshipUpdate',
     description: 'Schema for updating a person relationship (all fields optional).'
+} as const;
+
+export const PersonRelationshipWithDetailsSchema = {
+    properties: {
+        relationship: {
+            '$ref': '#/components/schemas/PersonRelationshipPublic'
+        },
+        person: {
+            '$ref': '#/components/schemas/PersonDetails'
+        }
+    },
+    type: 'object',
+    required: ['relationship', 'person'],
+    title: 'PersonRelationshipWithDetails',
+    description: 'Person relationship with full person details.'
 } as const;
 
 export const PersonReligionCreateSchema = {

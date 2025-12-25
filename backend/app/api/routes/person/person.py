@@ -22,6 +22,7 @@ from app.schemas.person import (
     PersonRelationshipCreate,
     PersonRelationshipPublic,
     PersonRelationshipUpdate,
+    PersonRelationshipWithDetails,
     PersonReligionCreate,
     PersonUpdate,
 )
@@ -544,6 +545,41 @@ def get_my_relationships(session: SessionDep, current_user: CurrentUser) -> Any:
     relationship_service = PersonRelationshipService(session)
     relationships = relationship_service.get_relationships_by_person(person.id)
     return relationships
+
+
+@router.get("/me/relationships/with-details", response_model=list[PersonRelationshipWithDetails])
+def get_my_relationships_with_details(session: SessionDep, current_user: CurrentUser) -> Any:
+    """
+    Get all relationships for current user with full person details.
+    Returns list of objects with relationship and related person information.
+    """
+    from app.schemas.person.person_relationship import PersonDetails
+    
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    relationship_service = PersonRelationshipService(session)
+    relationships = relationship_service.get_relationships_by_person(person.id)
+    
+    # Enrich each relationship with person details
+    result = []
+    for rel in relationships:
+        related_person = person_service.person_repo.get_by_id(rel.related_person_id)
+        if related_person:
+            result.append(
+                PersonRelationshipWithDetails(
+                    relationship=rel,
+                    person=PersonDetails(**related_person.model_dump())
+                )
+            )
+    
+    return result
 
 
 @router.post("/me/relationships", response_model=PersonRelationshipPublic)

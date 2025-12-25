@@ -407,6 +407,24 @@ export type PersonCreate = {
 };
 
 /**
+ * Person details for relationship response.
+ */
+export type PersonDetails = {
+    id: string;
+    first_name: string;
+    middle_name?: (string | null);
+    last_name: string;
+    gender_id: string;
+    date_of_birth: string;
+    date_of_death?: (string | null);
+    user_id?: (string | null);
+    created_by_user_id: string;
+    is_primary: boolean;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
  * Schema for creating person metadata.
  */
 export type PersonMetadataCreate = {
@@ -605,6 +623,14 @@ export type PersonRelationshipUpdate = {
     start_date?: (string | null);
     end_date?: (string | null);
     is_active?: (boolean | null);
+};
+
+/**
+ * Person relationship with full person details.
+ */
+export type PersonRelationshipWithDetails = {
+    relationship: PersonRelationshipPublic;
+    person: PersonDetails;
 };
 
 /**
@@ -1493,6 +1519,8 @@ export type PersonCreateMyRelationshipData = {
 };
 
 export type PersonCreateMyRelationshipResponse = (PersonRelationshipPublic);
+
+export type PersonGetMyRelationshipsWithDetailsResponse = (Array<PersonRelationshipWithDetails>);
 
 export type PersonGetMyRelationshipData = {
     relationshipId: string;

@@ -76,7 +76,7 @@ export function AddFamilyMemberDialog({
   const handleFinish = () => {
     // This will be called from ConfirmationStep after successful API calls
     showSuccessToast("Family member added successfully!")
-    queryClient.invalidateQueries({ queryKey: ["familyMembers"] })
+    queryClient.invalidateQueries({ queryKey: ["myRelationshipsWithDetails"] })
     handleClose()
   }
 
