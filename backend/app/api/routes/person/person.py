@@ -6,6 +6,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.deps import CurrentUser, SessionDep, get_current_active_superuser
+from app.db_models.person.person import Person
 from app.schemas.person import (
     PersonAddressCreate,
     PersonAddressPublic,
@@ -21,6 +22,7 @@ from app.schemas.person import (
     PersonRelationshipCreate,
     PersonRelationshipPublic,
     PersonRelationshipUpdate,
+    PersonReligionCreate,
     PersonUpdate,
 )
 from app.services.person import (
@@ -28,6 +30,7 @@ from app.services.person import (
     PersonMetadataService,
     PersonProfessionService,
     PersonRelationshipService,
+    PersonReligionService,
     PersonService,
 )
 
@@ -76,6 +79,98 @@ def create_my_person(
 
     person = person_service.create_person(person_in)
     return person
+
+
+@router.post("/family-member", response_model=PersonPublic)
+def create_family_member(
+    session: SessionDep, current_user: CurrentUser, person_in: PersonCreate
+) -> Any:
+    """
+    Create a family member (person without user account).
+    """
+    person_service = PersonService(session)
+
+    # Family members should not have a user_id
+    if person_in.user_id is not None:
+        raise HTTPException(
+            status_code=400,
+            detail="Family members cannot have a user account",
+        )
+
+    # Set created_by_user_id to current user
+    person_data = person_in.model_dump()
+    person_data["created_by_user_id"] = current_user.id
+    person = Person(**person_data)
+    
+    created_person = person_service.person_repo.create(person)
+    return created_person
+
+
+@router.post("/{person_id}/addresses", response_model=PersonAddressPublic)
+def create_person_address(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+    address_in: PersonAddressCreate,
+) -> Any:
+    """
+    Create address for a specific person.
+    User must be the creator of the person or a superuser.
+    """
+    person_service = PersonService(session)
+    person = person_service.person_repo.get_by_id(person_id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person not found",
+        )
+
+    # Check if user has permission (created the person or is superuser)
+    if person.created_by_user_id != current_user.id and not current_user.is_superuser:
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to add address to this person",
+        )
+
+    address_service = PersonAddressService(session)
+    address = address_service.create_address(person_id, address_in)
+    return address
+
+
+@router.post("/{person_id}/religion", response_model=PersonPublic)
+def create_person_religion(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+    religion_data: dict,
+) -> Any:
+    """
+    Create religion for a specific person.
+    User must be the creator of the person or a superuser.
+    """
+    person_service = PersonService(session)
+    person = person_service.person_repo.get_by_id(person_id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person not found",
+        )
+
+    # Check if user has permission (created the person or is superuser)
+    if person.created_by_user_id != current_user.id and not current_user.is_superuser:
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to add religion to this person",
+        )
+
+    religion_service = PersonReligionService(session)
+    religion_create = PersonReligionCreate(**religion_data)
+    religion = religion_service.create_person_religion(person_id, religion_create)
+    
+    # Return the updated person
+    return person_service.person_repo.get_by_id(person_id)
 
 
 @router.patch("/me", response_model=PersonPublic)

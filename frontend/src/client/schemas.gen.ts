@@ -1111,14 +1111,27 @@ export const PersonCreateSchema = {
             description: 'Date of death'
         },
         user_id: {
-            type: 'string',
-            format: 'uuid',
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
             title: 'User Id',
-            description: 'User account reference'
+            description: 'User account reference (optional for family members)'
+        },
+        is_primary: {
+            type: 'boolean',
+            title: 'Is Primary',
+            description: 'Is this the primary person for the user',
+            default: false
         }
     },
     type: 'object',
-    required: ['first_name', 'last_name', 'gender_id', 'date_of_birth', 'user_id'],
+    required: ['first_name', 'last_name', 'gender_id', 'date_of_birth'],
     title: 'PersonCreate',
     description: 'Schema for creating a new person.'
 } as const;
@@ -1447,10 +1460,31 @@ export const PersonPublicSchema = {
             title: 'Date Of Death',
             description: 'Date of death'
         },
-        user_id: {
+        id: {
             type: 'string',
             format: 'uuid',
+            title: 'Id'
+        },
+        user_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
             title: 'User Id'
+        },
+        created_by_user_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Created By User Id'
+        },
+        is_primary: {
+            type: 'boolean',
+            title: 'Is Primary'
         },
         created_at: {
             type: 'string',
@@ -1464,7 +1498,7 @@ export const PersonPublicSchema = {
         }
     },
     type: 'object',
-    required: ['first_name', 'last_name', 'gender_id', 'date_of_birth', 'user_id', 'created_at', 'updated_at'],
+    required: ['first_name', 'last_name', 'gender_id', 'date_of_birth', 'id', 'user_id', 'created_by_user_id', 'is_primary', 'created_at', 'updated_at'],
     title: 'PersonPublic',
     description: 'Person response schema.'
 } as const;

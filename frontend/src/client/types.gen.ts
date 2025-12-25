@@ -397,9 +397,13 @@ export type PersonCreate = {
      */
     date_of_death?: (string | null);
     /**
-     * User account reference
+     * User account reference (optional for family members)
      */
-    user_id: string;
+    user_id?: (string | null);
+    /**
+     * Is this the primary person for the user
+     */
+    is_primary?: boolean;
 };
 
 /**
@@ -528,7 +532,10 @@ export type PersonPublic = {
      * Date of death
      */
     date_of_death?: (string | null);
-    user_id: string;
+    id: string;
+    user_id: (string | null);
+    created_by_user_id: string;
+    is_primary: boolean;
     created_at: string;
     updated_at: string;
 };
@@ -1390,6 +1397,28 @@ export type PersonUpdateMyPersonData = {
 };
 
 export type PersonUpdateMyPersonResponse = (PersonPublic);
+
+export type PersonCreateFamilyMemberData = {
+    requestBody: PersonCreate;
+};
+
+export type PersonCreateFamilyMemberResponse = (PersonPublic);
+
+export type PersonCreatePersonAddressData = {
+    personId: string;
+    requestBody: PersonAddressCreate;
+};
+
+export type PersonCreatePersonAddressResponse = (PersonAddressPublic);
+
+export type PersonCreatePersonReligionData = {
+    personId: string;
+    requestBody: {
+        [key: string]: unknown;
+    };
+};
+
+export type PersonCreatePersonReligionResponse = (PersonPublic);
 
 export type PersonGetPersonByUserIdData = {
     userId: string;
