@@ -129,7 +129,16 @@ export function ReligionStep({ onComplete, onBack, initialData }: ReligionStepPr
   })
 
   const onSubmit = (data: FormData) => {
-    addReligionMutation.mutate(data)
+    // Add display names to the data
+    const enrichedData = {
+      ...data,
+      _displayNames: {
+        religion: religions?.find((r: any) => r.religionId === data.religion_id)?.religionName,
+        category: categories?.find((c: any) => c.categoryId === data.religion_category_id)?.categoryName,
+        subCategory: subCategories?.find((sc: any) => sc.subCategoryId === data.religion_sub_category_id)?.subCategoryName,
+      },
+    }
+    addReligionMutation.mutate(enrichedData)
   }
 
   const handleReligionChange = (value: string) => {

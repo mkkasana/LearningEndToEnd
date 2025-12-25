@@ -175,7 +175,18 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
   })
 
   const onSubmit = (data: FormData) => {
-    addAddressMutation.mutate(data)
+    // Add display names to the data
+    const enrichedData = {
+      ...data,
+      _displayNames: {
+        country: countries?.find((c: any) => c.countryId === data.country_id)?.countryName,
+        state: states?.find((s: any) => s.stateId === data.state_id)?.stateName,
+        district: districts?.find((d: any) => d.districtId === data.district_id)?.districtName,
+        subDistrict: subDistricts?.find((sd: any) => sd.subDistrictId === data.sub_district_id)?.subDistrictName,
+        locality: localities?.find((l: any) => l.localityId === data.locality_id)?.localityName,
+      },
+    }
+    addAddressMutation.mutate(enrichedData)
   }
 
   const handleCountryChange = (value: string) => {

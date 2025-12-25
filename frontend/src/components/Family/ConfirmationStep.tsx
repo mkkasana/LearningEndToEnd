@@ -41,6 +41,24 @@ export function ConfirmationStep({
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const [creationStatus, setCreationStatus] = useState<string>("")
 
+  // Build address string from display names
+  const addressParts = [
+    addressData._displayNames?.locality,
+    addressData._displayNames?.subDistrict,
+    addressData._displayNames?.district,
+    addressData._displayNames?.state,
+    addressData._displayNames?.country,
+  ].filter(Boolean)
+  const addressString = addressParts.join(", ")
+
+  // Build religion string from display names
+  const religionParts = [
+    religionData._displayNames?.religion,
+    religionData._displayNames?.category,
+    religionData._displayNames?.subCategory,
+  ].filter(Boolean)
+  const religionString = religionParts.join(", ")
+
   const createFamilyMemberMutation = useMutation({
     mutationFn: async () => {
       // Step 1: Create the person
@@ -179,22 +197,23 @@ export function ConfirmationStep({
 
         <div className="pt-4 border-t space-y-4">
           <div>
-            <p className="text-sm font-semibold mb-2">Address Details</p>
+            <p className="text-sm font-semibold mb-2">Address</p>
             <div className="text-sm text-muted-foreground space-y-1">
+              <p>{addressString || "No address specified"}</p>
               {addressData.address_line && (
-                <p>Address: {addressData.address_line}</p>
+                <p className="text-xs italic">Additional: {addressData.address_line}</p>
               )}
-              <p>Start Date: {new Date(addressData.start_date).toLocaleDateString()}</p>
+              <p className="text-xs">Start Date: {new Date(addressData.start_date).toLocaleDateString()}</p>
               {addressData.is_current && (
-                <p className="text-green-600">Current Address</p>
+                <p className="text-xs text-green-600">Current Address</p>
               )}
             </div>
           </div>
           
           <div>
-            <p className="text-sm font-semibold mb-2">Religion Details</p>
+            <p className="text-sm font-semibold mb-2">Religion</p>
             <div className="text-sm text-muted-foreground">
-              <p>Religion information will be saved</p>
+              <p>{religionString || "No religion specified"}</p>
             </div>
           </div>
         </div>
