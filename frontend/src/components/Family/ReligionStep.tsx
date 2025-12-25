@@ -38,9 +38,11 @@ type FormData = z.infer<typeof formSchema>
 
 interface ReligionStepProps {
   onComplete: (data: any) => void
+  onBack: () => void
+  initialData?: any
 }
 
-export function ReligionStep({ onComplete }: ReligionStepProps) {
+export function ReligionStep({ onComplete, onBack, initialData }: ReligionStepProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
 
   const [selectedReligion, setSelectedReligion] = useState<string>("")
@@ -49,11 +51,19 @@ export function ReligionStep({ onComplete }: ReligionStepProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      religion_id: "",
-      religion_category_id: "",
-      religion_sub_category_id: "",
+      religion_id: initialData?.religion_id || "",
+      religion_category_id: initialData?.religion_category_id || "",
+      religion_sub_category_id: initialData?.religion_sub_category_id || "",
     },
   })
+
+  // Initialize selected values from initialData
+  useEffect(() => {
+    if (initialData) {
+      if (initialData.religion_id) setSelectedReligion(initialData.religion_id)
+      if (initialData.religion_category_id) setSelectedCategory(initialData.religion_category_id)
+    }
+  }, [initialData])
 
   // Fetch current user's religion to prefill
   const { data: myReligion } = useQuery({
@@ -61,9 +71,9 @@ export function ReligionStep({ onComplete }: ReligionStepProps) {
     queryFn: () => PersonReligionService.getMyReligion(),
   })
 
-  // Prefill with user's religion
+  // Prefill with user's religion only if no initialData
   useEffect(() => {
-    if (myReligion) {
+    if (!initialData && myReligion) {
       form.setValue("religion_id", myReligion.religion_id)
       setSelectedReligion(myReligion.religion_id)
       
@@ -76,7 +86,7 @@ export function ReligionStep({ onComplete }: ReligionStepProps) {
         form.setValue("religion_sub_category_id", myReligion.religion_sub_category_id)
       }
     }
-  }, [myReligion])
+  }, [myReligion, initialData])
 
   // Fetch religions
   const { data: religions } = useQuery({
@@ -243,7 +253,10 @@ export function ReligionStep({ onComplete }: ReligionStepProps) {
             />
           )}
 
-          <div className="flex justify-end">
+          <div className="flex justify-between">
+            <Button type="button" variant="outline" onClick={onBack}>
+              Back
+            </Button>
             <LoadingButton type="submit" loading={addReligionMutation.isPending}>
               Next: Review
             </LoadingButton>

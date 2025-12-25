@@ -45,9 +45,11 @@ type FormData = z.infer<typeof formSchema>
 
 interface AddressStepProps {
   onComplete: (data: any) => void
+  onBack: () => void
+  initialData?: any
 }
 
-export function AddressStep({ onComplete }: AddressStepProps) {
+export function AddressStep({ onComplete, onBack, initialData }: AddressStepProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const { user } = useAuth()
 
@@ -59,11 +61,26 @@ export function AddressStep({ onComplete }: AddressStepProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      address_line: "",
-      start_date: new Date().toISOString().split("T")[0],
-      is_current: true,
+      address_line: initialData?.address_line || "",
+      start_date: initialData?.start_date || new Date().toISOString().split("T")[0],
+      is_current: initialData?.is_current !== undefined ? initialData.is_current : true,
+      country_id: initialData?.country_id || "",
+      state_id: initialData?.state_id || "",
+      district_id: initialData?.district_id || "",
+      sub_district_id: initialData?.sub_district_id || "",
+      locality_id: initialData?.locality_id || "",
     },
   })
+
+  // Initialize selected values from initialData
+  useEffect(() => {
+    if (initialData) {
+      if (initialData.country_id) setSelectedCountry(initialData.country_id)
+      if (initialData.state_id) setSelectedState(initialData.state_id)
+      if (initialData.district_id) setSelectedDistrict(initialData.district_id)
+      if (initialData.sub_district_id) setSelectedSubDistrict(initialData.sub_district_id)
+    }
+  }, [initialData])
 
   // Fetch current user's address to prefill
   const { data: myAddresses } = useQuery({
@@ -71,9 +88,9 @@ export function AddressStep({ onComplete }: AddressStepProps) {
     queryFn: () => PersonService.getMyAddresses(),
   })
 
-  // Prefill with user's current address
+  // Prefill with user's current address only if no initialData
   useEffect(() => {
-    if (myAddresses && myAddresses.length > 0) {
+    if (!initialData && myAddresses && myAddresses.length > 0) {
       const currentAddress = myAddresses.find((addr: any) => addr.is_current) || myAddresses[0]
       if (currentAddress) {
         form.setValue("country_id", currentAddress.country_id)
@@ -99,7 +116,7 @@ export function AddressStep({ onComplete }: AddressStepProps) {
         }
       }
     }
-  }, [myAddresses])
+  }, [myAddresses, initialData])
 
   // Fetch countries
   const { data: countries } = useQuery({
@@ -402,7 +419,10 @@ export function AddressStep({ onComplete }: AddressStepProps) {
             )}
           />
 
-          <div className="flex justify-end">
+          <div className="flex justify-between">
+            <Button type="button" variant="outline" onClick={onBack}>
+              Back
+            </Button>
             <LoadingButton type="submit" loading={addAddressMutation.isPending}>
               Next: Add Religion
             </LoadingButton>

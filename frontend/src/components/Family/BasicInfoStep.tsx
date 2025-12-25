@@ -57,23 +57,24 @@ type FormData = z.infer<typeof formSchema>
 
 interface BasicInfoStepProps {
   onComplete: (data: any) => void
+  initialData?: any
 }
 
-export function BasicInfoStep({ onComplete }: BasicInfoStepProps) {
+export function BasicInfoStep({ onComplete, initialData }: BasicInfoStepProps) {
   const { showErrorToast } = useCustomToast()
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      relationship_type: "",
-      first_name: "",
-      middle_name: "",
-      last_name: "",
-      gender_id: "",
-      date_of_birth: "",
-      is_dead: false,
-      date_of_death: "",
-      about: "",
+      relationship_type: initialData?.relationship_type || "",
+      first_name: initialData?.first_name || "",
+      middle_name: initialData?.middle_name || "",
+      last_name: initialData?.last_name || "",
+      gender_id: initialData?.gender_id || "",
+      date_of_birth: initialData?.date_of_birth || "",
+      is_dead: initialData?.is_dead || false,
+      date_of_death: initialData?.date_of_death || "",
+      about: initialData?.about || "",
     },
   })
 

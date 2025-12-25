@@ -53,6 +53,18 @@ export function AddFamilyMemberDialog({
     setCurrentStep(STEPS.CONFIRMATION)
   }
 
+  const handleBackToBasicInfo = () => {
+    setCurrentStep(STEPS.BASIC_INFO)
+  }
+
+  const handleBackToAddress = () => {
+    setCurrentStep(STEPS.ADDRESS)
+  }
+
+  const handleBackToReligion = () => {
+    setCurrentStep(STEPS.RELIGION)
+  }
+
   const handleClose = () => {
     setCurrentStep(STEPS.BASIC_INFO)
     setFamilyMemberData(null)
@@ -102,15 +114,26 @@ export function AddFamilyMemberDialog({
         </div>
 
         {currentStep === STEPS.BASIC_INFO && (
-          <BasicInfoStep onComplete={handleBasicInfoComplete} />
+          <BasicInfoStep 
+            onComplete={handleBasicInfoComplete} 
+            initialData={familyMemberData}
+          />
         )}
 
         {currentStep === STEPS.ADDRESS && (
-          <AddressStep onComplete={handleAddressComplete} />
+          <AddressStep 
+            onComplete={handleAddressComplete} 
+            onBack={handleBackToBasicInfo}
+            initialData={addressData}
+          />
         )}
 
         {currentStep === STEPS.RELIGION && (
-          <ReligionStep onComplete={handleReligionComplete} />
+          <ReligionStep 
+            onComplete={handleReligionComplete} 
+            onBack={handleBackToAddress}
+            initialData={religionData}
+          />
         )}
 
         {currentStep === STEPS.CONFIRMATION && (
@@ -119,6 +142,7 @@ export function AddFamilyMemberDialog({
             addressData={addressData}
             religionData={religionData}
             onFinish={handleFinish}
+            onBack={handleBackToReligion}
           />
         )}
       </DialogContent>

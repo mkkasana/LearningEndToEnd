@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { CheckCircle2, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { LoadingButton } from "@/components/ui/loading-button"
 import {
   PersonService,
@@ -17,6 +18,7 @@ interface ConfirmationStepProps {
   addressData: any
   religionData: any
   onFinish: () => void
+  onBack: () => void
 }
 
 const RELATIONSHIP_LABELS: Record<string, string> = {
@@ -34,6 +36,7 @@ export function ConfirmationStep({
   addressData,
   religionData,
   onFinish,
+  onBack,
 }: ConfirmationStepProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const [creationStatus, setCreationStatus] = useState<string>("")
@@ -204,7 +207,10 @@ export function ConfirmationStep({
         </div>
       )}
 
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        <Button variant="outline" onClick={onBack} disabled={createFamilyMemberMutation.isPending}>
+          Back
+        </Button>
         <LoadingButton
           onClick={() => createFamilyMemberMutation.mutate()}
           loading={createFamilyMemberMutation.isPending}
