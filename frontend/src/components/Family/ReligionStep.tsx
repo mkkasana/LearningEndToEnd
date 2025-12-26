@@ -267,7 +267,7 @@ export function ReligionStep({ onComplete, onBack, initialData }: ReligionStepPr
               Back
             </Button>
             <LoadingButton type="submit" loading={addReligionMutation.isPending}>
-              Next: Review
+              Next: Check for Duplicates
             </LoadingButton>
           </div>
         </form>

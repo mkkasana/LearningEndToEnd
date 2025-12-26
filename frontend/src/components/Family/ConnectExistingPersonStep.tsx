@@ -82,13 +82,6 @@ export function ConnectExistingPersonStep({
 
   return (
     <div className="space-y-4">
-      <div className="bg-muted p-3 rounded-md text-sm">
-        <p className="text-muted-foreground">
-          We found some existing persons that match the details you entered. 
-          You can connect to an existing person or create a new one.
-        </p>
-      </div>
-
       {/* Loading state */}
       {(isLoading || isFetching) && (
         <div className="flex items-center justify-center py-8 space-x-2">
@@ -123,9 +116,30 @@ export function ConnectExistingPersonStep({
         </div>
       )}
 
-      {/* Results will be displayed here */}
-      {!isLoading && !isFetching && !isError && matchingPersons && (
+      {/* No matches found */}
+      {!isLoading && !isFetching && !isError && matchingPersons && matchingPersons.length === 0 && (
+        <div className="space-y-4 py-4">
+          <div className="bg-muted p-4 rounded-md">
+            <p className="text-sm font-medium mb-2">
+              No matching persons found
+            </p>
+            <p className="text-sm text-muted-foreground">
+              We could not find any existing person with similar details. This does not appear to be a duplicate. You can proceed to create this new person.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Results with matches */}
+      {!isLoading && !isFetching && !isError && matchingPersons && matchingPersons.length > 0 && (
         <div className="space-y-4">
+          <div className="bg-muted p-3 rounded-md text-sm">
+            <p className="text-muted-foreground">
+              We found some existing persons that match the details you entered. 
+              You can connect to an existing person or create a new one.
+            </p>
+          </div>
+          
           <p className="text-sm font-medium">
             Found {matchingPersons.length} matching person(s)
           </p>
