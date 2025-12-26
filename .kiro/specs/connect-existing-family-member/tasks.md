@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [-] 1. Set up backend infrastructure for person matching
+- [x] 1. Set up backend infrastructure for person matching
   - Install rapidfuzz library for fuzzy string matching
   - Create PersonMatchingService class structure
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 5.1, 5.2, 5.3, 5.4, 5.5_
