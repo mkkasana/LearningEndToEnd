@@ -1,0 +1,195 @@
+# Implementation Plan
+
+- [-] 1. Set up backend infrastructure for person matching
+  - Install rapidfuzz library for fuzzy string matching
+  - Create PersonMatchingService class structure
+  - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 5.1, 5.2, 5.3, 5.4, 5.5_
+
+- [ ] 2. Implement person search schemas
+  - [ ] 2.1 Create PersonSearchRequest schema
+    - Define fields for basic details (first_name, last_name, middle_name, gender_id, date_of_birth)
+    - Define fields for address criteria (country_id, state_id, district_id, sub_district_id, locality_id)
+    - Define fields for religion criteria (religion_id, religion_category_id, religion_sub_category_id)
+    - _Requirements: 7.1_
+  - [ ] 2.2 Create PersonMatchResult schema
+    - Define person fields (person_id, names, dates)
+    - Add address_display and religion_display string fields
+    - Add match_score and name_match_score fields
+    - _Requirements: 7.5_
+  - [ ] 2.3 Export new schemas from person __init__.py
+    - Add PersonSearchRequest and PersonMatchResult to exports
+    - _Requirements: 7.1, 7.5_
+
+- [ ] 3. Implement fuzzy name matching utility
+  - [ ] 3.1 Create calculate_name_match_score method
+    - Normalize names (lowercase, strip whitespace)
+    - Use rapidfuzz.fuzz.ratio for first and last name comparison
+    - Calculate weighted average (40% first name, 60% last name)
+    - Return score rounded to 2 decimal places
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+
+- [ ] 4. Implement PersonMatchingService search logic
+  - [ ] 4.1 Create _find_persons_by_address helper method
+    - Query person_address table for matching address criteria
+    - Return list of person IDs
+    - _Requirements: 4.1_
+  - [ ] 4.2 Create _find_persons_by_religion helper method
+    - Query person_religion table for matching religion criteria
+    - Return list of person IDs
+    - _Requirements: 4.2_
+  - [ ] 4.3 Create _build_match_result helper method
+    - Fetch address and religion details for person
+    - Build comma-separated display strings
+    - Construct PersonMatchResult object
+    - _Requirements: 2.2, 2.3_
+  - [ ] 4.4 Implement search_matching_persons main method
+    - Find persons by address (call helper)
+    - Find persons by religion (call helper)
+    - Compute intersection of person IDs
+    - Filter by gender
+    - Get current user's person and connected person IDs
+    - Exclude current user and already-connected persons
+    - Calculate name match scores for remaining persons
+    - Filter by minimum score threshold (60%)
+    - Sort by match score descending
+    - Limit to top 10 results
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 5.1, 5.2, 5.3, 6.1, 6.2, 6.3_
+
+- [ ] 5. Create person search API endpoint
+  - [ ] 5.1 Add POST /api/v1/person/search-matches endpoint
+    - Accept PersonSearchRequest in request body
+    - Require authentication (CurrentUser dependency)
+    - Instantiate PersonMatchingService
+    - Call search_matching_persons method
+    - Return list of PersonMatchResult
+    - Handle errors with appropriate HTTP status codes
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+
+- [ ] 6. Regenerate OpenAPI spec and TypeScript client
+  - Run backend to generate updated openapi.json
+  - Run npm run generate-client in frontend
+  - Verify PersonService.searchMatches method exists
+  - _Requirements: 7.1, 7.5_
+
+- [ ] 7. Create ConnectExistingPersonStep frontend component
+  - [ ] 7.1 Create component file and basic structure
+    - Define props interface (searchCriteria, relationshipType, onConnect, onNext, onBack)
+    - Set up component skeleton with buttons
+    - _Requirements: 1.2, 1.5_
+  - [ ] 7.2 Implement search API call
+    - Use useQuery to call PersonService.searchMatches
+    - Pass search criteria from props
+    - Handle loading and error states
+    - _Requirements: 1.1, 4.1, 4.2, 4.3, 4.4, 4.5_
+  - [ ] 7.3 Implement matching persons list UI
+    - Create scrollable container for results
+    - Display person cards with name, DOB, address, religion
+    - Show match score badge on each card
+    - Add "Connect" button to each card
+    - Sort by match score (already sorted from API)
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [ ] 7.4 Implement navigation buttons
+    - Add "Back" button that calls onBack
+    - Add "Next: Create New" button that calls onNext
+    - Style buttons appropriately
+    - _Requirements: 1.4, 1.5_
+
+- [ ] 8. Create ConnectConfirmationDialog component
+  - [ ] 8.1 Create dialog component structure
+    - Use AlertDialog from Radix UI
+    - Accept props: open, onOpenChange, personName, relationshipType, onConfirm
+    - _Requirements: 3.1, 3.2_
+  - [ ] 8.2 Implement dialog content
+    - Show confirmation message with person name and relationship type
+    - Add "Cancel" and "Confirm" buttons
+    - _Requirements: 3.2, 3.4_
+  - [ ] 8.3 Handle confirmation action
+    - Call onConfirm callback when user confirms
+    - Close dialog when user cancels
+    - _Requirements: 3.3, 3.4_
+
+- [ ] 9. Update AddFamilyMemberDialog for 5-step flow
+  - [ ] 9.1 Add state for matching step
+    - Add matchingPersons state
+    - Add showMatchingStep boolean state
+    - Update currentStep to support step 4 (matching) and step 5 (confirmation)
+    - _Requirements: 1.2, 1.3_
+  - [ ] 9.2 Update ReligionStep next handler
+    - Build PersonSearchCriteria from collected data
+    - Call search API after religion step completes
+    - If matches found, set showMatchingStep=true and go to step 4
+    - If no matches, skip to step 5 (confirmation)
+    - _Requirements: 1.1, 1.2, 1.3_
+  - [ ] 9.3 Add ConnectExistingPersonStep to wizard
+    - Conditionally render ConnectExistingPersonStep when showMatchingStep=true
+    - Pass search criteria and callbacks
+    - Handle onConnect callback to show connect confirmation dialog
+    - Handle onNext callback to proceed to confirmation step
+    - Handle onBack callback to return to religion step
+    - _Requirements: 1.2, 1.4, 1.5_
+  - [ ] 9.4 Implement connect to existing person flow
+    - Create mutation for POST /api/v1/person/me/relationships
+    - On successful connection, show success toast
+    - Close wizard and invalidate family members query
+    - _Requirements: 3.3, 3.5_
+  - [ ] 9.5 Update step navigation logic
+    - Ensure back navigation preserves data
+    - Handle re-running search if user edits previous steps
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+
+- [ ] 10. Add error handling and loading states
+  - [ ] 10.1 Handle search API errors
+    - Show error toast if search fails
+    - Provide retry button
+    - Allow proceeding to confirmation as fallback
+    - _Requirements: 7.2, 7.3_
+  - [ ] 10.2 Handle connection API errors
+    - Show error toast if relationship creation fails
+    - Keep dialog open to allow retry
+    - _Requirements: 3.5_
+  - [ ] 10.3 Add loading indicators
+    - Show spinner while searching for matches
+    - Show spinner while creating relationship
+    - Disable buttons during loading
+    - _Requirements: 1.1, 3.3_
+
+- [ ] 11. Test the complete feature
+  - [ ] 11.1 Test with exact match scenario
+    - Create a person with specific details
+    - Try to add family member with same details
+    - Verify matching step appears with 100% match score
+    - Connect to existing person
+    - Verify relationship is created
+    - _Requirements: 1.1, 1.2, 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 3.5_
+  - [ ] 11.2 Test with fuzzy match scenario
+    - Create a person with name "John Smith"
+    - Try to add family member with name "Jon Smith"
+    - Verify matching step appears with high match score
+    - Verify match score is displayed correctly
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - [ ] 11.3 Test with no matches scenario
+    - Try to add family member with completely different details
+    - Verify matching step is skipped
+    - Verify wizard proceeds directly to confirmation
+    - _Requirements: 1.3_
+  - [ ] 11.4 Test exclusion of already-connected persons
+    - Add a family member
+    - Try to add the same person again
+    - Verify they don't appear in matching results
+    - _Requirements: 6.1, 6.2, 6.3_
+  - [ ] 11.5 Test navigation between steps
+    - Go through wizard to matching step
+    - Click back to religion step
+    - Verify data is preserved
+    - Click next again
+    - Verify same matches appear
+    - _Requirements: 1.4, 8.1, 8.2, 8.3, 8.4_
+  - [ ] 11.6 Test error scenarios
+    - Simulate API failure during search
+    - Verify error handling and retry option
+    - Simulate API failure during connection
+    - Verify error handling
+    - _Requirements: 7.2, 7.3_
+
+- [ ] 12. Final checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
