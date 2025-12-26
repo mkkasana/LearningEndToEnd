@@ -35,6 +35,11 @@ class PersonSearchRequest(SQLModel):
     religion_sub_category_id: uuid.UUID | None = Field(
         default=None, description="Religion sub-category reference"
     )
+    
+    # Address display string (passed from frontend to avoid duplicate queries)
+    address_display: str = Field(description="Comma-separated address display string")
+    # Religion display string (passed from frontend to avoid duplicate queries)
+    religion_display: str = Field(description="Comma-separated religion display string")
 
 
 class PersonMatchResult(SQLModel):

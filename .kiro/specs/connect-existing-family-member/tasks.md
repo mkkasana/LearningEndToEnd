@@ -29,20 +29,20 @@
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
 - [ ] 4. Implement PersonMatchingService search logic
-  - [ ] 4.1 Create _find_persons_by_address helper method
+  - [x] 4.1 Create _find_persons_by_address helper method
     - Query person_address table for matching address criteria
     - Return list of person IDs
     - _Requirements: 4.1_
-  - [ ] 4.2 Create _find_persons_by_religion helper method
+  - [x] 4.2 Create _find_persons_by_religion helper method
     - Query person_religion table for matching religion criteria
     - Return list of person IDs
     - _Requirements: 4.2_
-  - [ ] 4.3 Create _build_match_result helper method
+  - [x] 4.3 Create _build_match_result helper method
     - Fetch address and religion details for person
     - Build comma-separated display strings
     - Construct PersonMatchResult object
     - _Requirements: 2.2, 2.3_
-  - [ ] 4.4 Implement search_matching_persons main method
+  - [x] 4.4 Implement search_matching_persons main method
     - Find persons by address (call helper)
     - Find persons by religion (call helper)
     - Compute intersection of person IDs

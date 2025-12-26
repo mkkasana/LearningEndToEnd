@@ -4,14 +4,18 @@ import uuid
 from typing import List
 
 from rapidfuzz import fuzz
-from sqlmodel import Session
+from sqlmodel import Session, select
 
+from app.db_models.person.person import Person
+from app.db_models.person.person_address import PersonAddress
+from app.db_models.person.person_religion import PersonReligion
 from app.repositories.person.person_address_repository import PersonAddressRepository
 from app.repositories.person.person_relationship_repository import (
     PersonRelationshipRepository,
 )
 from app.repositories.person.person_religion_repository import PersonReligionRepository
 from app.repositories.person.person_repository import PersonRepository
+from app.schemas.person.person_search import PersonMatchResult, PersonSearchRequest
 
 
 class PersonMatchingService:
@@ -75,6 +79,10 @@ class PersonMatchingService:
     ) -> List[uuid.UUID]:
         """Find persons with matching address criteria.
         
+        All provided criteria must match exactly. If sub_district_id or locality_id
+        are provided, they must match. If they are None, only persons with None
+        for those fields will match.
+        
         Args:
             country_id: Country ID
             state_id: State ID
@@ -83,11 +91,20 @@ class PersonMatchingService:
             locality_id: Locality ID (optional)
             
         Returns:
-            List of person IDs matching the address criteria
+            List of person IDs matching the address criteria exactly
         """
-        # TODO: Implement address matching logic
-        # This will be implemented in a later task
-        return []
+        # Build query with all criteria for exact match
+        statement = select(PersonAddress.person_id).where(
+            PersonAddress.country_id == country_id,
+            PersonAddress.state_id == state_id,
+            PersonAddress.district_id == district_id,
+            PersonAddress.sub_district_id == sub_district_id,
+            PersonAddress.locality_id == locality_id,
+        )
+        
+        # Execute query and return list of person IDs
+        results = self.session.exec(statement).all()
+        return list(results)
 
     def _find_persons_by_religion(
         self,
@@ -97,39 +114,76 @@ class PersonMatchingService:
     ) -> List[uuid.UUID]:
         """Find persons with matching religion criteria.
         
+        All provided criteria must match exactly. If religion_category_id or 
+        religion_sub_category_id are provided, they must match. If they are None,
+        only persons with None for those fields will match.
+        
         Args:
             religion_id: Religion ID
             religion_category_id: Religion category ID (optional)
             religion_sub_category_id: Religion sub-category ID (optional)
             
         Returns:
-            List of person IDs matching the religion criteria
+            List of person IDs matching the religion criteria exactly
         """
-        # TODO: Implement religion matching logic
-        # This will be implemented in a later task
-        return []
+        # Build query with all criteria for exact match
+        statement = select(PersonReligion.person_id).where(
+            PersonReligion.religion_id == religion_id,
+            PersonReligion.religion_category_id == religion_category_id,
+            PersonReligion.religion_sub_category_id == religion_sub_category_id,
+        )
+        
+        # Execute query and return list of person IDs
+        results = self.session.exec(statement).all()
+        return list(results)
 
     def _build_match_result(
-        self, person_id: uuid.UUID, name_score: float
-    ) -> dict:
+        self,
+        person_id: uuid.UUID,
+        name_score: float,
+        address_display: str,
+        religion_display: str,
+    ) -> PersonMatchResult | None:
         """Build a match result for a person.
         
         Args:
             person_id: Person ID
             name_score: Name match score
+            address_display: Pre-built address display string
+            religion_display: Pre-built religion display string
             
         Returns:
-            Dictionary containing person details and match score
+            PersonMatchResult object or None if person not found
         """
-        # TODO: Implement match result building logic
-        # This will be implemented in a later task
-        return {}
+        # Fetch person details
+        person = self.session.exec(
+            select(Person).where(Person.id == person_id)
+        ).first()
+        
+        if not person:
+            return None
+        
+        # Construct PersonMatchResult
+        match_result = PersonMatchResult(
+            person_id=person.id,
+            first_name=person.first_name,
+            middle_name=person.middle_name,
+            last_name=person.last_name,
+            date_of_birth=person.date_of_birth,
+            date_of_death=person.date_of_death,
+            address_display=address_display,
+            religion_display=religion_display,
+            match_score=name_score,  # For now, match_score equals name_score
+            name_match_score=name_score,
+        )
+        
+        return match_result
 
     def search_matching_persons(
         self,
         current_user_id: uuid.UUID,
         search_criteria: dict,
-    ) -> List[dict]:
+    ) -> List[PersonMatchResult]:
         """Search for persons matching the provided criteria.
         
         Steps:
@@ -148,7 +202,88 @@ class PersonMatchingService:
         Returns:
             List of matching persons with scores, sorted by match score
         """
-        # TODO: Implement full search logic
-        # This will be implemented in a later task
-        return []
+        # Convert dict to PersonSearchRequest if needed
+        if isinstance(search_criteria, dict):
+            search_criteria = PersonSearchRequest(**search_criteria)
+        
+        # Use display strings from search criteria (passed from frontend)
+        address_display = search_criteria.address_display
+        religion_display = search_criteria.religion_display
+        
+        # Step 1: Find persons by address
+        address_person_ids = self._find_persons_by_address(
+            country_id=search_criteria.country_id,
+            state_id=search_criteria.state_id,
+            district_id=search_criteria.district_id,
+            sub_district_id=search_criteria.sub_district_id,
+            locality_id=search_criteria.locality_id,
+        )
+        
+        # Step 2: Find persons by religion
+        religion_person_ids = self._find_persons_by_religion(
+            religion_id=search_criteria.religion_id,
+            religion_category_id=search_criteria.religion_category_id,
+            religion_sub_category_id=search_criteria.religion_sub_category_id,
+        )
+        
+        # Step 3: Compute intersection of person IDs
+        matching_person_ids = set(address_person_ids) & set(religion_person_ids)
+        
+        if not matching_person_ids:
+            return []
+        
+        # Step 4: Filter by gender
+        persons = self.session.exec(
+            select(Person).where(
+                Person.id.in_(matching_person_ids),
+                Person.gender_id == search_criteria.gender_id
+            )
+        ).all()
+        
+        # Step 5: Get current user's person and connected person IDs
+        current_person = self.person_repo.get_by_user_id(current_user_id)
+        
+        if not current_person:
+            # If current user doesn't have a person record, return empty
+            return []
+        
+        # Get all related person IDs (already connected)
+        relationships = self.relationship_repo.get_by_person_id(current_person.id)
+        connected_person_ids = {rel.related_person_id for rel in relationships}
+        
+        # Step 6: Exclude current user and already-connected persons
+        persons = [
+            p for p in persons
+            if p.id != current_person.id and p.id not in connected_person_ids
+        ]
+        
+        if not persons:
+            return []
+        
+        # Step 7: Calculate name match scores for remaining persons
+        results = []
+        for person in persons:
+            name_score = self.calculate_name_match_score(
+                search_criteria.first_name,
+                search_criteria.last_name,
+                person.first_name,
+                person.last_name,
+            )
+            
+            # Filter by minimum score threshold (60%)
+            if name_score >= 60:
+                match_result = self._build_match_result(
+                    person.id,
+                    name_score,
+                    address_display,
+                    religion_display,
+                )
+                if match_result:  # Only add if result was successfully built
+                    results.append(match_result)
+        
+        # Step 8: Sort by match score descending
+        results.sort(key=lambda x: x.match_score, reverse=True)
+        
+        # Step 9: Limit to top 100 results
+        return results[:100]
 
