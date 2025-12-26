@@ -9,7 +9,7 @@ import useCustomToast from "@/hooks/useCustomToast"
 interface ConnectExistingPersonStepProps {
   searchCriteria: PersonSearchCriteria
   relationshipType: string
-  onConnect: (personId: string) => void
+  onConnect: (personId: string, personData: any) => void
   onNext: () => void
   onBack: () => void
 }
@@ -70,6 +70,7 @@ export function ConnectExistingPersonStep({
     isError,
     error,
     refetch,
+    isFetching,
   } = useQuery({
     queryKey: ["searchMatchingPersons", searchRequest],
     queryFn: () =>
@@ -78,13 +79,6 @@ export function ConnectExistingPersonStep({
       }),
     retry: false,
   })
-
-  // Show error toast if query fails
-  if (isError && error) {
-    showErrorToast(
-      error.message || "Failed to search for matching persons"
-    )
-  }
 
   return (
     <div className="space-y-4">
@@ -96,26 +90,41 @@ export function ConnectExistingPersonStep({
       </div>
 
       {/* Loading state */}
-      {isLoading && (
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">Loading matches...</p>
+      {(isLoading || isFetching) && (
+        <div className="flex items-center justify-center py-8 space-x-2">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p className="text-sm text-muted-foreground">Searching for matches...</p>
         </div>
       )}
 
       {/* Error state */}
-      {isError && (
-        <div className="space-y-2">
-          <p className="text-sm text-destructive">
-            Failed to load matching persons. Please try again.
-          </p>
-          <Button variant="outline" onClick={() => refetch()}>
-            Retry
-          </Button>
+      {isError && !isLoading && !isFetching && (
+        <div className="space-y-4 py-4">
+          <div className="bg-destructive/10 border border-destructive/20 rounded-md p-4">
+            <p className="text-sm text-destructive font-medium mb-2">
+              Failed to search for matching persons
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {error?.message || "An error occurred while searching. Please try again or proceed to create a new person."}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <LoadingButton 
+              variant="outline" 
+              onClick={() => refetch()}
+              loading={isFetching}
+            >
+              Retry Search
+            </LoadingButton>
+            <Button variant="default" onClick={onNext}>
+              Proceed to Create New
+            </Button>
+          </div>
         </div>
       )}
 
       {/* Results will be displayed here */}
-      {!isLoading && !isError && matchingPersons && (
+      {!isLoading && !isFetching && !isError && matchingPersons && (
         <div className="space-y-4">
           <p className="text-sm font-medium">
             Found {matchingPersons.length} matching person(s)
@@ -175,7 +184,7 @@ export function ConnectExistingPersonStep({
                 <div className="pt-2">
                   <Button
                     size="sm"
-                    onClick={() => onConnect(person.person_id)}
+                    onClick={() => onConnect(person.person_id, person)}
                   >
                     Connect as {relationshipType}
                   </Button>
@@ -188,10 +197,10 @@ export function ConnectExistingPersonStep({
 
       {/* Navigation buttons */}
       <div className="flex justify-between">
-        <Button type="button" variant="outline" onClick={onBack}>
+        <Button type="button" variant="outline" onClick={onBack} disabled={isLoading || isFetching}>
           Back
         </Button>
-        <Button type="button" onClick={onNext}>
+        <Button type="button" onClick={onNext} disabled={isLoading || isFetching}>
           Next: Create New
         </Button>
       </div>

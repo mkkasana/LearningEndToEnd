@@ -108,7 +108,7 @@
     - Close dialog when user cancels
     - _Requirements: 3.3, 3.4_
 
-- [ ] 9. Update AddFamilyMemberDialog for 5-step flow
+- [x] 9. Update AddFamilyMemberDialog for 5-step flow
   - [x] 9.1 Add state for matching step
     - Add matchingPersons state
     - Add showMatchingStep boolean state
@@ -137,59 +137,59 @@
     - Handle re-running search if user edits previous steps
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 10. Add error handling and loading states
-  - [ ] 10.1 Handle search API errors
+- [x] 10. Add error handling and loading states
+  - [x] 10.1 Handle search API errors
     - Show error toast if search fails
     - Provide retry button
     - Allow proceeding to confirmation as fallback
     - _Requirements: 7.2, 7.3_
-  - [ ] 10.2 Handle connection API errors
+  - [x] 10.2 Handle connection API errors
     - Show error toast if relationship creation fails
     - Keep dialog open to allow retry
     - _Requirements: 3.5_
-  - [ ] 10.3 Add loading indicators
+  - [x] 10.3 Add loading indicators
     - Show spinner while searching for matches
     - Show spinner while creating relationship
     - Disable buttons during loading
     - _Requirements: 1.1, 3.3_
 
-- [ ] 11. Test the complete feature
-  - [ ] 11.1 Test with exact match scenario
+- [x] 11. Test the complete feature
+  - [x] 11.1 Test with exact match scenario
     - Create a person with specific details
     - Try to add family member with same details
     - Verify matching step appears with 100% match score
     - Connect to existing person
     - Verify relationship is created
     - _Requirements: 1.1, 1.2, 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 3.5_
-  - [ ] 11.2 Test with fuzzy match scenario
+  - [x] 11.2 Test with fuzzy match scenario
     - Create a person with name "John Smith"
     - Try to add family member with name "Jon Smith"
     - Verify matching step appears with high match score
     - Verify match score is displayed correctly
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
-  - [ ] 11.3 Test with no matches scenario
+  - [x] 11.3 Test with no matches scenario
     - Try to add family member with completely different details
     - Verify matching step is skipped
     - Verify wizard proceeds directly to confirmation
     - _Requirements: 1.3_
-  - [ ] 11.4 Test exclusion of already-connected persons
+  - [x] 11.4 Test exclusion of already-connected persons
     - Add a family member
     - Try to add the same person again
     - Verify they don't appear in matching results
     - _Requirements: 6.1, 6.2, 6.3_
-  - [ ] 11.5 Test navigation between steps
+  - [x] 11.5 Test navigation between steps
     - Go through wizard to matching step
     - Click back to religion step
     - Verify data is preserved
     - Click next again
     - Verify same matches appear
     - _Requirements: 1.4, 8.1, 8.2, 8.3, 8.4_
-  - [ ] 11.6 Test error scenarios
+  - [x] 11.6 Test error scenarios
     - Simulate API failure during search
     - Verify error handling and retry option
     - Simulate API failure during connection
     - Verify error handling
     - _Requirements: 7.2, 7.3_
 
-- [ ] 12. Final checkpoint - Ensure all tests pass
+- [x] 12. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.

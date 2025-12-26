@@ -1,6 +1,5 @@
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -8,6 +7,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { LoadingButton } from "@/components/ui/loading-button"
 
 interface ConnectConfirmationDialogProps {
   open: boolean
@@ -15,6 +15,7 @@ interface ConnectConfirmationDialogProps {
   personName: string
   relationshipType: string
   onConfirm: () => void
+  isLoading?: boolean
 }
 
 export function ConnectConfirmationDialog({
@@ -23,18 +24,21 @@ export function ConnectConfirmationDialog({
   personName,
   relationshipType,
   onConfirm,
+  isLoading = false,
 }: ConnectConfirmationDialogProps) {
   const handleConfirm = () => {
     onConfirm()
-    onOpenChange(false)
+    // Don't close dialog here - let parent handle it on success
   }
 
   const handleCancel = () => {
-    onOpenChange(false)
+    if (!isLoading) {
+      onOpenChange(false)
+    }
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open} onOpenChange={isLoading ? undefined : onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Connect to Existing Person</AlertDialogTitle>
@@ -44,8 +48,12 @@ export function ConnectConfirmationDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm}>Confirm</AlertDialogAction>
+          <AlertDialogCancel onClick={handleCancel} disabled={isLoading}>
+            Cancel
+          </AlertDialogCancel>
+          <LoadingButton onClick={handleConfirm} loading={isLoading}>
+            Confirm
+          </LoadingButton>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

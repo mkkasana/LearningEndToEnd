@@ -59,15 +59,34 @@ export function AddFamilyMemberDialog({
     onSuccess: () => {
       showSuccessToast("Successfully connected to existing person!")
       queryClient.invalidateQueries({ queryKey: ["myRelationshipsWithDetails"] })
+      setShowConnectDialog(false)
       handleClose()
     },
     onError: (error: any) => {
-      showErrorToast(error.message || "Failed to create relationship")
+      showErrorToast(error.message || "Failed to create relationship. Please try again.")
+      // Keep dialog open to allow retry
     },
   })
 
   const handleBasicInfoComplete = (data: any) => {
-    setFamilyMemberData(data)
+    // Add relationship type label for display
+    const RELATIONSHIP_TYPES = [
+      { value: "rel-6a0ede824d101", label: "Father" },
+      { value: "rel-6a0ede824d102", label: "Mother" },
+      { value: "rel-6a0ede824d103", label: "Daughter" },
+      { value: "rel-6a0ede824d104", label: "Son" },
+      { value: "rel-6a0ede824d105", label: "Wife" },
+      { value: "rel-6a0ede824d106", label: "Husband" },
+      { value: "rel-6a0ede824d107", label: "Spouse" },
+    ]
+    const relationshipLabel = RELATIONSHIP_TYPES.find(
+      (r) => r.value === data.relationship_type
+    )?.label || data.relationship_type
+    
+    setFamilyMemberData({
+      ...data,
+      relationshipTypeLabel: relationshipLabel,
+    })
     setCurrentStep(STEPS.ADDRESS)
   }
 
@@ -95,67 +114,9 @@ export function AddFamilyMemberDialog({
     if (data._displayNames?.subCategory) religionParts.push(data._displayNames.subCategory)
     const religionDisplay = religionParts.join(", ")
     
-    // Build PersonSearchCriteria from collected data
-    const searchCriteria = {
-      firstName: familyMemberData.first_name,
-      lastName: familyMemberData.last_name,
-      middleName: familyMemberData.middle_name,
-      genderId: familyMemberData.gender_id,
-      dateOfBirth: familyMemberData.date_of_birth,
-      
-      countryId: addressData.country_id,
-      stateId: addressData.state_id,
-      districtId: addressData.district_id,
-      subDistrictId: addressData.sub_district_id,
-      localityId: addressData.locality_id,
-      
-      religionId: data.religion_id,
-      religionCategoryId: data.religion_category_id,
-      religionSubCategoryId: data.religion_sub_category_id,
-      
-      addressDisplay,
-      religionDisplay,
-    }
-    
-    try {
-      // Call search API
-      const matches = await PersonService.searchMatchingPersons({
-        requestBody: {
-          first_name: searchCriteria.firstName,
-          last_name: searchCriteria.lastName,
-          middle_name: searchCriteria.middleName || null,
-          gender_id: searchCriteria.genderId,
-          date_of_birth: searchCriteria.dateOfBirth,
-          country_id: searchCriteria.countryId,
-          state_id: searchCriteria.stateId,
-          district_id: searchCriteria.districtId,
-          sub_district_id: searchCriteria.subDistrictId || null,
-          locality_id: searchCriteria.localityId || null,
-          religion_id: searchCriteria.religionId,
-          religion_category_id: searchCriteria.religionCategoryId || null,
-          religion_sub_category_id: searchCriteria.religionSubCategoryId || null,
-          address_display: addressDisplay,
-          religion_display: religionDisplay,
-        },
-      })
-      
-      // If matches found, show matching step
-      if (matches && matches.length > 0) {
-        setMatchingPersons(matches)
-        setShowMatchingStep(true)
-        setCurrentStep(STEPS.MATCHING)
-      } else {
-        // No matches, skip to confirmation
-        setShowMatchingStep(false)
-        setCurrentStep(STEPS.CONFIRMATION)
-      }
-    } catch (error) {
-      // On error, allow proceeding to confirmation
-      console.error("Error searching for matches:", error)
-      showErrorToast("Failed to search for matches. Proceeding to create new person.")
-      setShowMatchingStep(false)
-      setCurrentStep(STEPS.CONFIRMATION)
-    }
+    // Always show matching step - it will handle search internally
+    setShowMatchingStep(true)
+    setCurrentStep(STEPS.MATCHING)
   }
 
   const handleBackToBasicInfo = () => {
@@ -173,13 +134,10 @@ export function AddFamilyMemberDialog({
     setCurrentStep(STEPS.RELIGION)
   }
 
-  const handleConnectToPerson = (personId: string) => {
-    // Find the person in matching results
-    const person = matchingPersons.find((p) => p.person_id === personId)
-    if (person) {
-      setSelectedPersonToConnect(person)
-      setShowConnectDialog(true)
-    }
+  const handleConnectToPerson = (personId: string, personData: any) => {
+    // personData is passed from ConnectExistingPersonStep
+    setSelectedPersonToConnect(personData)
+    setShowConnectDialog(true)
   }
 
   const handleMatchingStepNext = () => {
@@ -305,7 +263,7 @@ export function AddFamilyMemberDialog({
                   return parts.join(", ")
                 })(),
               }}
-              relationshipType={familyMemberData?.relationship_type || ""}
+              relationshipType={familyMemberData?.relationshipTypeLabel || ""}
               onConnect={handleConnectToPerson}
               onNext={handleMatchingStepNext}
               onBack={handleBackToReligion}
@@ -330,13 +288,14 @@ export function AddFamilyMemberDialog({
           open={showConnectDialog}
           onOpenChange={setShowConnectDialog}
           personName={`${selectedPersonToConnect.first_name} ${selectedPersonToConnect.middle_name ? selectedPersonToConnect.middle_name + ' ' : ''}${selectedPersonToConnect.last_name}`}
-          relationshipType={familyMemberData?.relationshipType || ""}
+          relationshipType={familyMemberData?.relationshipTypeLabel || ""}
           onConfirm={() => {
             createRelationshipMutation.mutate({
               relatedPersonId: selectedPersonToConnect.person_id,
-              relationshipType: familyMemberData?.relationshipType || "",
+              relationshipType: familyMemberData?.relationship_type || "",
             })
           }}
+          isLoading={createRelationshipMutation.isPending}
         />
       )}
     </>
