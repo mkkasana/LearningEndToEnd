@@ -72,23 +72,23 @@
   - _Requirements: 7.1, 7.5_
 
 - [ ] 7. Create ConnectExistingPersonStep frontend component
-  - [ ] 7.1 Create component file and basic structure
+  - [x] 7.1 Create component file and basic structure
     - Define props interface (searchCriteria, relationshipType, onConnect, onNext, onBack)
     - Set up component skeleton with buttons
     - _Requirements: 1.2, 1.5_
-  - [ ] 7.2 Implement search API call
+  - [x] 7.2 Implement search API call
     - Use useQuery to call PersonService.searchMatches
     - Pass search criteria from props
     - Handle loading and error states
     - _Requirements: 1.1, 4.1, 4.2, 4.3, 4.4, 4.5_
-  - [ ] 7.3 Implement matching persons list UI
+  - [x] 7.3 Implement matching persons list UI
     - Create scrollable container for results
     - Display person cards with name, DOB, address, religion
     - Show match score badge on each card
     - Add "Connect" button to each card
     - Sort by match score (already sorted from API)
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
-  - [ ] 7.4 Implement navigation buttons
+  - [x] 7.4 Implement navigation buttons
     - Add "Back" button that calls onBack
     - Add "Next: Create New" button that calls onNext
     - Style buttons appropriately
