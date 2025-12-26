@@ -71,7 +71,7 @@
   - Verify PersonService.searchMatches method exists
   - _Requirements: 7.1, 7.5_
 
-- [ ] 7. Create ConnectExistingPersonStep frontend component
+- [x] 7. Create ConnectExistingPersonStep frontend component
   - [x] 7.1 Create component file and basic structure
     - Define props interface (searchCriteria, relationshipType, onConnect, onNext, onBack)
     - Set up component skeleton with buttons
@@ -94,16 +94,16 @@
     - Style buttons appropriately
     - _Requirements: 1.4, 1.5_
 
-- [ ] 8. Create ConnectConfirmationDialog component
-  - [ ] 8.1 Create dialog component structure
+- [x] 8. Create ConnectConfirmationDialog component
+  - [x] 8.1 Create dialog component structure
     - Use AlertDialog from Radix UI
     - Accept props: open, onOpenChange, personName, relationshipType, onConfirm
     - _Requirements: 3.1, 3.2_
-  - [ ] 8.2 Implement dialog content
+  - [x] 8.2 Implement dialog content
     - Show confirmation message with person name and relationship type
     - Add "Cancel" and "Confirm" buttons
     - _Requirements: 3.2, 3.4_
-  - [ ] 8.3 Handle confirmation action
+  - [x] 8.3 Handle confirmation action
     - Call onConfirm callback when user confirms
     - Close dialog when user cancels
     - _Requirements: 3.3, 3.4_
