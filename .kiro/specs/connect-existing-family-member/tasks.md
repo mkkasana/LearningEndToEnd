@@ -5,18 +5,18 @@
   - Create PersonMatchingService class structure
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 2. Implement person search schemas
-  - [ ] 2.1 Create PersonSearchRequest schema
+- [x] 2. Implement person search schemas
+  - [x] 2.1 Create PersonSearchRequest schema
     - Define fields for basic details (first_name, last_name, middle_name, gender_id, date_of_birth)
     - Define fields for address criteria (country_id, state_id, district_id, sub_district_id, locality_id)
     - Define fields for religion criteria (religion_id, religion_category_id, religion_sub_category_id)
     - _Requirements: 7.1_
-  - [ ] 2.2 Create PersonMatchResult schema
+  - [x] 2.2 Create PersonMatchResult schema
     - Define person fields (person_id, names, dates)
     - Add address_display and religion_display string fields
     - Add match_score and name_match_score fields
     - _Requirements: 7.5_
-  - [ ] 2.3 Export new schemas from person __init__.py
+  - [x] 2.3 Export new schemas from person __init__.py
     - Add PersonSearchRequest and PersonMatchResult to exports
     - _Requirements: 7.1, 7.5_
 

@@ -34,6 +34,7 @@ from app.schemas.person.person_religion import (
     PersonReligionPublic,
     PersonReligionUpdate,
 )
+from app.schemas.person.person_search import PersonMatchResult, PersonSearchRequest
 from app.schemas.person.profession import (
     ProfessionCreate,
     ProfessionDetailPublic,
@@ -51,6 +52,7 @@ __all__ = [
     "PersonAddressUpdate",
     "PersonCreate",
     "PersonDetails",
+    "PersonMatchResult",
     "PersonMetadataCreate",
     "PersonMetadataPublic",
     "PersonMetadataUpdate",
@@ -65,6 +67,7 @@ __all__ = [
     "PersonReligionCreate",
     "PersonReligionPublic",
     "PersonReligionUpdate",
+    "PersonSearchRequest",
     "PersonUpdate",
     "ProfessionCreate",
     "ProfessionDetailPublic",
