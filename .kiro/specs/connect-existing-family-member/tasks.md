@@ -20,8 +20,8 @@
     - Add PersonSearchRequest and PersonMatchResult to exports
     - _Requirements: 7.1, 7.5_
 
-- [ ] 3. Implement fuzzy name matching utility
-  - [ ] 3.1 Create calculate_name_match_score method
+- [x] 3. Implement fuzzy name matching utility
+  - [x] 3.1 Create calculate_name_match_score method
     - Normalize names (lowercase, strip whitespace)
     - Use rapidfuzz.fuzz.ratio for first and last name comparison
     - Calculate weighted average (40% first name, 60% last name)
