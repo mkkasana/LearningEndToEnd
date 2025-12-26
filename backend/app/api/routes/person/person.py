@@ -12,6 +12,7 @@ from app.schemas.person import (
     PersonAddressPublic,
     PersonAddressUpdate,
     PersonCreate,
+    PersonMatchResult,
     PersonMetadataCreate,
     PersonMetadataPublic,
     PersonMetadataUpdate,
@@ -24,10 +25,12 @@ from app.schemas.person import (
     PersonRelationshipUpdate,
     PersonRelationshipWithDetails,
     PersonReligionCreate,
+    PersonSearchRequest,
     PersonUpdate,
 )
 from app.services.person import (
     PersonAddressService,
+    PersonMatchingService,
     PersonMetadataService,
     PersonProfessionService,
     PersonRelationshipService,
@@ -105,6 +108,44 @@ def create_family_member(
     
     created_person = person_service.person_repo.create(person)
     return created_person
+
+
+@router.post("/search-matches", response_model=list[PersonMatchResult])
+def search_matching_persons(
+    session: SessionDep,
+    current_user: CurrentUser,
+    search_request: PersonSearchRequest,
+) -> Any:
+    """
+    Search for existing persons matching the provided criteria.
+    
+    Returns list of potential matches with scores, sorted by match score descending.
+    Used to prevent duplicate person records when adding family members.
+    """
+    try:
+        # Instantiate PersonMatchingService
+        matching_service = PersonMatchingService(session)
+        
+        # Call search_matching_persons method
+        matches = matching_service.search_matching_persons(
+            current_user_id=current_user.id,
+            search_criteria=search_request,
+        )
+        
+        return matches
+        
+    except ValueError as e:
+        # Handle validation errors
+        raise HTTPException(
+            status_code=422,
+            detail=str(e),
+        )
+    except Exception as e:
+        # Handle unexpected errors
+        raise HTTPException(
+            status_code=500,
+            detail="An error occurred while searching for matching persons",
+        )
 
 
 @router.post("/{person_id}/addresses", response_model=PersonAddressPublic)

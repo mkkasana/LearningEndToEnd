@@ -271,7 +271,7 @@ class PersonMatchingService:
             )
             
             # Filter by minimum score threshold (60%)
-            if name_score >= 60:
+            if name_score >= 40:
                 match_result = self._build_match_result(
                     person.id,
                     name_score,

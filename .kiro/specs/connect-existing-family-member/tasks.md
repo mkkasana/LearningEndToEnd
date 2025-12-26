@@ -55,8 +55,8 @@
     - Limit to top 10 results
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 5.1, 5.2, 5.3, 6.1, 6.2, 6.3_
 
-- [ ] 5. Create person search API endpoint
-  - [ ] 5.1 Add POST /api/v1/person/search-matches endpoint
+- [x] 5. Create person search API endpoint
+  - [x] 5.1 Add POST /api/v1/person/search-matches endpoint
     - Accept PersonSearchRequest in request body
     - Require authentication (CurrentUser dependency)
     - Instantiate PersonMatchingService
