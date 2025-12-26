@@ -1222,6 +1222,82 @@ export const PersonDetailsSchema = {
     description: 'Person details for relationship response.'
 } as const;
 
+export const PersonMatchResultSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'Person ID'
+        },
+        first_name: {
+            type: 'string',
+            title: 'First Name',
+            description: 'First name'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name',
+            description: 'Middle name'
+        },
+        last_name: {
+            type: 'string',
+            title: 'Last Name',
+            description: 'Last name'
+        },
+        date_of_birth: {
+            type: 'string',
+            format: 'date',
+            title: 'Date Of Birth',
+            description: 'Date of birth'
+        },
+        date_of_death: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date Of Death',
+            description: 'Date of death'
+        },
+        address_display: {
+            type: 'string',
+            title: 'Address Display',
+            description: 'Comma-separated address display'
+        },
+        religion_display: {
+            type: 'string',
+            title: 'Religion Display',
+            description: 'Comma-separated religion display'
+        },
+        match_score: {
+            type: 'number',
+            title: 'Match Score',
+            description: 'Overall match score 0-100'
+        },
+        name_match_score: {
+            type: 'number',
+            title: 'Name Match Score',
+            description: 'Name similarity score 0-100'
+        }
+    },
+    type: 'object',
+    required: ['person_id', 'first_name', 'last_name', 'date_of_birth', 'address_display', 'religion_display', 'match_score', 'name_match_score'],
+    title: 'PersonMatchResult',
+    description: 'Result schema for person match.'
+} as const;
+
 export const PersonMetadataCreateSchema = {
     properties: {
         profile_image_url: {
@@ -1935,6 +2011,138 @@ export const PersonReligionUpdateSchema = {
     type: 'object',
     title: 'PersonReligionUpdate',
     description: 'Schema for updating person religion (all fields optional).'
+} as const;
+
+export const PersonSearchRequestSchema = {
+    properties: {
+        first_name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'First Name',
+            description: 'First name to search'
+        },
+        last_name: {
+            type: 'string',
+            maxLength: 100,
+            title: 'Last Name',
+            description: 'Last name to search'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name',
+            description: 'Middle name (optional)'
+        },
+        gender_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Gender Id',
+            description: 'Gender ID'
+        },
+        date_of_birth: {
+            type: 'string',
+            format: 'date',
+            title: 'Date Of Birth',
+            description: 'Date of birth'
+        },
+        country_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Country Id',
+            description: 'Country reference'
+        },
+        state_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'State Id',
+            description: 'State reference'
+        },
+        district_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'District Id',
+            description: 'District reference'
+        },
+        sub_district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub District Id',
+            description: 'Sub-district reference'
+        },
+        locality_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Id',
+            description: 'Locality reference'
+        },
+        religion_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Religion Id',
+            description: 'Religion reference'
+        },
+        religion_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Category Id',
+            description: 'Religion category reference'
+        },
+        religion_sub_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Sub Category Id',
+            description: 'Religion sub-category reference'
+        },
+        address_display: {
+            type: 'string',
+            title: 'Address Display',
+            description: 'Comma-separated address display string'
+        },
+        religion_display: {
+            type: 'string',
+            title: 'Religion Display',
+            description: 'Comma-separated religion display string'
+        }
+    },
+    type: 'object',
+    required: ['first_name', 'last_name', 'gender_id', 'date_of_birth', 'country_id', 'state_id', 'district_id', 'religion_id', 'address_display', 'religion_display'],
+    title: 'PersonSearchRequest',
+    description: 'Request schema for person matching search.'
 } as const;
 
 export const PersonUpdateSchema = {

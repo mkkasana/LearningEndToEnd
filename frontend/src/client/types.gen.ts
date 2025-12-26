@@ -425,6 +425,52 @@ export type PersonDetails = {
 };
 
 /**
+ * Result schema for person match.
+ */
+export type PersonMatchResult = {
+    /**
+     * Person ID
+     */
+    person_id: string;
+    /**
+     * First name
+     */
+    first_name: string;
+    /**
+     * Middle name
+     */
+    middle_name?: (string | null);
+    /**
+     * Last name
+     */
+    last_name: string;
+    /**
+     * Date of birth
+     */
+    date_of_birth: string;
+    /**
+     * Date of death
+     */
+    date_of_death?: (string | null);
+    /**
+     * Comma-separated address display
+     */
+    address_display: string;
+    /**
+     * Comma-separated religion display
+     */
+    religion_display: string;
+    /**
+     * Overall match score 0-100
+     */
+    match_score: number;
+    /**
+     * Name similarity score 0-100
+     */
+    name_match_score: number;
+};
+
+/**
  * Schema for creating person metadata.
  */
 export type PersonMetadataCreate = {
@@ -680,6 +726,72 @@ export type PersonReligionUpdate = {
     religion_id?: (string | null);
     religion_category_id?: (string | null);
     religion_sub_category_id?: (string | null);
+};
+
+/**
+ * Request schema for person matching search.
+ */
+export type PersonSearchRequest = {
+    /**
+     * First name to search
+     */
+    first_name: string;
+    /**
+     * Last name to search
+     */
+    last_name: string;
+    /**
+     * Middle name (optional)
+     */
+    middle_name?: (string | null);
+    /**
+     * Gender ID
+     */
+    gender_id: string;
+    /**
+     * Date of birth
+     */
+    date_of_birth: string;
+    /**
+     * Country reference
+     */
+    country_id: string;
+    /**
+     * State reference
+     */
+    state_id: string;
+    /**
+     * District reference
+     */
+    district_id: string;
+    /**
+     * Sub-district reference
+     */
+    sub_district_id?: (string | null);
+    /**
+     * Locality reference
+     */
+    locality_id?: (string | null);
+    /**
+     * Religion reference
+     */
+    religion_id: string;
+    /**
+     * Religion category reference
+     */
+    religion_category_id?: (string | null);
+    /**
+     * Religion sub-category reference
+     */
+    religion_sub_category_id?: (string | null);
+    /**
+     * Comma-separated address display string
+     */
+    address_display: string;
+    /**
+     * Comma-separated religion display string
+     */
+    religion_display: string;
 };
 
 /**
@@ -1429,6 +1541,12 @@ export type PersonCreateFamilyMemberData = {
 };
 
 export type PersonCreateFamilyMemberResponse = (PersonPublic);
+
+export type PersonSearchMatchingPersonsData = {
+    requestBody: PersonSearchRequest;
+};
+
+export type PersonSearchMatchingPersonsResponse = (Array<PersonMatchResult>);
 
 export type PersonCreatePersonAddressData = {
     personId: string;

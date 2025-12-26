@@ -28,7 +28,7 @@
     - Return score rounded to 2 decimal places
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 4. Implement PersonMatchingService search logic
+- [x] 4. Implement PersonMatchingService search logic
   - [x] 4.1 Create _find_persons_by_address helper method
     - Query person_address table for matching address criteria
     - Return list of person IDs
@@ -65,7 +65,7 @@
     - Handle errors with appropriate HTTP status codes
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 6. Regenerate OpenAPI spec and TypeScript client
+- [x] 6. Regenerate OpenAPI spec and TypeScript client
   - Run backend to generate updated openapi.json
   - Run npm run generate-client in frontend
   - Verify PersonService.searchMatches method exists
