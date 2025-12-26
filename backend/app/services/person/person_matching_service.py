@@ -1,5 +1,6 @@
 """Person matching service for finding duplicate persons."""
 
+import logging
 import uuid
 from typing import List
 
@@ -16,6 +17,8 @@ from app.repositories.person.person_relationship_repository import (
 from app.repositories.person.person_religion_repository import PersonReligionRepository
 from app.repositories.person.person_repository import PersonRepository
 from app.schemas.person.person_search import PersonMatchResult, PersonSearchRequest
+
+logger = logging.getLogger(__name__)
 
 
 class PersonMatchingService:
@@ -93,6 +96,11 @@ class PersonMatchingService:
         Returns:
             List of person IDs matching the address criteria exactly
         """
+        logger.debug(
+            f"Querying person_address: country={country_id}, state={state_id}, "
+            f"district={district_id}, sub_district={sub_district_id}, locality={locality_id}"
+        )
+        
         # Build query with all criteria for exact match
         statement = select(PersonAddress.person_id).where(
             PersonAddress.country_id == country_id,
@@ -104,6 +112,7 @@ class PersonMatchingService:
         
         # Execute query and return list of person IDs
         results = self.session.exec(statement).all()
+        logger.debug(f"Address query returned {len(results)} person IDs")
         return list(results)
 
     def _find_persons_by_religion(
@@ -126,6 +135,11 @@ class PersonMatchingService:
         Returns:
             List of person IDs matching the religion criteria exactly
         """
+        logger.debug(
+            f"Querying person_religion: religion={religion_id}, "
+            f"category={religion_category_id}, sub_category={religion_sub_category_id}"
+        )
+        
         # Build query with all criteria for exact match
         statement = select(PersonReligion.person_id).where(
             PersonReligion.religion_id == religion_id,
@@ -135,6 +149,7 @@ class PersonMatchingService:
         
         # Execute query and return list of person IDs
         results = self.session.exec(statement).all()
+        logger.debug(f"Religion query returned {len(results)} person IDs")
         return list(results)
 
     def _build_match_result(
@@ -202,6 +217,8 @@ class PersonMatchingService:
         Returns:
             List of matching persons with scores, sorted by match score
         """
+        logger.info(f"Starting person search for user {current_user_id}")
+        
         # Convert dict to PersonSearchRequest if needed
         if isinstance(search_criteria, dict):
             search_criteria = PersonSearchRequest(**search_criteria)
@@ -211,6 +228,10 @@ class PersonMatchingService:
         religion_display = search_criteria.religion_display
         
         # Step 1: Find persons by address
+        logger.debug(
+            f"Searching by address: country={search_criteria.country_id}, "
+            f"state={search_criteria.state_id}, district={search_criteria.district_id}"
+        )
         address_person_ids = self._find_persons_by_address(
             country_id=search_criteria.country_id,
             state_id=search_criteria.state_id,
@@ -218,18 +239,23 @@ class PersonMatchingService:
             sub_district_id=search_criteria.sub_district_id,
             locality_id=search_criteria.locality_id,
         )
+        logger.info(f"Found {len(address_person_ids)} persons matching address criteria")
         
         # Step 2: Find persons by religion
+        logger.debug(f"Searching by religion: religion_id={search_criteria.religion_id}")
         religion_person_ids = self._find_persons_by_religion(
             religion_id=search_criteria.religion_id,
             religion_category_id=search_criteria.religion_category_id,
             religion_sub_category_id=search_criteria.religion_sub_category_id,
         )
+        logger.info(f"Found {len(religion_person_ids)} persons matching religion criteria")
         
         # Step 3: Compute intersection of person IDs
         matching_person_ids = set(address_person_ids) & set(religion_person_ids)
+        logger.info(f"Found {len(matching_person_ids)} persons matching both address and religion")
         
         if not matching_person_ids:
+            logger.info("No persons found matching both criteria, returning empty list")
             return []
         
         # Step 4: Filter by gender
@@ -239,25 +265,30 @@ class PersonMatchingService:
                 Person.gender_id == search_criteria.gender_id
             )
         ).all()
+        logger.info(f"After gender filter: {len(persons)} persons remain")
         
         # Step 5: Get current user's person and connected person IDs
         current_person = self.person_repo.get_by_user_id(current_user_id)
         
         if not current_person:
             # If current user doesn't have a person record, return empty
+            logger.warning(f"User {current_user_id} does not have a person record")
             return []
         
         # Get all related person IDs (already connected)
         relationships = self.relationship_repo.get_by_person_id(current_person.id)
         connected_person_ids = {rel.related_person_id for rel in relationships}
+        logger.info(f"User has {len(connected_person_ids)} existing relationships to exclude")
         
         # Step 6: Exclude current user and already-connected persons
         persons = [
             p for p in persons
             if p.id != current_person.id and p.id not in connected_person_ids
         ]
+        logger.info(f"After excluding current user and connected persons: {len(persons)} persons remain")
         
         if not persons:
+            logger.info("No persons remain after exclusions, returning empty list")
             return []
         
         # Step 7: Calculate name match scores for remaining persons
@@ -281,9 +312,14 @@ class PersonMatchingService:
                 if match_result:  # Only add if result was successfully built
                     results.append(match_result)
         
+        logger.info(f"After name matching (threshold 40%): {len(results)} matches found")
+        
         # Step 8: Sort by match score descending
         results.sort(key=lambda x: x.match_score, reverse=True)
         
         # Step 9: Limit to top 100 results
-        return results[:100]
+        final_results = results[:100]
+        logger.info(f"Returning {len(final_results)} matches (top 100)")
+        
+        return final_results
 

@@ -109,30 +109,30 @@
     - _Requirements: 3.3, 3.4_
 
 - [ ] 9. Update AddFamilyMemberDialog for 5-step flow
-  - [ ] 9.1 Add state for matching step
+  - [x] 9.1 Add state for matching step
     - Add matchingPersons state
     - Add showMatchingStep boolean state
     - Update currentStep to support step 4 (matching) and step 5 (confirmation)
     - _Requirements: 1.2, 1.3_
-  - [ ] 9.2 Update ReligionStep next handler
+  - [x] 9.2 Update ReligionStep next handler
     - Build PersonSearchCriteria from collected data
     - Call search API after religion step completes
     - If matches found, set showMatchingStep=true and go to step 4
     - If no matches, skip to step 5 (confirmation)
     - _Requirements: 1.1, 1.2, 1.3_
-  - [ ] 9.3 Add ConnectExistingPersonStep to wizard
+  - [x] 9.3 Add ConnectExistingPersonStep to wizard
     - Conditionally render ConnectExistingPersonStep when showMatchingStep=true
     - Pass search criteria and callbacks
     - Handle onConnect callback to show connect confirmation dialog
     - Handle onNext callback to proceed to confirmation step
     - Handle onBack callback to return to religion step
     - _Requirements: 1.2, 1.4, 1.5_
-  - [ ] 9.4 Implement connect to existing person flow
+  - [x] 9.4 Implement connect to existing person flow
     - Create mutation for POST /api/v1/person/me/relationships
     - On successful connection, show success toast
     - Close wizard and invalidate family members query
     - _Requirements: 3.3, 3.5_
-  - [ ] 9.5 Update step navigation logic
+  - [x] 9.5 Update step navigation logic
     - Ensure back navigation preserves data
     - Handle re-running search if user edits previous steps
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_

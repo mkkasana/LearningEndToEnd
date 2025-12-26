@@ -32,8 +32,8 @@ import useAuth from "@/hooks/useAuth"
 
 const formSchema = z.object({
   country_id: z.string().min(1, "Country is required"),
-  state_id: z.string().optional(),
-  district_id: z.string().optional(),
+  state_id: z.string().min(1, "State is required"),
+  district_id: z.string().min(1, "District is required"),
   sub_district_id: z.string().optional(),
   locality_id: z.string().optional(),
   address_line: z.string().optional(),
@@ -274,7 +274,7 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
               name="state_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>State</FormLabel>
+                  <FormLabel>State *</FormLabel>
                   <Select
                     onValueChange={handleStateChange}
                     value={field.value}
@@ -305,7 +305,7 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
               name="district_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>District</FormLabel>
+                  <FormLabel>District *</FormLabel>
                   <Select
                     onValueChange={handleDistrictChange}
                     value={field.value}

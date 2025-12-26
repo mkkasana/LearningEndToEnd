@@ -1,5 +1,6 @@
 """Person API routes."""
 
+import logging
 import uuid
 from typing import Any
 
@@ -38,6 +39,7 @@ from app.services.person import (
     PersonService,
 )
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -122,6 +124,13 @@ def search_matching_persons(
     Returns list of potential matches with scores, sorted by match score descending.
     Used to prevent duplicate person records when adding family members.
     """
+    logger.info(
+        f"Person search request from user {current_user.email}: "
+        f"name={search_request.first_name} {search_request.last_name}, "
+        f"country={search_request.country_id}, state={search_request.state_id}, "
+        f"district={search_request.district_id}, religion={search_request.religion_id}"
+    )
+    
     try:
         # Instantiate PersonMatchingService
         matching_service = PersonMatchingService(session)
@@ -132,16 +141,19 @@ def search_matching_persons(
             search_criteria=search_request,
         )
         
+        logger.info(f"Found {len(matches)} matching persons for user {current_user.email}")
         return matches
         
     except ValueError as e:
         # Handle validation errors
+        logger.error(f"Validation error in person search for user {current_user.email}: {str(e)}")
         raise HTTPException(
             status_code=422,
             detail=str(e),
         )
     except Exception as e:
         # Handle unexpected errors
+        logger.exception(f"Unexpected error in person search for user {current_user.email}: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail="An error occurred while searching for matching persons",
