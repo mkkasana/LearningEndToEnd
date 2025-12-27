@@ -223,9 +223,85 @@ class PersonRelationshipService:
             self.session.rollback()
             raise
 
-    def delete_relationship(self, relationship: PersonRelationship) -> None:
-        """Delete a relationship."""
-        self.relationship_repo.delete(relationship)
+    def delete_relationship(self, relationship: PersonRelationship, soft_delete: bool = False) -> None:
+        """
+        Delete a bidirectional relationship.
+        
+        This method deletes both the primary relationship and its inverse relationship,
+        ensuring that both directions are removed from the system. Supports both
+        soft delete (setting is_active=False) and hard delete (removing records).
+        
+        Args:
+            relationship: The primary relationship to delete
+            soft_delete: If True, performs soft delete (is_active=False), otherwise hard delete
+            
+        Raises:
+            Exception: If the deletion fails (transaction will be rolled back)
+        """
+        try:
+            logger.info(
+                f"Deleting relationship: id={relationship.id}, "
+                f"person_id={relationship.person_id}, "
+                f"related_person_id={relationship.related_person_id}, "
+                f"soft_delete={soft_delete}"
+            )
+            
+            # Find inverse relationship using repository
+            inverse_relationship = self.relationship_repo.find_inverse_including_inactive(
+                person_id=relationship.person_id,
+                related_person_id=relationship.related_person_id,
+            )
+            
+            if soft_delete:
+                # Soft delete: update is_active to False for both relationships
+                logger.info(f"Performing soft delete for relationship ID: {relationship.id}")
+                relationship.is_active = False
+                relationship.updated_at = datetime.utcnow()
+                self.relationship_repo.update_without_commit(relationship)
+                logger.info(f"Soft deleted primary relationship with ID: {relationship.id}")
+                
+                if inverse_relationship:
+                    logger.info(
+                        f"Found inverse relationship with ID: {inverse_relationship.id}, "
+                        f"performing soft delete"
+                    )
+                    inverse_relationship.is_active = False
+                    inverse_relationship.updated_at = datetime.utcnow()
+                    self.relationship_repo.update_without_commit(inverse_relationship)
+                    logger.info(f"Soft deleted inverse relationship with ID: {inverse_relationship.id}")
+                else:
+                    logger.warning(
+                        f"Inverse relationship not found for relationship ID: {relationship.id}. "
+                        f"Continuing with primary soft delete only."
+                    )
+            else:
+                # Hard delete: remove both records from database
+                logger.info(f"Performing hard delete for relationship ID: {relationship.id}")
+                self.relationship_repo.delete_without_commit(relationship)
+                logger.info(f"Hard deleted primary relationship with ID: {relationship.id}")
+                
+                if inverse_relationship:
+                    logger.info(
+                        f"Found inverse relationship with ID: {inverse_relationship.id}, "
+                        f"performing hard delete"
+                    )
+                    self.relationship_repo.delete_without_commit(inverse_relationship)
+                    logger.info(f"Hard deleted inverse relationship with ID: {inverse_relationship.id}")
+                else:
+                    logger.warning(
+                        f"Inverse relationship not found for relationship ID: {relationship.id}. "
+                        f"Continuing with primary hard delete only."
+                    )
+            
+            # Commit transaction
+            self.session.commit()
+            logger.info(f"Successfully committed bidirectional relationship deletion")
+            
+        except Exception as e:
+            # Rollback transaction on any error
+            logger.error(f"Error deleting relationship: {e}", exc_info=True)
+            self.session.rollback()
+            raise
 
     def get_parents(self, person_id: uuid.UUID) -> list[PersonRelationship]:
         """Get all parents (father and mother) for a person."""

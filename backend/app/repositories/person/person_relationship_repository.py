@@ -96,3 +96,22 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
             PersonRelationship.related_person_id == person_id,
         )
         return self.session.exec(statement).first()
+
+    def delete_without_commit(self, obj: PersonRelationship) -> None:
+        """
+        Delete a record without committing.
+        
+        Used for transactional operations where multiple deletes
+        need to be committed together.
+        """
+        self.session.delete(obj)
+
+    def update_without_commit(self, obj: PersonRelationship) -> PersonRelationship:
+        """
+        Update a record without committing.
+        
+        Used for transactional operations where multiple updates
+        need to be committed together.
+        """
+        self.session.add(obj)
+        return obj

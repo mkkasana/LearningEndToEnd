@@ -97,8 +97,8 @@
     - Don't fail the request
     - _Requirements: 2.4_
 
-- [ ] 5. Update PersonRelationshipService - Delete
-  - [ ] 5.1 Refactor delete_relationship method
+- [x] 5. Update PersonRelationshipService - Delete
+  - [x] 5.1 Refactor delete_relationship method
     - Add transaction wrapper
     - Find inverse relationship using repository
     - Delete primary relationship
@@ -107,7 +107,7 @@
     - Commit transaction
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
   
-  - [ ] 5.2 Handle soft delete (is_active=false)
+  - [x] 5.2 Handle soft delete (is_active=false)
     - Check if deletion is soft delete (update is_active)
     - If soft delete, update both relationships
     - If hard delete, remove both records
