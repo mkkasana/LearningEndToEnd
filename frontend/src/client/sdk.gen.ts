@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AddressMetadataGetCountriesResponse, AddressMetadataCreateCountryData, AddressMetadataCreateCountryResponse, AddressMetadataGetCountryByIdData, AddressMetadataGetCountryByIdResponse, AddressMetadataUpdateCountryData, AddressMetadataUpdateCountryResponse, AddressMetadataDeleteCountryData, AddressMetadataDeleteCountryResponse, AddressMetadataGetStatesByCountryData, AddressMetadataGetStatesByCountryResponse, AddressMetadataGetStateByIdData, AddressMetadataGetStateByIdResponse, AddressMetadataUpdateStateData, AddressMetadataUpdateStateResponse, AddressMetadataDeleteStateData, AddressMetadataDeleteStateResponse, AddressMetadataCreateStateData, AddressMetadataCreateStateResponse, AddressMetadataGetDistrictsByStateData, AddressMetadataGetDistrictsByStateResponse, AddressMetadataGetDistrictByIdData, AddressMetadataGetDistrictByIdResponse, AddressMetadataUpdateDistrictData, AddressMetadataUpdateDistrictResponse, AddressMetadataDeleteDistrictData, AddressMetadataDeleteDistrictResponse, AddressMetadataCreateDistrictData, AddressMetadataCreateDistrictResponse, AddressMetadataGetSubDistrictsByDistrictData, AddressMetadataGetSubDistrictsByDistrictResponse, AddressMetadataGetSubDistrictByIdData, AddressMetadataGetSubDistrictByIdResponse, AddressMetadataUpdateSubDistrictData, AddressMetadataUpdateSubDistrictResponse, AddressMetadataDeleteSubDistrictData, AddressMetadataDeleteSubDistrictResponse, AddressMetadataCreateSubDistrictData, AddressMetadataCreateSubDistrictResponse, AddressMetadataGetLocalitiesBySubDistrictData, AddressMetadataGetLocalitiesBySubDistrictResponse, AddressMetadataGetLocalityByIdData, AddressMetadataGetLocalityByIdResponse, AddressMetadataUpdateLocalityData, AddressMetadataUpdateLocalityResponse, AddressMetadataDeleteLocalityData, AddressMetadataDeleteLocalityResponse, AddressMetadataCreateLocalityData, AddressMetadataCreateLocalityResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PersonGetMyPersonResponse, PersonCreateMyPersonData, PersonCreateMyPersonResponse, PersonDeleteMyPersonResponse, PersonUpdateMyPersonData, PersonUpdateMyPersonResponse, PersonCreateFamilyMemberData, PersonCreateFamilyMemberResponse, PersonSearchMatchingPersonsData, PersonSearchMatchingPersonsResponse, PersonCreatePersonAddressData, PersonCreatePersonAddressResponse, PersonCreatePersonReligionData, PersonCreatePersonReligionResponse, PersonGetPersonByUserIdData, PersonGetPersonByUserIdResponse, PersonDeletePersonByUserIdData, PersonDeletePersonByUserIdResponse, PersonGetMyAddressesResponse, PersonCreateMyAddressData, PersonCreateMyAddressResponse, PersonGetMyAddressData, PersonGetMyAddressResponse, PersonUpdateMyAddressData, PersonUpdateMyAddressResponse, PersonDeleteMyAddressData, PersonDeleteMyAddressResponse, PersonGetMyProfessionsResponse, PersonCreateMyProfessionData, PersonCreateMyProfessionResponse, PersonGetMyProfessionData, PersonGetMyProfessionResponse, PersonUpdateMyProfessionData, PersonUpdateMyProfessionResponse, PersonDeleteMyProfessionData, PersonDeleteMyProfessionResponse, PersonGetPersonRelationshipsWithDetailsData, PersonGetPersonRelationshipsWithDetailsResponse, PersonGetMyRelationshipsResponse, PersonCreateMyRelationshipData, PersonCreateMyRelationshipResponse, PersonGetMyRelationshipsWithDetailsResponse, PersonGetMyRelationshipData, PersonGetMyRelationshipResponse, PersonUpdateMyRelationshipData, PersonUpdateMyRelationshipResponse, PersonDeleteMyRelationshipData, PersonDeleteMyRelationshipResponse, PersonGetMyMetadataResponse, PersonCreateMyMetadataData, PersonCreateMyMetadataResponse, PersonDeleteMyMetadataResponse, PersonUpdateMyMetadataData, PersonUpdateMyMetadataResponse, PersonMetadataGetProfessionsResponse, PersonMetadataCreateProfessionData, PersonMetadataCreateProfessionResponse, PersonMetadataGetProfessionByIdData, PersonMetadataGetProfessionByIdResponse, PersonMetadataUpdateProfessionData, PersonMetadataUpdateProfessionResponse, PersonMetadataDeleteProfessionData, PersonMetadataDeleteProfessionResponse, PersonMetadataGetGendersResponse, PersonMetadataCreateGenderData, PersonMetadataCreateGenderResponse, PersonMetadataGetGenderByIdData, PersonMetadataGetGenderByIdResponse, PersonMetadataUpdateGenderData, PersonMetadataUpdateGenderResponse, PersonMetadataDeleteGenderData, PersonMetadataDeleteGenderResponse, PersonReligionCreateMyReligionData, PersonReligionCreateMyReligionResponse, PersonReligionGetMyReligionResponse, PersonReligionUpdateMyReligionData, PersonReligionUpdateMyReligionResponse, PersonReligionDeleteMyReligionResponse, PostsGetPublishedPostsData, PostsGetPublishedPostsResponse, PostsCreatePostData, PostsCreatePostResponse, PostsGetMyPostsData, PostsGetMyPostsResponse, PostsGetPostData, PostsGetPostResponse, PostsUpdatePostData, PostsUpdatePostResponse, PostsDeletePostData, PostsDeletePostResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProfileGetProfileCompletionStatusResponse, RelativesGetParentsData, RelativesGetParentsResponse, RelativesGetChildrenData, RelativesGetChildrenResponse, RelativesGetSpousesData, RelativesGetSpousesResponse, RelativesGetSiblingsData, RelativesGetSiblingsResponse, ReligionMetadataGetReligionsResponse, ReligionMetadataCreateReligionData, ReligionMetadataCreateReligionResponse, ReligionMetadataGetReligionByIdData, ReligionMetadataGetReligionByIdResponse, ReligionMetadataUpdateReligionData, ReligionMetadataUpdateReligionResponse, ReligionMetadataDeleteReligionData, ReligionMetadataDeleteReligionResponse, ReligionMetadataGetCategoriesByReligionData, ReligionMetadataGetCategoriesByReligionResponse, ReligionMetadataGetCategoryByIdData, ReligionMetadataGetCategoryByIdResponse, ReligionMetadataUpdateCategoryData, ReligionMetadataUpdateCategoryResponse, ReligionMetadataDeleteCategoryData, ReligionMetadataDeleteCategoryResponse, ReligionMetadataCreateCategoryData, ReligionMetadataCreateCategoryResponse, ReligionMetadataGetSubCategoriesByCategoryData, ReligionMetadataGetSubCategoriesByCategoryResponse, ReligionMetadataGetSubCategoryByIdData, ReligionMetadataGetSubCategoryByIdResponse, ReligionMetadataUpdateSubCategoryData, ReligionMetadataUpdateSubCategoryResponse, ReligionMetadataDeleteSubCategoryData, ReligionMetadataDeleteSubCategoryResponse, ReligionMetadataCreateSubCategoryData, ReligionMetadataCreateSubCategoryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { AddressMetadataGetCountriesResponse, AddressMetadataCreateCountryData, AddressMetadataCreateCountryResponse, AddressMetadataGetCountryByIdData, AddressMetadataGetCountryByIdResponse, AddressMetadataUpdateCountryData, AddressMetadataUpdateCountryResponse, AddressMetadataDeleteCountryData, AddressMetadataDeleteCountryResponse, AddressMetadataGetStatesByCountryData, AddressMetadataGetStatesByCountryResponse, AddressMetadataGetStateByIdData, AddressMetadataGetStateByIdResponse, AddressMetadataUpdateStateData, AddressMetadataUpdateStateResponse, AddressMetadataDeleteStateData, AddressMetadataDeleteStateResponse, AddressMetadataCreateStateData, AddressMetadataCreateStateResponse, AddressMetadataGetDistrictsByStateData, AddressMetadataGetDistrictsByStateResponse, AddressMetadataGetDistrictByIdData, AddressMetadataGetDistrictByIdResponse, AddressMetadataUpdateDistrictData, AddressMetadataUpdateDistrictResponse, AddressMetadataDeleteDistrictData, AddressMetadataDeleteDistrictResponse, AddressMetadataCreateDistrictData, AddressMetadataCreateDistrictResponse, AddressMetadataGetSubDistrictsByDistrictData, AddressMetadataGetSubDistrictsByDistrictResponse, AddressMetadataGetSubDistrictByIdData, AddressMetadataGetSubDistrictByIdResponse, AddressMetadataUpdateSubDistrictData, AddressMetadataUpdateSubDistrictResponse, AddressMetadataDeleteSubDistrictData, AddressMetadataDeleteSubDistrictResponse, AddressMetadataCreateSubDistrictData, AddressMetadataCreateSubDistrictResponse, AddressMetadataGetLocalitiesBySubDistrictData, AddressMetadataGetLocalitiesBySubDistrictResponse, AddressMetadataGetLocalityByIdData, AddressMetadataGetLocalityByIdResponse, AddressMetadataUpdateLocalityData, AddressMetadataUpdateLocalityResponse, AddressMetadataDeleteLocalityData, AddressMetadataDeleteLocalityResponse, AddressMetadataCreateLocalityData, AddressMetadataCreateLocalityResponse, IssuesCreateSupportTicketData, IssuesCreateSupportTicketResponse, IssuesGetMySupportTicketsData, IssuesGetMySupportTicketsResponse, IssuesGetSupportTicketData, IssuesGetSupportTicketResponse, IssuesUpdateSupportTicketData, IssuesUpdateSupportTicketResponse, IssuesDeleteSupportTicketData, IssuesDeleteSupportTicketResponse, IssuesGetAllSupportTicketsAdminData, IssuesGetAllSupportTicketsAdminResponse, IssuesResolveSupportTicketData, IssuesResolveSupportTicketResponse, IssuesReopenSupportTicketData, IssuesReopenSupportTicketResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PersonGetMyPersonResponse, PersonCreateMyPersonData, PersonCreateMyPersonResponse, PersonDeleteMyPersonResponse, PersonUpdateMyPersonData, PersonUpdateMyPersonResponse, PersonCreateFamilyMemberData, PersonCreateFamilyMemberResponse, PersonSearchMatchingPersonsData, PersonSearchMatchingPersonsResponse, PersonCreatePersonAddressData, PersonCreatePersonAddressResponse, PersonCreatePersonReligionData, PersonCreatePersonReligionResponse, PersonGetPersonByUserIdData, PersonGetPersonByUserIdResponse, PersonDeletePersonByUserIdData, PersonDeletePersonByUserIdResponse, PersonGetMyAddressesResponse, PersonCreateMyAddressData, PersonCreateMyAddressResponse, PersonGetMyAddressData, PersonGetMyAddressResponse, PersonUpdateMyAddressData, PersonUpdateMyAddressResponse, PersonDeleteMyAddressData, PersonDeleteMyAddressResponse, PersonGetMyProfessionsResponse, PersonCreateMyProfessionData, PersonCreateMyProfessionResponse, PersonGetMyProfessionData, PersonGetMyProfessionResponse, PersonUpdateMyProfessionData, PersonUpdateMyProfessionResponse, PersonDeleteMyProfessionData, PersonDeleteMyProfessionResponse, PersonGetMyRelationshipsResponse, PersonCreateMyRelationshipData, PersonCreateMyRelationshipResponse, PersonGetMyRelationshipsWithDetailsResponse, PersonGetPersonRelationshipsWithDetailsData, PersonGetPersonRelationshipsWithDetailsResponse, PersonGetMyRelationshipData, PersonGetMyRelationshipResponse, PersonUpdateMyRelationshipData, PersonUpdateMyRelationshipResponse, PersonDeleteMyRelationshipData, PersonDeleteMyRelationshipResponse, PersonGetMyMetadataResponse, PersonCreateMyMetadataData, PersonCreateMyMetadataResponse, PersonDeleteMyMetadataResponse, PersonUpdateMyMetadataData, PersonUpdateMyMetadataResponse, PersonMetadataGetProfessionsResponse, PersonMetadataCreateProfessionData, PersonMetadataCreateProfessionResponse, PersonMetadataGetProfessionByIdData, PersonMetadataGetProfessionByIdResponse, PersonMetadataUpdateProfessionData, PersonMetadataUpdateProfessionResponse, PersonMetadataDeleteProfessionData, PersonMetadataDeleteProfessionResponse, PersonMetadataGetGendersResponse, PersonMetadataCreateGenderData, PersonMetadataCreateGenderResponse, PersonMetadataGetGenderByIdData, PersonMetadataGetGenderByIdResponse, PersonMetadataUpdateGenderData, PersonMetadataUpdateGenderResponse, PersonMetadataDeleteGenderData, PersonMetadataDeleteGenderResponse, PersonReligionCreateMyReligionData, PersonReligionCreateMyReligionResponse, PersonReligionGetMyReligionResponse, PersonReligionUpdateMyReligionData, PersonReligionUpdateMyReligionResponse, PersonReligionDeleteMyReligionResponse, PostsGetPublishedPostsData, PostsGetPublishedPostsResponse, PostsCreatePostData, PostsCreatePostResponse, PostsGetMyPostsData, PostsGetMyPostsResponse, PostsGetPostData, PostsGetPostResponse, PostsUpdatePostData, PostsUpdatePostResponse, PostsDeletePostData, PostsDeletePostResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProfileGetProfileCompletionStatusResponse, RelativesGetParentsData, RelativesGetParentsResponse, RelativesGetChildrenData, RelativesGetChildrenResponse, RelativesGetSpousesData, RelativesGetSpousesResponse, RelativesGetSiblingsData, RelativesGetSiblingsResponse, ReligionMetadataGetReligionsResponse, ReligionMetadataCreateReligionData, ReligionMetadataCreateReligionResponse, ReligionMetadataGetReligionByIdData, ReligionMetadataGetReligionByIdResponse, ReligionMetadataUpdateReligionData, ReligionMetadataUpdateReligionResponse, ReligionMetadataDeleteReligionData, ReligionMetadataDeleteReligionResponse, ReligionMetadataGetCategoriesByReligionData, ReligionMetadataGetCategoriesByReligionResponse, ReligionMetadataGetCategoryByIdData, ReligionMetadataGetCategoryByIdResponse, ReligionMetadataUpdateCategoryData, ReligionMetadataUpdateCategoryResponse, ReligionMetadataDeleteCategoryData, ReligionMetadataDeleteCategoryResponse, ReligionMetadataCreateCategoryData, ReligionMetadataCreateCategoryResponse, ReligionMetadataGetSubCategoriesByCategoryData, ReligionMetadataGetSubCategoriesByCategoryResponse, ReligionMetadataGetSubCategoryByIdData, ReligionMetadataGetSubCategoryByIdResponse, ReligionMetadataUpdateSubCategoryData, ReligionMetadataUpdateSubCategoryResponse, ReligionMetadataDeleteSubCategoryData, ReligionMetadataDeleteSubCategoryResponse, ReligionMetadataCreateSubCategoryData, ReligionMetadataCreateSubCategoryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
 
 export class AddressMetadataService {
     /**
@@ -580,6 +580,188 @@ export class AddressMetadataService {
             mediaType: 'application/json',
             errors: {
                 404: 'Not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class IssuesService {
+    /**
+     * Create Support Ticket
+     * Create a new support ticket.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns SupportTicketPublic Successful Response
+     * @throws ApiError
+     */
+    public static createSupportTicket(data: IssuesCreateSupportTicketData): CancelablePromise<IssuesCreateSupportTicketResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/support-tickets/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Support Tickets
+     * Get current user's support tickets with optional status filter.
+     * @param data The data for the request.
+     * @param data.status
+     * @param data.skip
+     * @param data.limit
+     * @returns SupportTicketsPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMySupportTickets(data: IssuesGetMySupportTicketsData = {}): CancelablePromise<IssuesGetMySupportTicketsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/support-tickets/me',
+            query: {
+                status: data.status,
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Support Ticket
+     * Get a specific support ticket by ID (owner or admin only).
+     * @param data The data for the request.
+     * @param data.supportTicketId
+     * @returns SupportTicketPublic Successful Response
+     * @throws ApiError
+     */
+    public static getSupportTicket(data: IssuesGetSupportTicketData): CancelablePromise<IssuesGetSupportTicketResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/support-tickets/{support_ticket_id}',
+            path: {
+                support_ticket_id: data.supportTicketId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Support Ticket
+     * Update a support ticket (owner only).
+     * @param data The data for the request.
+     * @param data.supportTicketId
+     * @param data.requestBody
+     * @returns SupportTicketPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateSupportTicket(data: IssuesUpdateSupportTicketData): CancelablePromise<IssuesUpdateSupportTicketResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/support-tickets/{support_ticket_id}',
+            path: {
+                support_ticket_id: data.supportTicketId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Support Ticket
+     * Delete a support ticket (owner or admin).
+     * @param data The data for the request.
+     * @param data.supportTicketId
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteSupportTicket(data: IssuesDeleteSupportTicketData): CancelablePromise<IssuesDeleteSupportTicketResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/support-tickets/{support_ticket_id}',
+            path: {
+                support_ticket_id: data.supportTicketId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get All Support Tickets Admin
+     * Get all support tickets with filters (admin only).
+     * @param data The data for the request.
+     * @param data.status
+     * @param data.issueType
+     * @param data.skip
+     * @param data.limit
+     * @returns SupportTicketPublicWithUser Successful Response
+     * @throws ApiError
+     */
+    public static getAllSupportTicketsAdmin(data: IssuesGetAllSupportTicketsAdminData = {}): CancelablePromise<IssuesGetAllSupportTicketsAdminResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/support-tickets/admin/all',
+            query: {
+                status: data.status,
+                issue_type: data.issueType,
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Resolve Support Ticket
+     * Mark a support ticket as resolved (admin only).
+     * @param data The data for the request.
+     * @param data.supportTicketId
+     * @returns SupportTicketPublic Successful Response
+     * @throws ApiError
+     */
+    public static resolveSupportTicket(data: IssuesResolveSupportTicketData): CancelablePromise<IssuesResolveSupportTicketResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/support-tickets/{support_ticket_id}/resolve',
+            path: {
+                support_ticket_id: data.supportTicketId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Reopen Support Ticket
+     * Reopen a closed support ticket (admin only).
+     * @param data The data for the request.
+     * @param data.supportTicketId
+     * @returns SupportTicketPublic Successful Response
+     * @throws ApiError
+     */
+    public static reopenSupportTicket(data: IssuesReopenSupportTicketData): CancelablePromise<IssuesReopenSupportTicketResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/support-tickets/{support_ticket_id}/reopen',
+            path: {
+                support_ticket_id: data.supportTicketId
+            },
+            errors: {
                 422: 'Validation Error'
             }
         });
@@ -1195,29 +1377,6 @@ export class PersonService {
     }
     
     /**
-     * Get Person Relationships With Details
-     * Get all relationships for a specific person with full person details.
-     * Returns list of objects with relationship and related person information.
-     * Used to help users identify the correct person when multiple people have similar names.
-     * @param data The data for the request.
-     * @param data.personId
-     * @returns PersonRelationshipWithDetails Successful Response
-     * @throws ApiError
-     */
-    public static getPersonRelationshipsWithDetails(data: PersonGetPersonRelationshipsWithDetailsData): CancelablePromise<PersonGetPersonRelationshipsWithDetailsResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/v1/person/{person_id}/relationships/with-details',
-            path: {
-                person_id: data.personId
-            },
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
      * Get My Relationships
      * Get all relationships for current user's person profile.
      * @returns PersonRelationshipPublic Successful Response
@@ -1233,6 +1392,44 @@ export class PersonService {
     /**
      * Create My Relationship
      * Create new relationship for current user's person profile.
+     *
+     * **Bidirectional Relationships:**
+     * This endpoint automatically creates both directions of the relationship:
+     * - Primary relationship: Person A → Person B (as specified)
+     * - Inverse relationship: Person B → Person A (automatically determined)
+     *
+     * **Inverse Relationship Logic:**
+     * The system determines the correct inverse relationship type based on:
+     * - The primary relationship type
+     * - Both persons' genders (when applicable)
+     *
+     * **Examples:**
+     *
+     * 1. Parent-Child Relationships (gender-dependent):
+     * - Create: A → B as "Father" (B is A's father)
+     * - System creates: B → A as "Son" (if A is male) or "Daughter" (if A is female)
+     *
+     * - Create: A → B as "Mother" (B is A's mother)
+     * - System creates: B → A as "Son" (if A is male) or "Daughter" (if A is female)
+     *
+     * - Create: A → B as "Son" (B is A's son)
+     * - System creates: B → A as "Father" (if A is male) or "Mother" (if A is female)
+     *
+     * - Create: A → B as "Daughter" (B is A's daughter)
+     * - System creates: B → A as "Father" (if A is male) or "Mother" (if A is female)
+     *
+     * 2. Spouse Relationships (gender-independent):
+     * - Create: A → B as "Husband" (B is A's husband)
+     * - System creates: B → A as "Wife" (A is B's wife)
+     *
+     * - Create: A → B as "Wife" (B is A's wife)
+     * - System creates: B → A as "Husband" (A is B's husband)
+     *
+     * - Create: A → B as "Spouse" (B is A's spouse)
+     * - System creates: B → A as "Spouse" (A is B's spouse)
+     *
+     * **Result:**
+     * Both persons will see each other in their family trees with the correct relationship type.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns PersonRelationshipPublic Successful Response
@@ -1265,6 +1462,29 @@ export class PersonService {
     }
     
     /**
+     * Get Person Relationships With Details
+     * Get all relationships for a specific person with full person details.
+     * Returns list of objects with relationship and related person information.
+     * Used to help users identify the correct person when multiple people have similar names.
+     * @param data The data for the request.
+     * @param data.personId
+     * @returns PersonRelationshipWithDetails Successful Response
+     * @throws ApiError
+     */
+    public static getPersonRelationshipsWithDetails(data: PersonGetPersonRelationshipsWithDetailsData): CancelablePromise<PersonGetPersonRelationshipsWithDetailsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/{person_id}/relationships/with-details',
+            path: {
+                person_id: data.personId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
      * Get My Relationship
      * Get specific relationship by ID for current user.
      * @param data The data for the request.
@@ -1288,6 +1508,39 @@ export class PersonService {
     /**
      * Update My Relationship
      * Update relationship for current user.
+     *
+     * **Bidirectional Updates:**
+     * This endpoint automatically updates both directions of the relationship:
+     * - Updates the primary relationship (the one you're modifying)
+     * - Finds and updates the inverse relationship automatically
+     *
+     * **Synchronized Fields:**
+     * The following fields are synchronized across both directions:
+     * - `is_active`: When you activate/deactivate a relationship, both directions are updated
+     * - `start_date`: Changes to start date are reflected in both directions
+     * - `end_date`: Changes to end date are reflected in both directions
+     * - `updated_at`: Timestamp is updated for both relationships
+     *
+     * **Non-Synchronized Fields:**
+     * - `relationship_type`: Each direction maintains its own correct type (e.g., Father/Son)
+     *
+     * **Examples:**
+     *
+     * 1. Deactivating a relationship:
+     * - Update: A → B relationship, set `is_active=False`
+     * - System updates: B → A relationship, also sets `is_active=False`
+     * - Result: Neither person sees the relationship in their family tree
+     *
+     * 2. Updating dates:
+     * - Update: A → B relationship, set `start_date="2020-01-01"`
+     * - System updates: B → A relationship, also sets `start_date="2020-01-01"`
+     * - Result: Both directions show the same date range
+     *
+     * **Graceful Handling:**
+     * If the inverse relationship is not found (e.g., legacy data), the system:
+     * - Logs a warning
+     * - Continues with updating the primary relationship
+     * - Does not fail the request
      * @param data The data for the request.
      * @param data.relationshipId
      * @param data.requestBody
@@ -1312,6 +1565,43 @@ export class PersonService {
     /**
      * Delete My Relationship
      * Delete relationship for current user.
+     *
+     * **Bidirectional Deletion:**
+     * This endpoint automatically deletes both directions of the relationship:
+     * - Deletes the primary relationship (the one you're removing)
+     * - Finds and deletes the inverse relationship automatically
+     *
+     * **Transaction Safety:**
+     * Both deletions are performed within a database transaction:
+     * - If both deletions succeed, changes are committed
+     * - If either deletion fails, all changes are rolled back
+     * - Ensures data consistency (no orphaned relationships)
+     *
+     * **Soft Delete Support:**
+     * If using soft delete (setting `is_active=False` instead of removing records):
+     * - Both directions are soft-deleted together
+     * - Maintains referential integrity
+     *
+     * **Examples:**
+     *
+     * 1. Hard delete:
+     * - Delete: A → B relationship (Father)
+     * - System deletes: B → A relationship (Son/Daughter)
+     * - Result: Both records are removed from the database
+     *
+     * 2. Soft delete:
+     * - Delete: A → B relationship (sets `is_active=False`)
+     * - System updates: B → A relationship (also sets `is_active=False`)
+     * - Result: Both relationships are hidden but data is preserved
+     *
+     * **Graceful Handling:**
+     * If the inverse relationship is not found (e.g., legacy data), the system:
+     * - Logs a warning
+     * - Continues with deleting the primary relationship
+     * - Does not fail the request
+     *
+     * **Result:**
+     * Neither person will see the relationship in their family tree after deletion.
      * @param data The data for the request.
      * @param data.relationshipId
      * @returns unknown Successful Response

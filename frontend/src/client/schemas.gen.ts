@@ -440,6 +440,20 @@ export const HTTPValidationErrorSchema = {
     title: 'HTTPValidationError'
 } as const;
 
+export const IssueStatusSchema = {
+    type: 'string',
+    enum: ['open', 'closed'],
+    title: 'IssueStatus',
+    description: 'Enum for ticket status.'
+} as const;
+
+export const IssueTypeSchema = {
+    type: 'string',
+    enum: ['bug', 'feature_request'],
+    title: 'IssueType',
+    description: 'Enum for ticket types.'
+} as const;
+
 export const ItemCreateSchema = {
     properties: {
         title: {
@@ -3326,6 +3340,250 @@ export const SubDistrictUpdateSchema = {
     type: 'object',
     title: 'SubDistrictUpdate',
     description: 'Schema for updating a sub-district (all fields optional)'
+} as const;
+
+export const SupportTicketCreateSchema = {
+    properties: {
+        issue_type: {
+            '$ref': '#/components/schemas/IssueType',
+            description: 'Type of issue: bug or feature_request'
+        },
+        title: {
+            type: 'string',
+            maxLength: 100,
+            minLength: 1,
+            title: 'Title',
+            description: 'Ticket title (max 100 characters)'
+        },
+        description: {
+            type: 'string',
+            maxLength: 2000,
+            minLength: 1,
+            title: 'Description',
+            description: 'Detailed description (max 2000 characters)'
+        }
+    },
+    type: 'object',
+    required: ['issue_type', 'title', 'description'],
+    title: 'SupportTicketCreate',
+    description: 'Schema for creating a new support ticket.'
+} as const;
+
+export const SupportTicketPublicSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        user_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'User Id'
+        },
+        issue_type: {
+            '$ref': '#/components/schemas/IssueType'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        status: {
+            '$ref': '#/components/schemas/IssueStatus'
+        },
+        resolved_by_user_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Resolved By User Id'
+        },
+        resolved_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Resolved At'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['id', 'user_id', 'issue_type', 'title', 'description', 'status', 'resolved_by_user_id', 'resolved_at', 'created_at', 'updated_at'],
+    title: 'SupportTicketPublic',
+    description: 'Support ticket response schema.'
+} as const;
+
+export const SupportTicketPublicWithUserSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        user_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'User Id'
+        },
+        issue_type: {
+            '$ref': '#/components/schemas/IssueType'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        status: {
+            '$ref': '#/components/schemas/IssueStatus'
+        },
+        resolved_by_user_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Resolved By User Id'
+        },
+        resolved_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Resolved At'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        },
+        user_email: {
+            type: 'string',
+            title: 'User Email',
+            description: 'Email of the user who created the ticket'
+        },
+        user_full_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'User Full Name',
+            description: 'Full name of the user who created the ticket'
+        },
+        resolved_by_email: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Resolved By Email',
+            description: 'Email of the admin who resolved the ticket'
+        }
+    },
+    type: 'object',
+    required: ['id', 'user_id', 'issue_type', 'title', 'description', 'status', 'resolved_by_user_id', 'resolved_at', 'created_at', 'updated_at', 'user_email'],
+    title: 'SupportTicketPublicWithUser',
+    description: 'Support ticket response schema with user details (for admin view).'
+} as const;
+
+export const SupportTicketUpdateSchema = {
+    properties: {
+        title: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100,
+                    minLength: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 2000,
+                    minLength: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        }
+    },
+    type: 'object',
+    title: 'SupportTicketUpdate',
+    description: 'Schema for updating a support ticket (all fields optional).'
+} as const;
+
+export const SupportTicketsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/SupportTicketPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'SupportTicketsPublic',
+    description: 'List of support tickets response.'
 } as const;
 
 export const TokenSchema = {

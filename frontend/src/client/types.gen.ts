@@ -166,6 +166,16 @@ export type HTTPValidationError = {
 };
 
 /**
+ * Enum for ticket status.
+ */
+export type IssueStatus = 'open' | 'closed';
+
+/**
+ * Enum for ticket types.
+ */
+export type IssueType = 'bug' | 'feature_request';
+
+/**
  * Properties to receive on item creation
  */
 export type ItemCreate = {
@@ -1226,6 +1236,84 @@ export type SubDistrictUpdate = {
 };
 
 /**
+ * Schema for creating a new support ticket.
+ */
+export type SupportTicketCreate = {
+    /**
+     * Type of issue: bug or feature_request
+     */
+    issue_type: IssueType;
+    /**
+     * Ticket title (max 100 characters)
+     */
+    title: string;
+    /**
+     * Detailed description (max 2000 characters)
+     */
+    description: string;
+};
+
+/**
+ * Support ticket response schema.
+ */
+export type SupportTicketPublic = {
+    id: string;
+    user_id: string;
+    issue_type: IssueType;
+    title: string;
+    description: string;
+    status: IssueStatus;
+    resolved_by_user_id: (string | null);
+    resolved_at: (string | null);
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Support ticket response schema with user details (for admin view).
+ */
+export type SupportTicketPublicWithUser = {
+    id: string;
+    user_id: string;
+    issue_type: IssueType;
+    title: string;
+    description: string;
+    status: IssueStatus;
+    resolved_by_user_id: (string | null);
+    resolved_at: (string | null);
+    created_at: string;
+    updated_at: string;
+    /**
+     * Email of the user who created the ticket
+     */
+    user_email: string;
+    /**
+     * Full name of the user who created the ticket
+     */
+    user_full_name?: (string | null);
+    /**
+     * Email of the admin who resolved the ticket
+     */
+    resolved_by_email?: (string | null);
+};
+
+/**
+ * List of support tickets response.
+ */
+export type SupportTicketsPublic = {
+    data: Array<SupportTicketPublic>;
+    count: number;
+};
+
+/**
+ * Schema for updating a support ticket (all fields optional).
+ */
+export type SupportTicketUpdate = {
+    title?: (string | null);
+    description?: (string | null);
+};
+
+/**
  * JSON payload containing access token
  */
 export type Token = {
@@ -1466,6 +1554,60 @@ export type AddressMetadataCreateLocalityData = {
 
 export type AddressMetadataCreateLocalityResponse = (LocalityDetailPublic);
 
+export type IssuesCreateSupportTicketData = {
+    requestBody: SupportTicketCreate;
+};
+
+export type IssuesCreateSupportTicketResponse = (SupportTicketPublic);
+
+export type IssuesGetMySupportTicketsData = {
+    limit?: number;
+    skip?: number;
+    status?: (IssueStatus | null);
+};
+
+export type IssuesGetMySupportTicketsResponse = (SupportTicketsPublic);
+
+export type IssuesGetSupportTicketData = {
+    supportTicketId: string;
+};
+
+export type IssuesGetSupportTicketResponse = (SupportTicketPublic);
+
+export type IssuesUpdateSupportTicketData = {
+    requestBody: SupportTicketUpdate;
+    supportTicketId: string;
+};
+
+export type IssuesUpdateSupportTicketResponse = (SupportTicketPublic);
+
+export type IssuesDeleteSupportTicketData = {
+    supportTicketId: string;
+};
+
+export type IssuesDeleteSupportTicketResponse = (Message);
+
+export type IssuesGetAllSupportTicketsAdminData = {
+    issueType?: (IssueType | null);
+    limit?: number;
+    skip?: number;
+    status?: (IssueStatus | null);
+};
+
+export type IssuesGetAllSupportTicketsAdminResponse = (Array<SupportTicketPublicWithUser>);
+
+export type IssuesResolveSupportTicketData = {
+    supportTicketId: string;
+};
+
+export type IssuesResolveSupportTicketResponse = (SupportTicketPublic);
+
+export type IssuesReopenSupportTicketData = {
+    supportTicketId: string;
+};
+
+export type IssuesReopenSupportTicketResponse = (SupportTicketPublic);
+
 export type ItemsReadItemsData = {
     limit?: number;
     skip?: number;
@@ -1634,12 +1776,6 @@ export type PersonDeleteMyProfessionData = {
 
 export type PersonDeleteMyProfessionResponse = (unknown);
 
-export type PersonGetPersonRelationshipsWithDetailsData = {
-    personId: string;
-};
-
-export type PersonGetPersonRelationshipsWithDetailsResponse = (Array<PersonRelationshipWithDetails>);
-
 export type PersonGetMyRelationshipsResponse = (Array<PersonRelationshipPublic>);
 
 export type PersonCreateMyRelationshipData = {
@@ -1649,6 +1785,12 @@ export type PersonCreateMyRelationshipData = {
 export type PersonCreateMyRelationshipResponse = (PersonRelationshipPublic);
 
 export type PersonGetMyRelationshipsWithDetailsResponse = (Array<PersonRelationshipWithDetails>);
+
+export type PersonGetPersonRelationshipsWithDetailsData = {
+    personId: string;
+};
+
+export type PersonGetPersonRelationshipsWithDetailsResponse = (Array<PersonRelationshipWithDetails>);
 
 export type PersonGetMyRelationshipData = {
     relationshipId: string;
