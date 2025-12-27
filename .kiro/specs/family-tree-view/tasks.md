@@ -6,7 +6,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
 ## Tasks
 
-- [ ] 1. Set up route and basic page structure
+- [x] 1. Set up route and basic page structure
   - Create new route file at `frontend/src/routes/_layout/family-tree.tsx`
   - Add "Family View" navigation link to `_layout.tsx`
   - Create basic FamilyTreeView component with loading and error states
@@ -14,43 +14,43 @@ This implementation plan breaks down the Family Tree View feature into discrete,
   - Git commit all the change made for this task
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2. Implement data fetching and processing
-  - [ ] 2.1 Create useFamilyTreeData custom hook
+- [-] 2. Implement data fetching and processing
+  - [x] 2.1 Create useFamilyTreeData custom hook
     - Implement TanStack Query integration for fetching relationship data
     - Use existing `/api/v1/person/{person_id}/relationships/with-details` endpoint
     - Handle loading, error, and success states
     - Initialize with current user's person profile
     - _Requirements: 1.3, 9.1, 9.2_
 
-  - [ ] 2.2 Write property test for relationship categorization
+  - [x] 2.2 Write property test for relationship categorization
     - **Property 2: Relationship Categorization**
     - **Validates: Requirements 9.3**
 
-  - [ ] 2.3 Implement categorizeRelationships function
+  - [x] 2.3 Implement categorizeRelationships function
     - Categorize relationships into parents, spouses, and children based on relationship_type
     - Extract parent IDs for sibling calculation
     - Handle edge cases (empty relationships, unknown types)
     - _Requirements: 9.3_
 
-  - [ ] 2.4 Write property test for sibling calculation
+  - [x] 2.4 Write property test for sibling calculation
     - **Property 3: Sibling Calculation**
     - **Validates: Requirements 9.4**
 
-  - [ ] 2.5 Implement calculateSiblings function
+  - [x] 2.5 Implement calculateSiblings function
     - Find people who share parents with selected person
     - Exclude the selected person from results
     - Deduplicate siblings (same person through both parents)
     - _Requirements: 9.4_
 
-  - [ ] 2.6 Write property test for data caching
+  - [x] 2.6 Write property test for data caching
     - **Property 9: Data Caching**
     - **Validates: Requirements 9.5**
 
-  - [ ] 2.7 Implement data caching in useFamilyTreeData hook
+  - [x] 2.7 Implement data caching in useFamilyTreeData hook
     - Configure TanStack Query cache settings
     - Verify cached data is reused for previously viewed persons
     - _Requirements: 9.5_
-  - [ ] 2.8 Git commit all the change made for this task
+  - [-] 2.8 Git commit all the change made for this task
 
 
 - [ ] 3. Create PersonCard component
