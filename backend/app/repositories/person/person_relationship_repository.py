@@ -50,3 +50,49 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
             PersonRelationship.relationship_type.in_(relationship_types),
         )
         return list(self.session.exec(statement).all())
+
+    def find_inverse(
+        self, person_id: uuid.UUID, related_person_id: uuid.UUID
+    ) -> PersonRelationship | None:
+        """
+        Find the inverse relationship between two persons.
+        
+        Query person_relationship where person_id and related_person_id are swapped
+        and filter by is_active = True.
+        
+        Args:
+            person_id: The person_id from the primary relationship
+            related_person_id: The related_person_id from the primary relationship
+            
+        Returns:
+            The inverse relationship if found, None otherwise
+        """
+        statement = select(PersonRelationship).where(
+            PersonRelationship.person_id == related_person_id,
+            PersonRelationship.related_person_id == person_id,
+            PersonRelationship.is_active == True,
+        )
+        return self.session.exec(statement).first()
+
+    def find_inverse_including_inactive(
+        self, person_id: uuid.UUID, related_person_id: uuid.UUID
+    ) -> PersonRelationship | None:
+        """
+        Find the inverse relationship between two persons, including inactive ones.
+        
+        Same as find_inverse but doesn't filter by is_active.
+        Used for update/delete operations where we need to find the inverse
+        regardless of its active status.
+        
+        Args:
+            person_id: The person_id from the primary relationship
+            related_person_id: The related_person_id from the primary relationship
+            
+        Returns:
+            The inverse relationship if found, None otherwise
+        """
+        statement = select(PersonRelationship).where(
+            PersonRelationship.person_id == related_person_id,
+            PersonRelationship.related_person_id == person_id,
+        )
+        return self.session.exec(statement).first()

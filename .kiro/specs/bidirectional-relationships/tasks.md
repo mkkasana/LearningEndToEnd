@@ -40,20 +40,20 @@
     - Handle missing gender IDs gracefully
     - _Requirements: 4.1_
 
-- [ ] 2. Update PersonRelationshipRepository
-  - [ ] 2.1 Add find_inverse method
+- [x] 2. Update PersonRelationshipRepository
+  - [x] 2.1 Add find_inverse method
     - Query person_relationship where person_id and related_person_id are swapped
     - Filter by is_active = True
     - Return first match or None
     - _Requirements: 2.4, 3.3_
   
-  - [ ] 2.2 Add find_inverse_including_inactive method
+  - [x] 2.2 Add find_inverse_including_inactive method
     - Same as find_inverse but don't filter by is_active
     - Used for update/delete operations
     - _Requirements: 2.4, 3.3_
 
-- [ ] 3. Update PersonRelationshipService - Create
-  - [ ] 3.1 Refactor create_relationship method
+- [x] 3. Update PersonRelationshipService - Create
+  - [x] 3.1 Refactor create_relationship method
     - Add transaction wrapper
     - Fetch person and related_person records
     - Get gender mapping
@@ -65,13 +65,13 @@
     - Return primary relationship
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
   
-  - [ ] 3.2 Handle gender information missing
+  - [x] 3.2 Handle gender information missing
     - Check if both persons have gender_id
     - If missing, log warning and create primary only
     - Don't fail the request
     - _Requirements: 1.2_
   
-  - [ ] 3.3 Add transaction rollback on error
+  - [x] 3.3 Add transaction rollback on error
     - Wrap in try-except block
     - Rollback on any exception
     - Re-raise exception to caller
