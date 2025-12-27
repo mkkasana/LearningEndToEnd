@@ -84,7 +84,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
  - [x] 3.6 Git commit all the change made for this task
 
-- [-] 4. Implement family tree layout sections
+- [ ] 4. Implement family tree layout sections
   - [x] 4.1 Create ParentsSection component
     - Display parent cards above selected person
     - Show mother and father side-by-side
@@ -142,22 +142,22 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Test with children from multiple spouses
     - _Requirements: 6.5_
 
- - [-] 4.12 Git commit all the change made for this task
+ - [x] 4.12 Git commit all the change made for this task
 
-- [ ] 5. Implement visual relationship connectors
-  - [ ] 5.1 Create RelationshipLines component
+- [-] 5. Implement visual relationship connectors
+  - [x] 5.1 Create RelationshipLines component
     - Implement SVG-based line drawing
     - Support different line types: parent-child, spouse, sibling
     - Calculate line positions based on card positions
     - _Requirements: 3.3, 4.2, 6.2_
 
-  - [ ] 5.2 Write unit tests for RelationshipLines
+  - [x] 5.2 Write unit tests for RelationshipLines
     - Test parent-child vertical lines
     - Test spouse horizontal lines
     - Test line positioning calculations
     - _Requirements: 3.3, 4.2, 6.2_
 
-  - [ ] 5.3 Git commit all the change made for this task
+  - [-] 5.3 Git commit all the change made for this task
 
 - [ ] 6. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
