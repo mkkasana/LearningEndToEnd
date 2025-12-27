@@ -1,8 +1,8 @@
-# Design Document: Issue and Feature Request Tracking System
+# Design Document: Support Ticket and Feature Request Tracking System
 
 ## Overview
 
-The issue tracking system enables users to report bugs and request features while providing administrators with tools to manage and resolve these submissions. The system follows the existing application architecture with a React frontend, FastAPI backend, and PostgreSQL database.
+The support ticket system enables users to report bugs and request features while providing administrators with tools to manage and resolve these submissions. The system follows the existing application architecture with a React frontend, FastAPI backend, and PostgreSQL database.
 
 ## Architecture
 
@@ -12,44 +12,44 @@ The issue tracking system enables users to report bugs and request features whil
 ┌─────────────────────────────────────────────────────────────┐
 │                        Frontend (React)                      │
 ├─────────────────────────────────────────────────────────────┤
-│  - IssuesPage (User view)                                   │
-│  - CreateIssueDialog                                         │
-│  - IssueListTable                                            │
-│  - IssueDetailDialog                                         │
-│  - AdminIssuesPanel (Admin view)                            │
+│  - SupportTicketsPage (User view)                                   │
+│  - CreateSupportTicketDialog                                         │
+│  - SupportTicketListTable                                            │
+│  - SupportTicketDetailDialog                                         │
+│  - AdminSupportTicketsPanel (Admin view)                            │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │                    API Layer (FastAPI)                       │
 ├─────────────────────────────────────────────────────────────┤
-│  Routes: /api/v1/issues                                     │
-│  - POST   /issues (create)                                  │
-│  - GET    /issues/me (user's issues)                        │
-│  - GET    /issues/{id} (get single)                         │
-│  - PATCH  /issues/{id} (update)                             │
-│  - DELETE /issues/{id} (delete)                             │
-│  - GET    /issues/admin/all (admin: all issues)            │
-│  - PATCH  /issues/{id}/resolve (admin: mark resolved)      │
-│  - PATCH  /issues/{id}/reopen (admin: reopen)              │
+│  Routes: /api/v1/support-tickets                                     │
+│  - POST   /support-tickets (create)                                  │
+│  - GET    /support-tickets/me (user's issues)                        │
+│  - GET    /support-tickets/{id} (get single)                         │
+│  - PATCH  /support-tickets/{id} (update)                             │
+│  - DELETE /support-tickets/{id} (delete)                             │
+│  - GET    /support-tickets/admin/all (admin: all tickets)            │
+│  - PATCH  /support-tickets/{id}/resolve (admin: mark resolved)      │
+│  - PATCH  /support-tickets/{id}/reopen (admin: reopen)              │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │                    Service Layer                             │
 ├─────────────────────────────────────────────────────────────┤
-│  IssueService                                               │
-│  - create_issue()                                           │
-│  - get_user_issues()                                        │
-│  - get_all_issues_admin()                                   │
-│  - update_issue()                                           │
-│  - resolve_issue()                                          │
-│  - reopen_issue()                                           │
-│  - delete_issue()                                           │
+│  SupportTicketService                                               │
+│  - create_support_ticket()                                           │
+│  - get_user_support_tickets()                                        │
+│  - get_all_support_tickets_admin()                                   │
+│  - update_support_ticket()                                           │
+│  - resolve_support_ticket()                                          │
+│  - reopen_support_ticket()                                           │
+│  - delete_support_ticket()                                           │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │                  Repository Layer                            │
 ├─────────────────────────────────────────────────────────────┤
-│  IssueRepository                                            │
+│  SupportTicketRepository                                            │
 │  - create()                                                 │
 │  - get_by_id()                                              │
 │  - get_by_user_id()                                         │
@@ -62,7 +62,7 @@ The issue tracking system enables users to report bugs and request features whil
 ┌─────────────────────────────────────────────────────────────┐
 │                    Database (PostgreSQL)                     │
 ├─────────────────────────────────────────────────────────────┤
-│  Table: issue                                               │
+│  Table: support_ticket                                               │
 │  - id (UUID, PK)                                            │
 │  - user_id (UUID, FK → user.id)                            │
 │  - issue_type (VARCHAR: 'bug' | 'feature_request')         │
@@ -80,10 +80,10 @@ The issue tracking system enables users to report bugs and request features whil
 
 ### Database Model
 
-**Table: issue**
+**Table: support_ticket**
 
 ```sql
-CREATE TABLE issue (
+CREATE TABLE support_ticket (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
     issue_type VARCHAR(20) NOT NULL CHECK (issue_type IN ('bug', 'feature_request')),
@@ -96,10 +96,10 @@ CREATE TABLE issue (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_issue_user_id ON issue(user_id);
-CREATE INDEX idx_issue_status ON issue(status);
-CREATE INDEX idx_issue_created_at ON issue(created_at DESC);
-CREATE INDEX idx_issue_type ON issue(issue_type);
+CREATE INDEX idx_support_ticket_user_id ON support_ticket(user_id);
+CREATE INDEX idx_support_ticket_status ON support_ticket(status);
+CREATE INDEX idx_support_ticket_created_at ON support_ticket(created_at DESC);
+CREATE INDEX idx_support_ticket_type ON support_ticket(issue_type);
 ```
 
 ### Backend Schemas (Pydantic)
@@ -118,231 +118,231 @@ class IssueStatus(str, Enum):
     CLOSED = "closed"
 ```
 
-**IssueCreate:**
+**SupportTicketCreate:**
 ```python
-class IssueCreate(SQLModel):
-    issue_type: IssueType
+class SupportTicketCreate(SQLModel):
+    issue_type: SupportTicketType
     title: str = Field(min_length=1, max_length=100)
     description: str = Field(min_length=1, max_length=2000)
 ```
 
-**IssueUpdate:**
+**SupportTicketUpdate:**
 ```python
-class IssueUpdate(SQLModel):
+class SupportTicketUpdate(SQLModel):
     title: str | None = Field(default=None, min_length=1, max_length=100)
     description: str | None = Field(default=None, min_length=1, max_length=2000)
 ```
 
-**IssuePublic:**
+**SupportTicketPublic:**
 ```python
-class IssuePublic(SQLModel):
+class SupportTicketPublic(SQLModel):
     id: uuid.UUID
     user_id: uuid.UUID
-    issue_type: IssueType
+    issue_type: SupportTicketType
     title: str
     description: str
-    status: IssueStatus
+    status: SupportTicketStatus
     resolved_by_user_id: uuid.UUID | None
     resolved_at: datetime | None
     created_at: datetime
     updated_at: datetime
 ```
 
-**IssuePublicWithUser:**
+**SupportTicketPublicWithUser:**
 ```python
-class IssuePublicWithUser(IssuePublic):
+class SupportTicketPublicWithUser(SupportTicketPublic):
     user_email: str
     user_full_name: str | None
     resolved_by_email: str | None
 ```
 
-**IssuesPublicList:**
+**SupportTicketsPublicList:**
 ```python
-class IssuesPublicList(SQLModel):
-    data: list[IssuePublic]
+class SupportTicketsPublicList(SQLModel):
+    data: list[SupportTicketPublic]
     count: int
 ```
 
 ### Repository Layer
 
-**IssueRepository:**
+**SupportTicketRepository:**
 ```python
-class IssueRepository:
+class SupportTicketRepository:
     def __init__(self, session: Session):
         self.session = session
     
-    def create(self, issue: Issue) -> Issue:
+    def create(self, issue: SupportTicket) -> Issue:
         """Create a new issue"""
         
-    def get_by_id(self, issue_id: uuid.UUID) -> Issue | None:
-        """Get issue by ID"""
+    def get_by_id(self, support_ticket_id: uuid.UUID) -> SupportTicket | None:
+        """Get ticket by ID"""
         
     def get_by_user_id(
         self, 
         user_id: uuid.UUID, 
-        status: IssueStatus | None = None,
+        status: SupportTicketStatus | None = None,
         skip: int = 0,
         limit: int = 100
-    ) -> list[Issue]:
-        """Get all issues for a specific user with optional status filter"""
+    ) -> list[SupportTicket]:
+        """Get all tickets for a specific user with optional status filter"""
         
     def get_all(
         self,
-        status: IssueStatus | None = None,
-        issue_type: IssueType | None = None,
+        status: SupportTicketStatus | None = None,
+        issue_type: SupportTicketType | None = None,
         skip: int = 0,
         limit: int = 100
-    ) -> list[Issue]:
-        """Get all issues with optional filters (admin only)"""
+    ) -> list[SupportTicket]:
+        """Get all tickets with optional filters (admin only)"""
         
-    def update(self, issue: Issue) -> Issue:
-        """Update an issue"""
+    def update(self, issue: SupportTicket) -> Issue:
+        """Update a ticket"""
         
-    def delete(self, issue: Issue) -> None:
-        """Delete an issue"""
+    def delete(self, issue: SupportTicket) -> None:
+        """Delete a ticket"""
         
-    def count_by_user_id(self, user_id: uuid.UUID, status: IssueStatus | None = None) -> int:
-        """Count issues for a user"""
+    def count_by_user_id(self, user_id: uuid.UUID, status: SupportTicketStatus | None = None) -> int:
+        """Count tickets for a user"""
         
-    def count_all(self, status: IssueStatus | None = None, issue_type: IssueType | None = None) -> int:
-        """Count all issues (admin only)"""
+    def count_all(self, status: SupportTicketStatus | None = None, issue_type: SupportTicketType | None = None) -> int:
+        """Count all tickets (admin only)"""
 ```
 
 ### Service Layer
 
-**IssueService:**
+**SupportTicketService:**
 ```python
-class IssueService:
+class SupportTicketService:
     def __init__(self, session: Session):
         self.session = session
-        self.issue_repo = IssueRepository(session)
+        self.support_ticket_repo = SupportTicketRepository(session)
     
-    def create_issue(self, user_id: uuid.UUID, issue_in: IssueCreate) -> Issue:
-        """Create a new issue for a user"""
+    def create_support_ticket(self, user_id: uuid.UUID, support_ticket_in: SupportTicketCreate) -> Issue:
+        """Create a new ticket for a user"""
         
-    def get_user_issues(
+    def get_user_support_tickets(
         self, 
         user_id: uuid.UUID, 
-        status: IssueStatus | None = None,
+        status: SupportTicketStatus | None = None,
         skip: int = 0,
         limit: int = 100
-    ) -> tuple[list[Issue], int]:
-        """Get all issues for a user with pagination"""
+    ) -> tuple[list[SupportTicket], int]:
+        """Get all tickets for a user with pagination"""
         
-    def get_all_issues_admin(
+    def get_all_support_tickets_admin(
         self,
-        status: IssueStatus | None = None,
-        issue_type: IssueType | None = None,
+        status: SupportTicketStatus | None = None,
+        issue_type: SupportTicketType | None = None,
         skip: int = 0,
         limit: int = 100
-    ) -> tuple[list[Issue], int]:
-        """Get all issues for admin with filters and pagination"""
+    ) -> tuple[list[SupportTicket], int]:
+        """Get all tickets for admin with filters and pagination"""
         
-    def get_issue_by_id(self, issue_id: uuid.UUID) -> Issue | None:
-        """Get a single issue by ID"""
+    def get_support_ticket_by_id(self, support_ticket_id: uuid.UUID) -> SupportTicket | None:
+        """Get a single ticket by ID"""
         
-    def update_issue(self, issue: Issue, issue_in: IssueUpdate) -> Issue:
-        """Update an issue"""
+    def update_support_ticket(self, issue: SupportTicket, support_ticket_in: SupportTicketUpdate) -> Issue:
+        """Update a ticket"""
         
-    def resolve_issue(self, issue: Issue, resolved_by_user_id: uuid.UUID) -> Issue:
-        """Mark an issue as resolved"""
+    def resolve_support_ticket(self, issue: SupportTicket, resolved_by_user_id: uuid.UUID) -> Issue:
+        """Mark a ticket as resolved"""
         
-    def reopen_issue(self, issue: Issue) -> Issue:
+    def reopen_support_ticket(self, issue: SupportTicket) -> Issue:
         """Reopen a closed issue"""
         
-    def delete_issue(self, issue: Issue) -> None:
-        """Delete an issue"""
+    def delete_support_ticket(self, issue: SupportTicket) -> None:
+        """Delete a ticket"""
         
-    def can_user_access_issue(self, issue: Issue, user_id: uuid.UUID, is_superuser: bool) -> bool:
-        """Check if user can access an issue"""
+    def can_user_access_support_ticket(self, issue: SupportTicket, user_id: uuid.UUID, is_superuser: bool) -> bool:
+        """Check if user can access a ticket"""
 ```
 
 ### API Routes
 
 **Endpoints:**
 
-1. **POST /api/v1/issues** - Create new issue
+1. **POST /api/v1/support-tickets** - Create new issue
    - Auth: Required
-   - Body: IssueCreate
-   - Returns: IssuePublic
+   - Body: SupportTicketCreate
+   - Returns: SupportTicketPublic
 
-2. **GET /api/v1/issues/me** - Get current user's issues
+2. **GET /api/v1/support-tickets/me** - Get current user's issues
    - Auth: Required
    - Query params: status, skip, limit
-   - Returns: IssuesPublicList
+   - Returns: SupportTicketsPublicList
 
-3. **GET /api/v1/issues/{issue_id}** - Get single issue
+3. **GET /api/v1/support-tickets/{support_ticket_id}** - Get single issue
    - Auth: Required
    - Authorization: Owner or admin
-   - Returns: IssuePublic
+   - Returns: SupportTicketPublic
 
-4. **PATCH /api/v1/issues/{issue_id}** - Update issue
+4. **PATCH /api/v1/support-tickets/{support_ticket_id}** - Update issue
    - Auth: Required
    - Authorization: Owner only
-   - Body: IssueUpdate
-   - Returns: IssuePublic
+   - Body: SupportTicketUpdate
+   - Returns: SupportTicketPublic
 
-5. **DELETE /api/v1/issues/{issue_id}** - Delete issue
+5. **DELETE /api/v1/support-tickets/{support_ticket_id}** - Delete issue
    - Auth: Required
    - Authorization: Owner or admin
    - Returns: Success message
 
-6. **GET /api/v1/issues/admin/all** - Get all issues (admin)
+6. **GET /api/v1/support-tickets/admin/all** - Get all tickets (admin)
    - Auth: Required (superuser)
    - Query params: status, issue_type, skip, limit
-   - Returns: List[IssuePublicWithUser]
+   - Returns: List[SupportTicketPublicWithUser]
 
-7. **PATCH /api/v1/issues/{issue_id}/resolve** - Mark resolved (admin)
+7. **PATCH /api/v1/support-tickets/{support_ticket_id}/resolve** - Mark resolved (admin)
    - Auth: Required (superuser)
-   - Returns: IssuePublic
+   - Returns: SupportTicketPublic
 
-8. **PATCH /api/v1/issues/{issue_id}/reopen** - Reopen issue (admin)
+8. **PATCH /api/v1/support-tickets/{support_ticket_id}/reopen** - Reopen ticket (admin)
    - Auth: Required (superuser)
-   - Returns: IssuePublic
+   - Returns: SupportTicketPublic
 
 ### Frontend Components
 
-**1. IssuesPage (User View)**
-- Location: `frontend/src/routes/issues.tsx`
+**1. SupportTicketsPage (User View)**
+- Location: `frontend/src/routes/support-tickets.tsx`
 - Features:
   - Tab navigation (All, Open, Closed)
-  - Issue list table with pagination
-  - "Report New Issue" button
-  - Issue detail modal
+  - SupportTicket list table with pagination
+  - "Report New Ticket" button
+  - SupportTicket detail modal
   - Delete confirmation dialog
 
-**2. CreateIssueDialog**
-- Location: `frontend/src/components/Issues/CreateIssueDialog.tsx`
+**2. CreateSupportTicketDialog**
+- Location: `frontend/src/components/SupportTickets/CreateSupportTicketDialog.tsx`
 - Features:
-  - Issue type selector (Bug/Feature Request)
+  - SupportTicket type selector (Bug/Feature Request)
   - Title input (max 100 chars with counter)
   - Description textarea (max 2000 chars with counter)
   - Form validation
   - Submit button
 
-**3. IssueListTable**
-- Location: `frontend/src/components/Issues/IssueListTable.tsx`
+**3. SupportTicketListTable**
+- Location: `frontend/src/components/SupportTickets/SupportTicketListTable.tsx`
 - Columns:
-  - Issue # (auto-generated)
+  - SupportTicket # (auto-generated)
   - Type (icon badge)
   - Title
   - Status (badge)
   - Created Date
   - Actions (View, Delete)
 
-**4. IssueDetailDialog**
-- Location: `frontend/src/components/Issues/IssueDetailDialog.tsx`
+**4. SupportTicketDetailDialog**
+- Location: `frontend/src/components/SupportTickets/SupportTicketDetailDialog.tsx`
 - Displays:
   - Full title
   - Complete description
-  - Issue type
+  - SupportTicket type
   - Status
   - Created date
   - Updated date
   - Resolved date (if applicable)
 
-**5. AdminIssuesPanel**
-- Location: `frontend/src/components/Admin/AdminIssuesPanel.tsx`
+**5. AdminSupportTicketsPanel**
+- Location: `frontend/src/components/Admin/AdminSupportTicketsPanel.tsx`
 - Features:
   - Filter by status and type
   - Sort by creation date (oldest first)
@@ -353,18 +353,18 @@ class IssueService:
 
 ## Data Models
 
-### Issue Model (SQLModel)
+### SupportTicket Model (SQLModel)
 
 ```python
-class Issue(SQLModel, table=True):
-    __tablename__ = "issue"
+class SupportTicket(SQLModel, table=True):
+    __tablename__ = "support_ticket"
     
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", index=True)
-    issue_type: IssueType
+    issue_type: SupportTicketType
     title: str = Field(max_length=100)
     description: str = Field(max_length=2000)
-    status: IssueStatus = Field(default=IssueStatus.OPEN, index=True)
+    status: SupportTicketStatus = Field(default=IssueStatus.OPEN, index=True)
     resolved_by_user_id: uuid.UUID | None = Field(default=None, foreign_key="user.id")
     resolved_at: datetime | None = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.utcnow, index=True)
@@ -375,8 +375,8 @@ class Issue(SQLModel, table=True):
 
 *A property is a characteristic or behavior that should hold true across all valid executions of a system—essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
 
-### Property 1: Issue ownership validation
-*For any* issue and any user, when a non-admin user attempts to access an issue, access should only be granted if the user_id matches the issue's user_id
+### Property 1: SupportTicket ownership validation
+*For any* ticket and any user, when a non-admin user attempts to access a ticket, access should only be granted if the user_id matches the ticket's user_id
 **Validates: Requirements 8.1, 8.2**
 
 ### Property 2: Status transition validity
@@ -388,19 +388,19 @@ class Issue(SQLModel, table=True):
 **Validates: Requirements 5.2, 5.3**
 
 ### Property 4: Title length constraint
-*For any* issue creation or update, when the title exceeds 100 characters, the operation should be rejected with a validation error
+*For any* ticket creation or update, when the title exceeds 100 characters, the operation should be rejected with a validation error
 **Validates: Requirements 2.1, 1.5**
 
 ### Property 5: Description length constraint
-*For any* issue creation or update, when the description exceeds 2000 characters, the operation should be rejected with a validation error
+*For any* ticket creation or update, when the description exceeds 2000 characters, the operation should be rejected with a validation error
 **Validates: Requirements 2.2**
 
 ### Property 6: Required field validation
-*For any* issue creation, when any required field (issue_type, title, description) is missing or empty, the operation should be rejected with a validation error
+*For any* ticket creation, when any required field (issue_type, title, description) is missing or empty, the operation should be rejected with a validation error
 **Validates: Requirements 2.3, 2.4, 2.5**
 
-### Property 7: User issue list isolation
-*For any* user's issue list query, all returned issues should have a user_id matching the requesting user's ID
+### Property 7: User ticket list isolation
+*For any* user's ticket list query, all returned tickets should have a user_id matching the requesting user's ID
 **Validates: Requirements 8.1**
 
 ### Property 8: Admin access privilege
@@ -408,11 +408,11 @@ class Issue(SQLModel, table=True):
 **Validates: Requirements 4.4, 4.5**
 
 ### Property 9: Timestamp consistency
-*For any* issue update operation, the updated_at timestamp should be greater than or equal to the created_at timestamp
+*For any* ticket update operation, the updated_at timestamp should be greater than or equal to the created_at timestamp
 **Validates: Requirements 7.2**
 
 ### Property 10: Deletion cascade
-*For any* issue, when the issue is deleted, it should no longer appear in any user or admin queries
+*For any* issue, when the ticket is deleted, it should no longer appear in any user or admin queries
 **Validates: Requirements 10.3, 10.4**
 
 ## Error Handling
@@ -421,7 +421,7 @@ class Issue(SQLModel, table=True):
 - Missing required fields
 - Title exceeds 100 characters
 - Description exceeds 2000 characters
-- Invalid issue type or status
+- Invalid ticket type or status
 
 ### Authorization Errors (403)
 - Non-owner accessing another user's issue
@@ -429,8 +429,8 @@ class Issue(SQLModel, table=True):
 - Non-owner attempting to update another user's issue
 
 ### Not Found Errors (404)
-- Issue ID does not exist
-- User has no issues
+- SupportTicket ID does not exist
+- User has no tickets
 
 ### Server Errors (500)
 - Database connection failures
@@ -451,36 +451,36 @@ class Issue(SQLModel, table=True):
 - Admin authorization flow
 
 ### Property-Based Tests
-- Property 1: Issue ownership validation
+- Property 1: SupportTicket ownership validation
 - Property 2: Status transition validity
 - Property 4: Title length constraint
 - Property 5: Description length constraint
 - Property 6: Required field validation
 
 ### End-to-End Tests
-- User creates issue flow
-- User views their issues
-- Admin resolves issue flow
-- Issue deletion flow
+- User creates ticket flow
+- User views their tickets
+- Admin resolves ticket flow
+- SupportTicket deletion flow
 
 ## Security Considerations
 
 1. **Authentication**: All endpoints require valid JWT token
 2. **Authorization**: 
    - Users can only access their own issues
-   - Admins can access all issues
-   - Only admins can resolve/reopen issues
+   - Admins can access all tickets
+   - Only admins can resolve/reopen tickets
 3. **Input Validation**: 
    - Length limits enforced at multiple layers
    - SQL injection prevented by SQLModel parameterization
    - XSS prevention through React's automatic escaping
-4. **Rate Limiting**: Consider implementing rate limits on issue creation to prevent spam
+4. **Rate Limiting**: Consider implementing rate limits on ticket creation to prevent spam
 5. **Audit Trail**: All actions tracked with timestamps and user IDs
 
 ## Performance Considerations
 
 1. **Database Indexes**:
-   - user_id for fast user issue queries
+   - user_id for fast user ticket queries
    - status for filtering
    - created_at for sorting
    - issue_type for admin filtering
@@ -506,17 +506,17 @@ class Issue(SQLModel, table=True):
 3. Generate OpenAPI client for frontend
 4. Deploy frontend components
 5. Add navigation link to main menu
-6. Update admin panel with new issues section
+6. Update admin panel with new tickets section
 
 ## Future Enhancements
 
 1. **Comments**: Allow users and admins to add comments to issues
 2. **Attachments**: Support file uploads (screenshots for bugs)
-3. **Email Notifications**: Notify users when their issues are resolved
+3. **Email Notifications**: Notify users when their tickets are resolved
 4. **Priority Levels**: Add priority field (Low, Medium, High, Critical)
 5. **Labels/Tags**: Allow categorization with custom labels
 6. **Search**: Full-text search across title and description
-7. **Analytics**: Dashboard showing issue trends and statistics
+7. **Analytics**: Dashboard showing ticket trends and statistics
 8. **Voting**: Allow users to upvote feature requests
-9. **Duplicate Detection**: Suggest similar issues before submission
-10. **Export**: Export issues to CSV or PDF
+9. **Duplicate Detection**: Suggest similar tickets before submission
+10. **Export**: Export tickets to CSV or PDF
