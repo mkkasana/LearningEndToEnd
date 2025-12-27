@@ -190,7 +190,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Close dialog and invalidate queries on success
   - _Requirements: 1.3, 2.1, 2.2, 2.3, 2.4, 2.5_
 
- - [ ] 8.2 Commit create dialog component
+ - [x] 8.2 Git Commit create dialog component related changes
 
 ### 9. Create SupportTicket List Components
 - [ ] 9. Create SupportTicket List Components
@@ -217,7 +217,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Make description scrollable if long
   - _Requirements: 3.3, 7.4_
 
- - [ ] 9.3 Commit list components
+ - [ ] 9.3 Git Commit list components related changes
 
 ### 10. Create User Issues Page
 - [ ] 10. Create User Issues Page
@@ -236,7 +236,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Follow the pattern from `frontend/src/routes/_layout/admin.tsx`
   - _Requirements: 1.1, 1.2, 3.1, 9.1, 9.2, 9.3_
 
- - [ ] 10.2 Commit user tickets page
+ - [ ] 10.2 Git Commit user tickets page related changes
 
 ### 11. Create Admin Issues Panel
 - [ ] 11. Create Admin Issues Panel
@@ -262,7 +262,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Ensure proper authorization (page already requires superuser)
   - _Requirements: 4.1, 4.4, 4.5_
 
- - [ ] 11.3 Commit admin panel components
+ - [ ] 11.3 Git Commit admin panel components related changes
 
 ### 12. Add Navigation
 - [ ] 12. Add Navigation
@@ -273,7 +273,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Place after "Update Family" and before "Admin" in the menu
   - _Requirements: 1.1_
 
- - [ ] 12.2 Commit navigation changes
+ - [ ] 12.2 Git Commit navigation changes related changes
 
 ### 13. Frontend Checkpoint
 - [ ] 13. Frontend Checkpoint
@@ -304,7 +304,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Test with multiple users to ensure isolation (users only see their own issues)
   - _Requirements: 1.1, 1.4, 4.1, 5.1, 8.1_
 
- - [ ] 14.2 Final commit for end-to-end verification
+ - [ ] 14.2 Final git commit for end-to-end verification
 
 ---
 

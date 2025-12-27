@@ -57,7 +57,7 @@ class SupportTicketRepository(BaseRepository[SupportTicket]):
         return list(self.session.exec(statement).all())
 
     def count_by_user_id(
-        self, user_id: uuid.UUID, status: IssueStatus | None = None
+        self, user_id: uuid.UUID, status: IssueStatus = IssueStatus.OPEN
     ) -> int:
         """Count tickets for a specific user with optional status filter."""
         statement = select(SupportTicket).where(SupportTicket.user_id == user_id)
