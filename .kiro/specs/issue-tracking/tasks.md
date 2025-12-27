@@ -151,7 +151,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
  - [x] 5.6 Git Commit API routes and tests changes
 
 ### 6. Backend Checkpoint
-- [ ] 6. Backend Checkpoint
+- [x] 6. Backend Checkpoint
  - [ ] 6.1 Ensure all backend tests pass
   - Run all property-based tests (pytest backend/tests/services/test_support_ticket_service.py backend/tests/api/test_support_tickets_api.py)
   - Verify all properties pass with 100+ iterations
@@ -164,19 +164,19 @@ This implementation plan follows a bottom-up approach: database → backend (mod
 ## Frontend Implementation
 
 ### 7. Generate OpenAPI Client
-- [ ] 7. Generate OpenAPI Client
- - [ ] 7.1 Generate TypeScript client from OpenAPI spec
+- [x] 7. Generate OpenAPI Client
+ - [x] 7.1 Generate TypeScript client from OpenAPI spec
   - Run `npm run generate-client` in frontend directory
   - Verify new SupportTicketsService is generated in `frontend/src/client/`
   - Check `frontend/src/client/schemas.gen.ts` for SupportTicket types (SupportTicketPublic, SupportTicketCreate, etc.)
   - Verify IssueType and IssueStatus enums are generated
   - _Requirements: 1.1_
 
- - [ ] 7.2 Commit generated OpenAPI client
+ - [x] 7.2 Git Commit generated OpenAPI client
  
 ### 8. Create SupportTicket Dialog Component
 - [ ] 8. Create SupportTicket Dialog Component
- - [ ] 8.1 Create CreateSupportTicketDialog component
+ - [x] 8.1 Create CreateSupportTicketDialog component
   - Create `frontend/src/components/SupportTickets/CreateSupportTicketDialog.tsx`
   - Implement dialog with form using shadcn/ui Dialog, Form components
   - Add ticket type selector (Bug/Feature Request) using Select or RadioGroup
