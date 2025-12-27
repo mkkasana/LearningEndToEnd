@@ -77,8 +77,8 @@
     - Re-raise exception to caller
     - _Requirements: 3.4_
 
-- [ ] 4. Update PersonRelationshipService - Update
-  - [ ] 4.1 Refactor update_relationship method
+- [x] 4. Update PersonRelationshipService - Update
+  - [x] 4.1 Refactor update_relationship method
     - Add transaction wrapper
     - Update primary relationship
     - Find inverse relationship using repository
@@ -90,7 +90,7 @@
     - Return updated primary relationship
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
   
-  - [ ] 4.2 Handle missing inverse gracefully
+  - [x] 4.2 Handle missing inverse gracefully
     - Check if inverse exists
     - If not found, log warning with relationship ID
     - Continue with primary update

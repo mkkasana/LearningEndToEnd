@@ -146,12 +146,82 @@ class PersonRelationshipService:
     def update_relationship(
         self, relationship: PersonRelationship, relationship_update: PersonRelationshipUpdate
     ) -> PersonRelationship:
-        """Update a relationship."""
-        update_data = relationship_update.model_dump(exclude_unset=True)
-        for key, value in update_data.items():
-            setattr(relationship, key, value)
-        relationship.updated_at = datetime.utcnow()
-        return self.relationship_repo.update(relationship)
+        """
+        Update a bidirectional relationship.
+        
+        This method updates both the primary relationship and its inverse relationship,
+        ensuring that changes to is_active, start_date, and end_date are synchronized
+        across both directions. The relationship_type is NOT updated for the inverse.
+        
+        Args:
+            relationship: The primary relationship to update
+            relationship_update: The update data
+            
+        Returns:
+            The updated primary relationship
+            
+        Raises:
+            Exception: If the update fails (transaction will be rolled back)
+        """
+        try:
+            logger.info(
+                f"Updating relationship: id={relationship.id}, "
+                f"person_id={relationship.person_id}, "
+                f"related_person_id={relationship.related_person_id}"
+            )
+            
+            # Update primary relationship
+            update_data = relationship_update.model_dump(exclude_unset=True)
+            for key, value in update_data.items():
+                setattr(relationship, key, value)
+            relationship.updated_at = datetime.utcnow()
+            updated_primary = self.relationship_repo.update(relationship)
+            logger.info(f"Updated primary relationship with ID: {updated_primary.id}")
+            
+            # Find inverse relationship using repository
+            inverse_relationship = self.relationship_repo.find_inverse_including_inactive(
+                person_id=relationship.person_id,
+                related_person_id=relationship.related_person_id,
+            )
+            
+            # If inverse found, update matching fields
+            if inverse_relationship:
+                logger.info(
+                    f"Found inverse relationship with ID: {inverse_relationship.id}, "
+                    f"updating matching fields"
+                )
+                
+                # Update only the fields that should be synchronized
+                # Do NOT update relationship_type of inverse
+                if "is_active" in update_data:
+                    inverse_relationship.is_active = update_data["is_active"]
+                if "start_date" in update_data:
+                    inverse_relationship.start_date = update_data["start_date"]
+                if "end_date" in update_data:
+                    inverse_relationship.end_date = update_data["end_date"]
+                
+                # Update updated_at timestamp for inverse
+                inverse_relationship.updated_at = datetime.utcnow()
+                self.relationship_repo.update(inverse_relationship)
+                logger.info(f"Updated inverse relationship with ID: {inverse_relationship.id}")
+            else:
+                # If inverse not found, log warning and continue
+                logger.warning(
+                    f"Inverse relationship not found for relationship ID: {relationship.id}. "
+                    f"Continuing with primary update only."
+                )
+            
+            # Commit transaction
+            self.session.commit()
+            logger.info(f"Successfully committed bidirectional relationship update")
+            
+            return updated_primary
+            
+        except Exception as e:
+            # Rollback transaction on any error
+            logger.error(f"Error updating relationship: {e}", exc_info=True)
+            self.session.rollback()
+            raise
 
     def delete_relationship(self, relationship: PersonRelationship) -> None:
         """Delete a relationship."""
