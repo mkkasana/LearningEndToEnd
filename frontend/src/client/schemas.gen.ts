@@ -1779,10 +1779,16 @@ export const PersonRelationshipPublicSchema = {
             type: 'string',
             format: 'date-time',
             title: 'Updated At'
+        },
+        relationship_type_label: {
+            type: 'string',
+            title: 'Relationship Type Label',
+            description: 'Get human-readable label for the relationship type.',
+            readOnly: true
         }
     },
     type: 'object',
-    required: ['related_person_id', 'relationship_type', 'id', 'person_id', 'created_at', 'updated_at'],
+    required: ['related_person_id', 'relationship_type', 'id', 'person_id', 'created_at', 'updated_at', 'relationship_type_label'],
     title: 'PersonRelationshipPublic',
     description: 'Person relationship response schema.'
 } as const;

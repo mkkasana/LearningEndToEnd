@@ -658,6 +658,10 @@ export type PersonRelationshipPublic = {
     person_id: string;
     created_at: string;
     updated_at: string;
+    /**
+     * Get human-readable label for the relationship type.
+     */
+    readonly relationship_type_label: string;
 };
 
 /**
@@ -1629,6 +1633,12 @@ export type PersonDeleteMyProfessionData = {
 };
 
 export type PersonDeleteMyProfessionResponse = (unknown);
+
+export type PersonGetPersonRelationshipsWithDetailsData = {
+    personId: string;
+};
+
+export type PersonGetPersonRelationshipsWithDetailsResponse = (Array<PersonRelationshipWithDetails>);
 
 export type PersonGetMyRelationshipsResponse = (Array<PersonRelationshipPublic>);
 

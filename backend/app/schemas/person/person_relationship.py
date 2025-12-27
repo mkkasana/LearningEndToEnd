@@ -4,6 +4,7 @@ import uuid
 from datetime import date, datetime
 from typing import Any
 
+from pydantic import computed_field
 from sqlmodel import Field, SQLModel
 
 from app.enums import RelationshipType
@@ -42,6 +43,12 @@ class PersonRelationshipPublic(PersonRelationshipBase):
     person_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+
+    @computed_field
+    @property
+    def relationship_type_label(self) -> str:
+        """Get human-readable label for the relationship type."""
+        return self.relationship_type.label
 
 
 # Inline person details to avoid circular import

@@ -287,6 +287,7 @@ export function AddFamilyMemberDialog({
         <ConnectConfirmationDialog
           open={showConnectDialog}
           onOpenChange={setShowConnectDialog}
+          personId={selectedPersonToConnect.person_id}
           personName={`${selectedPersonToConnect.first_name} ${selectedPersonToConnect.middle_name ? selectedPersonToConnect.middle_name + ' ' : ''}${selectedPersonToConnect.last_name}`}
           relationshipType={familyMemberData?.relationshipTypeLabel || ""}
           onConfirm={() => {
