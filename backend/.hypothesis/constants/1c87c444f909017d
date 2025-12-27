@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/db_models/religion/religion_sub_category.py
+# hypothesis_version: 6.148.8
+
+[255, 500, 'Optional description', 'Parent category', 'Sub-category code', 'Sub-category name', 'religion_category.id']

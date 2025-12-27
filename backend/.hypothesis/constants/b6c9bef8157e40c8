@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/core/security.py
+# hypothesis_version: 6.148.8
+
+['HS256', 'auto', 'bcrypt', 'exp', 'sub']

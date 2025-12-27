@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/schemas/religion/religion_category.py
+# hypothesis_version: 6.148.8
+
+[255, 500, 'Category code', 'Optional description']

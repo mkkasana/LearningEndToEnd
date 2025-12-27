@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/models.py
+# hypothesis_version: 6.148.8
+
+['Item', 'User', 'UserCreate', 'UserUpdate']

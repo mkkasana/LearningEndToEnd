@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/api/routes/utils.py
+# hypothesis_version: 6.148.8
+
+[201, '/health-check/', '/test-email/', '/utils', 'Test email sent', 'utils']

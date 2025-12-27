@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/db_models/person/person.py
+# hypothesis_version: 6.148.8
+
+[100, 'Creation timestamp', 'Date of birth', 'Date of death', 'First name', 'Gender reference', 'Last name', 'Middle name', 'person', 'person_gender.id', 'user.id']

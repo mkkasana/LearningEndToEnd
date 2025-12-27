@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/db_models/person/person_address.py
+# hypothesis_version: 6.148.8
+
+['Address end date', 'Address start date', 'Country reference', 'Creation timestamp', 'District reference', 'Locality reference', 'Person reference', 'State reference', 'address_country.id', 'address_district.id', 'address_locality.id', 'address_state.id', 'person.id', 'person_address']

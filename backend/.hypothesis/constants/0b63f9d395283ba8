@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/db_models/person/person_relationship.py
+# hypothesis_version: 6.148.8
+
+['Creation timestamp', 'Person reference', 'Relationship type', 'person.id', 'person_relationship']

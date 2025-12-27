@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/db_models/person/person_metadata.py
+# hypothesis_version: 6.148.8
+
+[500, 'Creation timestamp', 'Person biography', 'Person reference', 'Profile image URL', 'person.id', 'person_metadata']

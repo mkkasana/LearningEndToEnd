@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/api/routes/person/__init__.py
+# hypothesis_version: 6.148.8
+
+['metadata_router', 'person_router']

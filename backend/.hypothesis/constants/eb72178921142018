@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/enums/relationship_type.py
+# hypothesis_version: 6.148.8
+
+['Daughter', 'Father', 'Husband', 'Mother', 'Son', 'Spouse', 'Wife', 'rel-6a0ede824d101', 'rel-6a0ede824d102', 'rel-6a0ede824d103', 'rel-6a0ede824d104', 'rel-6a0ede824d105', 'rel-6a0ede824d106', 'rel-6a0ede824d107']

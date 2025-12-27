@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/core/config.py
+# hypothesis_version: 6.148.8
+
+[587, 5432, ',', '../.env', '/', '/api/v1', 'POSTGRES_PASSWORD', 'SECRET_KEY', '[', 'after', 'changethis', 'ignore', 'local', 'postgresql+psycopg', 'production', 'staging', 'test@example.com']

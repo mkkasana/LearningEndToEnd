@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/schemas/address/state.py
+# hypothesis_version: 6.148.8
+
+[255, 'State code', 'State name']

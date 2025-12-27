@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/services/person/person_relationship_service.py
+# hypothesis_version: 6.148.8
+
+['end_date', 'is_active', 'start_date']

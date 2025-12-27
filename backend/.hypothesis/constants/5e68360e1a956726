@@ -1,0 +1,4 @@
+# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/db_models/address/sub_district.py
+# hypothesis_version: 6.148.8
+
+[255, 'address_district.id', 'address_sub_district']
