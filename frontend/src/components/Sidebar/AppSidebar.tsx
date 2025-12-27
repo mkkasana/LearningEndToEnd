@@ -1,4 +1,4 @@
-import { Briefcase, Bug, Home, Users, UsersRound } from "lucide-react"
+import { Briefcase, Bug, Home, Network, Users, UsersRound } from "lucide-react"
 
 import { SidebarAppearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
@@ -16,6 +16,7 @@ const baseItems: Item[] = [
   { icon: Home, title: "Dashboard", path: "/" },
   { icon: Briefcase, title: "Items", path: "/items" },
   { icon: UsersRound, title: "Update Family", path: "/family" },
+  { icon: Network, title: "Family View", path: "/family-tree" },
   { icon: Bug, title: "Report Ticket", path: "/support-tickets" },
 ]
 

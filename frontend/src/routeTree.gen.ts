@@ -16,8 +16,10 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as CompleteProfileRouteImport } from './routes/complete-profile'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutSupportTicketsRouteImport } from './routes/_layout/support-tickets'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
+import { Route as LayoutFamilyTreeRouteImport } from './routes/_layout/family-tree'
 import { Route as LayoutFamilyRouteImport } from './routes/_layout/family'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 
@@ -55,6 +57,11 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutSupportTicketsRoute = LayoutSupportTicketsRouteImport.update({
+  id: '/support-tickets',
+  path: '/support-tickets',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -63,6 +70,11 @@ const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
 const LayoutItemsRoute = LayoutItemsRouteImport.update({
   id: '/items',
   path: '/items',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutFamilyTreeRoute = LayoutFamilyTreeRouteImport.update({
+  id: '/family-tree',
+  path: '/family-tree',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutFamilyRoute = LayoutFamilyRouteImport.update({
@@ -84,8 +96,10 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
   '/family': typeof LayoutFamilyRoute
+  '/family-tree': typeof LayoutFamilyTreeRoute
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
+  '/support-tickets': typeof LayoutSupportTicketsRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesByTo {
@@ -96,8 +110,10 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
   '/family': typeof LayoutFamilyRoute
+  '/family-tree': typeof LayoutFamilyTreeRoute
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
+  '/support-tickets': typeof LayoutSupportTicketsRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesById {
@@ -110,8 +126,10 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/family': typeof LayoutFamilyRoute
+  '/_layout/family-tree': typeof LayoutFamilyTreeRoute
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
+  '/_layout/support-tickets': typeof LayoutSupportTicketsRoute
   '/_layout/': typeof LayoutIndexRoute
 }
 export interface FileRouteTypes {
@@ -124,8 +142,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin'
     | '/family'
+    | '/family-tree'
     | '/items'
     | '/settings'
+    | '/support-tickets'
     | '/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -136,8 +156,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin'
     | '/family'
+    | '/family-tree'
     | '/items'
     | '/settings'
+    | '/support-tickets'
     | '/'
   id:
     | '__root__'
@@ -149,8 +171,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_layout/admin'
     | '/_layout/family'
+    | '/_layout/family-tree'
     | '/_layout/items'
     | '/_layout/settings'
+    | '/_layout/support-tickets'
     | '/_layout/'
   fileRoutesById: FileRoutesById
 }
@@ -214,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/support-tickets': {
+      id: '/_layout/support-tickets'
+      path: '/support-tickets'
+      fullPath: '/support-tickets'
+      preLoaderRoute: typeof LayoutSupportTicketsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/settings': {
       id: '/_layout/settings'
       path: '/settings'
@@ -226,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/items'
       fullPath: '/items'
       preLoaderRoute: typeof LayoutItemsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/family-tree': {
+      id: '/_layout/family-tree'
+      path: '/family-tree'
+      fullPath: '/family-tree'
+      preLoaderRoute: typeof LayoutFamilyTreeRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/family': {
@@ -248,16 +286,20 @@ declare module '@tanstack/react-router' {
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutFamilyRoute: typeof LayoutFamilyRoute
+  LayoutFamilyTreeRoute: typeof LayoutFamilyTreeRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
+  LayoutSupportTicketsRoute: typeof LayoutSupportTicketsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutFamilyRoute: LayoutFamilyRoute,
+  LayoutFamilyTreeRoute: LayoutFamilyTreeRoute,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
+  LayoutSupportTicketsRoute: LayoutSupportTicketsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 
