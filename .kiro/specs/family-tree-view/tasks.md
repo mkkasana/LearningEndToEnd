@@ -14,7 +14,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
   - Git commit all the change made for this task
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [-] 2. Implement data fetching and processing
+- [x] 2. Implement data fetching and processing
   - [x] 2.1 Create useFamilyTreeData custom hook
     - Implement TanStack Query integration for fetching relationship data
     - Use existing `/api/v1/person/{person_id}/relationships/with-details` endpoint
@@ -22,7 +22,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Initialize with current user's person profile
     - _Requirements: 1.3, 9.1, 9.2_
 
-  - [x] 2.2 Write property test for relationship categorization
+  - [ ] 2.2 Write property test for relationship categorization
     - **Property 2: Relationship Categorization**
     - **Validates: Requirements 9.3**
 
@@ -50,7 +50,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Configure TanStack Query cache settings
     - Verify cached data is reused for previously viewed persons
     - _Requirements: 9.5_
-  - [-] 2.8 Git commit all the change made for this task
+  - [x] 2.8 Git commit all the change made for this task
 
 
 - [ ] 3. Create PersonCard component

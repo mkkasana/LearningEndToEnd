@@ -8,7 +8,7 @@ import {
   SPOUSE_TYPES,
   CHILD_TYPES,
 } from './useFamilyTreeData'
-import type { PersonRelationshipWithDetails, PersonDetails, PersonRelationshipPublic } from '@/client'
+import type { PersonRelationshipWithDetails, RelationshipType } from '@/client'
 
 // Generators for property-based testing
 
@@ -21,19 +21,34 @@ const personDetailsArbitrary = fc.record({
   middle_name: fc.option(fc.string({ minLength: 1, maxLength: 50 }), { nil: null }),
   last_name: fc.string({ minLength: 1, maxLength: 50 }),
   gender_id: fc.uuid(),
-  date_of_birth: fc.date({ min: new Date('1900-01-01'), max: new Date() }).map(d => d.toISOString().split('T')[0]),
-  date_of_death: fc.option(fc.date({ min: new Date('1900-01-01'), max: new Date() }).map(d => d.toISOString().split('T')[0]), { nil: null }),
+  date_of_birth: fc.integer({ min: 1900, max: 2024 }).chain(year =>
+    fc.integer({ min: 1, max: 12 }).chain(month =>
+      fc.integer({ min: 1, max: 28 }).map(day =>
+        `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+      )
+    )
+  ),
+  date_of_death: fc.option(
+    fc.integer({ min: 1900, max: 2024 }).chain(year =>
+      fc.integer({ min: 1, max: 12 }).chain(month =>
+        fc.integer({ min: 1, max: 28 }).map(day =>
+          `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+        )
+      )
+    ),
+    { nil: null }
+  ),
   user_id: fc.option(fc.uuid(), { nil: null }),
   created_by_user_id: fc.uuid(),
   is_primary: fc.boolean(),
-  created_at: fc.date().map(d => d.toISOString()),
-  updated_at: fc.date().map(d => d.toISOString()),
+  created_at: fc.integer({ min: 1609459200000, max: Date.now() }).map(ts => new Date(ts).toISOString()),
+  updated_at: fc.integer({ min: 1609459200000, max: Date.now() }).map(ts => new Date(ts).toISOString()),
 })
 
 /**
  * Generate a random relationship type
  */
-const relationshipTypeArbitrary = fc.constantFrom(
+const relationshipTypeArbitrary = fc.constantFrom<RelationshipType>(
   RELATIONSHIP_TYPES.FATHER,
   RELATIONSHIP_TYPES.MOTHER,
   RELATIONSHIP_TYPES.DAUGHTER,
@@ -46,23 +61,41 @@ const relationshipTypeArbitrary = fc.constantFrom(
 /**
  * Generate a random PersonRelationshipPublic object
  */
-const personRelationshipPublicArbitrary = (relType: string) => fc.record({
+const personRelationshipPublicArbitrary = (relType: RelationshipType) => fc.record({
   id: fc.uuid(),
   person_id: fc.uuid(),
   related_person_id: fc.uuid(),
   relationship_type: fc.constant(relType),
   relationship_type_label: fc.string(),
-  start_date: fc.option(fc.date().map(d => d.toISOString().split('T')[0]), { nil: null }),
-  end_date: fc.option(fc.date().map(d => d.toISOString().split('T')[0]), { nil: null }),
+  start_date: fc.option(
+    fc.integer({ min: 1900, max: 2024 }).chain(year =>
+      fc.integer({ min: 1, max: 12 }).chain(month =>
+        fc.integer({ min: 1, max: 28 }).map(day =>
+          `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+        )
+      )
+    ),
+    { nil: null }
+  ),
+  end_date: fc.option(
+    fc.integer({ min: 1900, max: 2024 }).chain(year =>
+      fc.integer({ min: 1, max: 12 }).chain(month =>
+        fc.integer({ min: 1, max: 28 }).map(day =>
+          `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+        )
+      )
+    ),
+    { nil: null }
+  ),
   is_active: fc.boolean(),
-  created_at: fc.date().map(d => d.toISOString()),
-  updated_at: fc.date().map(d => d.toISOString()),
+  created_at: fc.integer({ min: 1609459200000, max: Date.now() }).map(ts => new Date(ts).toISOString()),
+  updated_at: fc.integer({ min: 1609459200000, max: Date.now() }).map(ts => new Date(ts).toISOString()),
 })
 
 /**
  * Generate a PersonRelationshipWithDetails with a specific relationship type
  */
-const personRelationshipWithDetailsArbitrary = (relType: string) =>
+const personRelationshipWithDetailsArbitrary = (relType: RelationshipType) =>
   fc.record({
     relationship: personRelationshipPublicArbitrary(relType),
     person: personDetailsArbitrary,
@@ -211,7 +244,7 @@ describe('useFamilyTreeData - Property-Based Tests', () => {
    */
   describe('Property 3: Sibling Calculation', () => {
     it('should return empty array when no parents exist', async () => {
-      const result = await calculateSiblings('person-id', [], [])
+      const result = await calculateSiblings('person-id', [])
       expect(result).toEqual([])
     })
 
@@ -230,7 +263,7 @@ describe('useFamilyTreeData - Property-Based Tests', () => {
             
             // For now, we'll test with empty relationships to verify
             // that the selected person is never included
-            const result = await calculateSiblings(selectedPersonId, parentIds, [])
+            const result = await calculateSiblings(selectedPersonId, parentIds)
             
             // The result should never contain the selected person
             expect(result.every(sibling => sibling.id !== selectedPersonId)).toBe(true)

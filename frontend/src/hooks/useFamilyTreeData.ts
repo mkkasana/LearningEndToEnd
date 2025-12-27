@@ -60,8 +60,7 @@ export function useFamilyTreeData(personId: string | null) {
       // Calculate siblings
       const siblings = await calculateSiblings(
         personId || 'me',
-        categorized.parentIds,
-        relationships
+        categorized.parentIds
       )
 
       return {
@@ -120,13 +119,11 @@ export function categorizeRelationships(
  * Calculate siblings by finding people who share the same parents
  * @param selectedPersonId - The ID of the selected person
  * @param parentIds - Array of parent IDs
- * @param allRelationships - All relationships for the selected person
  * @returns Array of sibling person details
  */
 export async function calculateSiblings(
   selectedPersonId: string,
-  parentIds: string[],
-  allRelationships: PersonRelationshipWithDetails[]
+  parentIds: string[]
 ): Promise<PersonDetails[]> {
   if (parentIds.length === 0) {
     return []
