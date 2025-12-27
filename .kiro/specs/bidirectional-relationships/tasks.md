@@ -114,13 +114,13 @@
     - _Requirements: 3.5_
 
 - [ ] 6. Create data migration script
-  - [ ] 6.1 Create migration script file
+  - [x] 6.1 Create migration script file
     - Create `scripts/migrate_bidirectional_relationships.py`
     - Add database connection setup
     - Add logging configuration
     - _Requirements: 5.1_
   
-  - [ ] 6.2 Implement migration logic
+  - [x] 6.2 Implement migration logic
     - Query all existing relationships
     - For each relationship, check if inverse exists
     - If inverse missing, determine inverse type
@@ -129,19 +129,19 @@
     - Log progress every 100 relationships
     - _Requirements: 5.1, 5.2, 5.3, 5.4_
   
-  - [ ] 6.3 Add idempotency check
+  - [x] 6.3 Add idempotency check
     - Skip relationships that already have inverses
     - Allow script to run multiple times safely
     - _Requirements: 5.5_
   
-  - [ ] 6.4 Add dry-run mode
+  - [x] 6.4 Add dry-run mode
     - Add --dry-run flag
     - Report what would be created without creating
     - Useful for testing before actual migration
     - _Requirements: 5.4_
 
-- [ ] 7. Write unit tests
-  - [ ] 7.1 Test RelationshipTypeHelper.get_inverse_type
+- [x] 7. Write unit tests
+  - [x] 7.1 Test RelationshipTypeHelper.get_inverse_type
     - Test Father + male person (A) → Son (A → B as Father, B is A's father, A is male → B → A as Son)
     - Test Father + female person (A) → Daughter (A → B as Father, B is A's father, A is female → B → A as Daughter)
     - Test Mother + male person (A) → Son (A → B as Mother, B is A's mother, A is male → B → A as Son)
@@ -156,7 +156,7 @@
     - Test unknown type → None
     - _Requirements: 6.4, 6.5_
   
-  - [ ] 7.2 Test PersonRelationshipService.create_relationship
+  - [x] 7.2 Test PersonRelationshipService.create_relationship
     - Test creates both primary and inverse
     - Test correct inverse type determination
     - Test transaction rollback on error
@@ -164,84 +164,84 @@
     - Mock database calls
     - _Requirements: 6.1_
   
-  - [ ] 7.3 Test PersonRelationshipService.update_relationship
+  - [x] 7.3 Test PersonRelationshipService.update_relationship
     - Test updates both relationships
     - Test only syncs appropriate fields
     - Test handles missing inverse gracefully
     - Test updated_at timestamp updated
     - _Requirements: 6.2_
   
-  - [ ] 7.4 Test PersonRelationshipService.delete_relationship
+  - [x] 7.4 Test PersonRelationshipService.delete_relationship
     - Test deletes both relationships
     - Test transaction atomicity
     - Test handles missing inverse gracefully
     - Test soft delete affects both
     - _Requirements: 6.3_
 
-- [ ] 8. Write integration tests
-  - [ ] 8.1 Test end-to-end relationship creation
+- [x] 8. Write integration tests
+  - [x] 8.1 Test end-to-end relationship creation
     - Create relationship via API
     - Query person A's relationships → verify B appears
     - Query person B's relationships → verify A appears with inverse type
     - Verify both relationship records exist in database
     - _Requirements: 6.1_
   
-  - [ ] 8.2 Test end-to-end relationship update
+  - [x] 8.2 Test end-to-end relationship update
     - Create bidirectional relationship
     - Update via API (change is_active to false)
     - Query both persons → verify both show inactive
     - _Requirements: 6.2_
   
-  - [ ] 8.3 Test end-to-end relationship deletion
+  - [x] 8.3 Test end-to-end relationship deletion
     - Create bidirectional relationship
     - Delete via API
     - Query both persons → verify neither shows the relationship
     - Verify both records removed from database
     - _Requirements: 6.3_
   
-  - [ ] 8.4 Test migration script
+  - [x] 8.4 Test migration script
     - Create test database with single-direction relationships
     - Run migration script
     - Verify inverse relationships created
     - Run migration again → verify idempotency
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 9. Update API documentation
-  - [ ] 9.1 Update API endpoint docstrings
+- [x] 9. Update API documentation
+  - [x] 9.1 Update API endpoint docstrings
     - Document that relationships are bidirectional
     - Explain inverse relationship creation
     - Add examples showing both directions
     - _Requirements: 1.1_
   
-  - [ ] 9.2 Create migration guide
+  - [x] 9.2 Create migration guide
     - Document migration script usage
     - Provide dry-run example
     - Explain rollback procedure if needed
     - _Requirements: 5.1, 5.4_
 
-- [ ] 10. Manual testing and verification
-  - [ ] 10.1 Test relationship creation flow
+- [x] 10. Manual testing and verification
+  - [x] 10.1 Test relationship creation flow
     - Create Father relationship
     - Verify Son/Daughter inverse created based on gender
     - Check database records
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
   
-  - [ ] 10.2 Test relationship update flow
+  - [x] 10.2 Test relationship update flow
     - Update relationship is_active
     - Verify both directions updated
     - _Requirements: 2.1, 2.2, 2.3_
   
-  - [ ] 10.3 Test relationship deletion flow
+  - [x] 10.3 Test relationship deletion flow
     - Delete relationship
     - Verify both directions removed
     - _Requirements: 3.1, 3.2_
   
-  - [ ] 10.4 Test migration on development data
+  - [x] 10.4 Test migration on development data
     - Run migration script with --dry-run
     - Review what would be created
     - Run actual migration
     - Verify all relationships have inverses
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 11. Final checkpoint
+- [x] 11. Final checkpoint
   - Ensure all tests pass, ask the user if questions arise.

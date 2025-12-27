@@ -684,6 +684,44 @@ def create_my_relationship(
 ) -> Any:
     """
     Create new relationship for current user's person profile.
+    
+    **Bidirectional Relationships:**
+    This endpoint automatically creates both directions of the relationship:
+    - Primary relationship: Person A → Person B (as specified)
+    - Inverse relationship: Person B → Person A (automatically determined)
+    
+    **Inverse Relationship Logic:**
+    The system determines the correct inverse relationship type based on:
+    - The primary relationship type
+    - Both persons' genders (when applicable)
+    
+    **Examples:**
+    
+    1. Parent-Child Relationships (gender-dependent):
+       - Create: A → B as "Father" (B is A's father)
+       - System creates: B → A as "Son" (if A is male) or "Daughter" (if A is female)
+       
+       - Create: A → B as "Mother" (B is A's mother)
+       - System creates: B → A as "Son" (if A is male) or "Daughter" (if A is female)
+       
+       - Create: A → B as "Son" (B is A's son)
+       - System creates: B → A as "Father" (if A is male) or "Mother" (if A is female)
+       
+       - Create: A → B as "Daughter" (B is A's daughter)
+       - System creates: B → A as "Father" (if A is male) or "Mother" (if A is female)
+    
+    2. Spouse Relationships (gender-independent):
+       - Create: A → B as "Husband" (B is A's husband)
+       - System creates: B → A as "Wife" (A is B's wife)
+       
+       - Create: A → B as "Wife" (B is A's wife)
+       - System creates: B → A as "Husband" (A is B's husband)
+       
+       - Create: A → B as "Spouse" (B is A's spouse)
+       - System creates: B → A as "Spouse" (A is B's spouse)
+    
+    **Result:**
+    Both persons will see each other in their family trees with the correct relationship type.
     """
     person_service = PersonService(session)
     person = person_service.get_person_by_user_id(current_user.id)
@@ -736,6 +774,39 @@ def update_my_relationship(
 ) -> Any:
     """
     Update relationship for current user.
+    
+    **Bidirectional Updates:**
+    This endpoint automatically updates both directions of the relationship:
+    - Updates the primary relationship (the one you're modifying)
+    - Finds and updates the inverse relationship automatically
+    
+    **Synchronized Fields:**
+    The following fields are synchronized across both directions:
+    - `is_active`: When you activate/deactivate a relationship, both directions are updated
+    - `start_date`: Changes to start date are reflected in both directions
+    - `end_date`: Changes to end date are reflected in both directions
+    - `updated_at`: Timestamp is updated for both relationships
+    
+    **Non-Synchronized Fields:**
+    - `relationship_type`: Each direction maintains its own correct type (e.g., Father/Son)
+    
+    **Examples:**
+    
+    1. Deactivating a relationship:
+       - Update: A → B relationship, set `is_active=False`
+       - System updates: B → A relationship, also sets `is_active=False`
+       - Result: Neither person sees the relationship in their family tree
+    
+    2. Updating dates:
+       - Update: A → B relationship, set `start_date="2020-01-01"`
+       - System updates: B → A relationship, also sets `start_date="2020-01-01"`
+       - Result: Both directions show the same date range
+    
+    **Graceful Handling:**
+    If the inverse relationship is not found (e.g., legacy data), the system:
+    - Logs a warning
+    - Continues with updating the primary relationship
+    - Does not fail the request
     """
     person_service = PersonService(session)
     person = person_service.get_person_by_user_id(current_user.id)
@@ -767,6 +838,43 @@ def delete_my_relationship(
 ) -> Any:
     """
     Delete relationship for current user.
+    
+    **Bidirectional Deletion:**
+    This endpoint automatically deletes both directions of the relationship:
+    - Deletes the primary relationship (the one you're removing)
+    - Finds and deletes the inverse relationship automatically
+    
+    **Transaction Safety:**
+    Both deletions are performed within a database transaction:
+    - If both deletions succeed, changes are committed
+    - If either deletion fails, all changes are rolled back
+    - Ensures data consistency (no orphaned relationships)
+    
+    **Soft Delete Support:**
+    If using soft delete (setting `is_active=False` instead of removing records):
+    - Both directions are soft-deleted together
+    - Maintains referential integrity
+    
+    **Examples:**
+    
+    1. Hard delete:
+       - Delete: A → B relationship (Father)
+       - System deletes: B → A relationship (Son/Daughter)
+       - Result: Both records are removed from the database
+    
+    2. Soft delete:
+       - Delete: A → B relationship (sets `is_active=False`)
+       - System updates: B → A relationship (also sets `is_active=False`)
+       - Result: Both relationships are hidden but data is preserved
+    
+    **Graceful Handling:**
+    If the inverse relationship is not found (e.g., legacy data), the system:
+    - Logs a warning
+    - Continues with deleting the primary relationship
+    - Does not fail the request
+    
+    **Result:**
+    Neither person will see the relationship in their family tree after deletion.
     """
     person_service = PersonService(session)
     person = person_service.get_person_by_user_id(current_user.id)
