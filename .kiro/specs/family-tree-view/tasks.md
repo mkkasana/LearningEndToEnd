@@ -54,35 +54,35 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
 
 - [ ] 3. Create PersonCard component
-  - [ ] 3.1 Implement PersonCard component with variants
+  - [x] 3.1 Implement PersonCard component with variants
     - Create component with props: person, relationshipType, variant, onClick, showPhoto
     - Implement variants: selected, parent, spouse, sibling, child
     - Add click handler for navigation
     - _Requirements: 2.1, 2.3_
 
-  - [ ] 3.2 Write property test for person information formatting
+  - [x] 3.2 Write property test for person information formatting
     - **Property 1: Person Information Formatting**
     - **Validates: Requirements 2.2, 3.4, 4.3, 6.3**
 
-  - [ ] 3.3 Implement person information display formatting
+  - [x] 3.3 Implement person information display formatting
     - Display first name and last name
     - Format birth/death years as "YYYY - YYYY" or "YYYY -"
     - Show relationship label for non-selected cards
     - _Requirements: 2.2, 3.4, 4.3, 6.3_
 
-  - [ ] 3.4 Write unit tests for PersonCard edge cases
+  - [x] 3.4 Write unit tests for PersonCard edge cases
     - Test with missing photo (shows placeholder)
     - Test with missing middle name
     - Test with missing death date
     - Test different variants render with correct styling
     - _Requirements: 2.4, 2.5_
 
-  - [ ] 3.5 Implement photo display with fallback
+  - [x] 3.5 Implement photo display with fallback
     - Display profile photo if available
     - Show gender-based avatar placeholder if no photo
     - _Requirements: 2.4, 2.5_
 
- - [ ] 3.6 Git commit all the change made for this task
+ - [x] 3.6 Git commit all the change made for this task
 
 - [ ] 4. Implement family tree layout sections
   - [ ] 4.1 Create ParentsSection component
