@@ -60,7 +60,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Add click handler for navigation
     - _Requirements: 2.1, 2.3_
 
-  - [x] 3.2 Write property test for person information formatting
+  - [ ] 3.2 Write property test for person information formatting
     - **Property 1: Person Information Formatting**
     - **Validates: Requirements 2.2, 3.4, 4.3, 6.3**
 
@@ -84,65 +84,65 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
  - [x] 3.6 Git commit all the change made for this task
 
-- [ ] 4. Implement family tree layout sections
-  - [ ] 4.1 Create ParentsSection component
+- [-] 4. Implement family tree layout sections
+  - [x] 4.1 Create ParentsSection component
     - Display parent cards above selected person
     - Show mother and father side-by-side
     - Handle cases with 0, 1, or 2 parents
     - _Requirements: 3.1, 3.2, 3.5, 3.6_
 
-  - [ ] 4.2 Write property test for relationship display
+  - [x] 4.2 Write property test for relationship display
     - **Property 4: Relationship Display**
     - **Validates: Requirements 3.1, 4.1, 5.1, 6.1**
 
-  - [ ] 4.3 Create SpouseSection component
+  - [x] 4.3 Create SpouseSection component
     - Display spouse card(s) horizontally adjacent to selected person
     - Handle single spouse case
     - _Requirements: 4.1, 4.5_
 
-  - [ ] 4.4 Write property test for multiple spouse display
+  - [x] 4.4 Write property test for multiple spouse display
     - **Property 5: Multiple Spouse Display**
     - **Validates: Requirements 4.4**
 
-  - [ ] 4.5 Implement SpouseCarousel for multiple spouses
+  - [x] 4.5 Implement SpouseCarousel for multiple spouses
     - Create carousel/slideshow component for multiple spouses
     - Add prev/next navigation buttons
     - Add indicator dots showing current spouse
     - Implement smooth transitions
     - _Requirements: 4.4_
 
-  - [ ] 4.6 Create SiblingsSection component
+  - [x] 4.6 Create SiblingsSection component
     - Display sibling cards near selected person
     - Apply de-emphasized styling (smaller, reduced opacity)
     - Handle case with no siblings
     - _Requirements: 5.1, 5.2, 5.4_
 
-  - [ ] 4.7 Write property test for multiple sibling display
+  - [x] 4.7 Write property test for multiple sibling display
     - **Property 6: Multiple Sibling Display**
     - **Validates: Requirements 5.3**
 
-  - [ ] 4.8 Implement SiblingsList with horizontal scrolling
+  - [x] 4.8 Implement SiblingsList with horizontal scrolling
     - Create horizontally scrollable container for siblings
     - Add scroll indicators if overflow
     - Handle many siblings gracefully
     - _Requirements: 5.3_
 
-  - [ ] 4.9 Create ChildrenSection component
+  - [x] 4.9 Create ChildrenSection component
     - Display child cards below selected person
     - Apply smaller styling compared to selected person
     - Handle case with no children
     - _Requirements: 6.1, 6.4, 6.6_
 
-  - [ ] 4.10 Write property test for all children display
+  - [x] 4.10 Write property test for all children display
     - **Property 7: All Children Display**
     - **Validates: Requirements 6.5**
 
-  - [ ] 4.11 Ensure all children display regardless of spouse
+  - [x] 4.11 Ensure all children display regardless of spouse
     - Verify children from all spouses are shown
     - Test with children from multiple spouses
     - _Requirements: 6.5_
 
- - [ ] 4.12 Git commit all the change made for this task
+ - [-] 4.12 Git commit all the change made for this task
 
 - [ ] 5. Implement visual relationship connectors
   - [ ] 5.1 Create RelationshipLines component
