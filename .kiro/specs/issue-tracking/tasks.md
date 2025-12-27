@@ -175,7 +175,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
  - [x] 7.2 Git Commit generated OpenAPI client
  
 ### 8. Create SupportTicket Dialog Component
-- [ ] 8. Create SupportTicket Dialog Component
+- [x] 8. Create SupportTicket Dialog Component
  - [x] 8.1 Create CreateSupportTicketDialog component
   - Create `frontend/src/components/SupportTickets/CreateSupportTicketDialog.tsx`
   - Implement dialog with form using shadcn/ui Dialog, Form components
@@ -193,8 +193,8 @@ This implementation plan follows a bottom-up approach: database → backend (mod
  - [x] 8.2 Git Commit create dialog component related changes
 
 ### 9. Create SupportTicket List Components
-- [ ] 9. Create SupportTicket List Components
- - [ ] 9.1 Create SupportTicketListTable component
+- [x] 9. Create SupportTicket List Components
+ - [x] 9.1 Create SupportTicketListTable component
   - Create `frontend/src/components/SupportTickets/SupportTicketListTable.tsx`
   - Display tickets in table format using shadcn/ui Table or DataTable
   - Columns: SupportTicket # (auto-generated from index), Type badge, Title, Status badge, Created date, Actions
@@ -207,7 +207,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Implement pagination controls if count > limit
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 10.1, 10.2_
 
- - [ ] 9.2 Create SupportTicketDetailDialog component
+ - [x] 9.2 Create SupportTicketDetailDialog component
   - Create `frontend/src/components/SupportTickets/SupportTicketDetailDialog.tsx`
   - Display full ticket details in a Dialog
   - Show: Title (heading), Full description, Type badge, Status badge
@@ -217,11 +217,11 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Make description scrollable if long
   - _Requirements: 3.3, 7.4_
 
- - [ ] 9.3 Git Commit list components related changes
+ - [x] 9.3 Git Commit list components related changes
 
 ### 10. Create User Issues Page
-- [ ] 10. Create User Issues Page
- - [ ] 10.1 Create SupportTicketsPage route component
+- [x] 10. Create User Issues Page
+ - [x] 10.1 Create SupportTicketsPage route component
   - Create `frontend/src/routes/_layout/support-tickets.tsx`
   - Use createFileRoute from @tanstack/react-router
   - Implement tab navigation (All, Open, Closed) using shadcn/ui Tabs
@@ -236,11 +236,11 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Follow the pattern from `frontend/src/routes/_layout/admin.tsx`
   - _Requirements: 1.1, 1.2, 3.1, 9.1, 9.2, 9.3_
 
- - [ ] 10.2 Git Commit user tickets page related changes
+ - [x] 10.2 Git Commit user tickets page related changes
 
 ### 11. Create Admin Issues Panel
-- [ ] 11. Create Admin Issues Panel
- - [ ] 11.1 Create AdminSupportTicketsPanel component
+- [-] 11. Create Admin Issues Panel
+ - [x] 11.1 Create AdminSupportTicketsPanel component
   - Create `frontend/src/components/Admin/AdminSupportTicketsPanel.tsx`
   - Fetch all tickets using useSuspenseQuery with SupportTicketsService.getAdminAllIssues()
   - Display tickets in table with columns: SupportTicket #, Submitter (email/name), Type, Title, Status, Created date, Actions
@@ -254,7 +254,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Invalidate queries after resolve/reopen/delete actions
   - _Requirements: 4.1, 4.2, 4.3, 5.1, 5.2, 5.4, 5.5, 6.3, 6.5_
 
- - [ ] 11.2 Integrate AdminSupportTicketsPanel into Admin page
+ - [x] 11.2 Integrate AdminSupportTicketsPanel into Admin page
   - Update `frontend/src/routes/_layout/admin.tsx`
   - Add new section for "Issue Management" below or above Users section
   - Add heading "Issue Management" or "User Issues"
@@ -262,7 +262,7 @@ This implementation plan follows a bottom-up approach: database → backend (mod
   - Ensure proper authorization (page already requires superuser)
   - _Requirements: 4.1, 4.4, 4.5_
 
- - [ ] 11.3 Git Commit admin panel components related changes
+ - [-] 11.3 Git Commit admin panel components related changes
 
 ### 12. Add Navigation
 - [ ] 12. Add Navigation

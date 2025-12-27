@@ -4,9 +4,11 @@ import { Suspense } from "react"
 
 import { type UserPublic, UsersService } from "@/client"
 import AddUser from "@/components/Admin/AddUser"
+import AdminSupportTicketsPanel from "@/components/Admin/AdminSupportTicketsPanel"
 import { columns, type UserTableData } from "@/components/Admin/columns"
 import { DataTable } from "@/components/Common/DataTable"
 import PendingUsers from "@/components/Pending/PendingUsers"
+import { Skeleton } from "@/components/ui/skeleton"
 import useAuth from "@/hooks/useAuth"
 
 function getUsersQueryOptions() {
@@ -49,17 +51,41 @@ function UsersTable() {
 
 function Admin() {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-12">
+      {/* Users Section */}
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Users</h1>
+            <p className="text-muted-foreground">
+              Manage user accounts and permissions
+            </p>
+          </div>
+          <AddUser />
+        </div>
+        <UsersTable />
+      </div>
+
+      {/* Issue Management Section */}
+      <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Users</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Issue Management</h1>
           <p className="text-muted-foreground">
-            Manage user accounts and permissions
+            Manage user-submitted bugs and feature requests
           </p>
         </div>
-        <AddUser />
+        <Suspense
+          fallback={
+            <div className="space-y-4">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          }
+        >
+          <AdminSupportTicketsPanel />
+        </Suspense>
       </div>
-      <UsersTable />
     </div>
   )
 }
