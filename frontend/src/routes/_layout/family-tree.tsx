@@ -26,7 +26,6 @@ export const Route = createFileRoute("/_layout/family-tree")({
 
 function FamilyTreeView() {
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
-  const [personCache, setPersonCache] = useState<Map<string, PersonDetails>>(new Map())
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   const treeContainerRef = useRef<HTMLDivElement>(null)
   const selectedPersonRef = useRef<HTMLDivElement>(null)
@@ -44,30 +43,15 @@ function FamilyTreeView() {
     enabled: profileStatus?.has_person === true,
   })
 
-  // Initialize selected person to current user's person and cache it
+  // Initialize selected person to current user's person
   useEffect(() => {
     if (myPerson && !selectedPersonId) {
       setSelectedPersonId(myPerson.id)
-      setPersonCache(prev => new Map(prev).set(myPerson.id, myPerson))
     }
   }, [myPerson, selectedPersonId])
 
   // Fetch family tree data for selected person
   const { familyData, isLoading, error, refetch } = useFamilyTreeData(selectedPersonId)
-
-  // Cache all persons from family data
-  useEffect(() => {
-    if (familyData) {
-      setPersonCache(prev => {
-        const newCache = new Map(prev)
-        familyData.parents.forEach(p => newCache.set(p.id, p))
-        familyData.spouses.forEach(p => newCache.set(p.id, p))
-        familyData.siblings.forEach(p => newCache.set(p.id, p))
-        familyData.children.forEach(p => newCache.set(p.id, p))
-        return newCache
-      })
-    }
-  }, [familyData])
 
   /**
    * Handle person card click - update selected person and fetch new data
@@ -177,8 +161,8 @@ function FamilyTreeView() {
     )
   }
 
-  // Get the selected person from cache
-  const selectedPerson = personCache.get(selectedPersonId) || null
+  // Get the selected person from the API response (not from cache)
+  const selectedPerson = familyData?.selectedPerson || null
 
   // Main content - Family Tree View
   return (

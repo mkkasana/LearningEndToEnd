@@ -675,6 +675,14 @@ export type PersonRelationshipPublic = {
 };
 
 /**
+ * Response containing selected person and their relationships.
+ */
+export type PersonRelationshipsWithDetailsResponse = {
+    selected_person: PersonDetails;
+    relationships: Array<PersonRelationshipWithDetails>;
+};
+
+/**
  * Schema for updating a person relationship (all fields optional).
  */
 export type PersonRelationshipUpdate = {
@@ -1784,13 +1792,13 @@ export type PersonCreateMyRelationshipData = {
 
 export type PersonCreateMyRelationshipResponse = (PersonRelationshipPublic);
 
-export type PersonGetMyRelationshipsWithDetailsResponse = (Array<PersonRelationshipWithDetails>);
+export type PersonGetMyRelationshipsWithDetailsResponse = (PersonRelationshipsWithDetailsResponse);
 
 export type PersonGetPersonRelationshipsWithDetailsData = {
     personId: string;
 };
 
-export type PersonGetPersonRelationshipsWithDetailsResponse = (Array<PersonRelationshipWithDetails>);
+export type PersonGetPersonRelationshipsWithDetailsResponse = (PersonRelationshipsWithDetailsResponse);
 
 export type PersonGetMyRelationshipData = {
     relationshipId: string;

@@ -40,10 +40,12 @@ function Family() {
   const { showSuccessToast, showErrorToast } = useCustomToast()
 
   // Fetch family members with full details
-  const { data: familyMembersData, isLoading } = useQuery({
+  const { data: familyMembersResponse, isLoading } = useQuery({
     queryKey: ["myRelationshipsWithDetails"],
     queryFn: () => PersonService.getMyRelationshipsWithDetails(),
   })
+
+  const familyMembersData = familyMembersResponse?.relationships || []
 
   // Delete relationship mutation
   const deleteMutation = useMutation({

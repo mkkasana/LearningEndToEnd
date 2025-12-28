@@ -38,6 +38,7 @@ export interface CategorizedRelationships {
 
 export interface FamilyTreeData extends CategorizedRelationships {
   siblings: PersonDetails[]
+  selectedPerson: PersonDetails
 }
 
 /**
@@ -55,13 +56,13 @@ export function useFamilyTreeData(personId: string | null) {
     queryKey: ['familyTreeData', personId],
     queryFn: async () => {
       try {
-        // Fetch relationship data
-        const relationships = personId
+        // Fetch relationship data - now returns selected person + relationships
+        const response = personId
           ? await PersonService.getPersonRelationshipsWithDetails({ personId })
           : await PersonService.getMyRelationshipsWithDetails()
 
         // Categorize relationships
-        const categorized = categorizeRelationships(relationships)
+        const categorized = categorizeRelationships(response.relationships)
 
         // Calculate siblings - handle failures gracefully
         let siblings: PersonDetails[] = []
@@ -78,6 +79,7 @@ export function useFamilyTreeData(personId: string | null) {
         return {
           ...categorized,
           siblings,
+          selectedPerson: response.selected_person,
         }
       } catch (error) {
         // Re-throw with more descriptive error message
@@ -153,12 +155,12 @@ export async function calculateSiblings(
   // For each parent, fetch their relationships to find their children
   for (const parentId of parentIds) {
     try {
-      const parentRelationships = await PersonService.getPersonRelationshipsWithDetails({
+      const parentRelationshipsResponse = await PersonService.getPersonRelationshipsWithDetails({
         personId: parentId,
       })
 
       // Find all children of this parent
-      for (const rel of parentRelationships) {
+      for (const rel of parentRelationshipsResponse.relationships) {
         const relType = rel.relationship.relationship_type
 
         if (CHILD_TYPES.includes(relType as any)) {

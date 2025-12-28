@@ -25,6 +25,7 @@ from app.schemas.person import (
     PersonRelationshipPublic,
     PersonRelationshipUpdate,
     PersonRelationshipWithDetails,
+    PersonRelationshipsWithDetailsResponse,
     PersonReligionCreate,
     PersonSearchRequest,
     PersonUpdate,
@@ -600,13 +601,13 @@ def get_my_relationships(session: SessionDep, current_user: CurrentUser) -> Any:
     return relationships
 
 
-@router.get("/me/relationships/with-details", response_model=list[PersonRelationshipWithDetails])
+@router.get("/me/relationships/with-details", response_model=PersonRelationshipsWithDetailsResponse)
 def get_my_relationships_with_details(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Get all relationships for current user with full person details.
-    Returns list of objects with relationship and related person information.
+    Returns the selected person and list of objects with relationship and related person information.
     """
-    from app.schemas.person.person_relationship import PersonDetails
+    from app.schemas.person.person_relationship import PersonDetails, PersonRelationshipsWithDetailsResponse
     
     person_service = PersonService(session)
     person = person_service.get_person_by_user_id(current_user.id)
@@ -632,10 +633,13 @@ def get_my_relationships_with_details(session: SessionDep, current_user: Current
                 )
             )
     
-    return result
+    return PersonRelationshipsWithDetailsResponse(
+        selected_person=PersonDetails(**person.model_dump()),
+        relationships=result
+    )
 
 
-@router.get("/{person_id}/relationships/with-details", response_model=list[PersonRelationshipWithDetails])
+@router.get("/{person_id}/relationships/with-details", response_model=PersonRelationshipsWithDetailsResponse)
 def get_person_relationships_with_details(
     session: SessionDep, 
     current_user: CurrentUser,
@@ -643,10 +647,10 @@ def get_person_relationships_with_details(
 ) -> Any:
     """
     Get all relationships for a specific person with full person details.
-    Returns list of objects with relationship and related person information.
+    Returns the selected person and list of objects with relationship and related person information.
     Used to help users identify the correct person when multiple people have similar names.
     """
-    from app.schemas.person.person_relationship import PersonDetails
+    from app.schemas.person.person_relationship import PersonDetails, PersonRelationshipsWithDetailsResponse
     
     person_service = PersonService(session)
     
@@ -673,7 +677,10 @@ def get_person_relationships_with_details(
                 )
             )
     
-    return result
+    return PersonRelationshipsWithDetailsResponse(
+        selected_person=PersonDetails(**person.model_dump()),
+        relationships=result
+    )
 
 
 @router.post("/me/relationships", response_model=PersonRelationshipPublic)

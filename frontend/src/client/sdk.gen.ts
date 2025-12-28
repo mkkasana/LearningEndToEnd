@@ -1450,8 +1450,8 @@ export class PersonService {
     /**
      * Get My Relationships With Details
      * Get all relationships for current user with full person details.
-     * Returns list of objects with relationship and related person information.
-     * @returns PersonRelationshipWithDetails Successful Response
+     * Returns the selected person and list of objects with relationship and related person information.
+     * @returns PersonRelationshipsWithDetailsResponse Successful Response
      * @throws ApiError
      */
     public static getMyRelationshipsWithDetails(): CancelablePromise<PersonGetMyRelationshipsWithDetailsResponse> {
@@ -1464,11 +1464,11 @@ export class PersonService {
     /**
      * Get Person Relationships With Details
      * Get all relationships for a specific person with full person details.
-     * Returns list of objects with relationship and related person information.
+     * Returns the selected person and list of objects with relationship and related person information.
      * Used to help users identify the correct person when multiple people have similar names.
      * @param data The data for the request.
      * @param data.personId
-     * @returns PersonRelationshipWithDetails Successful Response
+     * @returns PersonRelationshipsWithDetailsResponse Successful Response
      * @throws ApiError
      */
     public static getPersonRelationshipsWithDetails(data: PersonGetPersonRelationshipsWithDetailsData): CancelablePromise<PersonGetPersonRelationshipsWithDetailsResponse> {

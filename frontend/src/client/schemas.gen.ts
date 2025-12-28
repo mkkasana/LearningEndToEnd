@@ -1887,6 +1887,25 @@ export const PersonRelationshipWithDetailsSchema = {
     description: 'Person relationship with full person details.'
 } as const;
 
+export const PersonRelationshipsWithDetailsResponseSchema = {
+    properties: {
+        selected_person: {
+            '$ref': '#/components/schemas/PersonDetails'
+        },
+        relationships: {
+            items: {
+                '$ref': '#/components/schemas/PersonRelationshipWithDetails'
+            },
+            type: 'array',
+            title: 'Relationships'
+        }
+    },
+    type: 'object',
+    required: ['selected_person', 'relationships'],
+    title: 'PersonRelationshipsWithDetailsResponse',
+    description: 'Response containing selected person and their relationships.'
+} as const;
+
 export const PersonReligionCreateSchema = {
     properties: {
         religion_id: {

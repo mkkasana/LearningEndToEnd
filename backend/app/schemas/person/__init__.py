@@ -28,6 +28,7 @@ from app.schemas.person.person_relationship import (
     PersonRelationshipPublic,
     PersonRelationshipUpdate,
     PersonRelationshipWithDetails,
+    PersonRelationshipsWithDetailsResponse,
 )
 from app.schemas.person.person_religion import (
     PersonReligionCreate,
@@ -64,6 +65,7 @@ __all__ = [
     "PersonRelationshipPublic",
     "PersonRelationshipUpdate",
     "PersonRelationshipWithDetails",
+    "PersonRelationshipsWithDetailsResponse",
     "PersonReligionCreate",
     "PersonReligionPublic",
     "PersonReligionUpdate",

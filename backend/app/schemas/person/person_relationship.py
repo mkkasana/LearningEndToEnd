@@ -74,3 +74,11 @@ class PersonRelationshipWithDetails(SQLModel):
 
     relationship: PersonRelationshipPublic
     person: PersonDetails
+
+
+class PersonRelationshipsWithDetailsResponse(SQLModel):
+    """Response containing selected person and their relationships."""
+
+    selected_person: PersonDetails
+    relationships: list[PersonRelationshipWithDetails]
+
