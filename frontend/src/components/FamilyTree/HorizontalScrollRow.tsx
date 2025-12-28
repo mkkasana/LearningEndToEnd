@@ -138,6 +138,11 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
     ? 'Children row' 
     : 'Center row with siblings and spouses'
 
+  // Determine justify alignment based on variant
+  // Parent and child rows should center content when narrow
+  // Center row should start from left (for selected person centering to work)
+  const justifyClass = variant === 'center' ? 'justify-start' : 'justify-center'
+
   return (
     <div 
       className={containerClass}
@@ -148,7 +153,7 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
         className="w-full whitespace-nowrap rounded-lg border border-border/50 bg-muted/10 p-2 md:p-3 lg:p-4"
         ref={scrollContainerRef}
       >
-        <div className="flex gap-3 md:gap-4 lg:gap-6 p-1 md:p-2 items-center justify-start">
+        <div className={cn("flex gap-3 md:gap-4 lg:gap-6 p-1 md:p-2 items-center", justifyClass)}>
           {people.map((person) => {
             const cardVariant = getCardVariant(person.id)
             const relationshipType = getRelationshipType(person.id)

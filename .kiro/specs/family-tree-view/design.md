@@ -218,12 +218,39 @@ interface HorizontalScrollRowProps {
 - Works consistently across all screen sizes (desktop, tablet, mobile)
 
 **Layout Behavior**:
-- **Parents Row**: All parents displayed horizontally with parent color-coding, scrollable if many
+- **Parents Row**: All parents displayed horizontally with parent color-coding, centered in viewport, scrollable if many
 - **Center Row**: Siblings (left) + Selected Person (center) + Spouses (right), all in one scrollable row with color coding, auto-scrolls to center selected person
-- **Children Row**: All children displayed horizontally with children color-coding, scrollable if many
+- **Children Row**: All children displayed horizontally with children color-coding, centered in viewport, scrollable if many
 - **No vertical stacking**: Cards never stack vertically within a row, only horizontal scrolling
 - **Mobile-friendly**: Maintains horizontal layout even on small screens
-- **Center-focused**: Selected person always centered in viewport on initial render
+- **Center-focused**: All rows center their content in the viewport
+
+**Color Scheme**:
+The component uses distinct, light colors for visual grouping:
+- **Parents**: Light amber/orange tones (e.g., bg-amber-100, border-amber-300)
+- **Siblings**: Light blue/sky tones (e.g., bg-blue-100, border-blue-300)
+- **Spouses**: Light purple/violet tones (e.g., bg-purple-100, border-purple-300)
+- **Children**: Light pink/rose tones (e.g., bg-pink-100, border-pink-300)
+- **Selected Person**: Light green/emerald with prominent border (e.g., bg-green-100, border-green-500, ring)
+
+**Color Palette Rationale**:
+These colors are chosen to be:
+- **Easily distinguishable**: Each relationship type has a distinct hue (amber, blue, purple, pink, green) that is visually separable from the others
+- **Light and non-overwhelming**: All colors use the 100-level background (bg-*-100) to maintain a calm, unobtrusive interface
+- **Accessible**: Sufficient contrast is maintained between text and background colors for readability
+- **Semantically meaningful**: 
+  - Amber/orange for parents (warm, foundational)
+  - Blue for siblings (cool, lateral relationship)
+  - Purple for spouses (romantic, partnership)
+  - Pink for children (soft, nurturing)
+  - Green for selected person (prominent, active state)
+- **Consistent with Tailwind CSS**: Uses standard Tailwind color classes for maintainability and consistency
+
+**Implementation Details**:
+- Background colors: `bg-{color}-100` for light backgrounds
+- Border colors: `border-{color}-300` for subtle borders (except selected person uses `border-green-500` for prominence)
+- Dark mode support: `dark:bg-{color}-950/20` and `dark:border-{color}-800` for dark theme compatibility
+- Selected person styling: Uses `border-2` and `border-green-500` for a more prominent appearance
 
 ### Data Processing Functions
 
@@ -469,9 +496,15 @@ A property is a characteristic or behavior that should hold true across all vali
 
 ### Property 13: Relationship Type Color Coding
 
-*For any* person card displayed in the family tree, the card should have color-coding that corresponds to its relationship type (parent, sibling, spouse, child, or selected person).
+*For any* person card displayed in the family tree, the card should have color-coding that corresponds to its relationship type (parent, sibling, spouse, child, or selected person), with each relationship type having a distinct, easily distinguishable light color.
 
-**Validates: Requirements 9.2, 9.3, 9.4**
+**Validates: Requirements 9.2, 9.3, 9.4, 9.10**
+
+### Property 14: Row Content Centering
+
+*For any* row (parents, center, or children) in the family tree, when the row content is narrower than the viewport, the content should be centered in the viewport rather than left-aligned.
+
+**Validates: Requirements 9.2, 9.4**
 
 ## Error Handling
 

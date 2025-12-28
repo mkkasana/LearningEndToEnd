@@ -50,8 +50,8 @@ function getVariantStyles(variant: PersonCardVariant): string {
     case 'selected':
       return cn(
         baseStyles,
-        "border-2 border-primary shadow-lg scale-105 bg-primary/5",
-        "hover:shadow-2xl hover:border-primary hover:bg-primary/10",
+        "border-2 border-green-500 shadow-lg scale-105 bg-green-100",
+        "hover:shadow-2xl hover:border-green-600 hover:bg-green-100",
         "min-w-[160px] md:min-w-[180px] lg:min-w-[200px]",
         "min-h-[180px] md:min-h-[200px] lg:min-h-[220px]"
       )
@@ -92,7 +92,14 @@ function getVariantStyles(variant: PersonCardVariant): string {
 
 /**
  * Get color-coding classes based on relationship type
- * Requirements: 9.2, 9.3, 9.4
+ * Requirements: 9.2, 9.3, 9.4, 9.10
+ * 
+ * Color Palette:
+ * - Parents: Light amber/orange (bg-amber-100, border-amber-300)
+ * - Siblings: Light blue/sky (bg-blue-100, border-blue-300)
+ * - Spouses: Light purple/violet (bg-purple-100, border-purple-300)
+ * - Children: Light pink/rose (bg-pink-100, border-pink-300)
+ * - Selected: Light green with prominent border (bg-green-100, border-green-500)
  */
 function getColorVariantClasses(colorVariant?: 'parent' | 'sibling' | 'spouse' | 'child' | 'selected'): string {
   if (!colorVariant || colorVariant === 'selected') {
@@ -101,13 +108,13 @@ function getColorVariantClasses(colorVariant?: 'parent' | 'sibling' | 'spouse' |
   
   switch (colorVariant) {
     case 'parent':
-      return 'bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-800'
+      return 'bg-amber-100 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800'
     case 'sibling':
-      return 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800'
+      return 'bg-blue-100 dark:bg-blue-950/20 border-blue-300 dark:border-blue-800'
     case 'spouse':
-      return 'bg-pink-50/50 dark:bg-pink-950/20 border-pink-200 dark:border-pink-800'
+      return 'bg-purple-100 dark:bg-purple-950/20 border-purple-300 dark:border-purple-800'
     case 'child':
-      return 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800'
+      return 'bg-pink-100 dark:bg-pink-950/20 border-pink-300 dark:border-pink-800'
     default:
       return ''
   }

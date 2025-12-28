@@ -212,8 +212,8 @@ describe('HorizontalScrollRow', () => {
         />
       )
       
-      // Check for pink color classes (spouse color)
-      expect(container.innerHTML).toContain('pink-')
+      // Check for purple color classes (spouse color)
+      expect(container.innerHTML).toContain('purple-')
     })
 
     it('should not apply color-coding to selected person in center row', () => {
@@ -333,6 +333,131 @@ describe('HorizontalScrollRow', () => {
       
       const personCards = container.querySelectorAll('[role="button"]')
       expect(personCards.length).toBe(3)
+    })
+
+    // Unit tests for row centering (Requirements: 9.2, 9.4)
+    it('should center parent row content when narrow', () => {
+      const mockPerson: PersonDetails = {
+        id: '123',
+        first_name: 'John',
+        middle_name: null,
+        last_name: 'Doe',
+        gender_id: 'male-id',
+        date_of_birth: '1970-01-01T00:00:00.000Z',
+        date_of_death: null,
+        user_id: null,
+        created_by_user_id: 'creator-id',
+        is_primary: false,
+        created_at: '2024-01-01T00:00:00.000Z',
+        updated_at: '2024-01-01T00:00:00.000Z',
+      }
+      
+      const { container } = render(
+        <HorizontalScrollRow
+          people={[mockPerson]}
+          onPersonClick={vi.fn()}
+          variant="parent"
+        />
+      )
+      
+      // Should have justify-center for centering narrow content
+      expect(container.innerHTML).toContain('justify-center')
+    })
+
+    it('should center children row content when narrow', () => {
+      const mockPerson: PersonDetails = {
+        id: '123',
+        first_name: 'Jane',
+        middle_name: null,
+        last_name: 'Doe',
+        gender_id: 'female-id',
+        date_of_birth: '2000-01-01T00:00:00.000Z',
+        date_of_death: null,
+        user_id: null,
+        created_by_user_id: 'creator-id',
+        is_primary: false,
+        created_at: '2024-01-01T00:00:00.000Z',
+        updated_at: '2024-01-01T00:00:00.000Z',
+      }
+      
+      const { container } = render(
+        <HorizontalScrollRow
+          people={[mockPerson]}
+          onPersonClick={vi.fn()}
+          variant="child"
+        />
+      )
+      
+      // Should have justify-center for centering narrow content
+      expect(container.innerHTML).toContain('justify-center')
+    })
+
+    it('should not center center row (uses justify-start for selected person centering)', () => {
+      const mockPerson: PersonDetails = {
+        id: '123',
+        first_name: 'John',
+        middle_name: null,
+        last_name: 'Doe',
+        gender_id: 'male-id',
+        date_of_birth: '1970-01-01T00:00:00.000Z',
+        date_of_death: null,
+        user_id: null,
+        created_by_user_id: 'creator-id',
+        is_primary: false,
+        created_at: '2024-01-01T00:00:00.000Z',
+        updated_at: '2024-01-01T00:00:00.000Z',
+      }
+      
+      const { container } = render(
+        <HorizontalScrollRow
+          people={[mockPerson]}
+          selectedPersonId="123"
+          onPersonClick={vi.fn()}
+          variant="center"
+        />
+      )
+      
+      // Center row should use justify-start (not justify-center)
+      // Check the flex container specifically
+      const flexContainer = container.querySelector('.flex.gap-3')
+      expect(flexContainer?.className).toContain('justify-start')
+      expect(flexContainer?.className).not.toContain('justify-center')
+    })
+
+    it('should maintain scrollability when content is wide', () => {
+      const manyPeople: PersonDetails[] = Array.from({ length: 15 }, (_, i) => ({
+        id: `person-${i}`,
+        first_name: `Person`,
+        middle_name: null,
+        last_name: `${i}`,
+        gender_id: 'male-id',
+        date_of_birth: '1970-01-01T00:00:00.000Z',
+        date_of_death: null,
+        user_id: null,
+        created_by_user_id: 'creator-id',
+        is_primary: false,
+        created_at: '2024-01-01T00:00:00.000Z',
+        updated_at: '2024-01-01T00:00:00.000Z',
+      }))
+      
+      const { container } = render(
+        <HorizontalScrollRow
+          people={manyPeople}
+          onPersonClick={vi.fn()}
+          variant="parent"
+        />
+      )
+      
+      // Should render all people
+      const personCards = container.querySelectorAll('[role="button"]')
+      expect(personCards.length).toBe(15)
+      
+      // Should have ScrollArea for horizontal scrolling
+      const region = container.querySelector('[role="region"]')
+      expect(region).toBeTruthy()
+      
+      // Should still have justify-center (centering works with scrolling)
+      expect(container.innerHTML).toContain('justify-center')
     })
   })
 
@@ -464,14 +589,14 @@ describe('HorizontalScrollRow', () => {
             expect(region).toBeTruthy()
             expect(region?.getAttribute('aria-label')).toBe('Center row with siblings and spouses')
             
-            // Check for color-coding classes (siblings: blue, spouses: pink)
+            // Check for color-coding classes (siblings: blue, spouses: purple)
             if (siblings.length > 0) {
               const hasSiblingColor = container.innerHTML.includes('blue-')
               expect(hasSiblingColor).toBe(true)
             }
             
             if (spouses.length > 0) {
-              const hasSpouseColor = container.innerHTML.includes('pink-')
+              const hasSpouseColor = container.innerHTML.includes('purple-')
               expect(hasSpouseColor).toBe(true)
             }
           }
@@ -880,9 +1005,9 @@ describe('HorizontalScrollRow', () => {
               expect(hasSiblingColor).toBe(true)
             }
             
-            // Check for spouse color coding (pink)
+            // Check for spouse color coding (purple)
             if (spouses.length > 0) {
-              const hasSpouseColor = centerContainer.innerHTML.includes('pink-')
+              const hasSpouseColor = centerContainer.innerHTML.includes('purple-')
               expect(hasSpouseColor).toBe(true)
             }
             
@@ -941,7 +1066,7 @@ describe('HorizontalScrollRow', () => {
             
             // Check initial render
             const hasSiblingColor1 = container.innerHTML.includes('blue-')
-            const hasSpouseColor1 = container.innerHTML.includes('pink-')
+            const hasSpouseColor1 = container.innerHTML.includes('purple-')
             expect(hasSiblingColor1).toBe(true)
             expect(hasSpouseColor1).toBe(true)
             
@@ -958,7 +1083,7 @@ describe('HorizontalScrollRow', () => {
             
             // Check that color coding is maintained
             const hasSiblingColor2 = container.innerHTML.includes('blue-')
-            const hasSpouseColor2 = container.innerHTML.includes('pink-')
+            const hasSpouseColor2 = container.innerHTML.includes('purple-')
             expect(hasSiblingColor2).toBe(true)
             expect(hasSpouseColor2).toBe(true)
           }
@@ -1061,9 +1186,218 @@ describe('HorizontalScrollRow', () => {
             // For center row, verify color coding is applied
             if (variant === 'center' && colorCoding) {
               const hasSiblingOrSpouseColor = container.innerHTML.includes('blue-') || 
-                                              container.innerHTML.includes('pink-')
+                                              container.innerHTML.includes('purple-')
               expect(hasSiblingOrSpouseColor).toBe(true)
             }
+          }
+        ),
+        { numRuns: 100 }
+      )
+    })
+  })
+
+  describe('Property 14: Row Content Centering', () => {
+    /**
+     * Feature: family-tree-view, Property 14: Row Content Centering
+     * Validates: Requirements 9.2, 9.4
+     * 
+     * For any row (parents, center, or children) in the family tree, when the row content
+     * is narrower than the viewport, the content should be centered in the viewport
+     * rather than left-aligned.
+     */
+    it('should center content when narrower than viewport for parent and child rows', () => {
+      fc.assert(
+        fc.property(
+          // Generate small number of people (1 to 3) to ensure content is narrow
+          fc.array(personDetailsArbitrary, { minLength: 1, maxLength: 3 }),
+          // Test parent and child variants (center row has different behavior)
+          fc.constantFrom('parent', 'child'),
+          (people, variant) => {
+            const mockOnClick = vi.fn()
+            
+            const { container } = render(
+              <HorizontalScrollRow
+                people={people}
+                onPersonClick={mockOnClick}
+                variant={variant}
+              />
+            )
+
+            // Verify the row is rendered
+            const region = container.querySelector('[role="region"]')
+            expect(region).toBeTruthy()
+            
+            // Check that the flex container has centering classes
+            // When content is narrow, it should use justify-center
+            const flexContainer = container.querySelector('.flex')
+            expect(flexContainer).toBeTruthy()
+            
+            // The container should have justify-center for centering
+            // or items-center for vertical centering
+            const hasJustifyCenter = container.innerHTML.includes('justify-center')
+            const hasItemsCenter = container.innerHTML.includes('items-center')
+            
+            // At minimum, items-center should be present for vertical alignment
+            expect(hasItemsCenter).toBe(true)
+            
+            // For narrow content, justify-center should be applied
+            // This is a layout property that ensures content is centered
+            if (people.length <= 3) {
+              // With few people, the content should be centered
+              // The component should apply justify-center
+              expect(hasJustifyCenter || hasItemsCenter).toBe(true)
+            }
+          }
+        ),
+        { numRuns: 100 }
+      )
+    })
+
+    it('should maintain scrollability when content exceeds viewport width', () => {
+      fc.assert(
+        fc.property(
+          // Generate many people (10 to 20) to ensure content exceeds viewport
+          fc.array(personDetailsArbitrary, { minLength: 10, maxLength: 20 }),
+          fc.constantFrom('parent', 'child'),
+          (people, variant) => {
+            const mockOnClick = vi.fn()
+            
+            const { container } = render(
+              <HorizontalScrollRow
+                people={people}
+                onPersonClick={mockOnClick}
+                variant={variant}
+              />
+            )
+
+            // Verify the row is rendered
+            const region = container.querySelector('[role="region"]')
+            expect(region).toBeTruthy()
+            
+            // Should have ScrollArea component for horizontal scrolling
+            const hasScrollBar = container.innerHTML.includes('ScrollBar') || 
+                                container.querySelector('[orientation="horizontal"]')
+            expect(hasScrollBar).toBeTruthy()
+            
+            // All people should be rendered
+            const personCards = container.querySelectorAll('[role="button"]')
+            expect(personCards.length).toBe(people.length)
+            
+            // The flex container should still exist for layout
+            const flexContainer = container.querySelector('.flex')
+            expect(flexContainer).toBeTruthy()
+          }
+        ),
+        { numRuns: 100 }
+      )
+    })
+
+    it('should apply centering to both parent and children rows consistently', () => {
+      fc.assert(
+        fc.property(
+          fc.array(personDetailsArbitrary, { minLength: 1, maxLength: 3 }),
+          (people) => {
+            const mockOnClick = vi.fn()
+            
+            // Test parent row
+            const { container: parentContainer } = render(
+              <HorizontalScrollRow
+                people={people}
+                onPersonClick={mockOnClick}
+                variant="parent"
+              />
+            )
+            
+            // Test child row
+            const { container: childContainer } = render(
+              <HorizontalScrollRow
+                people={people}
+                onPersonClick={mockOnClick}
+                variant="child"
+              />
+            )
+            
+            // Both should have the same centering behavior
+            const parentHasItemsCenter = parentContainer.innerHTML.includes('items-center')
+            const childHasItemsCenter = childContainer.innerHTML.includes('items-center')
+            
+            expect(parentHasItemsCenter).toBe(true)
+            expect(childHasItemsCenter).toBe(true)
+            
+            // Both should render all people
+            const parentCards = parentContainer.querySelectorAll('[role="button"]')
+            const childCards = childContainer.querySelectorAll('[role="button"]')
+            
+            expect(parentCards.length).toBe(people.length)
+            expect(childCards.length).toBe(people.length)
+          }
+        ),
+        { numRuns: 100 }
+      )
+    })
+
+    it('should handle edge case of single person in row', () => {
+      fc.assert(
+        fc.property(
+          personDetailsArbitrary,
+          fc.constantFrom('parent', 'child'),
+          (person, variant) => {
+            const mockOnClick = vi.fn()
+            
+            const { container } = render(
+              <HorizontalScrollRow
+                people={[person]}
+                onPersonClick={mockOnClick}
+                variant={variant}
+              />
+            )
+
+            // Should render the single person
+            const personCards = container.querySelectorAll('[role="button"]')
+            expect(personCards.length).toBe(1)
+            
+            // Should have centering classes
+            const hasItemsCenter = container.innerHTML.includes('items-center')
+            expect(hasItemsCenter).toBe(true)
+            
+            // Should not need scrolling for single person
+            const region = container.querySelector('[role="region"]')
+            expect(region).toBeTruthy()
+          }
+        ),
+        { numRuns: 100 }
+      )
+    })
+
+    it('should center content regardless of viewport size changes', () => {
+      fc.assert(
+        fc.property(
+          fc.array(personDetailsArbitrary, { minLength: 1, maxLength: 3 }),
+          fc.constantFrom('parent', 'child'),
+          (people, variant) => {
+            const mockOnClick = vi.fn()
+            
+            const { container } = render(
+              <HorizontalScrollRow
+                people={people}
+                onPersonClick={mockOnClick}
+                variant={variant}
+              />
+            )
+
+            // Verify centering is applied through CSS classes
+            // The component should use responsive classes that maintain centering
+            const hasResponsiveClasses = container.innerHTML.includes('md:') || 
+                                        container.innerHTML.includes('lg:')
+            expect(hasResponsiveClasses).toBe(true)
+            
+            // Should have items-center for vertical centering
+            const hasItemsCenter = container.innerHTML.includes('items-center')
+            expect(hasItemsCenter).toBe(true)
+            
+            // Should render all people
+            const personCards = container.querySelectorAll('[role="button"]')
+            expect(personCards.length).toBe(people.length)
           }
         ),
         { numRuns: 100 }

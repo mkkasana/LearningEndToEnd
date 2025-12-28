@@ -354,13 +354,67 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Add comments explaining centering logic
     - Update component prop documentation
 
-  - [-] 14.8 Git commit all changes made for this task
+  - [x] 14.8 Git commit all changes made for this task
 
-- [ ] 15. Final checkpoint - Verify centering and color coding
+- [x] 15. Final checkpoint - Verify centering and color coding
   - Test selected person is always centered initially
   - Test all relationship types have distinct colors
   - Test color scheme is visually clear and accessible
   - Verify smooth scrolling animation
+  - Ensure all tests pass
+
+## UI Refinement Tasks (Center All Rows and Distinct Colors)
+
+- [ ] 16. Refine row centering and color palette
+  - [x] 16.1 Write property test for row content centering
+    - **Property 14: Row Content Centering**
+    - **Validates: Requirements 9.2, 9.4**
+
+  - [x] 16.2 Implement center alignment for parents and children rows
+    - Update HorizontalScrollRow to center content when narrower than viewport
+    - Apply to parent row (top)
+    - Apply to children row (bottom)
+    - Use CSS flexbox justify-center or similar approach
+    - Maintain scrollability when content exceeds viewport width
+    - _Requirements: 9.2, 9.4_
+
+  - [x] 16.3 Update color palette to be more distinct
+    - Change parent color to light amber/orange (bg-amber-100, border-amber-300)
+    - Change sibling color to light blue/sky (bg-blue-100, border-blue-300)
+    - Change spouse color to light purple/violet (bg-purple-100, border-purple-300)
+    - Change children color to light pink/rose (bg-pink-100, border-pink-300)
+    - Keep selected person as light green with prominent border (bg-green-100, border-green-500)
+    - Ensure all colors are light and easily distinguishable
+    - _Requirements: 9.10_
+
+  - [x] 16.4 Write unit tests for row centering
+    - Test parent row centers when content is narrow
+    - Test children row centers when content is narrow
+    - Test rows remain scrollable when content is wide
+    - _Requirements: 9.2, 9.4_
+
+  - [x] 16.5 Update unit tests for new color palette
+    - Update color assertions in PersonCard tests
+    - Update color assertions in HorizontalScrollRow tests
+    - Verify each relationship type has correct color
+    - _Requirements: 9.10_
+
+  - [x] 16.6 Update design documentation with color scheme
+    - Document the specific color palette in design.md
+    - Add rationale for color choices (distinguishability, accessibility)
+    - Include Tailwind class names for reference
+
+  - [-] 16.7 Git commit all changes made for this task
+
+- [ ] 17. Final checkpoint - Verify all UI refinements
+  - Test all rows center their content appropriately
+  - Test parent row uses amber/orange color
+  - Test sibling row uses blue color
+  - Test spouse row uses purple color
+  - Test children row uses pink color
+  - Test selected person uses green with prominent styling
+  - Verify colors are distinct and easily distinguishable
+  - Test on desktop, tablet, and mobile viewports
   - Ensure all tests pass
 
 ## Notes
