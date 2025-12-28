@@ -129,3 +129,22 @@ This document specifies the requirements for a Family Tree View feature that pro
 8. WHEN the Family Tree View initially renders THEN the System SHALL scroll the center row to position the selected person in the center of the viewport
 9. WHEN a new person is selected THEN the System SHALL scroll the center row to center the newly selected person in the viewport
 10. WHEN displaying person cards THEN the System SHALL use distinct, light colors for each relationship type (parents, siblings, spouses, children, selected) that are easily distinguishable from each other
+
+### Requirement 10
+
+**User Story:** As a user, I want to search for any person in the system regardless of family connection, so that I can explore family trees of people who may not be directly related to me.
+
+#### Acceptance Criteria
+
+1. WHEN the Family Tree View renders THEN the System SHALL display a "Search Person" button at the top of the family tree UI
+2. WHEN a user clicks the "Search Person" button THEN the System SHALL open a multi-step search dialog
+3. WHEN the search dialog opens THEN the System SHALL display Step 1 asking for first name, last name and gender (optional)
+4. WHEN a user completes Step 1 THEN the System SHALL display Step 2 asking for address details with country (required), state (required), district (required), sub-district (optional), and locality (optional), with default values from the current user's address
+5. WHEN a user completes Step 2 THEN the System SHALL display Step 3 asking for religion details with religion (required), category (required) and sub-category (optional), with default values from the current user's religion
+6. WHEN a user completes Step 3 THEN the System SHALL display Step 4 showing a list of matched persons based on the search criteria. It should also show the fuzzy match score.
+7. WHEN displaying matched persons in Step 4 THEN the System SHALL show each person's name, birth year, Comma seperated address, and comma seperated religion information
+8. WHEN displaying each matched person THEN the System SHALL provide an "Explore" button next to each person
+9. WHEN a user clicks the "Explore" button for a matched person THEN the System SHALL close the search dialog and render the family tree centered on that person
+10. WHEN no persons match the search criteria THEN the System SHALL display a message indicating no results were found
+11. WHEN a user navigates between steps THEN the System SHALL allow going back to previous steps to modify search criteria, Search criteria should be preserved while navigating back and forth.
+12. WHEN a user closes the search dialog THEN the System SHALL return to the current family tree view without changes

@@ -419,7 +419,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
 ## Visual Enhancement Tasks (Relationship Lines and Spouse Differentiation)
 
-- [ ] 18. Add visual relationship lines between generations
+- [x] 18. Add visual relationship lines between generations
   - [x] 18.1 Implement parent-to-children connecting lines
     - Draw vertical lines from parents row to center row (selected person and siblings)
     - Connect each parent to their children in the center row
@@ -468,13 +468,103 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
   - [x] 19.4 Git commit all changes made for this task
 
-- [ ] 20. Final checkpoint - Verify visual enhancements
+- [x] 20. Final checkpoint - Verify visual enhancements
   - Test connecting lines appear between parents and center row
   - Test connecting lines appear between center row and children
   - Test lines work correctly with horizontal scrolling
   - Test spouse cards have reduced opacity
   - Test visual hierarchy clearly differentiates blood relatives from spouses
   - Verify enhancements work on desktop, tablet, and mobile
+  - Ensure all tests pass
+
+## Search Feature Tasks
+
+- [ ] 21. Implement person search functionality
+  - [x] 21.1 Add Search Person button to family tree header
+    - Add button with search icon at the top of the family tree UI
+    - Position button prominently for easy access
+    - Add click handler to open search dialog
+    - _Requirements: 10.1_
+
+  - [x] 21.2 Create SearchPersonDialog component structure
+    - Create multi-step dialog component with state management
+    - Implement step navigation (1-4)
+    - Add Back/Next/Close buttons
+    - Preserve search criteria when navigating between steps
+    - _Requirements: 10.2, 10.11, 10.12_
+
+  - [x] 21.3 Implement Step 1: Name and Gender form
+    - Create form with first name, last name, and gender (optional) fields
+    - Add validation for required fields
+    - Implement Next button to proceed to Step 2
+    - _Requirements: 10.3_
+
+  - [x] 21.4 Implement Step 2: Address Details form
+    - Create form with country, state, district (required), sub-district, locality (optional)
+    - Implement cascading dropdowns for address hierarchy
+    - Pre-fill with current user's address as default values
+    - Add Back button to return to Step 1
+    - Add Next button to proceed to Step 3
+    - _Requirements: 10.4_
+
+  - [x] 21.5 Implement Step 3: Religion Details form
+    - Create form with religion, category (required), sub-category (optional)
+    - Implement cascading dropdowns for religion hierarchy
+    - Pre-fill with current user's religion as default values
+    - Add Back button to return to Step 2
+    - Add Search button to execute search and proceed to Step 4
+    - _Requirements: 10.5_
+
+  - [x] 21.6 Implement Step 4: Search Results display
+    - Display list of matched persons with their details
+    - Show name, birth year, comma-separated address, comma-separated religion
+    - Display fuzzy match score for each result
+    - Add "Explore" button next to each person
+    - Handle empty results with appropriate message
+    - Add Back button to return to Step 3 and modify criteria
+    - _Requirements: 10.6, 10.7, 10.8, 10.10_
+
+  - [x] 21.7 Implement person search API integration
+    - Create API service function for person search
+    - Send search criteria to backend endpoint
+    - Handle loading state during search
+    - Handle error states (network errors, server errors)
+    - Parse and format search results
+    - _Requirements: 10.6_
+
+  - [x] 21.8 Implement Explore button functionality
+    - Handle click on Explore button
+    - Close search dialog
+    - Update selected person to the explored person
+    - Fetch and render family tree for the explored person
+    - _Requirements: 10.9_
+
+  - [x] 21.9 Write unit tests for SearchPersonDialog
+    - Test dialog opens and closes correctly
+    - Test step navigation (forward and backward)
+    - Test search criteria preservation between steps
+    - Test form validation
+    - Test default values from current user
+    - Test Explore button triggers person selection
+
+  - [x] 21.10 Write unit tests for search results
+    - Test search results display correctly
+    - Test empty results message
+    - Test match score display
+    - Test address and religion formatting
+
+  - [ ] 21.11 Deep restart the component with commands like docker compose down && docker rmi backend:latest && docker rmi frontend:latest && docker compose build --no-cache && docker compose up -d 
+
+  - [ ] 21.12 Git commit all changes made for this task
+
+- [ ] 22. Final checkpoint - Verify search feature
+  - Test Search Person button appears and opens dialog
+  - Test all 4 steps of the search wizard
+  - Test navigation between steps preserves data
+  - Test default values populate from current user
+  - Test search executes and displays results
+  - Test Explore button navigates to selected person's tree
+  - Test empty results handling
   - Ensure all tests pass
 
 ## Notes

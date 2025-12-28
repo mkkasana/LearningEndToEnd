@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useState, useEffect, useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Loader2, AlertCircle, Network } from "lucide-react"
+import { Loader2, AlertCircle, Network, Search } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { ProfileService, PersonService } from "@/client"
@@ -11,6 +11,7 @@ import { ParentsSection } from "@/components/FamilyTree/ParentsSection"
 import { HorizontalScrollRow } from "@/components/FamilyTree/HorizontalScrollRow"
 import { ChildrenSection } from "@/components/FamilyTree/ChildrenSection"
 import { RowConnector } from "@/components/FamilyTree/RowConnector"
+import { SearchPersonDialog } from "@/components/FamilyTree/SearchPersonDialog"
 
 export const Route = createFileRoute("/_layout/family-tree")({
   component: FamilyTreeView,
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/_layout/family-tree")({
 function FamilyTreeView() {
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
   const [personCache, setPersonCache] = useState<Map<string, PersonDetails>>(new Map())
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   const treeContainerRef = useRef<HTMLDivElement>(null)
   const selectedPersonRef = useRef<HTMLDivElement>(null)
 
@@ -190,7 +192,22 @@ function FamilyTreeView() {
             Explore your family relationships visually
           </p>
         </div>
+        <Button
+          onClick={() => setIsSearchDialogOpen(true)}
+          className="flex items-center gap-2"
+          variant="outline"
+          aria-label="Search for a person"
+        >
+          <Search className="h-4 w-4" />
+          <span className="hidden sm:inline">Search Person</span>
+        </Button>
       </header>
+
+      <SearchPersonDialog
+        open={isSearchDialogOpen}
+        onOpenChange={setIsSearchDialogOpen}
+        onPersonSelected={handlePersonClick}
+      />
 
       <main 
         ref={treeContainerRef}

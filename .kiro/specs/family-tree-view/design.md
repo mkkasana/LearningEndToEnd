@@ -59,7 +59,8 @@ The design emphasizes progressive loading (fetching data on-demand as users navi
 ```
 FamilyTreeView
 ├── FamilyTreeHeader
-│   └── SelectedPersonInfo
+│   ├── SelectedPersonInfo
+│   └── SearchPersonButton
 ├── FamilyTreeCanvas (3-row layout)
 │   ├── ParentsRow (horizontally scrollable)
 │   │   ├── PersonCard (Parent 1)
@@ -79,8 +80,12 @@ FamilyTreeView
 │       ├── PersonCard (Child 2)
 │       ├── ... (any number of children)
 │       └── RelationshipLines
-└── LoadingOverlay
-```
+├── LoadingOverlay
+└── SearchPersonDialog (multi-step wizard)
+    ├── Step 1: Name and Gender
+    ├── Step 2: Address Details
+    ├── Step 3: Religion Details
+    └── Step 4: Search Results with Explore butto
 
 ## Components and Interfaces
 
@@ -252,6 +257,60 @@ These colors are chosen to be:
 - Selected person: `bg-card` (white/theme background) with `border-2 border-green-500` for prominence and readability
 - Dark mode support: `dark:bg-{color}-950/20` and `dark:border-{color}-800` for dark theme compatibility
 
+### 7. SearchPersonDialog (Multi-Step Wizard)
+
+**Purpose**: Provide a multi-step search interface for finding any person in the system.
+
+**Props**:
+```typescript
+interface SearchPersonDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onPersonSelected: (personId: string) => void
+}
+```
+
+**State**:
+```typescript
+interface SearchDialogState {
+  currentStep: 1 | 2 | 3 | 4
+  searchCriteria: {
+    firstName: string
+    lastName: string
+    genderId?: string
+    address: {
+      countryId: string
+      stateId: string
+      districtId: string
+      subDistrictId?: string
+      locality?: string
+    }
+    religion: {
+      religionId: string
+      categoryId: string
+      subCategoryId?: string
+    }
+  }
+  searchResults: PersonSearchResult[]
+  isSearching: boolean
+}
+```
+
+**Features**:
+- Step 1: Name and Gender form
+- Step 2: Address details form with cascading dropdowns
+- Step 3: Religion details form with cascading dropdowns
+- Step 4: Search results list with fuzzy match scores
+- Navigation between steps with preserved data
+- Back/Next buttons for step navigation
+- Close button to cancel search
+
+**Sub-components**:
+- `SearchStep1NameGender`: Form for name and gender input
+- `SearchStep2Address`: Form for address details with default values from user
+- `SearchStep3Religion`: Form for religion details with default values from user
+- `SearchStep4Results`: List of matched persons with Explore buttons
+
 ### Data Processing Functions
 
 #### 1. categorizeRelationships
@@ -415,6 +474,146 @@ const CHILD_TYPES = [
   RELATIONSHIP_TYPES.DAUGHTER,
   RELATIONSHIP_TYPES.SON,
 ]
+```
+
+### Search-Related Models
+
+#### PersonSearchCriteria
+```typescript
+interface PersonSearchCriteria {
+  first_name?: string
+  last_name?: string
+  gender_id?: string
+  address?: {
+    country_id: string
+    state_id: string
+    district_id: string
+    sub_district_id?: string
+    locality?: string
+  }
+  religion?: {
+    religion_id: string
+    category_id: string
+    sub_category_id?: string
+  }
+}
+```
+
+#### PersonSearchResult
+```typescript
+interface PersonSearchResult {
+  person: PersonDetails
+  match_score: number // Fuzzy match score (0-100)
+  address_display: string // Comma-separated address
+  religion_display: string // Comma-separated religion info
+}
+```
+
+#### SearchStepData
+```typescript
+interface SearchStepData {
+  step1: {
+    firstName: string
+    lastName: string
+    genderId?: string
+  }
+  step2: {
+    countryId: string
+    stateId: string
+    districtId: string
+    subDistrictId?: string
+    locality?: string
+  }
+  step3: {
+    religionId: string
+    categoryId: string
+    subCategoryId?: string
+  }
+}
+```
+
+```typescript
+const RELATIONSHIP_TYPES = {
+  FATHER: 'rel-6a0ede824d101',
+  MOTHER: 'rel-6a0ede824d102',
+  DAUGHTER: 'rel-6a0ede824d103',
+  SON: 'rel-6a0ede824d104',
+  WIFE: 'rel-6a0ede824d105',
+  HUSBAND: 'rel-6a0ede824d106',
+  SPOUSE: 'rel-6a0ede824d107',
+} as const
+
+const PARENT_TYPES = [
+  RELATIONSHIP_TYPES.FATHER,
+  RELATIONSHIP_TYPES.MOTHER,
+]
+
+const SPOUSE_TYPES = [
+  RELATIONSHIP_TYPES.WIFE,
+  RELATIONSHIP_TYPES.HUSBAND,
+  RELATIONSHIP_TYPES.SPOUSE,
+]
+
+const CHILD_TYPES = [
+  RELATIONSHIP_TYPES.DAUGHTER,
+  RELATIONSHIP_TYPES.SON,
+]
+```
+
+### Search-Related Models
+
+#### PersonSearchCriteria
+```typescript
+interface PersonSearchCriteria {
+  first_name?: string
+  last_name?: string
+  gender_id?: string
+  address?: {
+    country_id: string
+    state_id: string
+    district_id: string
+    sub_district_id?: string
+    locality?: string
+  }
+  religion?: {
+    religion_id: string
+    category_id: string
+    sub_category_id?: string
+  }
+}
+```
+
+#### PersonSearchResult
+```typescript
+interface PersonSearchResult {
+  person: PersonDetails
+  match_score: number // Fuzzy match score (0-100)
+  address_display: string // Comma-separated address
+  religion_display: string // Comma-separated religion info
+}
+```
+
+#### SearchStepData
+```typescript
+interface SearchStepData {
+  step1: {
+    firstName: string
+    lastName: string
+    genderId?: string
+  }
+  step2: {
+    countryId: string
+    stateId: string
+    districtId: string
+    subDistrictId?: string
+    locality?: string
+  }
+  step3: {
+    religionId: string
+    categoryId: string
+    subCategoryId?: string
+  }
+}
 ```
 
 
