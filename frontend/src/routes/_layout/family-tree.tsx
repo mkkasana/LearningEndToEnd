@@ -10,6 +10,7 @@ import { useFamilyTreeData } from "@/hooks/useFamilyTreeData"
 import { ParentsSection } from "@/components/FamilyTree/ParentsSection"
 import { HorizontalScrollRow } from "@/components/FamilyTree/HorizontalScrollRow"
 import { ChildrenSection } from "@/components/FamilyTree/ChildrenSection"
+import { RowConnector } from "@/components/FamilyTree/RowConnector"
 
 export const Route = createFileRoute("/_layout/family-tree")({
   component: FamilyTreeView,
@@ -193,7 +194,7 @@ function FamilyTreeView() {
 
       <main 
         ref={treeContainerRef}
-        className="relative flex flex-col items-center gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8 border-2 rounded-xl shadow-sm bg-gradient-to-br from-background to-muted/20 transition-all duration-300"
+        className="relative flex flex-col items-center gap-2 md:gap-3 p-4 md:p-6 lg:p-8 border-2 rounded-xl shadow-sm bg-gradient-to-br from-background to-muted/20 transition-all duration-300"
         role="region"
         aria-label="Family tree visualization"
       >
@@ -212,6 +213,11 @@ function FamilyTreeView() {
             parents={familyData.parents}
             onPersonClick={handlePersonClick}
           />
+        )}
+
+        {/* Connector from parents to center row */}
+        {familyData.parents.length > 0 && (
+          <RowConnector />
         )}
 
         {/* Center Section: Siblings, Selected Person, Spouses - All in one horizontal row */}
@@ -248,6 +254,11 @@ function FamilyTreeView() {
             />
           ) : null
         })()}
+
+        {/* Connector from center row to children */}
+        {familyData.children.length > 0 && (
+          <RowConnector />
+        )}
 
         {/* Children Section */}
         {familyData.children.length > 0 && (

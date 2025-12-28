@@ -466,7 +466,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Ensure opacity works with existing color coding
     - Test visual hierarchy is clear and intuitive
 
-  - [ ] 19.4 Git commit all changes made for this task
+  - [x] 19.4 Git commit all changes made for this task
 
 - [ ] 20. Final checkpoint - Verify visual enhancements
   - Test connecting lines appear between parents and center row

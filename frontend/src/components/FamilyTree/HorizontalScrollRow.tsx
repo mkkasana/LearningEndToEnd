@@ -127,9 +127,9 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
   // Container styling based on variant
   const containerClass = cn(
     "w-full",
-    variant === 'parent' && "mb-4 md:mb-6 lg:mb-8",
-    variant === 'center' && "my-2 md:my-4",
-    variant === 'child' && "mt-4 md:mt-6 lg:mt-8"
+    variant === 'parent' && "mb-2 md:mb-3",
+    variant === 'center' && "my-1 md:my-2",
+    variant === 'child' && "mt-2 md:mt-3"
   )
 
   const ariaLabel = variant === 'parent' 
