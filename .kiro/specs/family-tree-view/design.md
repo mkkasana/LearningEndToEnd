@@ -211,17 +211,19 @@ interface HorizontalScrollRowProps {
 - Horizontal scroll container with smooth scrolling
 - Responsive card sizing based on viewport
 - Scroll indicators showing more content available
-- Color-coded cards in center row (siblings vs spouses)
+- Color-coded cards for all relationship types (parents, siblings, spouses, children)
 - Selected person prominently displayed in center row
+- Auto-scroll to center the selected person on initial render
 - Touch-friendly scrolling on mobile devices
 - Works consistently across all screen sizes (desktop, tablet, mobile)
 
 **Layout Behavior**:
-- **Parents Row**: All parents displayed horizontally, scrollable if many
-- **Center Row**: Siblings (left) + Selected Person (center) + Spouses (right), all in one scrollable row with color coding
-- **Children Row**: All children displayed horizontally, scrollable if many
+- **Parents Row**: All parents displayed horizontally with parent color-coding, scrollable if many
+- **Center Row**: Siblings (left) + Selected Person (center) + Spouses (right), all in one scrollable row with color coding, auto-scrolls to center selected person
+- **Children Row**: All children displayed horizontally with children color-coding, scrollable if many
 - **No vertical stacking**: Cards never stack vertically within a row, only horizontal scrolling
 - **Mobile-friendly**: Maintains horizontal layout even on small screens
+- **Center-focused**: Selected person always centered in viewport on initial render
 
 ### Data Processing Functions
 
@@ -458,6 +460,18 @@ A property is a characteristic or behavior that should hold true across all vali
 *For any* person with relationships, the family tree should display exactly three horizontal rows (parents, center with siblings+spouses, children) where each row uses horizontal scrolling for overflow without vertical stacking of same-type relationships.
 
 **Validates: Requirements 9.1, 9.2, 9.3, 9.4, 9.5**
+
+### Property 12: Selected Person Centering
+
+*For any* person selected in the family tree, the center row should automatically scroll to position that person in the center of the viewport.
+
+**Validates: Requirements 9.8, 9.9**
+
+### Property 13: Relationship Type Color Coding
+
+*For any* person card displayed in the family tree, the card should have color-coding that corresponds to its relationship type (parent, sibling, spouse, child, or selected person).
+
+**Validates: Requirements 9.2, 9.3, 9.4**
 
 ## Error Handling
 

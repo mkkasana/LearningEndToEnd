@@ -120,9 +120,11 @@ This document specifies the requirements for a Family Tree View feature that pro
 #### Acceptance Criteria
 
 1. WHEN the Family Tree View renders THEN the System SHALL display exactly three horizontal rows: parents (top), siblings and spouses (middle), and children (bottom)
-2. WHEN a person has multiple parents THEN the System SHALL display all parents in a single horizontally scrollable row at the top
+2. WHEN a person has multiple parents THEN the System SHALL display all parents in a single horizontally scrollable row at the top with color-coding to identify parents
 3. WHEN a person has multiple siblings and/or spouses THEN the System SHALL display all siblings and spouses together in a single horizontally scrollable middle row with color-coding to differentiate relationship types
-4. WHEN a person has multiple children THEN the System SHALL display all children in a single horizontally scrollable row at the bottom
+4. WHEN a person has multiple children THEN the System SHALL display all children in a single horizontally scrollable row at the bottom with color-coding to identify children
 5. WHEN the Family Tree View renders on any screen size THEN the System SHALL maintain the three-row horizontal layout without vertical stacking of same-type relationships
 6. WHEN the viewport size changes THEN the System SHALL adjust card sizes and spacing while maintaining horizontal scrollability
 7. WHEN touch gestures are available THEN the System SHALL support touch interactions for selecting persons and horizontal scrolling
+8. WHEN the Family Tree View initially renders THEN the System SHALL scroll the center row to position the selected person in the center of the viewport
+9. WHEN a new person is selected THEN the System SHALL scroll the center row to center the newly selected person in the viewport

@@ -1,4 +1,4 @@
-import { memo } from "react"
+import { memo, useEffect, useRef } from "react"
 import { PersonCard } from "./PersonCard"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import type { PersonDetails } from "@/client"
@@ -32,6 +32,25 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
   variant,
   colorCoding,
 }: HorizontalScrollRowProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const selectedPersonRef = useRef<HTMLDivElement>(null)
+
+  // Auto-scroll to center the selected person when it changes or on initial render
+  // Requirements: 9.8, 9.9
+  useEffect(() => {
+    if (variant === 'center' && selectedPersonId && selectedPersonRef.current && scrollContainerRef.current) {
+      // Check if scrollIntoView is available (may not be in test environment)
+      if (typeof selectedPersonRef.current.scrollIntoView === 'function') {
+        // Use scrollIntoView with smooth behavior and center alignment
+        selectedPersonRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        })
+      }
+    }
+  }, [selectedPersonId, variant])
+
   if (people.length === 0 && !selectedPersonId) {
     return null
   }
@@ -82,21 +101,27 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
     return 'Spouse'
   }
 
-  // Get background color for color-coding in center row
-  const getCardBackgroundClass = (personId: string): string => {
-    if (variant !== 'center' || !colorCoding || personId === selectedPersonId) {
-      return ''
+  // Get background color for color-coding
+  // Requirements: 9.2, 9.3, 9.4
+  const getColorVariant = (personId: string): 'parent' | 'sibling' | 'spouse' | 'child' | 'selected' | undefined => {
+    if (personId === selectedPersonId) {
+      return 'selected'
     }
     
-    const type = colorCoding.get(personId)
-    if (type === 'sibling') {
-      return 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800'
-    }
-    if (type === 'spouse') {
-      return 'bg-pink-50/50 dark:bg-pink-950/20 border-pink-200 dark:border-pink-800'
+    if (variant === 'parent') {
+      return 'parent'
     }
     
-    return ''
+    if (variant === 'child') {
+      return 'child'
+    }
+    
+    // For center row, use color coding
+    if (variant === 'center' && colorCoding) {
+      return colorCoding.get(personId)
+    }
+    
+    return undefined
   }
 
   // Container styling based on variant
@@ -119,21 +144,22 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
       role="region"
       aria-label={ariaLabel}
     >
-      <ScrollArea className="w-full whitespace-nowrap rounded-lg border border-border/50 bg-muted/10 p-2 md:p-3 lg:p-4">
+      <ScrollArea 
+        className="w-full whitespace-nowrap rounded-lg border border-border/50 bg-muted/10 p-2 md:p-3 lg:p-4"
+        ref={scrollContainerRef}
+      >
         <div className="flex gap-3 md:gap-4 lg:gap-6 p-1 md:p-2 items-center justify-start">
           {people.map((person) => {
             const cardVariant = getCardVariant(person.id)
             const relationshipType = getRelationshipType(person.id)
-            const backgroundClass = getCardBackgroundClass(person.id)
+            const colorVariant = getColorVariant(person.id)
+            const isSelected = person.id === selectedPersonId
             
             return (
               <div 
                 key={person.id} 
-                className={cn(
-                  "inline-block flex-shrink-0",
-                  backgroundClass && "rounded-lg p-2",
-                  backgroundClass
-                )}
+                ref={isSelected ? selectedPersonRef : null}
+                className="inline-block flex-shrink-0"
               >
                 <PersonCard
                   person={person}
@@ -141,6 +167,7 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
                   variant={cardVariant}
                   onClick={onPersonClick}
                   showPhoto={true}
+                  colorVariant={colorVariant}
                 />
               </div>
             )

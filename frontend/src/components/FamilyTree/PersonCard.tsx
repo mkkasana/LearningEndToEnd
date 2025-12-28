@@ -13,6 +13,7 @@ export interface PersonCardProps {
   variant: PersonCardVariant
   onClick: (personId: string) => void
   showPhoto?: boolean
+  colorVariant?: 'parent' | 'sibling' | 'spouse' | 'child' | 'selected'
 }
 
 /**
@@ -90,6 +91,29 @@ function getVariantStyles(variant: PersonCardVariant): string {
 }
 
 /**
+ * Get color-coding classes based on relationship type
+ * Requirements: 9.2, 9.3, 9.4
+ */
+function getColorVariantClasses(colorVariant?: 'parent' | 'sibling' | 'spouse' | 'child' | 'selected'): string {
+  if (!colorVariant || colorVariant === 'selected') {
+    return ''
+  }
+  
+  switch (colorVariant) {
+    case 'parent':
+      return 'bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-800'
+    case 'sibling':
+      return 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800'
+    case 'spouse':
+      return 'bg-pink-50/50 dark:bg-pink-950/20 border-pink-200 dark:border-pink-800'
+    case 'child':
+      return 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800'
+    default:
+      return ''
+  }
+}
+
+/**
  * Get avatar size based on variant with responsive sizing
  */
 function getAvatarSize(variant: PersonCardVariant): string {
@@ -117,6 +141,7 @@ export const PersonCard = memo(function PersonCard({
   variant,
   onClick,
   showPhoto = true,
+  colorVariant,
 }: PersonCardProps) {
   const yearsDisplay = formatYearsDisplay(person.date_of_birth, person.date_of_death)
   const displayName = `${person.first_name} ${person.last_name}`
@@ -124,11 +149,14 @@ export const PersonCard = memo(function PersonCard({
     ? `${displayName}, currently selected, born ${yearsDisplay}`
     : `${displayName}, ${relationshipType || 'family member'}, born ${yearsDisplay}. Click to view their family tree.`
   
+  const colorClasses = getColorVariantClasses(colorVariant)
+  
   return (
     <Card
       className={cn(
         "flex flex-col items-center gap-2 md:gap-3 p-3 md:p-4",
-        getVariantStyles(variant)
+        getVariantStyles(variant),
+        colorClasses
       )}
       onClick={() => onClick(person.id)}
       role="button"

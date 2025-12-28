@@ -302,11 +302,65 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
   - [x] 12.9 Git commit all changes made for this task
 
-- [ ] 13. Final checkpoint - Verify UI improvements
+- [x] 13. Final checkpoint - Verify UI improvements
   - Test on desktop, tablet, and mobile viewports
   - Verify no vertical stacking of same-type relationships
   - Verify horizontal scrolling works smoothly
   - Verify color-coding clearly differentiates siblings from spouses
+  - Ensure all tests pass
+
+## UI Polish Tasks (Centering and Color Coding)
+
+- [-] 14. Implement selected person centering and comprehensive color coding
+  - [x] 14.1 Write property test for selected person centering
+    - **Property 12: Selected Person Centering**
+    - **Validates: Requirements 9.8, 9.9**
+
+  - [x] 14.2 Implement auto-scroll to center selected person
+    - Add scroll logic to HorizontalScrollRow to center the selected person
+    - Use scrollIntoView or manual scroll calculation
+    - Trigger on initial render and when person selection changes
+    - Ensure smooth scrolling animation
+    - _Requirements: 9.8, 9.9_
+
+  - [x] 14.3 Write property test for relationship type color coding
+    - **Property 13: Relationship Type Color Coding**
+    - **Validates: Requirements 9.2, 9.3, 9.4**
+
+  - [x] 14.4 Extend color coding to all relationship types
+    - Add distinct colors for parents (e.g., blue/indigo)
+    - Add distinct colors for children (e.g., green/emerald)
+    - Keep existing colors for siblings and spouses
+    - Ensure selected person has most prominent styling
+    - Update PersonCard component to accept color variant
+    - _Requirements: 9.2, 9.3, 9.4_
+
+  - [ ] 14.5 Write unit tests for centering behavior
+    - Test selected person is centered on initial render
+    - Test selected person is centered after selection change
+    - Test centering works with different numbers of siblings/spouses
+    - _Requirements: 9.8, 9.9_
+
+  - [ ] 14.6 Write unit tests for color coding
+    - Test parent cards have parent color
+    - Test sibling cards have sibling color
+    - Test spouse cards have spouse color
+    - Test child cards have child color
+    - Test selected person has selected styling
+    - _Requirements: 9.2, 9.3, 9.4_
+
+  - [ ] 14.7 Update documentation and comments
+    - Document color scheme in design document
+    - Add comments explaining centering logic
+    - Update component prop documentation
+
+  - [-] 14.8 Git commit all changes made for this task
+
+- [ ] 15. Final checkpoint - Verify centering and color coding
+  - Test selected person is always centered initially
+  - Test all relationship types have distinct colors
+  - Test color scheme is visually clear and accessible
+  - Verify smooth scrolling animation
   - Ensure all tests pass
 
 ## Notes
