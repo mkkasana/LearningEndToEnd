@@ -19,7 +19,11 @@ export function SpouseSection({ spouses, onPersonClick }: SpouseSectionProps) {
   // For single spouse, display directly
   if (spouses.length === 1) {
     return (
-      <div className="flex items-center">
+      <div 
+        className="flex items-center"
+        role="region"
+        aria-label="Spouse section"
+      >
         <PersonCard
           person={spouses[0]}
           relationshipType="Spouse"
@@ -33,7 +37,11 @@ export function SpouseSection({ spouses, onPersonClick }: SpouseSectionProps) {
 
   // For multiple spouses, use SpouseCarousel
   return (
-    <div className="flex items-center">
+    <div 
+      className="flex items-center"
+      role="region"
+      aria-label="Spouses section"
+    >
       <SpouseCarousel spouses={spouses} onPersonClick={onPersonClick} />
     </div>
   )

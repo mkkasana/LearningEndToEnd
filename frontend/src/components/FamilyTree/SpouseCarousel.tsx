@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, memo } from "react"
 import { PersonCard } from "./PersonCard"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -13,8 +13,9 @@ export interface SpouseCarouselProps {
 /**
  * SpouseCarousel component displays multiple spouses in a carousel/slideshow format
  * with prev/next navigation buttons and indicator dots
+ * Performance: Memoized to prevent unnecessary re-renders
  */
-export function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) {
+export const SpouseCarousel = memo(function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   if (spouses.length === 0) {
@@ -45,7 +46,14 @@ export function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) 
           onClick={handlePrevious}
           disabled={spouses.length <= 1}
           aria-label="Previous spouse"
-          className="h-7 w-7 md:h-8 md:w-8 touch-manipulation active:scale-95"
+          className={cn(
+            "h-7 w-7 md:h-8 md:w-8 touch-manipulation",
+            "transition-all duration-200",
+            "hover:bg-accent hover:scale-110",
+            "active:scale-95",
+            "disabled:opacity-30 disabled:cursor-not-allowed",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          )}
         >
           <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
         </Button>
@@ -68,7 +76,14 @@ export function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) 
           onClick={handleNext}
           disabled={spouses.length <= 1}
           aria-label="Next spouse"
-          className="h-7 w-7 md:h-8 md:w-8 touch-manipulation active:scale-95"
+          className={cn(
+            "h-7 w-7 md:h-8 md:w-8 touch-manipulation",
+            "transition-all duration-200",
+            "hover:bg-accent hover:scale-110",
+            "active:scale-95",
+            "disabled:opacity-30 disabled:cursor-not-allowed",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          )}
         >
           <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
         </Button>
@@ -82,12 +97,13 @@ export function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) 
               key={index}
               onClick={() => handleDotClick(index)}
               className={cn(
-                "h-1.5 w-1.5 md:h-2 md:w-2 rounded-full transition-all duration-200",
+                "h-1.5 w-1.5 md:h-2 md:w-2 rounded-full transition-all duration-300 ease-in-out",
                 "touch-manipulation active:scale-110",
                 "min-h-[24px] min-w-[24px] flex items-center justify-center",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                 index === currentIndex
-                  ? "bg-primary w-3 md:w-4"
-                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                  ? "bg-primary w-3 md:w-4 shadow-sm"
+                  : "bg-muted-foreground/30 hover:bg-muted-foreground/60 hover:scale-125"
               )}
               aria-label={`Go to spouse ${index + 1}`}
               aria-current={index === currentIndex ? "true" : "false"}
@@ -95,7 +111,7 @@ export function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) 
             >
               <span
                 className={cn(
-                  "h-1.5 w-1.5 md:h-2 md:w-2 rounded-full",
+                  "h-1.5 w-1.5 md:h-2 md:w-2 rounded-full transition-all duration-300",
                   index === currentIndex
                     ? "bg-primary w-3 md:w-4"
                     : "bg-muted-foreground/30"
@@ -107,4 +123,4 @@ export function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) 
       )}
     </div>
   )
-}
+})

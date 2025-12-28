@@ -28,8 +28,12 @@ export function ParentsSection({ parents, onPersonClick }: ParentsSectionProps) 
   })
 
   return (
-    <div className="flex flex-col items-center gap-2 md:gap-4 mb-4 md:mb-6 lg:mb-8">
-      <div className="flex flex-col md:flex-row gap-4 md:gap-6 justify-center items-center md:items-start">
+    <div 
+      className="flex flex-col items-center gap-2 md:gap-4 mb-4 md:mb-6 lg:mb-8"
+      role="region"
+      aria-label="Parents section"
+    >
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8 justify-center items-center md:items-start">
         {father && (
           <PersonCard
             person={father}

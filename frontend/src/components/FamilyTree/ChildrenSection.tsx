@@ -19,8 +19,12 @@ export function ChildrenSection({ children, onPersonClick }: ChildrenSectionProp
   }
 
   return (
-    <div className="flex flex-col items-center gap-2 md:gap-4 mt-4 md:mt-6 lg:mt-8">
-      <div className="flex flex-wrap gap-3 md:gap-4 justify-center items-start max-w-full md:max-w-3xl lg:max-w-4xl">
+    <div 
+      className="flex flex-col items-center gap-2 md:gap-4 mt-4 md:mt-6 lg:mt-8"
+      role="region"
+      aria-label="Children section"
+    >
+      <div className="flex flex-wrap gap-3 md:gap-4 lg:gap-5 justify-center items-start max-w-full md:max-w-3xl lg:max-w-4xl">
         {children.map((child) => (
           <PersonCard
             key={child.id}

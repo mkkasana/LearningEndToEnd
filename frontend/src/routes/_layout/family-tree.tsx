@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Loader2, AlertCircle, Network } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -27,6 +27,8 @@ export const Route = createFileRoute("/_layout/family-tree")({
 function FamilyTreeView() {
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
   const [personCache, setPersonCache] = useState<Map<string, PersonDetails>>(new Map())
+  const treeContainerRef = useRef<HTMLDivElement>(null)
+  const selectedPersonRef = useRef<HTMLDivElement>(null)
 
   // Check if user has a person profile
   const { data: profileStatus } = useQuery({
@@ -69,12 +71,28 @@ function FamilyTreeView() {
   /**
    * Handle person card click - update selected person and fetch new data
    * Requirements: 7.1, 7.2, 7.3
+   * Accessibility: Manages focus when navigating between persons
    */
   const handlePersonClick = (personId: string) => {
     setSelectedPersonId(personId)
     // Data will be automatically fetched by useFamilyTreeData hook
     // when selectedPersonId changes
+    
+    // Scroll to top of tree container for better UX
+    if (treeContainerRef.current) {
+      treeContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
   }
+
+  // Focus management: Focus the selected person card after navigation
+  useEffect(() => {
+    if (!isLoading && selectedPersonRef.current) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        selectedPersonRef.current?.focus()
+      }, 100)
+    }
+  }, [selectedPersonId, isLoading])
 
   // Error handling: No person profile (Requirement 1.4)
   if (profileStatus && !profileStatus.has_person) {
@@ -163,23 +181,30 @@ function FamilyTreeView() {
 
   // Main content - Family Tree View
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-6 animate-in fade-in duration-500">
+      <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Family Tree View</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+            Family Tree View
+          </h1>
+          <p className="text-muted-foreground mt-1">
             Explore your family relationships visually
           </p>
         </div>
-      </div>
+      </header>
 
-      <div className="relative flex flex-col items-center gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8 border rounded-lg">
+      <main 
+        ref={treeContainerRef}
+        className="relative flex flex-col items-center gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8 border-2 rounded-xl shadow-sm bg-gradient-to-br from-background to-muted/20 transition-all duration-300"
+        role="region"
+        aria-label="Family tree visualization"
+      >
         {/* Loading overlay - shows while fetching new data but maintains previous data */}
         {isLoading && familyData && (
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-lg">
+          <div className="absolute inset-0 bg-background/90 backdrop-blur-sm flex items-center justify-center z-10 rounded-xl transition-all duration-300">
             <div className="flex flex-col items-center">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              <p className="mt-4 text-muted-foreground">Loading family tree...</p>
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="mt-4 text-muted-foreground font-medium">Loading family tree...</p>
             </div>
           </div>
         )}
@@ -193,7 +218,7 @@ function FamilyTreeView() {
 
         {/* Center Section: Siblings, Selected Person, Spouse */}
         {/* Desktop: horizontal layout, Tablet: mixed, Mobile: vertical stack */}
-        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 lg:gap-8 w-full md:w-auto">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 lg:gap-10 w-full md:w-auto">
           {/* Siblings on the left (desktop/tablet) or above (mobile) */}
           {familyData.siblings.length > 0 && (
             <SiblingsSection
@@ -234,15 +259,17 @@ function FamilyTreeView() {
           familyData.spouses.length === 0 &&
           familyData.siblings.length === 0 &&
           familyData.children.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Network className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold">No Family Relationships</h3>
-              <p className="text-muted-foreground text-center max-w-md mt-2">
+            <div className="flex flex-col items-center justify-center py-12 px-4">
+              <div className="rounded-full bg-muted/50 p-6 mb-4">
+                <Network className="h-12 w-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">No Family Relationships</h3>
+              <p className="text-muted-foreground text-center max-w-md text-sm md:text-base">
                 No family relationships have been recorded yet. Add family members to see them in the tree.
               </p>
             </div>
           )}
-      </div>
+      </main>
     </div>
   )
 }

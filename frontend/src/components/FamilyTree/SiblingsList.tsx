@@ -1,6 +1,7 @@
 import { PersonCard } from "./PersonCard"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import type { PersonDetails } from "@/client"
+import { memo } from "react"
 
 export interface SiblingsListProps {
   siblings: PersonDetails[]
@@ -10,15 +11,16 @@ export interface SiblingsListProps {
 /**
  * SiblingsList component displays siblings in a horizontally scrollable container
  * with scroll indicators if overflow occurs
+ * Performance: Memoized to prevent unnecessary re-renders
  */
-export function SiblingsList({ siblings, onPersonClick }: SiblingsListProps) {
+export const SiblingsList = memo(function SiblingsList({ siblings, onPersonClick }: SiblingsListProps) {
   if (siblings.length === 0) {
     return null
   }
 
   return (
     <div className="w-full max-w-xs md:max-w-md lg:max-w-2xl">
-      <ScrollArea className="w-full whitespace-nowrap">
+      <ScrollArea className="w-full whitespace-nowrap rounded-lg border border-border/50 bg-muted/20 p-2">
         <div className="flex gap-2 md:gap-3 p-1 md:p-2">
           {siblings.map((sibling) => (
             <div key={sibling.id} className="inline-block">
@@ -32,8 +34,8 @@ export function SiblingsList({ siblings, onPersonClick }: SiblingsListProps) {
             </div>
           ))}
         </div>
-        <ScrollBar orientation="horizontal" />
+        <ScrollBar orientation="horizontal" className="h-2" />
       </ScrollArea>
     </div>
   )
-}
+})

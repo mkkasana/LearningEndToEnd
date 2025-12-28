@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import type { PersonDetails } from "@/client"
 import { User } from "lucide-react"
+import { memo } from "react"
 
 export type PersonCardVariant = 'selected' | 'parent' | 'spouse' | 'sibling' | 'child'
 
@@ -37,41 +38,51 @@ export function formatYearsDisplay(dateOfBirth: string, dateOfDeath?: string | n
  * Get variant-specific styling classes with responsive sizing
  */
 function getVariantStyles(variant: PersonCardVariant): string {
-  const baseStyles = "cursor-pointer transition-all hover:shadow-lg touch-manipulation active:scale-95"
+  const baseStyles = cn(
+    "cursor-pointer transition-all duration-200 ease-in-out",
+    "hover:shadow-xl hover:scale-[1.02] hover:border-primary/50",
+    "touch-manipulation active:scale-95",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+  )
   
   switch (variant) {
     case 'selected':
       return cn(
         baseStyles,
-        "border-2 border-primary shadow-md scale-105",
+        "border-2 border-primary shadow-lg scale-105 bg-primary/5",
+        "hover:shadow-2xl hover:border-primary hover:bg-primary/10",
         "min-w-[160px] md:min-w-[180px] lg:min-w-[200px]",
         "min-h-[180px] md:min-h-[200px] lg:min-h-[220px]"
       )
     case 'parent':
       return cn(
         baseStyles,
-        "border border-border",
+        "border border-border shadow-sm bg-card",
+        "hover:bg-accent/50",
         "min-w-[140px] md:min-w-[160px] lg:min-w-[180px]",
         "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]"
       )
     case 'spouse':
       return cn(
         baseStyles,
-        "border border-border",
+        "border border-border shadow-sm bg-card",
+        "hover:bg-accent/50",
         "min-w-[140px] md:min-w-[160px] lg:min-w-[180px]",
         "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]"
       )
     case 'sibling':
       return cn(
         baseStyles,
-        "border border-border opacity-75 scale-90",
+        "border border-border opacity-75 scale-90 shadow-sm bg-card",
+        "hover:opacity-90 hover:bg-accent/30",
         "min-w-[120px] md:min-w-[140px] lg:min-w-[160px]",
         "min-h-[140px] md:min-h-[160px] lg:min-h-[180px]"
       )
     case 'child':
       return cn(
         baseStyles,
-        "border border-border scale-95",
+        "border border-border scale-95 shadow-sm bg-card",
+        "hover:bg-accent/50",
         "min-w-[130px] md:min-w-[150px] lg:min-w-[170px]",
         "min-h-[150px] md:min-h-[170px] lg:min-h-[190px]"
       )
@@ -97,8 +108,10 @@ function getAvatarSize(variant: PersonCardVariant): string {
 
 /**
  * PersonCard component displays information about a person in the family tree
+ * Accessibility: Supports keyboard navigation, ARIA labels, and focus management
+ * Performance: Memoized to prevent unnecessary re-renders
  */
-export function PersonCard({
+export const PersonCard = memo(function PersonCard({
   person,
   relationshipType,
   variant,
@@ -107,6 +120,9 @@ export function PersonCard({
 }: PersonCardProps) {
   const yearsDisplay = formatYearsDisplay(person.date_of_birth, person.date_of_death)
   const displayName = `${person.first_name} ${person.last_name}`
+  const ariaLabel = variant === 'selected' 
+    ? `${displayName}, currently selected, born ${yearsDisplay}`
+    : `${displayName}, ${relationshipType || 'family member'}, born ${yearsDisplay}. Click to view their family tree.`
   
   return (
     <Card
@@ -123,38 +139,39 @@ export function PersonCard({
           onClick(person.id)
         }
       }}
-      aria-label={`${displayName}, ${relationshipType || 'selected person'}`}
+      aria-label={ariaLabel}
+      aria-pressed={variant === 'selected'}
     >
       {showPhoto && (
-        <Avatar className={getAvatarSize(variant)}>
-          <AvatarImage src={undefined} alt={displayName} />
+        <Avatar className={getAvatarSize(variant)} aria-hidden="true">
+          <AvatarImage src={undefined} alt="" />
           <AvatarFallback>
-            <User className="size-1/2" />
+            <User className="size-1/2" aria-hidden="true" />
           </AvatarFallback>
         </Avatar>
       )}
       
       <div className="flex flex-col items-center gap-1 text-center">
         <div className={cn(
-          "font-semibold",
-          variant === 'selected' ? "text-lg" : "text-sm"
+          "font-semibold leading-tight",
+          variant === 'selected' ? "text-lg md:text-xl" : "text-sm md:text-base"
         )}>
           {displayName}
         </div>
         
         <div className={cn(
-          "text-muted-foreground",
-          variant === 'selected' ? "text-sm" : "text-xs"
+          "text-muted-foreground font-medium",
+          variant === 'selected' ? "text-sm md:text-base" : "text-xs md:text-sm"
         )}>
           {yearsDisplay}
         </div>
         
         {relationshipType && variant !== 'selected' && (
-          <div className="text-xs text-muted-foreground italic mt-1">
+          <div className="text-xs md:text-sm text-muted-foreground/80 italic mt-0.5 font-light">
             {relationshipType}
           </div>
         )}
       </div>
     </Card>
   )
-}
+})

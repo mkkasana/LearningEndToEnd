@@ -18,7 +18,11 @@ export function SiblingsSection({ siblings, onPersonClick }: SiblingsSectionProp
 
   // Use SiblingsList for horizontal scrolling
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div 
+      className="flex flex-col items-center gap-2"
+      role="region"
+      aria-label="Siblings section"
+    >
       <SiblingsList siblings={siblings} onPersonClick={onPersonClick} />
     </div>
   )
