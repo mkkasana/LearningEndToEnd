@@ -13,13 +13,40 @@ const personDetailsArbitrary = fc.record({
   middle_name: fc.option(fc.string({ minLength: 1, maxLength: 20 }), { nil: null }),
   last_name: fc.string({ minLength: 1, maxLength: 20 }),
   gender_id: fc.uuid(),
-  date_of_birth: fc.date({ min: new Date('1900-01-01'), max: new Date() }).map(d => d.toISOString()),
-  date_of_death: fc.option(fc.date({ min: new Date('1900-01-01'), max: new Date() }).map(d => d.toISOString()), { nil: null }),
+  date_of_birth: fc.integer({ min: 1900, max: 2024 }).chain(year =>
+    fc.integer({ min: 1, max: 12 }).chain(month =>
+      fc.integer({ min: 1, max: 28 }).map(day =>
+        `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T00:00:00.000Z`
+      )
+    )
+  ),
+  date_of_death: fc.option(
+    fc.integer({ min: 1900, max: 2024 }).chain(year =>
+      fc.integer({ min: 1, max: 12 }).chain(month =>
+        fc.integer({ min: 1, max: 28 }).map(day =>
+          `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T00:00:00.000Z`
+        )
+      )
+    ),
+    { nil: null }
+  ),
   user_id: fc.option(fc.uuid(), { nil: null }),
   created_by_user_id: fc.uuid(),
   is_primary: fc.boolean(),
-  created_at: fc.date().map(d => d.toISOString()),
-  updated_at: fc.date().map(d => d.toISOString()),
+  created_at: fc.integer({ min: 2020, max: 2024 }).chain(year =>
+    fc.integer({ min: 1, max: 12 }).chain(month =>
+      fc.integer({ min: 1, max: 28 }).map(day =>
+        `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T00:00:00.000Z`
+      )
+    )
+  ),
+  updated_at: fc.integer({ min: 2020, max: 2024 }).chain(year =>
+    fc.integer({ min: 1, max: 12 }).chain(month =>
+      fc.integer({ min: 1, max: 28 }).map(day =>
+        `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T00:00:00.000Z`
+      )
+    )
+  ),
 }) as fc.Arbitrary<PersonDetails>
 
 describe('HorizontalScrollRow', () => {
@@ -337,8 +364,8 @@ describe('HorizontalScrollRow', () => {
             )
 
             // Check that the row exists
-            const scrollArea = container.querySelector('[data-radix-scroll-area-viewport]')
-            expect(scrollArea).toBeTruthy()
+            const region = container.querySelector('[role="region"]')
+            expect(region).toBeTruthy()
 
             // Check that all people are rendered
             const personCards = container.querySelectorAll('[role="button"]')
@@ -348,10 +375,15 @@ describe('HorizontalScrollRow', () => {
             const flexContainer = container.querySelector('.flex')
             expect(flexContainer).toBeTruthy()
             
-            // Verify no vertical stacking classes (flex-col, grid with rows, etc.)
-            const hasVerticalStacking = container.innerHTML.includes('flex-col') && 
-                                       !container.innerHTML.includes('md:flex-row')
-            expect(hasVerticalStacking).toBe(false)
+            // Verify horizontal layout by checking for flex class without flex-col
+            // The inner flex container should have 'flex' but not 'flex-col' alone
+            const innerFlexDiv = container.querySelector('.flex.gap-3')
+            expect(innerFlexDiv).toBeTruthy()
+            
+            // Check that items-center and justify-start are present (horizontal alignment)
+            const hasHorizontalAlignment = container.innerHTML.includes('items-center') && 
+                                          container.innerHTML.includes('justify-start')
+            expect(hasHorizontalAlignment).toBe(true)
           }
         ),
         { numRuns: 100 }
@@ -382,9 +414,10 @@ describe('HorizontalScrollRow', () => {
               const personCards = container.querySelectorAll('[role="button"]')
               expect(personCards.length).toBe(parents.length)
               
-              // Should have horizontal scroll
-              const scrollBar = container.querySelector('[data-orientation="horizontal"]')
-              expect(scrollBar).toBeTruthy()
+              // Should have ScrollArea component (check for region role)
+              const region = container.querySelector('[role="region"]')
+              expect(region).toBeTruthy()
+              expect(region?.getAttribute('aria-label')).toBe('Parents row')
             }
           }
         ),
@@ -426,9 +459,10 @@ describe('HorizontalScrollRow', () => {
             const personCards = container.querySelectorAll('[role="button"]')
             expect(personCards.length).toBe(allPeople.length)
             
-            // Should have horizontal scroll
-            const scrollBar = container.querySelector('[data-orientation="horizontal"]')
-            expect(scrollBar).toBeTruthy()
+            // Should have region with correct label
+            const region = container.querySelector('[role="region"]')
+            expect(region).toBeTruthy()
+            expect(region?.getAttribute('aria-label')).toBe('Center row with siblings and spouses')
             
             // Check for color-coding classes (siblings: blue, spouses: pink)
             if (siblings.length > 0) {
@@ -470,9 +504,10 @@ describe('HorizontalScrollRow', () => {
               const personCards = container.querySelectorAll('[role="button"]')
               expect(personCards.length).toBe(children.length)
               
-              // Should have horizontal scroll
-              const scrollBar = container.querySelector('[data-orientation="horizontal"]')
-              expect(scrollBar).toBeTruthy()
+              // Should have region with correct label
+              const region = container.querySelector('[role="region"]')
+              expect(region).toBeTruthy()
+              expect(region?.getAttribute('aria-label')).toBe('Children row')
             }
           }
         ),

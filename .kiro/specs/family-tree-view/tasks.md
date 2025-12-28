@@ -249,7 +249,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
 ## UI Improvement Tasks (Horizontal Scrolling Layout)
 
-- [-] 12. Refactor layout to three-row horizontal scrolling design
+- [x] 12. Refactor layout to three-row horizontal scrolling design
   - [x] 12.1 Create HorizontalScrollRow component
     - Implement unified component for displaying people in horizontally scrollable rows
     - Support variants: 'parent', 'center', 'child'
@@ -300,7 +300,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Ensure lines connect properly in horizontal scroll containers
     - Test with various family structures
 
-  - [-] 12.9 Git commit all changes made for this task
+  - [x] 12.9 Git commit all changes made for this task
 
 - [ ] 13. Final checkpoint - Verify UI improvements
   - Test on desktop, tablet, and mobile viewports
