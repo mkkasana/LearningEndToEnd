@@ -19,7 +19,7 @@ describe('Spouse Opacity Verification', () => {
     updated_at: '2024-01-01T00:00:00Z',
   }
 
-  it('spouse card should have opacity-75 class in className string', () => {
+  it('spouse card should have opacity-40 class in className string', () => {
     const { container } = render(
       <PersonCard
         person={mockPerson}
@@ -34,10 +34,10 @@ describe('Spouse Opacity Verification', () => {
     const className = card?.className || ''
     
     console.log('Spouse card className:', className)
-    console.log('Contains opacity-75:', className.includes('opacity-75'))
+    console.log('Contains opacity-40:', className.includes('opacity-40'))
     console.log('Contains bg-purple-100:', className.includes('bg-purple-100'))
     
-    expect(className).toContain('opacity-75')
+    expect(className).toContain('opacity-40')
   })
 
   it('selected person should NOT have opacity-75 class', () => {
