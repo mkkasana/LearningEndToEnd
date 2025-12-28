@@ -37,6 +37,7 @@ export function formatYearsDisplay(dateOfBirth: string, dateOfDeath?: string | n
 
 /**
  * Get variant-specific styling classes with responsive sizing
+ * Requirements: 4.1 - Spouse cards have reduced opacity for visual hierarchy
  */
 function getVariantStyles(variant: PersonCardVariant): string {
   const baseStyles = cn(
@@ -66,8 +67,8 @@ function getVariantStyles(variant: PersonCardVariant): string {
     case 'spouse':
       return cn(
         baseStyles,
-        "border border-border shadow-sm bg-card",
-        "hover:bg-accent/50",
+        "border border-border shadow-sm bg-card opacity-40",
+        "hover:bg-accent/50 hover:opacity-60",
         "min-w-[140px] md:min-w-[160px] lg:min-w-[180px]",
         "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]"
       )

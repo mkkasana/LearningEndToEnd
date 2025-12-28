@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-8 bg-gray-100">
+  <h1 class="text-2xl font-bold mb-4">Opacity Test</h1>
+  
+  <div class="flex gap-4">
+    <div class="border border-border shadow-sm bg-card p-4 w-40 h-40 bg-purple-100 border-purple-300">
+      <p>Spouse without opacity</p>
+      <p class="text-sm">bg-purple-100</p>
+    </div>
+    
+    <div class="border border-border shadow-sm bg-card p-4 w-40 h-40 bg-purple-100 border-purple-300 opacity-75">
+      <p>Spouse with opacity-75</p>
+      <p class="text-sm">bg-purple-100 opacity-75</p>
+    </div>
+    
+    <div class="border border-border shadow-sm bg-card p-4 w-40 h-40 bg-blue-100 border-blue-300">
+      <p>Sibling without extra opacity</p>
+      <p class="text-sm">bg-blue-100</p>
+    </div>
+    
+    <div class="border border-border shadow-sm bg-card p-4 w-40 h-40 bg-blue-100 border-blue-300 opacity-75">
+      <p>Sibling with opacity-75</p>
+      <p class="text-sm">bg-blue-100 opacity-75</p>
+    </div>
+  </div>
+</body>
+</html>

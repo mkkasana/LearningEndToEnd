@@ -327,4 +327,100 @@ describe('PersonCard - Unit Tests for Edge Cases', () => {
     // Relationship label should not be shown for selected variant
     expect(screen.queryByText('Self')).toBeNull()
   })
+
+  describe('Spouse Visual Differentiation - Opacity Tests', () => {
+    it('should render spouse cards with reduced opacity (0.40)', () => {
+      const { container } = render(
+        <PersonCard
+          person={mockPerson}
+          variant="spouse"
+          relationshipType="Wife"
+          onClick={() => {}}
+        />
+      )
+
+      const card = container.querySelector('[data-slot="card"]')
+      expect(card?.className).toContain('opacity-40')
+    })
+
+    it('should render selected person with full opacity (no opacity class)', () => {
+      const { container } = render(
+        <PersonCard
+          person={mockPerson}
+          variant="selected"
+          onClick={() => {}}
+        />
+      )
+
+      const card = container.querySelector('[data-slot="card"]')
+      // Selected person should not have opacity-40 class
+      expect(card?.className).not.toContain('opacity-40')
+      // Should have border-2 and border-green-500 for selected styling
+      expect(card?.className).toContain('border-2')
+      expect(card?.className).toContain('border-green-500')
+    })
+
+    it('should render sibling cards with opacity-75 (same as before)', () => {
+      const { container } = render(
+        <PersonCard
+          person={mockPerson}
+          variant="sibling"
+          relationshipType="Sister"
+          onClick={() => {}}
+        />
+      )
+
+      const card = container.querySelector('[data-slot="card"]')
+      // Siblings already had opacity-75, should remain unchanged
+      expect(card?.className).toContain('opacity-75')
+      expect(card?.className).toContain('scale-90')
+    })
+
+    it('should render parent cards with full opacity (no opacity class)', () => {
+      const { container } = render(
+        <PersonCard
+          person={mockPerson}
+          variant="parent"
+          relationshipType="Father"
+          onClick={() => {}}
+        />
+      )
+
+      const card = container.querySelector('[data-slot="card"]')
+      // Parents should not have opacity reduction
+      expect(card?.className).not.toContain('opacity-40')
+      expect(card?.className).not.toContain('opacity-75')
+    })
+
+    it('should render child cards with full opacity (no opacity class)', () => {
+      const { container } = render(
+        <PersonCard
+          person={mockPerson}
+          variant="child"
+          relationshipType="Son"
+          onClick={() => {}}
+        />
+      )
+
+      const card = container.querySelector('[data-slot="card"]')
+      // Children should not have opacity reduction
+      expect(card?.className).not.toContain('opacity-40')
+      expect(card?.className).not.toContain('opacity-75')
+    })
+
+    it('should increase spouse opacity on hover (0.60)', () => {
+      const { container } = render(
+        <PersonCard
+          person={mockPerson}
+          variant="spouse"
+          relationshipType="Husband"
+          onClick={() => {}}
+        />
+      )
+
+      const card = container.querySelector('[data-slot="card"]')
+      // Should have hover:opacity-60 class
+      expect(card?.className).toContain('hover:opacity-60')
+    })
+  })
 })

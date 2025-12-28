@@ -406,7 +406,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
   - [x] 16.7 Git commit all changes made for this task
 
-- [ ] 17. Final checkpoint - Verify all UI refinements
+- [x] 17. Final checkpoint - Verify all UI refinements
   - Test all rows center their content appropriately
   - Test parent row uses amber/orange color
   - Test sibling row uses blue color
@@ -415,6 +415,66 @@ This implementation plan breaks down the Family Tree View feature into discrete,
   - Test selected person uses green with prominent styling
   - Verify colors are distinct and easily distinguishable
   - Test on desktop, tablet, and mobile viewports
+  - Ensure all tests pass
+
+## Visual Enhancement Tasks (Relationship Lines and Spouse Differentiation)
+
+- [ ] 18. Add visual relationship lines between generations
+  - [x] 18.1 Implement parent-to-children connecting lines
+    - Draw vertical lines from parents row to center row (selected person and siblings)
+    - Connect each parent to their children in the center row
+    - Use SVG paths for smooth, scalable lines
+    - Ensure lines work with horizontal scrolling
+    - _Requirements: 3.3_
+
+  - [x] 18.2 Implement selected-person-to-children connecting lines
+    - Draw vertical lines from center row (selected person and spouses) to children row
+    - Connect selected person to their children
+    - Connect spouses to their children (if applicable)
+    - Handle multiple spouses with children from different relationships
+    - _Requirements: 6.2_
+
+  - [x] 18.3 Write unit tests for generation connecting lines
+    - Test parent-to-children lines render correctly
+    - Test selected-person-to-children lines render correctly
+    - Test lines update when scrolling horizontally
+    - Test lines work with various family structures (0-N parents, 0-N children)
+
+  - [x] 18.4 Update RelationshipLines component for generation connections
+    - Extend component to support vertical generation lines
+    - Calculate line positions dynamically based on card positions
+    - Handle edge cases (no parents, no children, scrolled positions)
+
+  - [x] 18.5 Git commit all changes made for this task
+
+- [-] 19. Add visual differentiation for spouses
+  - [x] 19.1 Implement reduced opacity for spouse cards
+    - Apply opacity reduction (0.7-0.8) to spouse cards in center row
+    - Maintain readability while creating visual hierarchy
+    - Ensure selected person remains fully opaque
+    - Keep siblings at normal opacity
+    - _Requirements: 4.1_
+
+  - [x] 19.2 Write unit tests for spouse visual differentiation
+    - Test spouse cards have reduced opacity
+    - Test selected person has full opacity
+    - Test sibling cards have full opacity
+    - Test opacity values are correct
+
+  - [x] 19.3 Update PersonCard component for spouse opacity
+    - Add opacity styling based on relationship type
+    - Ensure opacity works with existing color coding
+    - Test visual hierarchy is clear and intuitive
+
+  - [ ] 19.4 Git commit all changes made for this task
+
+- [ ] 20. Final checkpoint - Verify visual enhancements
+  - Test connecting lines appear between parents and center row
+  - Test connecting lines appear between center row and children
+  - Test lines work correctly with horizontal scrolling
+  - Test spouse cards have reduced opacity
+  - Test visual hierarchy clearly differentiates blood relatives from spouses
+  - Verify enhancements work on desktop, tablet, and mobile
   - Ensure all tests pass
 
 ## Notes
