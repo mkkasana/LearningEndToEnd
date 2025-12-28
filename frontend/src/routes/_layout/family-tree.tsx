@@ -7,10 +7,8 @@ import { Button } from "@/components/ui/button"
 import { ProfileService, PersonService } from "@/client"
 import type { PersonDetails } from "@/client"
 import { useFamilyTreeData } from "@/hooks/useFamilyTreeData"
-import { PersonCard } from "@/components/FamilyTree/PersonCard"
 import { ParentsSection } from "@/components/FamilyTree/ParentsSection"
-import { SpouseSection } from "@/components/FamilyTree/SpouseSection"
-import { SiblingsSection } from "@/components/FamilyTree/SiblingsSection"
+import { HorizontalScrollRow } from "@/components/FamilyTree/HorizontalScrollRow"
 import { ChildrenSection } from "@/components/FamilyTree/ChildrenSection"
 
 export const Route = createFileRoute("/_layout/family-tree")({
@@ -216,35 +214,40 @@ function FamilyTreeView() {
           />
         )}
 
-        {/* Center Section: Siblings, Selected Person, Spouse */}
-        {/* Desktop: horizontal layout, Tablet: mixed, Mobile: vertical stack */}
-        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 lg:gap-10 w-full md:w-auto">
-          {/* Siblings on the left (desktop/tablet) or above (mobile) */}
-          {familyData.siblings.length > 0 && (
-            <SiblingsSection
-              siblings={familyData.siblings}
+        {/* Center Section: Siblings, Selected Person, Spouses - All in one horizontal row */}
+        {/* Requirements: 9.3 - Single horizontally scrollable row with color-coding */}
+        {(() => {
+          // Combine siblings, selected person, and spouses into one array
+          const centerRowPeople: PersonDetails[] = []
+          const colorCoding = new Map<string, 'sibling' | 'spouse'>()
+          
+          // Add siblings on the left
+          familyData.siblings.forEach(sibling => {
+            centerRowPeople.push(sibling)
+            colorCoding.set(sibling.id, 'sibling')
+          })
+          
+          // Add selected person in the center
+          if (selectedPerson) {
+            centerRowPeople.push(selectedPerson)
+          }
+          
+          // Add spouses on the right
+          familyData.spouses.forEach(spouse => {
+            centerRowPeople.push(spouse)
+            colorCoding.set(spouse.id, 'spouse')
+          })
+          
+          return centerRowPeople.length > 0 ? (
+            <HorizontalScrollRow
+              people={centerRowPeople}
+              selectedPersonId={selectedPersonId || undefined}
               onPersonClick={handlePersonClick}
+              variant="center"
+              colorCoding={colorCoding}
             />
-          )}
-
-          {/* Selected Person in the center */}
-          {selectedPerson && (
-            <PersonCard
-              person={selectedPerson}
-              variant="selected"
-              onClick={handlePersonClick}
-              showPhoto={true}
-            />
-          )}
-
-          {/* Spouse on the right (desktop/tablet) or below (mobile) */}
-          {familyData.spouses.length > 0 && (
-            <SpouseSection
-              spouses={familyData.spouses}
-              onPersonClick={handlePersonClick}
-            />
-          )}
-        </div>
+          ) : null
+        })()}
 
         {/* Children Section */}
         {familyData.children.length > 0 && (

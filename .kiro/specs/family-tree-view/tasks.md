@@ -247,6 +247,68 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 - [x] 11. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
+## UI Improvement Tasks (Horizontal Scrolling Layout)
+
+- [-] 12. Refactor layout to three-row horizontal scrolling design
+  - [x] 12.1 Create HorizontalScrollRow component
+    - Implement unified component for displaying people in horizontally scrollable rows
+    - Support variants: 'parent', 'center', 'child'
+    - Add color-coding support for center row (siblings vs spouses)
+    - Ensure smooth horizontal scrolling with scroll indicators
+    - Make touch-friendly for mobile devices
+    - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+
+  - [x] 12.2 Write property test for three-row horizontal layout
+    - **Property 11: Three-Row Horizontal Layout**
+    - **Validates: Requirements 9.1, 9.2, 9.3, 9.4, 9.5**
+
+  - [x] 12.3 Refactor ParentsSection to use HorizontalScrollRow
+    - Replace existing parent layout with HorizontalScrollRow
+    - Ensure all parents display horizontally without vertical stacking
+    - Test with 0, 1, 2, and many parents
+    - _Requirements: 9.2_
+
+  - [x] 12.4 Refactor center section to combine siblings and spouses
+    - Merge SiblingsSection and SpouseSection into single HorizontalScrollRow
+    - Position siblings on left, selected person in center, spouses on right
+    - Add color-coding to differentiate siblings from spouses
+    - Ensure horizontal scrolling works for many siblings/spouses
+    - _Requirements: 9.3_
+
+  - [x] 12.5 Refactor ChildrenSection to use HorizontalScrollRow
+    - Replace existing children layout with HorizontalScrollRow
+    - Ensure all children display horizontally without vertical stacking
+    - Test with 0, 1, and many children
+    - _Requirements: 9.4_
+
+  - [x] 12.6 Write unit tests for HorizontalScrollRow
+    - Test horizontal scrolling behavior
+    - Test color-coding in center row
+    - Test scroll indicators appear when needed
+    - Test touch interactions on mobile
+    - _Requirements: 9.5, 9.7_
+
+  - [x] 12.7 Update responsive styles for all screen sizes
+    - Ensure three-row layout maintained on mobile, tablet, and desktop
+    - Adjust card sizes based on viewport
+    - Verify no vertical stacking occurs on any screen size
+    - Test horizontal scrolling works on all devices
+    - _Requirements: 9.5, 9.6_
+
+  - [x] 12.8 Update RelationshipLines for new layout
+    - Adjust line drawing logic for three-row layout
+    - Ensure lines connect properly in horizontal scroll containers
+    - Test with various family structures
+
+  - [-] 12.9 Git commit all changes made for this task
+
+- [ ] 13. Final checkpoint - Verify UI improvements
+  - Test on desktop, tablet, and mobile viewports
+  - Verify no vertical stacking of same-type relationships
+  - Verify horizontal scrolling works smoothly
+  - Verify color-coding clearly differentiates siblings from spouses
+  - Ensure all tests pass
+
 ## Notes
 
 - Each task references specific requirements for traceability

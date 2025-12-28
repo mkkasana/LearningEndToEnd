@@ -60,20 +60,24 @@ The design emphasizes progressive loading (fetching data on-demand as users navi
 FamilyTreeView
 ├── FamilyTreeHeader
 │   └── SelectedPersonInfo
-├── FamilyTreeCanvas
-│   ├── ParentsSection
-│   │   ├── PersonCard (Father)
-│   │   ├── PersonCard (Mother)
+├── FamilyTreeCanvas (3-row layout)
+│   ├── ParentsRow (horizontally scrollable)
+│   │   ├── PersonCard (Parent 1)
+│   │   ├── PersonCard (Parent 2)
+│   │   ├── ... (any number of parents)
 │   │   └── RelationshipLines
-│   ├── CenterSection
-│   │   ├── SiblingsList (left)
+│   ├── CenterRow (horizontally scrollable)
+│   │   ├── PersonCard (Sibling 1) [color-coded]
+│   │   ├── PersonCard (Sibling 2) [color-coded]
 │   │   ├── PersonCard (Selected Person - emphasized)
-│   │   ├── SpouseCarousel (right)
+│   │   ├── PersonCard (Spouse 1) [color-coded]
+│   │   ├── PersonCard (Spouse 2) [color-coded]
+│   │   ├── ... (any number of siblings/spouses)
 │   │   └── RelationshipLines
-│   └── ChildrenSection
+│   └── ChildrenRow (horizontally scrollable)
 │       ├── PersonCard (Child 1)
 │       ├── PersonCard (Child 2)
-│       ├── ...
+│       ├── ... (any number of children)
 │       └── RelationshipLines
 └── LoadingOverlay
 ```
@@ -187,6 +191,37 @@ interface SpouseCarouselProps {
 - Horizontal navigation (prev/next buttons)
 - Indicator dots showing current spouse
 - Smooth transitions between spouses
+
+#### 6. HorizontalScrollRow (New Component for Improved Layout)
+
+**Purpose**: Unified component for displaying any row of people (parents, center row with siblings+spouses, or children) in a horizontally scrollable container without vertical stacking.
+
+**Props**:
+```typescript
+interface HorizontalScrollRowProps {
+  people: PersonDetails[]
+  selectedPersonId?: string // For highlighting the selected person in center row
+  onPersonClick: (personId: string) => void
+  variant: 'parent' | 'center' | 'child'
+  colorCoding?: Map<string, 'sibling' | 'spouse'> // For center row differentiation
+}
+```
+
+**Features**:
+- Horizontal scroll container with smooth scrolling
+- Responsive card sizing based on viewport
+- Scroll indicators showing more content available
+- Color-coded cards in center row (siblings vs spouses)
+- Selected person prominently displayed in center row
+- Touch-friendly scrolling on mobile devices
+- Works consistently across all screen sizes (desktop, tablet, mobile)
+
+**Layout Behavior**:
+- **Parents Row**: All parents displayed horizontally, scrollable if many
+- **Center Row**: Siblings (left) + Selected Person (center) + Spouses (right), all in one scrollable row with color coding
+- **Children Row**: All children displayed horizontally, scrollable if many
+- **No vertical stacking**: Cards never stack vertically within a row, only horizontal scrolling
+- **Mobile-friendly**: Maintains horizontal layout even on small screens
 
 ### Data Processing Functions
 
@@ -418,6 +453,12 @@ A property is a characteristic or behavior that should hold true across all vali
 
 **Validates: Requirements 10.4**
 
+### Property 11: Three-Row Horizontal Layout
+
+*For any* person with relationships, the family tree should display exactly three horizontal rows (parents, center with siblings+spouses, children) where each row uses horizontal scrolling for overflow without vertical stacking of same-type relationships.
+
+**Validates: Requirements 9.1, 9.2, 9.3, 9.4, 9.5**
+
 ## Error Handling
 
 ### Error Scenarios
@@ -602,11 +643,13 @@ export const Route = createFileRoute("/_layout/family-tree")({
 
 ```typescript
 const breakpoints = {
-  mobile: '0-640px',    // Stack vertically, smaller cards
-  tablet: '641-1024px', // Adjust spacing, medium cards
-  desktop: '1025px+',   // Full layout, larger cards
+  mobile: '0-640px',    // Smaller cards, horizontal scrolling maintained
+  tablet: '641-1024px', // Medium cards, horizontal scrolling maintained
+  desktop: '1025px+',   // Larger cards, horizontal scrolling maintained
 }
 ```
+
+**Key Principle**: All screen sizes maintain the three-row horizontal layout. The only changes across breakpoints are card sizes and spacing—never vertical stacking of same-type relationships.
 
 ### Future Enhancements
 
