@@ -392,7 +392,7 @@ describe('HorizontalScrollRow', () => {
       expect(container.innerHTML).toContain('justify-center')
     })
 
-    it('should not center center row (uses justify-start for selected person centering)', () => {
+    it('should center all rows including center row', () => {
       const mockPerson: PersonDetails = {
         id: '123',
         first_name: 'John',
@@ -417,11 +417,9 @@ describe('HorizontalScrollRow', () => {
         />
       )
       
-      // Center row should use justify-start (not justify-center)
-      // Check the flex container specifically
+      // Center row should also use justify-center for better visual balance
       const flexContainer = container.querySelector('.flex.gap-3')
-      expect(flexContainer?.className).toContain('justify-start')
-      expect(flexContainer?.className).not.toContain('justify-center')
+      expect(flexContainer?.className).toContain('justify-center')
     })
 
     it('should maintain scrollability when content is wide', () => {

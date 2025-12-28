@@ -139,9 +139,8 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
     : 'Center row with siblings and spouses'
 
   // Determine justify alignment based on variant
-  // Parent and child rows should center content when narrow
-  // Center row should start from left (for selected person centering to work)
-  const justifyClass = variant === 'center' ? 'justify-start' : 'justify-center'
+  // All rows should center content when narrow for better visual balance
+  const justifyClass = 'justify-center'
 
   return (
     <div 
