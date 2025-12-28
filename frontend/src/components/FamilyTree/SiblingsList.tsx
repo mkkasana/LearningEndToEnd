@@ -17,9 +17,9 @@ export function SiblingsList({ siblings, onPersonClick }: SiblingsListProps) {
   }
 
   return (
-    <div className="w-full max-w-2xl">
+    <div className="w-full max-w-xs md:max-w-md lg:max-w-2xl">
       <ScrollArea className="w-full whitespace-nowrap">
-        <div className="flex gap-3 p-2">
+        <div className="flex gap-2 md:gap-3 p-1 md:p-2">
           {siblings.map((sibling) => (
             <div key={sibling.id} className="inline-block">
               <PersonCard

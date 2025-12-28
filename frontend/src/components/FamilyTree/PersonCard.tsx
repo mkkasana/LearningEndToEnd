@@ -34,59 +34,64 @@ export function formatYearsDisplay(dateOfBirth: string, dateOfDeath?: string | n
 }
 
 /**
- * Get variant-specific styling classes
+ * Get variant-specific styling classes with responsive sizing
  */
 function getVariantStyles(variant: PersonCardVariant): string {
-  const baseStyles = "cursor-pointer transition-all hover:shadow-lg"
+  const baseStyles = "cursor-pointer transition-all hover:shadow-lg touch-manipulation active:scale-95"
   
   switch (variant) {
     case 'selected':
       return cn(
         baseStyles,
         "border-2 border-primary shadow-md scale-105",
-        "min-w-[200px]"
+        "min-w-[160px] md:min-w-[180px] lg:min-w-[200px]",
+        "min-h-[180px] md:min-h-[200px] lg:min-h-[220px]"
       )
     case 'parent':
       return cn(
         baseStyles,
         "border border-border",
-        "min-w-[180px]"
+        "min-w-[140px] md:min-w-[160px] lg:min-w-[180px]",
+        "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]"
       )
     case 'spouse':
       return cn(
         baseStyles,
         "border border-border",
-        "min-w-[180px]"
+        "min-w-[140px] md:min-w-[160px] lg:min-w-[180px]",
+        "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]"
       )
     case 'sibling':
       return cn(
         baseStyles,
         "border border-border opacity-75 scale-90",
-        "min-w-[160px]"
+        "min-w-[120px] md:min-w-[140px] lg:min-w-[160px]",
+        "min-h-[140px] md:min-h-[160px] lg:min-h-[180px]"
       )
     case 'child':
       return cn(
         baseStyles,
         "border border-border scale-95",
-        "min-w-[170px]"
+        "min-w-[130px] md:min-w-[150px] lg:min-w-[170px]",
+        "min-h-[150px] md:min-h-[170px] lg:min-h-[190px]"
       )
   }
 }
 
 /**
- * Get avatar size based on variant
+ * Get avatar size based on variant with responsive sizing
  */
 function getAvatarSize(variant: PersonCardVariant): string {
   switch (variant) {
     case 'selected':
-      return "size-20"
+      return "size-16 md:size-18 lg:size-20"
     case 'parent':
     case 'spouse':
-      return "size-16"
+      return "size-12 md:size-14 lg:size-16"
     case 'sibling':
-      return "size-12"
+      return "size-10 md:size-11 lg:size-12"
     case 'child':
-      return "size-14"
+      return "size-11 md:size-12 lg:size-14"
   }
 }
 
@@ -106,7 +111,7 @@ export function PersonCard({
   return (
     <Card
       className={cn(
-        "flex flex-col items-center gap-3 p-4",
+        "flex flex-col items-center gap-2 md:gap-3 p-3 md:p-4",
         getVariantStyles(variant)
       )}
       onClick={() => onClick(person.id)}

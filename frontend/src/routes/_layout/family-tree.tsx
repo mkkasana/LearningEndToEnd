@@ -173,7 +173,7 @@ function FamilyTreeView() {
         </div>
       </div>
 
-      <div className="relative flex flex-col items-center gap-8 p-8 border rounded-lg">
+      <div className="relative flex flex-col items-center gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8 border rounded-lg">
         {/* Loading overlay - shows while fetching new data but maintains previous data */}
         {isLoading && familyData && (
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-lg">
@@ -192,8 +192,9 @@ function FamilyTreeView() {
         )}
 
         {/* Center Section: Siblings, Selected Person, Spouse */}
-        <div className="flex items-center gap-8">
-          {/* Siblings on the left */}
+        {/* Desktop: horizontal layout, Tablet: mixed, Mobile: vertical stack */}
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 lg:gap-8 w-full md:w-auto">
+          {/* Siblings on the left (desktop/tablet) or above (mobile) */}
           {familyData.siblings.length > 0 && (
             <SiblingsSection
               siblings={familyData.siblings}
@@ -211,7 +212,7 @@ function FamilyTreeView() {
             />
           )}
 
-          {/* Spouse on the right */}
+          {/* Spouse on the right (desktop/tablet) or below (mobile) */}
           {familyData.spouses.length > 0 && (
             <SpouseSection
               spouses={familyData.spouses}

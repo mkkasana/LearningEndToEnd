@@ -36,8 +36,8 @@ export function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) 
   const currentSpouse = spouses[currentIndex]
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-col items-center gap-2 md:gap-3">
+      <div className="flex items-center gap-1 md:gap-2">
         {/* Previous button */}
         <Button
           variant="outline"
@@ -45,9 +45,9 @@ export function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) 
           onClick={handlePrevious}
           disabled={spouses.length <= 1}
           aria-label="Previous spouse"
-          className="h-8 w-8"
+          className="h-7 w-7 md:h-8 md:w-8 touch-manipulation active:scale-95"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
         </Button>
 
         {/* Current spouse card */}
@@ -68,29 +68,40 @@ export function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) 
           onClick={handleNext}
           disabled={spouses.length <= 1}
           aria-label="Next spouse"
-          className="h-8 w-8"
+          className="h-7 w-7 md:h-8 md:w-8 touch-manipulation active:scale-95"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
         </Button>
       </div>
 
       {/* Indicator dots */}
       {spouses.length > 1 && (
-        <div className="flex gap-1.5" role="tablist" aria-label="Spouse navigation">
+        <div className="flex gap-1 md:gap-1.5" role="tablist" aria-label="Spouse navigation">
           {spouses.map((_, index) => (
             <button
               key={index}
               onClick={() => handleDotClick(index)}
               className={cn(
-                "h-2 w-2 rounded-full transition-all duration-200",
+                "h-1.5 w-1.5 md:h-2 md:w-2 rounded-full transition-all duration-200",
+                "touch-manipulation active:scale-110",
+                "min-h-[24px] min-w-[24px] flex items-center justify-center",
                 index === currentIndex
-                  ? "bg-primary w-4"
+                  ? "bg-primary w-3 md:w-4"
                   : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
               )}
               aria-label={`Go to spouse ${index + 1}`}
               aria-current={index === currentIndex ? "true" : "false"}
               role="tab"
-            />
+            >
+              <span
+                className={cn(
+                  "h-1.5 w-1.5 md:h-2 md:w-2 rounded-full",
+                  index === currentIndex
+                    ? "bg-primary w-3 md:w-4"
+                    : "bg-muted-foreground/30"
+                )}
+              />
+            </button>
           ))}
         </div>
       )}

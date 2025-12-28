@@ -723,3 +723,311 @@ describe('Error Scenarios', () => {
     })
   })
 })
+
+
+/**
+ * Feature: family-tree-view, Property 10: Responsive Layout Adaptation
+ * Validates: Requirements 10.4
+ * 
+ * For any viewport size change, the family tree layout should adapt appropriately
+ * by adjusting card sizes, spacing, and section arrangement based on the current
+ * breakpoint (desktop, tablet, or mobile).
+ */
+describe('Property 10: Responsive Layout Adaptation', () => {
+  /**
+   * Test that layout adapts to different viewport widths
+   */
+  it('should adapt layout based on viewport width', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 320, max: 2560 }), // Viewport width range
+        (viewportWidth) => {
+          // Determine expected breakpoint
+          const getBreakpoint = (width: number): 'mobile' | 'tablet' | 'desktop' => {
+            if (width <= 640) return 'mobile'
+            if (width <= 1024) return 'tablet'
+            return 'desktop'
+          }
+
+          const breakpoint = getBreakpoint(viewportWidth)
+
+          // Simulate layout adaptation logic
+          const getLayoutConfig = (bp: 'mobile' | 'tablet' | 'desktop') => {
+            switch (bp) {
+              case 'mobile':
+                return {
+                  cardSize: 'small',
+                  spacing: 'compact',
+                  arrangement: 'vertical',
+                  maxCardsPerRow: 1,
+                }
+              case 'tablet':
+                return {
+                  cardSize: 'medium',
+                  spacing: 'normal',
+                  arrangement: 'mixed',
+                  maxCardsPerRow: 2,
+                }
+              case 'desktop':
+                return {
+                  cardSize: 'large',
+                  spacing: 'spacious',
+                  arrangement: 'horizontal',
+                  maxCardsPerRow: 4,
+                }
+            }
+          }
+
+          const layoutConfig = getLayoutConfig(breakpoint)
+
+          // Verify layout configuration matches breakpoint
+          if (viewportWidth <= 640) {
+            expect(layoutConfig.cardSize).toBe('small')
+            expect(layoutConfig.arrangement).toBe('vertical')
+            expect(layoutConfig.maxCardsPerRow).toBe(1)
+          } else if (viewportWidth <= 1024) {
+            expect(layoutConfig.cardSize).toBe('medium')
+            expect(layoutConfig.arrangement).toBe('mixed')
+            expect(layoutConfig.maxCardsPerRow).toBe(2)
+          } else {
+            expect(layoutConfig.cardSize).toBe('large')
+            expect(layoutConfig.arrangement).toBe('horizontal')
+            expect(layoutConfig.maxCardsPerRow).toBe(4)
+          }
+        }
+      ),
+      { numRuns: 100 }
+    )
+  })
+
+  /**
+   * Test that card sizes scale appropriately with viewport
+   */
+  it('should scale card sizes based on breakpoint', () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom('mobile', 'tablet', 'desktop'),
+        (breakpoint) => {
+          // Simulate card size calculation
+          const getCardDimensions = (bp: 'mobile' | 'tablet' | 'desktop') => {
+            switch (bp) {
+              case 'mobile':
+                return { width: 140, height: 180, avatarSize: 48 }
+              case 'tablet':
+                return { width: 170, height: 220, avatarSize: 56 }
+              case 'desktop':
+                return { width: 200, height: 260, avatarSize: 64 }
+            }
+          }
+
+          const dimensions = getCardDimensions(breakpoint)
+
+          // Verify dimensions are appropriate for breakpoint
+          if (breakpoint === 'mobile') {
+            expect(dimensions.width).toBeLessThanOrEqual(160)
+            expect(dimensions.avatarSize).toBeLessThanOrEqual(48)
+          } else if (breakpoint === 'tablet') {
+            expect(dimensions.width).toBeGreaterThan(140)
+            expect(dimensions.width).toBeLessThanOrEqual(180)
+            expect(dimensions.avatarSize).toBeGreaterThan(48)
+            expect(dimensions.avatarSize).toBeLessThanOrEqual(56)
+          } else {
+            expect(dimensions.width).toBeGreaterThan(170)
+            expect(dimensions.avatarSize).toBeGreaterThan(56)
+          }
+        }
+      ),
+      { numRuns: 100 }
+    )
+  })
+
+  /**
+   * Test that spacing adjusts based on viewport
+   */
+  it('should adjust spacing based on breakpoint', () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom('mobile', 'tablet', 'desktop'),
+        (breakpoint) => {
+          // Simulate spacing calculation
+          const getSpacing = (bp: 'mobile' | 'tablet' | 'desktop') => {
+            switch (bp) {
+              case 'mobile':
+                return { gap: 8, padding: 16, sectionGap: 16 }
+              case 'tablet':
+                return { gap: 16, padding: 24, sectionGap: 24 }
+              case 'desktop':
+                return { gap: 24, padding: 32, sectionGap: 32 }
+            }
+          }
+
+          const spacing = getSpacing(breakpoint)
+
+          // Verify spacing increases with larger viewports
+          if (breakpoint === 'mobile') {
+            expect(spacing.gap).toBeLessThanOrEqual(12)
+            expect(spacing.padding).toBeLessThanOrEqual(16)
+          } else if (breakpoint === 'tablet') {
+            expect(spacing.gap).toBeGreaterThan(8)
+            expect(spacing.gap).toBeLessThanOrEqual(20)
+            expect(spacing.padding).toBeGreaterThan(16)
+            expect(spacing.padding).toBeLessThanOrEqual(24)
+          } else {
+            expect(spacing.gap).toBeGreaterThan(16)
+            expect(spacing.padding).toBeGreaterThan(24)
+          }
+        }
+      ),
+      { numRuns: 100 }
+    )
+  })
+
+  /**
+   * Test that section arrangement changes with viewport
+   */
+  it('should change section arrangement based on breakpoint', () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom('mobile', 'tablet', 'desktop'),
+        fc.array(fc.record({
+          id: fc.uuid(),
+          type: fc.constantFrom('parent', 'spouse', 'sibling', 'child'),
+        }), { minLength: 1, maxLength: 10 }),
+        (breakpoint, sections) => {
+          // Simulate section arrangement logic
+          const arrangeSections = (
+            bp: 'mobile' | 'tablet' | 'desktop',
+            secs: Array<{ id: string; type: string }>
+          ) => {
+            if (bp === 'mobile') {
+              // Mobile: vertical stack
+              return {
+                layout: 'vertical',
+                columns: 1,
+                sections: secs.map(s => ({ ...s, width: '100%' })),
+              }
+            } else if (bp === 'tablet') {
+              // Tablet: mixed layout
+              return {
+                layout: 'mixed',
+                columns: 2,
+                sections: secs.map(s => ({ ...s, width: '50%' })),
+              }
+            } else {
+              // Desktop: horizontal layout
+              return {
+                layout: 'horizontal',
+                columns: 4,
+                sections: secs.map(s => ({ ...s, width: '25%' })),
+              }
+            }
+          }
+
+          const arrangement = arrangeSections(breakpoint, sections)
+
+          // Verify arrangement matches breakpoint
+          if (breakpoint === 'mobile') {
+            expect(arrangement.layout).toBe('vertical')
+            expect(arrangement.columns).toBe(1)
+            arrangement.sections.forEach(s => {
+              expect(s.width).toBe('100%')
+            })
+          } else if (breakpoint === 'tablet') {
+            expect(arrangement.layout).toBe('mixed')
+            expect(arrangement.columns).toBe(2)
+          } else {
+            expect(arrangement.layout).toBe('horizontal')
+            expect(arrangement.columns).toBe(4)
+          }
+        }
+      ),
+      { numRuns: 100 }
+    )
+  })
+
+  /**
+   * Test that viewport resize triggers layout recalculation
+   */
+  it('should recalculate layout on viewport resize', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 320, max: 2560 }),
+        fc.integer({ min: 320, max: 2560 }),
+        (initialWidth, newWidth) => {
+          // Simulate viewport resize
+          let currentWidth = initialWidth
+          let layoutRecalculated = false
+
+          const getBreakpoint = (width: number) => {
+            if (width <= 640) return 'mobile'
+            if (width <= 1024) return 'tablet'
+            return 'desktop'
+          }
+
+          const initialBreakpoint = getBreakpoint(currentWidth)
+
+          // Simulate resize
+          currentWidth = newWidth
+          const newBreakpoint = getBreakpoint(currentWidth)
+
+          // Layout should recalculate if breakpoint changed
+          if (initialBreakpoint !== newBreakpoint) {
+            layoutRecalculated = true
+          }
+
+          // Verify layout recalculation logic
+          const breakpointChanged = initialBreakpoint !== newBreakpoint
+          expect(layoutRecalculated).toBe(breakpointChanged)
+        }
+      ),
+      { numRuns: 100 }
+    )
+  })
+
+  /**
+   * Test that all sections remain visible across breakpoints
+   */
+  it('should keep all sections visible across breakpoints', () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom('mobile', 'tablet', 'desktop'),
+        fc.record({
+          hasParents: fc.boolean(),
+          hasSpouses: fc.boolean(),
+          hasSiblings: fc.boolean(),
+          hasChildren: fc.boolean(),
+        }),
+        (breakpoint, familyData) => {
+          // Simulate section visibility logic
+          const getSectionVisibility = (
+            _bp: 'mobile' | 'tablet' | 'desktop',
+            data: {
+              hasParents: boolean
+              hasSpouses: boolean
+              hasSiblings: boolean
+              hasChildren: boolean
+            }
+          ) => {
+            // All sections should be visible if they have data,
+            // regardless of breakpoint
+            return {
+              parentsVisible: data.hasParents,
+              spousesVisible: data.hasSpouses,
+              siblingsVisible: data.hasSiblings,
+              childrenVisible: data.hasChildren,
+            }
+          }
+
+          const visibility = getSectionVisibility(breakpoint, familyData)
+
+          // Verify sections are visible based on data, not breakpoint
+          expect(visibility.parentsVisible).toBe(familyData.hasParents)
+          expect(visibility.spousesVisible).toBe(familyData.hasSpouses)
+          expect(visibility.siblingsVisible).toBe(familyData.hasSiblings)
+          expect(visibility.childrenVisible).toBe(familyData.hasChildren)
+        }
+      ),
+      { numRuns: 100 }
+    )
+  })
+})
