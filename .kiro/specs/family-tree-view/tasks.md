@@ -157,34 +157,31 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Test line positioning calculations
     - _Requirements: 3.3, 4.2, 6.2_
 
-  - [-] 5.3 Git commit all the change made for this task
-
-- [ ] 6. Checkpoint - Ensure all tests pass
-  - Ensure all tests pass, ask the user if questions arise.
+  - [x] 5.3 Git commit all the change made for this task
 
 - [ ] 7. Implement person selection and navigation
-  - [ ] 7.1 Write property test for person selection navigation
+  - [x] 7.1 Write property test for person selection navigation
     - **Property 8: Person Selection Navigation**
     - **Validates: Requirements 7.1, 7.2, 7.3**
 
-  - [ ] 7.2 Implement person selection logic
+  - [x] 7.2 Implement person selection logic
     - Handle click events on person cards
     - Update selected person state
     - Fetch new person's relationship data
     - Re-render tree centered on new person
     - _Requirements: 7.1, 7.2, 7.3_
 
-  - [ ] 7.3 Write unit test for loading indicator
+  - [x] 7.3 Write unit test for loading indicator
     - Test loading indicator appears during data fetch
     - Test loading indicator disappears after data loads
     - _Requirements: 7.5_
 
-  - [ ] 7.4 Add loading indicator during data fetch
+  - [x] 7.4 Add loading indicator during data fetch
     - Display loading overlay or spinner while fetching
     - Maintain previous data during loading (if available)
     - _Requirements: 7.5_
 
-  - [ ] 7.5 Git commit all the change made for this task
+  - [-] 7.5 Git commit all the change made for this task
 - [ ] 8. Implement error handling
   - [ ] 8.1 Add error handling for no person profile
     - Display message prompting profile completion
