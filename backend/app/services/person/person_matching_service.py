@@ -82,33 +82,49 @@ class PersonMatchingService:
     ) -> List[uuid.UUID]:
         """Find persons with matching address criteria.
         
-        All provided criteria must match exactly. If sub_district_id or locality_id
-        are provided, they must match. If they are None, only persons with None
-        for those fields will match.
+        Required criteria (country, state, district) must match exactly.
+        Optional criteria (sub_district, locality) are only applied if provided:
+        - If provided: must match exactly
+        - If None: matches any value (including None)
+        
+        This supports two use cases:
+        1. "Update Family" flow: All fields provided → exact match
+        2. "Search Person" flow: Optional fields None → broader match
         
         Args:
-            country_id: Country ID
-            state_id: State ID
-            district_id: District ID
-            sub_district_id: Sub-district ID (optional)
-            locality_id: Locality ID (optional)
+            country_id: Country ID (required)
+            state_id: State ID (required)
+            district_id: District ID (required)
+            sub_district_id: Sub-district ID (optional, None = match any)
+            locality_id: Locality ID (optional, None = match any)
             
         Returns:
-            List of person IDs matching the address criteria exactly
+            List of person IDs matching the address criteria
         """
         logger.debug(
             f"Querying person_address: country={country_id}, state={state_id}, "
             f"district={district_id}, sub_district={sub_district_id}, locality={locality_id}"
         )
         
-        # Build query with all criteria for exact match
+        # Start with required criteria
         statement = select(PersonAddress.person_id).where(
             PersonAddress.country_id == country_id,
             PersonAddress.state_id == state_id,
             PersonAddress.district_id == district_id,
-            PersonAddress.sub_district_id == sub_district_id,
-            PersonAddress.locality_id == locality_id,
         )
+        
+        # Only apply optional filters if values are provided
+        if sub_district_id is not None:
+            statement = statement.where(PersonAddress.sub_district_id == sub_district_id)
+            logger.debug(f"Applying sub_district filter: {sub_district_id}")
+        else:
+            logger.debug("Skipping sub_district filter (not provided)")
+            
+        if locality_id is not None:
+            statement = statement.where(PersonAddress.locality_id == locality_id)
+            logger.debug(f"Applying locality filter: {locality_id}")
+        else:
+            logger.debug("Skipping locality filter (not provided)")
         
         # Execute query and return list of person IDs
         results = self.session.exec(statement).all()
@@ -123,29 +139,45 @@ class PersonMatchingService:
     ) -> List[uuid.UUID]:
         """Find persons with matching religion criteria.
         
-        All provided criteria must match exactly. If religion_category_id or 
-        religion_sub_category_id are provided, they must match. If they are None,
-        only persons with None for those fields will match.
+        Required criteria (religion) must match exactly.
+        Optional criteria (category, sub_category) are only applied if provided:
+        - If provided: must match exactly
+        - If None: matches any value (including None)
+        
+        This supports two use cases:
+        1. "Update Family" flow: All fields provided → exact match
+        2. "Search Person" flow: Optional fields None → broader match
         
         Args:
-            religion_id: Religion ID
-            religion_category_id: Religion category ID (optional)
-            religion_sub_category_id: Religion sub-category ID (optional)
+            religion_id: Religion ID (required)
+            religion_category_id: Religion category ID (optional, None = match any)
+            religion_sub_category_id: Religion sub-category ID (optional, None = match any)
             
         Returns:
-            List of person IDs matching the religion criteria exactly
+            List of person IDs matching the religion criteria
         """
         logger.debug(
             f"Querying person_religion: religion={religion_id}, "
             f"category={religion_category_id}, sub_category={religion_sub_category_id}"
         )
         
-        # Build query with all criteria for exact match
+        # Start with required criteria
         statement = select(PersonReligion.person_id).where(
             PersonReligion.religion_id == religion_id,
-            PersonReligion.religion_category_id == religion_category_id,
-            PersonReligion.religion_sub_category_id == religion_sub_category_id,
         )
+        
+        # Only apply optional filters if values are provided
+        if religion_category_id is not None:
+            statement = statement.where(PersonReligion.religion_category_id == religion_category_id)
+            logger.debug(f"Applying religion_category filter: {religion_category_id}")
+        else:
+            logger.debug("Skipping religion_category filter (not provided)")
+            
+        if religion_sub_category_id is not None:
+            statement = statement.where(PersonReligion.religion_sub_category_id == religion_sub_category_id)
+            logger.debug(f"Applying religion_sub_category filter: {religion_sub_category_id}")
+        else:
+            logger.debug("Skipping religion_sub_category filter (not provided)")
         
         # Execute query and return list of person IDs
         results = self.session.exec(statement).all()
@@ -224,8 +256,9 @@ class PersonMatchingService:
             search_criteria = PersonSearchRequest(**search_criteria)
         
         # Use display strings from search criteria (passed from frontend)
-        address_display = search_criteria.address_display
-        religion_display = search_criteria.religion_display
+        # If not provided, use empty strings as placeholders
+        address_display = search_criteria.address_display or ""
+        religion_display = search_criteria.religion_display or ""
         
         # Step 1: Find persons by address
         logger.debug(
@@ -258,13 +291,17 @@ class PersonMatchingService:
             logger.info("No persons found matching both criteria, returning empty list")
             return []
         
-        # Step 4: Filter by gender
-        persons = self.session.exec(
-            select(Person).where(
-                Person.id.in_(matching_person_ids),
-                Person.gender_id == search_criteria.gender_id
-            )
-        ).all()
+        # Step 4: Filter by gender (only if provided)
+        query = select(Person).where(Person.id.in_(matching_person_ids))
+        
+        # Only apply gender filter if gender_id is provided and not empty
+        if search_criteria.gender_id:
+            query = query.where(Person.gender_id == search_criteria.gender_id)
+            logger.debug(f"Applying gender filter: {search_criteria.gender_id}")
+        else:
+            logger.debug("Skipping gender filter (not provided)")
+        
+        persons = self.session.exec(query).all()
         logger.info(f"After gender filter: {len(persons)} persons remain")
         
         # Step 5: Get current user's person and connected person IDs
