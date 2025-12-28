@@ -49,23 +49,37 @@ export function useFamilyTreeData(personId: string | null) {
   const query = useQuery({
     queryKey: ['familyTreeData', personId],
     queryFn: async () => {
-      // Fetch relationship data
-      const relationships = personId
-        ? await PersonService.getPersonRelationshipsWithDetails({ personId })
-        : await PersonService.getMyRelationshipsWithDetails()
+      try {
+        // Fetch relationship data
+        const relationships = personId
+          ? await PersonService.getPersonRelationshipsWithDetails({ personId })
+          : await PersonService.getMyRelationshipsWithDetails()
 
-      // Categorize relationships
-      const categorized = categorizeRelationships(relationships)
+        // Categorize relationships
+        const categorized = categorizeRelationships(relationships)
 
-      // Calculate siblings
-      const siblings = await calculateSiblings(
-        personId || 'me',
-        categorized.parentIds
-      )
+        // Calculate siblings - handle failures gracefully
+        let siblings: PersonDetails[] = []
+        try {
+          siblings = await calculateSiblings(
+            personId || 'me',
+            categorized.parentIds
+          )
+        } catch (error) {
+          console.error('Failed to calculate siblings:', error)
+          // Continue with empty siblings array if calculation fails
+        }
 
-      return {
-        ...categorized,
-        siblings,
+        return {
+          ...categorized,
+          siblings,
+        }
+      } catch (error) {
+        // Re-throw with more descriptive error message
+        if (error instanceof Error) {
+          throw new Error(`Failed to load family tree data: ${error.message}`)
+        }
+        throw new Error('Failed to load family tree data')
       }
     },
     enabled: personId !== null,

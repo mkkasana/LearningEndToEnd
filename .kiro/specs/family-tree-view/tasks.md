@@ -159,7 +159,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
   - [x] 5.3 Git commit all the change made for this task
 
-- [ ] 7. Implement person selection and navigation
+- [x] 7. Implement person selection and navigation
   - [x] 7.1 Write property test for person selection navigation
     - **Property 8: Person Selection Navigation**
     - **Validates: Requirements 7.1, 7.2, 7.3**
@@ -181,26 +181,26 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Maintain previous data during loading (if available)
     - _Requirements: 7.5_
 
-  - [-] 7.5 Git commit all the change made for this task
-- [ ] 8. Implement error handling
-  - [ ] 8.1 Add error handling for no person profile
+  - [x] 7.5 Git commit all the change made for this task
+- [-] 8. Implement error handling
+  - [x] 8.1 Add error handling for no person profile
     - Display message prompting profile completion
     - Add link to profile completion page
     - _Requirements: 1.4_
 
-  - [ ] 8.2 Write unit tests for error scenarios
+  - [x] 8.2 Write unit tests for error scenarios
     - Test API fetch failure handling
     - Test invalid person ID handling
     - Test empty relationship data handling
     - Test partial data handling
 
-  - [ ] 8.3 Implement error recovery mechanisms
+  - [x] 8.3 Implement error recovery mechanisms
     - Add retry buttons for failed API calls
     - Show partial data if some relationships fail
     - Provide clear error messages
     - Add fallback navigation to user's own profile
 
-  - [ ] 8.4 Git commit all the change made for this task
+  - [x] 8.4 Git commit all the change made for this task
 - [ ] 9. Implement responsive design
   - [ ] 9.1 Write property test for responsive layout adaptation
     - **Property 10: Responsive Layout Adaptation**

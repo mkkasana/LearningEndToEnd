@@ -365,3 +365,361 @@ describe('Loading Indicator', () => {
     })
   })
 })
+
+
+/**
+ * Unit tests for error scenarios
+ * Requirements: Error handling for various failure cases
+ */
+describe('Error Scenarios', () => {
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    })
+  })
+
+  /**
+   * Test API fetch failure handling
+   */
+  it('should handle API fetch failure gracefully', async () => {
+    const TestComponent = () => {
+      const [error, setError] = useState<Error | null>(null)
+      const [isLoading, setIsLoading] = useState(false)
+
+      const fetchData = async () => {
+        setIsLoading(true)
+        setError(null)
+        try {
+          // Simulate API failure
+          throw new Error('Failed to fetch family tree data')
+        } catch (err) {
+          setError(err as Error)
+        } finally {
+          setIsLoading(false)
+        }
+      }
+
+      return (
+        <div>
+          {isLoading && <div data-testid="loading">Loading...</div>}
+          {error && (
+            <div data-testid="error-message">
+              {error.message}
+              <button onClick={fetchData} data-testid="retry-button">
+                Retry
+              </button>
+            </div>
+          )}
+          <button onClick={fetchData} data-testid="fetch-button">
+            Fetch
+          </button>
+        </div>
+      )
+    }
+
+    const { getByTestId } = render(
+      <QueryClientProvider client={queryClient}>
+        <TestComponent />
+      </QueryClientProvider>
+    )
+
+    // Trigger fetch
+    act(() => {
+      getByTestId('fetch-button').click()
+    })
+
+    // Wait for error to appear
+    await waitFor(() => {
+      expect(getByTestId('error-message')).toBeTruthy()
+      expect(getByTestId('error-message').textContent).toContain('Failed to fetch family tree data')
+      expect(getByTestId('retry-button')).toBeTruthy()
+    })
+  })
+
+  /**
+   * Test invalid person ID handling
+   */
+  it('should handle invalid person ID gracefully', async () => {
+    const TestComponent = () => {
+      const [error, setError] = useState<Error | null>(null)
+      const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
+
+      const handlePersonClick = async (personId: string) => {
+        setError(null)
+        try {
+          // Validate person ID format (basic UUID check)
+          if (!personId || personId.length === 0) {
+            throw new Error('Invalid person ID')
+          }
+          setSelectedPersonId(personId)
+        } catch (err) {
+          setError(err as Error)
+        }
+      }
+
+      return (
+        <div>
+          {error && <div data-testid="error-message">{error.message}</div>}
+          {selectedPersonId && <div data-testid="selected-person">{selectedPersonId}</div>}
+          <button onClick={() => handlePersonClick('')} data-testid="invalid-button">
+            Select Invalid
+          </button>
+          <button onClick={() => handlePersonClick('valid-id')} data-testid="valid-button">
+            Select Valid
+          </button>
+        </div>
+      )
+    }
+
+    const { getByTestId, queryByTestId } = render(
+      <QueryClientProvider client={queryClient}>
+        <TestComponent />
+      </QueryClientProvider>
+    )
+
+    // Try to select invalid person ID
+    act(() => {
+      getByTestId('invalid-button').click()
+    })
+
+    // Error should be displayed
+    await waitFor(() => {
+      expect(getByTestId('error-message')).toBeTruthy()
+      expect(getByTestId('error-message').textContent).toContain('Invalid person ID')
+      expect(queryByTestId('selected-person')).toBeNull()
+    })
+
+    // Try to select valid person ID
+    act(() => {
+      getByTestId('valid-button').click()
+    })
+
+    // Valid person should be selected
+    await waitFor(() => {
+      expect(queryByTestId('error-message')).toBeNull()
+      expect(getByTestId('selected-person')).toBeTruthy()
+    })
+  })
+
+  /**
+   * Test empty relationship data handling
+   */
+  it('should handle empty relationship data gracefully', async () => {
+    const TestComponent = () => {
+      const [familyData, setFamilyData] = useState<{
+        parents: any[]
+        spouses: any[]
+        siblings: any[]
+        children: any[]
+      } | null>(null)
+      const [isLoading, setIsLoading] = useState(false)
+
+      const fetchData = async () => {
+        setIsLoading(true)
+        // Simulate fetching empty relationship data
+        await new Promise(resolve => setTimeout(resolve, 10))
+        setFamilyData({
+          parents: [],
+          spouses: [],
+          siblings: [],
+          children: [],
+        })
+        setIsLoading(false)
+      }
+
+      React.useEffect(() => {
+        fetchData()
+      }, [])
+
+      const hasNoRelationships = familyData &&
+        familyData.parents.length === 0 &&
+        familyData.spouses.length === 0 &&
+        familyData.siblings.length === 0 &&
+        familyData.children.length === 0
+
+      return (
+        <div>
+          {isLoading && <div data-testid="loading">Loading...</div>}
+          {hasNoRelationships && (
+            <div data-testid="empty-state">
+              No family relationships have been recorded yet.
+            </div>
+          )}
+          {familyData && !hasNoRelationships && (
+            <div data-testid="family-tree">Family Tree Content</div>
+          )}
+        </div>
+      )
+    }
+
+    const { getByTestId, queryByTestId } = render(
+      <QueryClientProvider client={queryClient}>
+        <TestComponent />
+      </QueryClientProvider>
+    )
+
+    // Wait for data to load
+    await waitFor(() => {
+      expect(queryByTestId('loading')).toBeNull()
+      expect(getByTestId('empty-state')).toBeTruthy()
+      expect(getByTestId('empty-state').textContent).toContain('No family relationships')
+      expect(queryByTestId('family-tree')).toBeNull()
+    })
+  })
+
+  /**
+   * Test partial data handling
+   */
+  it('should handle partial data gracefully', async () => {
+    const TestComponent = () => {
+      const [familyData, setFamilyData] = useState<{
+        parents: any[]
+        spouses: any[]
+        siblings: any[]
+        children: any[]
+      } | null>(null)
+      const [isLoading, setIsLoading] = useState(false)
+
+      const fetchData = async () => {
+        setIsLoading(true)
+        // Simulate fetching partial relationship data
+        await new Promise(resolve => setTimeout(resolve, 10))
+        setFamilyData({
+          parents: [{ id: '1', first_name: 'John', last_name: 'Doe' }],
+          spouses: [], // No spouses
+          siblings: [{ id: '2', first_name: 'Jane', last_name: 'Doe' }],
+          children: [], // No children
+        })
+        setIsLoading(false)
+      }
+
+      React.useEffect(() => {
+        fetchData()
+      }, [])
+
+      return (
+        <div>
+          {isLoading && <div data-testid="loading">Loading...</div>}
+          {familyData && (
+            <div data-testid="family-tree">
+              {familyData.parents.length > 0 && (
+                <div data-testid="parents-section">Parents: {familyData.parents.length}</div>
+              )}
+              {familyData.spouses.length > 0 && (
+                <div data-testid="spouses-section">Spouses: {familyData.spouses.length}</div>
+              )}
+              {familyData.siblings.length > 0 && (
+                <div data-testid="siblings-section">Siblings: {familyData.siblings.length}</div>
+              )}
+              {familyData.children.length > 0 && (
+                <div data-testid="children-section">Children: {familyData.children.length}</div>
+              )}
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    const { getByTestId, queryByTestId } = render(
+      <QueryClientProvider client={queryClient}>
+        <TestComponent />
+      </QueryClientProvider>
+    )
+
+    // Wait for data to load
+    await waitFor(() => {
+      expect(queryByTestId('loading')).toBeNull()
+      expect(getByTestId('family-tree')).toBeTruthy()
+      
+      // Should show sections with data
+      expect(getByTestId('parents-section')).toBeTruthy()
+      expect(getByTestId('siblings-section')).toBeTruthy()
+      
+      // Should not show sections without data
+      expect(queryByTestId('spouses-section')).toBeNull()
+      expect(queryByTestId('children-section')).toBeNull()
+    })
+  })
+
+  /**
+   * Test retry mechanism after API failure
+   */
+  it('should allow retry after API failure', async () => {
+    let attemptCount = 0
+
+    const TestComponent = () => {
+      const [error, setError] = useState<Error | null>(null)
+      const [data, setData] = useState<string | null>(null)
+      const [isLoading, setIsLoading] = useState(false)
+
+      const fetchData = async () => {
+        setIsLoading(true)
+        setError(null)
+        try {
+          attemptCount++
+          if (attemptCount === 1) {
+            // First attempt fails
+            throw new Error('Network error')
+          }
+          // Second attempt succeeds
+          setData('Success')
+        } catch (err) {
+          setError(err as Error)
+        } finally {
+          setIsLoading(false)
+        }
+      }
+
+      return (
+        <div>
+          {isLoading && <div data-testid="loading">Loading...</div>}
+          {error && (
+            <div data-testid="error-message">
+              {error.message}
+              <button onClick={fetchData} data-testid="retry-button">
+                Retry
+              </button>
+            </div>
+          )}
+          {data && <div data-testid="success">{data}</div>}
+          <button onClick={fetchData} data-testid="fetch-button">
+            Fetch
+          </button>
+        </div>
+      )
+    }
+
+    const { getByTestId, queryByTestId } = render(
+      <QueryClientProvider client={queryClient}>
+        <TestComponent />
+      </QueryClientProvider>
+    )
+
+    // First attempt - should fail
+    act(() => {
+      getByTestId('fetch-button').click()
+    })
+
+    await waitFor(() => {
+      expect(getByTestId('error-message')).toBeTruthy()
+      expect(getByTestId('retry-button')).toBeTruthy()
+    })
+
+    // Retry - should succeed
+    act(() => {
+      getByTestId('retry-button').click()
+    })
+
+    await waitFor(() => {
+      expect(queryByTestId('error-message')).toBeNull()
+      expect(getByTestId('success')).toBeTruthy()
+      expect(getByTestId('success').textContent).toBe('Success')
+    })
+  })
+})

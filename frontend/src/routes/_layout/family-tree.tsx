@@ -76,16 +76,19 @@ function FamilyTreeView() {
     // when selectedPersonId changes
   }
 
-  if (!profileStatus?.has_person) {
+  // Error handling: No person profile (Requirement 1.4)
+  if (profileStatus && !profileStatus.has_person) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <Alert className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Profile Not Complete</AlertTitle>
           <AlertDescription>
-            <p>You need to complete your profile before viewing the family tree.</p>
+            <p className="mb-4">
+              You need to complete your profile and add your personal information before viewing the family tree.
+            </p>
             <Button
-              className="mt-4"
+              className="w-full"
               onClick={() => {
                 window.location.href = "/complete-profile"
               }}
@@ -108,7 +111,7 @@ function FamilyTreeView() {
     )
   }
 
-  // Error state
+  // Error state with recovery options
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -116,14 +119,29 @@ function FamilyTreeView() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error Loading Family Tree</AlertTitle>
           <AlertDescription>
-            <p>{error.message || "An unexpected error occurred while loading the family tree."}</p>
-            <Button
-              className="mt-4"
-              variant="outline"
-              onClick={() => refetch()}
-            >
-              Retry
-            </Button>
+            <p className="mb-4">
+              {error.message || "An unexpected error occurred while loading the family tree."}
+            </p>
+            <div className="flex flex-col gap-2">
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={() => refetch()}
+              >
+                Retry
+              </Button>
+              {selectedPersonId && myPerson && selectedPersonId !== myPerson.id && (
+                <Button
+                  className="w-full"
+                  variant="secondary"
+                  onClick={() => {
+                    setSelectedPersonId(myPerson.id)
+                  }}
+                >
+                  Return to My Profile
+                </Button>
+              )}
+            </div>
           </AlertDescription>
         </Alert>
       </div>
