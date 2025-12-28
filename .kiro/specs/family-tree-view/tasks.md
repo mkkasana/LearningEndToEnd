@@ -365,7 +365,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
 ## UI Refinement Tasks (Center All Rows and Distinct Colors)
 
-- [ ] 16. Refine row centering and color palette
+- [x] 16. Refine row centering and color palette
   - [x] 16.1 Write property test for row content centering
     - **Property 14: Row Content Centering**
     - **Validates: Requirements 9.2, 9.4**
@@ -404,7 +404,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Add rationale for color choices (distinguishability, accessibility)
     - Include Tailwind class names for reference
 
-  - [-] 16.7 Git commit all changes made for this task
+  - [x] 16.7 Git commit all changes made for this task
 
 - [ ] 17. Final checkpoint - Verify all UI refinements
   - Test all rows center their content appropriately

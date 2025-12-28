@@ -231,11 +231,11 @@ The component uses distinct, light colors for visual grouping:
 - **Siblings**: Light blue/sky tones (e.g., bg-blue-100, border-blue-300)
 - **Spouses**: Light purple/violet tones (e.g., bg-purple-100, border-purple-300)
 - **Children**: Light pink/rose tones (e.g., bg-pink-100, border-pink-300)
-- **Selected Person**: Light green/emerald with prominent border (e.g., bg-green-100, border-green-500, ring)
+- **Selected Person**: White/card background with prominent green border (e.g., bg-card, border-green-500)
 
 **Color Palette Rationale**:
 These colors are chosen to be:
-- **Easily distinguishable**: Each relationship type has a distinct hue (amber, blue, purple, pink, green) that is visually separable from the others
+- **Easily distinguishable**: Each relationship type has a distinct hue (amber, blue, purple, pink) that is visually separable from the others
 - **Light and non-overwhelming**: All colors use the 100-level background (bg-*-100) to maintain a calm, unobtrusive interface
 - **Accessible**: Sufficient contrast is maintained between text and background colors for readability
 - **Semantically meaningful**: 
@@ -243,14 +243,14 @@ These colors are chosen to be:
   - Blue for siblings (cool, lateral relationship)
   - Purple for spouses (romantic, partnership)
   - Pink for children (soft, nurturing)
-  - Green for selected person (prominent, active state)
+  - Green border for selected person (prominent, active state with white background for text readability)
 - **Consistent with Tailwind CSS**: Uses standard Tailwind color classes for maintainability and consistency
 
 **Implementation Details**:
-- Background colors: `bg-{color}-100` for light backgrounds
-- Border colors: `border-{color}-300` for subtle borders (except selected person uses `border-green-500` for prominence)
+- Background colors: `bg-{color}-100` for light backgrounds on relationship cards
+- Border colors: `border-{color}-300` for subtle borders on relationship cards
+- Selected person: `bg-card` (white/theme background) with `border-2 border-green-500` for prominence and readability
 - Dark mode support: `dark:bg-{color}-950/20` and `dark:border-{color}-800` for dark theme compatibility
-- Selected person styling: Uses `border-2` and `border-green-500` for a more prominent appearance
 
 ### Data Processing Functions
 

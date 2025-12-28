@@ -230,7 +230,7 @@ describe('PersonCard - Unit Tests for Edge Cases', () => {
     const card = container.querySelector('[data-slot="card"]')
     expect(card?.className).toContain('border-2')
     expect(card?.className).toContain('border-green-500')
-    expect(card?.className).toContain('bg-green-100')
+    expect(card?.className).toContain('bg-card')
   })
 
   it('should render parent variant with correct styling', () => {

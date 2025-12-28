@@ -50,8 +50,8 @@ function getVariantStyles(variant: PersonCardVariant): string {
     case 'selected':
       return cn(
         baseStyles,
-        "border-2 border-green-500 shadow-lg scale-105 bg-green-100",
-        "hover:shadow-2xl hover:border-green-600 hover:bg-green-100",
+        "border-2 border-green-500 shadow-lg scale-105 bg-card",
+        "hover:shadow-2xl hover:border-green-600 hover:bg-card",
         "min-w-[160px] md:min-w-[180px] lg:min-w-[200px]",
         "min-h-[180px] md:min-h-[200px] lg:min-h-[220px]"
       )
