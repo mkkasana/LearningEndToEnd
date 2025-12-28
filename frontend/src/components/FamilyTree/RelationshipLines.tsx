@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 
-export type RelationshipLineType = 'parent-child' | 'spouse' | 'sibling'
+export type RelationshipLineType = 'parent-child' | 'spouse' | 'sibling' | 'generation'
 
 export interface Position {
   x: number
@@ -12,6 +12,23 @@ export interface RelationshipLinesProps {
   fromPosition: Position
   toPosition: Position
   className?: string
+}
+
+export interface GenerationLinesProps {
+  connections: Array<{
+    from: Position
+    to: Position
+  }>
+  className?: string
+}
+
+/**
+ * Calculate SVG path for generation connecting lines
+ * Creates vertical lines from one generation to another
+ */
+function calculateGenerationPath(from: Position, to: Position): string {
+  // Simple vertical line from parent row to child row
+  return `M ${from.x} ${from.y} L ${to.x} ${to.y}`
 }
 
 /**
@@ -58,6 +75,11 @@ function getLineStyle(type: RelationshipLineType): {
   strokeDasharray?: string
 } {
   switch (type) {
+    case 'generation':
+      return {
+        stroke: 'currentColor',
+        strokeWidth: 2,
+      }
     case 'parent-child':
       return {
         stroke: 'currentColor',
@@ -104,9 +126,45 @@ function calculateViewBox(from: Position, to: Position, type: RelationshipLineTy
 }
 
 /**
+ * Calculate bounding box for multiple connections
+ */
+function calculateMultiViewBox(connections: Array<{ from: Position; to: Position }>): {
+  x: number
+  y: number
+  width: number
+  height: number
+} {
+  if (connections.length === 0) {
+    return { x: 0, y: 0, width: 0, height: 0 }
+  }
+  
+  let minX = Infinity
+  let maxX = -Infinity
+  let minY = Infinity
+  let maxY = -Infinity
+  
+  connections.forEach(({ from, to }) => {
+    minX = Math.min(minX, from.x, to.x)
+    maxX = Math.max(maxX, from.x, to.x)
+    minY = Math.min(minY, from.y, to.y)
+    maxY = Math.max(maxY, from.y, to.y)
+  })
+  
+  const padding = 20
+  
+  return {
+    x: minX - padding,
+    y: minY - padding,
+    width: maxX - minX + padding * 2,
+    height: maxY - minY + padding * 2,
+  }
+}
+
+/**
  * RelationshipLines component renders SVG lines showing relationships between people
  * 
- * Supports three types of relationships:
+ * Supports four types of relationships:
+ * - generation: Vertical lines connecting generations (parents to children)
  * - parent-child: Vertical lines with branches
  * - spouse: Horizontal dashed lines
  * - sibling: Lines showing shared parent connection
@@ -120,6 +178,9 @@ export function RelationshipLines({
   // Calculate the path based on relationship type
   let path: string
   switch (type) {
+    case 'generation':
+      path = calculateGenerationPath(fromPosition, toPosition)
+      break
     case 'parent-child':
       path = calculateParentChildPath(fromPosition, toPosition)
       break
@@ -158,6 +219,57 @@ export function RelationshipLines({
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+    </svg>
+  )
+}
+
+/**
+ * GenerationLines component renders multiple vertical lines connecting generations
+ * Used for connecting parents to children across rows
+ * 
+ * Requirements: 3.3, 6.2
+ */
+export function GenerationLines({
+  connections,
+  className,
+}: GenerationLinesProps) {
+  if (connections.length === 0) {
+    return null
+  }
+  
+  const lineStyle = getLineStyle('generation')
+  const viewBox = calculateMultiViewBox(connections)
+  
+  return (
+    <svg
+      className={cn(
+        "absolute pointer-events-none text-muted-foreground/30 z-0",
+        className
+      )}
+      style={{
+        left: viewBox.x,
+        top: viewBox.y,
+        width: viewBox.width,
+        height: viewBox.height,
+      }}
+      viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
+      preserveAspectRatio="none"
+    >
+      {connections.map((connection, index) => {
+        const path = calculateGenerationPath(connection.from, connection.to)
+        return (
+          <path
+            key={index}
+            d={path}
+            fill="none"
+            stroke={lineStyle.stroke}
+            strokeWidth={lineStyle.strokeWidth}
+            strokeDasharray={lineStyle.strokeDasharray}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        )
+      })}
     </svg>
   )
 }

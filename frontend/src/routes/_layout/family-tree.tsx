@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Loader2, AlertCircle, Network } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -10,6 +10,7 @@ import { useFamilyTreeData } from "@/hooks/useFamilyTreeData"
 import { ParentsSection } from "@/components/FamilyTree/ParentsSection"
 import { HorizontalScrollRow } from "@/components/FamilyTree/HorizontalScrollRow"
 import { ChildrenSection } from "@/components/FamilyTree/ChildrenSection"
+import { GenerationLines, type Position } from "@/components/FamilyTree/RelationshipLines"
 
 export const Route = createFileRoute("/_layout/family-tree")({
   component: FamilyTreeView,
@@ -27,6 +28,10 @@ function FamilyTreeView() {
   const [personCache, setPersonCache] = useState<Map<string, PersonDetails>>(new Map())
   const treeContainerRef = useRef<HTMLDivElement>(null)
   const selectedPersonRef = useRef<HTMLDivElement>(null)
+  const parentsRowRef = useRef<HTMLDivElement>(null)
+  const centerRowRef = useRef<HTMLDivElement>(null)
+  const childrenRowRef = useRef<HTMLDivElement>(null)
+  const [cardPositions, setCardPositions] = useState<Map<string, DOMRect>>(new Map())
 
   // Check if user has a person profile
   const { data: profileStatus } = useQuery({
@@ -91,6 +96,151 @@ function FamilyTreeView() {
       }, 100)
     }
   }, [selectedPersonId, isLoading])
+
+  /**
+   * Calculate card positions for drawing connecting lines
+   * This runs after the DOM is updated with new family data
+   */
+  const updateCardPositions = useCallback(() => {
+    if (!treeContainerRef.current) return
+    
+    const positions = new Map<string, DOMRect>()
+    
+    // Find all person cards and get their positions
+    const cards = treeContainerRef.current.querySelectorAll('[data-person-id]')
+    cards.forEach((card) => {
+      const personId = card.getAttribute('data-person-id')
+      if (personId) {
+        const rect = card.getBoundingClientRect()
+        const containerRect = treeContainerRef.current!.getBoundingClientRect()
+        
+        // Store position relative to container
+        positions.set(personId, new DOMRect(
+          rect.left - containerRect.left,
+          rect.top - containerRect.top,
+          rect.width,
+          rect.height
+        ))
+      }
+    })
+    
+    setCardPositions(positions)
+  }, [])
+
+  // Update card positions when family data changes or window resizes
+  useEffect(() => {
+    if (familyData && !isLoading) {
+      // Delay to ensure DOM is fully rendered
+      setTimeout(updateCardPositions, 100)
+    }
+  }, [familyData, isLoading, updateCardPositions])
+
+  useEffect(() => {
+    window.addEventListener('resize', updateCardPositions)
+    return () => window.removeEventListener('resize', updateCardPositions)
+  }, [updateCardPositions])
+
+  /**
+   * Calculate generation connecting lines
+   * Returns connections from parents to center row and from center row to children
+   */
+  const calculateGenerationLines = useCallback((): {
+    parentToCenter: Array<{ from: Position; to: Position }>
+    centerToChildren: Array<{ from: Position; to: Position }>
+  } => {
+    const parentToCenter: Array<{ from: Position; to: Position }> = []
+    const centerToChildren: Array<{ from: Position; to: Position }> = []
+    
+    if (!familyData || !selectedPersonId) {
+      return { parentToCenter, centerToChildren }
+    }
+    
+    // Parent to center connections (parents to selected person and siblings)
+    familyData.parents.forEach((parent) => {
+      const parentPos = cardPositions.get(parent.id)
+      if (!parentPos) return
+      
+      // Connect to selected person
+      const selectedPos = cardPositions.get(selectedPersonId)
+      if (selectedPos) {
+        parentToCenter.push({
+          from: {
+            x: parentPos.left + parentPos.width / 2,
+            y: parentPos.top + parentPos.height
+          },
+          to: {
+            x: selectedPos.left + selectedPos.width / 2,
+            y: selectedPos.top
+          }
+        })
+      }
+      
+      // Connect to siblings (they share the same parents)
+      familyData.siblings.forEach((sibling) => {
+        const siblingPos = cardPositions.get(sibling.id)
+        if (siblingPos) {
+          parentToCenter.push({
+            from: {
+              x: parentPos.left + parentPos.width / 2,
+              y: parentPos.top + parentPos.height
+            },
+            to: {
+              x: siblingPos.left + siblingPos.width / 2,
+              y: siblingPos.top
+            }
+          })
+        }
+      })
+    })
+    
+    // Center to children connections (selected person and spouses to their children)
+    const selectedPos = cardPositions.get(selectedPersonId)
+    if (selectedPos) {
+      familyData.children.forEach((child) => {
+        const childPos = cardPositions.get(child.id)
+        if (childPos) {
+          centerToChildren.push({
+            from: {
+              x: selectedPos.left + selectedPos.width / 2,
+              y: selectedPos.top + selectedPos.height
+            },
+            to: {
+              x: childPos.left + childPos.width / 2,
+              y: childPos.top
+            }
+          })
+        }
+      })
+    }
+    
+    // Connect spouses to children (if applicable)
+    familyData.spouses.forEach((spouse) => {
+      const spousePos = cardPositions.get(spouse.id)
+      if (!spousePos) return
+      
+      // For now, connect all spouses to all children
+      // In a more sophisticated implementation, we would track which children belong to which spouse
+      familyData.children.forEach((child) => {
+        const childPos = cardPositions.get(child.id)
+        if (childPos) {
+          centerToChildren.push({
+            from: {
+              x: spousePos.left + spousePos.width / 2,
+              y: spousePos.top + spousePos.height
+            },
+            to: {
+              x: childPos.left + childPos.width / 2,
+              y: childPos.top
+            }
+          })
+        }
+      })
+    })
+    
+    return { parentToCenter, centerToChildren }
+  }, [familyData, selectedPersonId, cardPositions])
+
+  const generationLines = calculateGenerationLines()
 
   // Error handling: No person profile (Requirement 1.4)
   if (profileStatus && !profileStatus.has_person) {
@@ -206,12 +356,29 @@ function FamilyTreeView() {
             </div>
           </div>
         )}
+        
+        {/* Generation connecting lines */}
+        {generationLines.parentToCenter.length > 0 && (
+          <GenerationLines
+            connections={generationLines.parentToCenter}
+            className="z-0"
+          />
+        )}
+        {generationLines.centerToChildren.length > 0 && (
+          <GenerationLines
+            connections={generationLines.centerToChildren}
+            className="z-0"
+          />
+        )}
+        
         {/* Parents Section */}
         {familyData.parents.length > 0 && (
-          <ParentsSection
-            parents={familyData.parents}
-            onPersonClick={handlePersonClick}
-          />
+          <div ref={parentsRowRef} className="w-full z-10">
+            <ParentsSection
+              parents={familyData.parents}
+              onPersonClick={handlePersonClick}
+            />
+          </div>
         )}
 
         {/* Center Section: Siblings, Selected Person, Spouses - All in one horizontal row */}
@@ -239,22 +406,26 @@ function FamilyTreeView() {
           })
           
           return centerRowPeople.length > 0 ? (
-            <HorizontalScrollRow
-              people={centerRowPeople}
-              selectedPersonId={selectedPersonId || undefined}
-              onPersonClick={handlePersonClick}
-              variant="center"
-              colorCoding={colorCoding}
-            />
+            <div ref={centerRowRef} className="w-full z-10">
+              <HorizontalScrollRow
+                people={centerRowPeople}
+                selectedPersonId={selectedPersonId || undefined}
+                onPersonClick={handlePersonClick}
+                variant="center"
+                colorCoding={colorCoding}
+              />
+            </div>
           ) : null
         })()}
 
         {/* Children Section */}
         {familyData.children.length > 0 && (
-          <ChildrenSection
-            children={familyData.children}
-            onPersonClick={handlePersonClick}
-          />
+          <div ref={childrenRowRef} className="w-full z-10">
+            <ChildrenSection
+              children={familyData.children}
+              onPersonClick={handlePersonClick}
+            />
+          </div>
         )}
 
         {/* Empty state if no relationships */}

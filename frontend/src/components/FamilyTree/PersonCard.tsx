@@ -176,6 +176,7 @@ export const PersonCard = memo(function PersonCard({
       }}
       aria-label={ariaLabel}
       aria-pressed={variant === 'selected'}
+      data-person-id={person.id}
     >
       {showPhoto && (
         <Avatar className={getAvatarSize(variant)} aria-hidden="true">
