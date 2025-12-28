@@ -224,7 +224,7 @@ This implementation plan breaks down the Family Tree View feature into discrete,
 
   - [x] 9.5 Git commit all the change made for this task
 
-- [-] 10. Styling and polish
+- [x] 10. Styling and polish
   - [x] 10.1 Apply consistent styling with Tailwind CSS
     - Style all components following existing design patterns
     - Ensure visual hierarchy (selected person prominent)
@@ -242,9 +242,9 @@ This implementation plan breaks down the Family Tree View feature into discrete,
     - Verify TanStack Query caching is working
     - Test with large family structures
 
-  - [-] 10.4 Git commit all the change made for this task
+  - [x] 10.4 Git commit all the change made for this task
 
-- [ ] 11. Final checkpoint - Ensure all tests pass
+- [x] 11. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

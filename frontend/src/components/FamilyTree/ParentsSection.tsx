@@ -8,24 +8,12 @@ export interface ParentsSectionProps {
 
 /**
  * ParentsSection component displays parent cards above the selected person
- * Handles cases with 0, 1, or 2 parents
+ * Displays all parents without filtering - users can have any number of parents
  */
 export function ParentsSection({ parents, onPersonClick }: ParentsSectionProps) {
   if (parents.length === 0) {
     return null
   }
-
-  // Separate mother and father if both exist
-  const father = parents.find(p => {
-    // We need to check the relationship type from the original data
-    // For now, we'll use a simple heuristic based on gender_id
-    // This will be refined when we have access to the relationship type
-    return p.gender_id === 'gen-6a0ede824d101' // Male gender ID
-  })
-  
-  const mother = parents.find(p => {
-    return p.gender_id === 'gen-6a0ede824d102' // Female gender ID
-  })
 
   return (
     <div 
@@ -33,35 +21,17 @@ export function ParentsSection({ parents, onPersonClick }: ParentsSectionProps) 
       role="region"
       aria-label="Parents section"
     >
-      <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8 justify-center items-center md:items-start">
-        {father && (
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8 justify-center items-center md:items-start flex-wrap">
+        {parents.map((parent) => (
           <PersonCard
-            person={father}
-            relationshipType="Father"
-            variant="parent"
-            onClick={onPersonClick}
-            showPhoto={true}
-          />
-        )}
-        {mother && (
-          <PersonCard
-            person={mother}
-            relationshipType="Mother"
-            variant="parent"
-            onClick={onPersonClick}
-            showPhoto={true}
-          />
-        )}
-        {/* Handle case where we have a parent but can't determine gender */}
-        {parents.length === 1 && !father && !mother && (
-          <PersonCard
-            person={parents[0]}
+            key={parent.id}
+            person={parent}
             relationshipType="Parent"
             variant="parent"
             onClick={onPersonClick}
             showPhoto={true}
           />
-        )}
+        ))}
       </div>
     </div>
   )
