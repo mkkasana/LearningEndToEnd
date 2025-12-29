@@ -18,7 +18,9 @@ class SubDistrictService:
         self.session = session
         self.sub_district_repo = SubDistrictRepository(session)
 
-    def get_sub_districts_by_district(self, district_id: UUID) -> list[SubDistrictPublic]:
+    def get_sub_districts_by_district(
+        self, district_id: UUID
+    ) -> list[SubDistrictPublic]:
         """Get all active sub-districts for a district formatted for API response"""
         sub_districts = self.sub_district_repo.get_by_district(district_id)
         return [

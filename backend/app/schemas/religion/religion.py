@@ -10,7 +10,9 @@ class ReligionBase(SQLModel):
 
     name: str = Field(max_length=255, description="Religion name")
     code: str = Field(max_length=10, description="Religion code")
-    description: str | None = Field(default=None, max_length=500, description="Optional description")
+    description: str | None = Field(
+        default=None, max_length=500, description="Optional description"
+    )
     is_active: bool = Field(default=True, description="Whether religion is active")
 
 

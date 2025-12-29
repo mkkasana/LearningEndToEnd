@@ -17,7 +17,7 @@ class StateRepository(BaseRepository[State]):
         statement = (
             select(State)
             .where(State.country_id == country_id)
-            .where(State.is_active == True)
+            .where(State.is_active)
             .order_by(State.name)
         )
         return list(self.session.exec(statement).all())

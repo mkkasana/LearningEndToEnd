@@ -26,9 +26,9 @@ from app.schemas.person.person_relationship import (
     PersonDetails,
     PersonRelationshipCreate,
     PersonRelationshipPublic,
+    PersonRelationshipsWithDetailsResponse,
     PersonRelationshipUpdate,
     PersonRelationshipWithDetails,
-    PersonRelationshipsWithDetailsResponse,
 )
 from app.schemas.person.person_religion import (
     PersonReligionCreate,

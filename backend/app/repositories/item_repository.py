@@ -12,22 +12,19 @@ class ItemRepository(BaseRepository[Item]):
     def __init__(self, session: Session):
         super().__init__(Item, session)
 
-    def get_by_owner(self, owner_id: UUID, skip: int = 0, limit: int = 100) -> list[Item]:
+    def get_by_owner(
+        self, owner_id: UUID, skip: int = 0, limit: int = 100
+    ) -> list[Item]:
         """Get all items for a specific owner"""
         statement = (
-            select(Item)
-            .where(Item.owner_id == owner_id)
-            .offset(skip)
-            .limit(limit)
+            select(Item).where(Item.owner_id == owner_id).offset(skip).limit(limit)
         )
         return list(self.session.exec(statement).all())
 
     def count_by_owner(self, owner_id: UUID) -> int:
         """Count items for a specific owner"""
         statement = (
-            select(func.count())
-            .select_from(Item)
-            .where(Item.owner_id == owner_id)
+            select(func.count()).select_from(Item).where(Item.owner_id == owner_id)
         )
         return self.session.exec(statement).one()
 

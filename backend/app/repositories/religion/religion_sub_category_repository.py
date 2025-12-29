@@ -2,7 +2,7 @@
 
 import uuid
 
-from sqlmodel import select, Session
+from sqlmodel import Session, select
 
 from app.db_models.religion.religion_sub_category import ReligionSubCategory
 from app.repositories.base import BaseRepository
@@ -14,12 +14,14 @@ class ReligionSubCategoryRepository(BaseRepository[ReligionSubCategory]):
     def __init__(self, session: Session):
         super().__init__(ReligionSubCategory, session)
 
-    def get_sub_categories_by_category(self, category_id: uuid.UUID) -> list[ReligionSubCategory]:
+    def get_sub_categories_by_category(
+        self, category_id: uuid.UUID
+    ) -> list[ReligionSubCategory]:
         """Get all active sub-categories for a specific category sorted by name."""
         statement = (
             select(ReligionSubCategory)
             .where(ReligionSubCategory.category_id == category_id)
-            .where(ReligionSubCategory.is_active == True)
+            .where(ReligionSubCategory.is_active)
             .order_by(ReligionSubCategory.name)
         )
         return list(self.session.exec(statement).all())
@@ -36,5 +38,7 @@ class ReligionSubCategoryRepository(BaseRepository[ReligionSubCategory]):
             ReligionSubCategory.category_id == category_id,
         )
         if exclude_sub_category_id:
-            statement = statement.where(ReligionSubCategory.id != exclude_sub_category_id)
+            statement = statement.where(
+                ReligionSubCategory.id != exclude_sub_category_id
+            )
         return self.session.exec(statement).first() is not None

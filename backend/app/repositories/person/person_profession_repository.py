@@ -2,7 +2,7 @@
 
 import uuid
 
-from sqlmodel import Session, select
+from sqlmodel import Session, desc, select
 
 from app.db_models.person.person_profession import PersonProfession
 from app.repositories.base import BaseRepository
@@ -19,14 +19,14 @@ class PersonProfessionRepository(BaseRepository[PersonProfession]):
         statement = (
             select(PersonProfession)
             .where(PersonProfession.person_id == person_id)
-            .order_by(PersonProfession.start_date.desc())
+            .order_by(desc(PersonProfession.start_date))
         )
         return list(self.session.exec(statement).all())
 
     def get_current_profession(self, person_id: uuid.UUID) -> PersonProfession | None:
         """Get current profession for a person."""
         statement = select(PersonProfession).where(
-            PersonProfession.person_id == person_id, PersonProfession.is_current == True
+            PersonProfession.person_id == person_id, PersonProfession.is_current
         )
         return self.session.exec(statement).first()
 

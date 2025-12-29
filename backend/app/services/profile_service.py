@@ -22,37 +22,39 @@ class ProfileService:
     def check_profile_completion(self, user_id: uuid.UUID) -> ProfileCompletionStatus:
         """Check if user has completed their profile."""
         missing_fields = []
-        
+
         # Check if person record exists
         person = self.person_repo.get_by_user_id(user_id)
         has_person = person is not None
-        
+
         if not has_person:
             missing_fields.append("person")
-        
+
         # Check if address exists
         has_address = False
-        if has_person:
+        if has_person and person is not None:
             addresses = self.address_repo.get_by_person_id(person.id)  # Use person.id
             has_address = len(addresses) > 0
-            
+
             if not has_address:
                 missing_fields.append("address")
         else:
             missing_fields.append("address")
-        
+
         # Check if religion exists
         has_religion = False
-        if has_person:
-            has_religion = self.religion_repo.person_has_religion(person.id)  # Use person.id
-            
+        if has_person and person is not None:
+            has_religion = self.religion_repo.person_has_religion(
+                person.id
+            )  # Use person.id
+
             if not has_religion:
                 missing_fields.append("religion")
         else:
             missing_fields.append("religion")
-        
+
         is_complete = has_person and has_address and has_religion
-        
+
         return ProfileCompletionStatus(
             is_complete=is_complete,
             has_person=has_person,

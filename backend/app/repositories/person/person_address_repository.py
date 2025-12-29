@@ -2,7 +2,7 @@
 
 import uuid
 
-from sqlmodel import Session, select
+from sqlmodel import Session, desc, select
 
 from app.db_models.person.person_address import PersonAddress
 from app.repositories.base import BaseRepository
@@ -19,14 +19,14 @@ class PersonAddressRepository(BaseRepository[PersonAddress]):
         statement = (
             select(PersonAddress)
             .where(PersonAddress.person_id == person_id)
-            .order_by(PersonAddress.start_date.desc())
+            .order_by(desc(PersonAddress.start_date))
         )
         return list(self.session.exec(statement).all())
 
     def get_current_address(self, person_id: uuid.UUID) -> PersonAddress | None:
         """Get current address for a person."""
         statement = select(PersonAddress).where(
-            PersonAddress.person_id == person_id, PersonAddress.is_current == True
+            PersonAddress.person_id == person_id, PersonAddress.is_current
         )
         return self.session.exec(statement).first()
 

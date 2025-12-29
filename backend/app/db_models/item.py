@@ -16,6 +16,6 @@ class Item(SQLModel, table=True):
     owner_id: uuid.UUID = Field(
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )
-    
+
     # Relationships
     owner: Optional["User"] = Relationship(back_populates="items")

@@ -113,7 +113,9 @@ def update_religion(
 
     # Check if new code conflicts with existing religion
     if religion_in.code:
-        if religion_service.code_exists(religion_in.code, exclude_religion_id=religion_id):
+        if religion_service.code_exists(
+            religion_in.code, exclude_religion_id=religion_id
+        ):
             raise HTTPException(
                 status_code=400,
                 detail=f"Religion with code '{religion_in.code.upper()}' already exists",
@@ -311,7 +313,9 @@ def get_sub_categories_by_category(session: SessionDep, category_id: uuid.UUID) 
     return sub_categories
 
 
-@router.get("/sub-categories/{sub_category_id}", response_model=ReligionSubCategoryDetailPublic)
+@router.get(
+    "/sub-categories/{sub_category_id}", response_model=ReligionSubCategoryDetailPublic
+)
 def get_sub_category_by_id(session: SessionDep, sub_category_id: uuid.UUID) -> Any:
     """
     Get a specific sub-category by ID.
@@ -334,7 +338,9 @@ def get_sub_category_by_id(session: SessionDep, sub_category_id: uuid.UUID) -> A
     response_model=ReligionSubCategoryDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
-def create_sub_category(session: SessionDep, sub_category_in: ReligionSubCategoryCreate) -> Any:
+def create_sub_category(
+    session: SessionDep, sub_category_in: ReligionSubCategoryCreate
+) -> Any:
     """
     Create a new religion sub-category.
     Requires superuser authentication.

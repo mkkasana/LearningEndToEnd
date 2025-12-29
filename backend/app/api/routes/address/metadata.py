@@ -60,13 +60,13 @@ def get_country_by_id(session: SessionDep, country_id: uuid.UUID) -> Any:
     """
     country_service = CountryService(session)
     country = country_service.get_country_by_id(country_id)
-    
+
     if not country:
         raise HTTPException(
             status_code=404,
             detail="Country not found",
         )
-    
+
     return country
 
 
@@ -186,13 +186,13 @@ def get_state_by_id(session: SessionDep, state_id: uuid.UUID) -> Any:
     """
     state_service = StateService(session)
     state = state_service.get_state_by_id(state_id)
-    
+
     if not state:
         raise HTTPException(
             status_code=404,
             detail="State not found",
         )
-    
+
     return state
 
 

@@ -21,7 +21,10 @@ class SupportTicket(SQLModel, table=True):
     title: str = Field(max_length=100, description="Ticket title")
     description: str = Field(description="Detailed description of the issue")
     status: str = Field(
-        default="open", max_length=20, index=True, description="Ticket status: open or closed"
+        default="open",
+        max_length=20,
+        index=True,
+        description="Ticket status: open or closed",
     )
     resolved_by_user_id: uuid.UUID | None = Field(
         default=None, foreign_key="user.id", description="Admin who resolved the ticket"

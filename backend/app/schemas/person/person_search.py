@@ -17,9 +17,13 @@ class PersonSearchRequest(SQLModel):
     middle_name: str | None = Field(
         default=None, max_length=100, description="Middle name (optional)"
     )
-    gender_id: uuid.UUID | None = Field(default=None, description="Gender ID (optional)")
-    date_of_birth: date | None = Field(default=None, description="Date of birth (optional)")
-    
+    gender_id: uuid.UUID | None = Field(
+        default=None, description="Gender ID (optional)"
+    )
+    date_of_birth: date | None = Field(
+        default=None, description="Date of birth (optional)"
+    )
+
     @field_validator("gender_id", mode="before")
     @classmethod
     def empty_string_to_none(cls, v: Any) -> Any:
@@ -35,7 +39,9 @@ class PersonSearchRequest(SQLModel):
     sub_district_id: uuid.UUID | None = Field(
         default=None, description="Sub-district reference (optional)"
     )
-    locality_id: uuid.UUID | None = Field(default=None, description="Locality reference (optional)")
+    locality_id: uuid.UUID | None = Field(
+        default=None, description="Locality reference (optional)"
+    )
 
     # Religion criteria
     religion_id: uuid.UUID = Field(description="Religion reference")
@@ -45,12 +51,16 @@ class PersonSearchRequest(SQLModel):
     religion_sub_category_id: uuid.UUID | None = Field(
         default=None, description="Religion sub-category reference (optional)"
     )
-    
+
     # Address display string (passed from frontend to avoid duplicate queries)
-    address_display: str | None = Field(default=None, description="Comma-separated address display string (optional)")
+    address_display: str | None = Field(
+        default=None, description="Comma-separated address display string (optional)"
+    )
     # Religion display string (passed from frontend to avoid duplicate queries)
-    religion_display: str | None = Field(default=None, description="Comma-separated religion display string (optional)")
-    
+    religion_display: str | None = Field(
+        default=None, description="Comma-separated religion display string (optional)"
+    )
+
     @field_validator("address_display", "religion_display", mode="before")
     @classmethod
     def empty_string_display_to_none(cls, v: Any) -> Any:

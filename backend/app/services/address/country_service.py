@@ -39,14 +39,16 @@ class CountryService:
         )
         return self.country_repo.create(country)
 
-    def update_country(self, country: Country, country_update: CountryUpdate) -> Country:
+    def update_country(
+        self, country: Country, country_update: CountryUpdate
+    ) -> Country:
         """Update country information"""
         update_data = country_update.model_dump(exclude_unset=True)
-        
+
         # Ensure code is uppercase if provided
         if "code" in update_data and update_data["code"]:
             update_data["code"] = update_data["code"].upper()
-        
+
         country.sqlmodel_update(update_data)
         return self.country_repo.update(country)
 

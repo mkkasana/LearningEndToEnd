@@ -1,9 +1,7 @@
 """Support Ticket API routes."""
 
 import uuid
-from typing import Any
-
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -20,6 +18,7 @@ from app.schemas.support_ticket import (
     SupportTicketUpdate,
 )
 from app.services.support_ticket_service import SupportTicketService
+from app.utils.logging_decorator import log_route
 
 router = APIRouter(prefix="/support-tickets", tags=["issues"])
 
@@ -27,10 +26,12 @@ router = APIRouter(prefix="/support-tickets", tags=["issues"])
 SuperUser = Annotated[User, Depends(get_current_active_superuser)]
 
 
-
 @router.post("/", response_model=SupportTicketPublic)
+@log_route
 def create_support_ticket(
-    session: SessionDep, current_user: CurrentUser, support_ticket_in: SupportTicketCreate
+    session: SessionDep,
+    current_user: CurrentUser,
+    support_ticket_in: SupportTicketCreate,
 ) -> Any:
     """
     Create a new support ticket.
@@ -43,6 +44,7 @@ def create_support_ticket(
 
 
 @router.get("/me", response_model=SupportTicketsPublic)
+@log_route
 def get_my_support_tickets(
     session: SessionDep,
     current_user: CurrentUser,
@@ -61,6 +63,7 @@ def get_my_support_tickets(
 
 
 @router.get("/{support_ticket_id}", response_model=SupportTicketPublic)
+@log_route
 def get_support_ticket(
     session: SessionDep, current_user: CurrentUser, support_ticket_id: uuid.UUID
 ) -> Any:
@@ -82,6 +85,7 @@ def get_support_ticket(
 
 
 @router.patch("/{support_ticket_id}", response_model=SupportTicketPublic)
+@log_route
 def update_support_ticket(
     session: SessionDep,
     current_user: CurrentUser,
@@ -100,11 +104,14 @@ def update_support_ticket(
     if support_ticket.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
-    support_ticket = support_ticket_service.update_support_ticket(support_ticket, support_ticket_in)
+    support_ticket = support_ticket_service.update_support_ticket(
+        support_ticket, support_ticket_in
+    )
     return support_ticket
 
 
 @router.delete("/{support_ticket_id}", response_model=Message)
+@log_route
 def delete_support_ticket(
     session: SessionDep, current_user: CurrentUser, support_ticket_id: uuid.UUID
 ) -> Any:
@@ -126,11 +133,11 @@ def delete_support_ticket(
     return Message(message="Support ticket deleted successfully")
 
 
-
 @router.get("/admin/all", response_model=list[SupportTicketPublicWithUser])
+@log_route
 def get_all_support_tickets_admin(
     session: SessionDep,
-    current_user: SuperUser,
+    current_user: SuperUser,  # noqa: ARG001
     status: IssueStatus | None = None,
     issue_type: IssueType | None = None,
     skip: int = 0,
@@ -179,6 +186,7 @@ def get_all_support_tickets_admin(
 
 
 @router.patch("/{support_ticket_id}/resolve", response_model=SupportTicketPublic)
+@log_route
 def resolve_support_ticket(
     session: SessionDep,
     support_ticket_id: uuid.UUID,
@@ -193,15 +201,18 @@ def resolve_support_ticket(
     if not support_ticket:
         raise HTTPException(status_code=404, detail="Support ticket not found")
 
-    support_ticket = support_ticket_service.resolve_support_ticket(support_ticket, current_user.id)
+    support_ticket = support_ticket_service.resolve_support_ticket(
+        support_ticket, current_user.id
+    )
     return support_ticket
 
 
 @router.patch("/{support_ticket_id}/reopen", response_model=SupportTicketPublic)
+@log_route
 def reopen_support_ticket(
     session: SessionDep,
     support_ticket_id: uuid.UUID,
-    current_user: SuperUser,
+    current_user: SuperUser,  # noqa: ARG001
 ) -> Any:
     """
     Reopen a closed support ticket (admin only).

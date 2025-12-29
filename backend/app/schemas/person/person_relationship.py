@@ -2,7 +2,6 @@
 
 import uuid
 from datetime import date, datetime
-from typing import Any
 
 from pydantic import computed_field
 from sqlmodel import Field, SQLModel
@@ -44,7 +43,7 @@ class PersonRelationshipPublic(PersonRelationshipBase):
     created_at: datetime
     updated_at: datetime
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def relationship_type_label(self) -> str:
         """Get human-readable label for the relationship type."""
@@ -81,4 +80,3 @@ class PersonRelationshipsWithDetailsResponse(SQLModel):
 
     selected_person: PersonDetails
     relationships: list[PersonRelationshipWithDetails]
-

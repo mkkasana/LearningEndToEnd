@@ -103,6 +103,8 @@ models/       → Database entities
 - **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - Migration from legacy structure
 - **[ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md)** - Visual diagrams
 - **[REFACTORING_SUMMARY.md](REFACTORING_SUMMARY.md)** - What changed and why
+- **[documentation/LOGGING.md](documentation/LOGGING.md)** - Comprehensive logging guide
+- **[documentation/LOGGING_QUICK_REFERENCE.md](documentation/LOGGING_QUICK_REFERENCE.md)** - Logging quick reference
 
 ### Adding New Features
 
@@ -117,6 +119,31 @@ Follow the 5-step pattern:
 See [QUICK_REFERENCE.md](QUICK_REFERENCE.md) for templates and examples.
 
 ## Development
+
+### Logging
+
+The backend includes comprehensive logging with automatic sensitive data masking and request tracing.
+
+**View logs:**
+```bash
+# All logs
+docker compose logs -f backend
+
+# Only errors
+docker compose logs backend | grep ERROR
+
+# Specific user activity
+docker compose logs backend | grep "user@example.com"
+```
+
+**Features:**
+- ✅ Automatic sensitive data masking (passwords, tokens, secrets)
+- ✅ Request/response logging with unique request IDs
+- ✅ Performance monitoring (execution time tracking)
+- ✅ User context in authenticated requests
+- ✅ Environment-based log levels (DEBUG/INFO/WARNING)
+
+See [documentation/LOGGING.md](documentation/LOGGING.md) for complete guide.
 
 ### Current Structure
 

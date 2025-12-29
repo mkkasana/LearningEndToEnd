@@ -17,7 +17,7 @@ class SubDistrictRepository(BaseRepository[SubDistrict]):
         statement = (
             select(SubDistrict)
             .where(SubDistrict.district_id == district_id)
-            .where(SubDistrict.is_active == True)
+            .where(SubDistrict.is_active)
             .order_by(SubDistrict.name)
         )
         return list(self.session.exec(statement).all())

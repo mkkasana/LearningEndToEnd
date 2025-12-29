@@ -17,7 +17,7 @@ class LocalityRepository(BaseRepository[Locality]):
         statement = (
             select(Locality)
             .where(Locality.sub_district_id == sub_district_id)
-            .where(Locality.is_active == True)
+            .where(Locality.is_active)
             .order_by(Locality.name)
         )
         return list(self.session.exec(statement).all())

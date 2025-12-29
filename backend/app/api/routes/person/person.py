@@ -23,9 +23,9 @@ from app.schemas.person import (
     PersonPublic,
     PersonRelationshipCreate,
     PersonRelationshipPublic,
+    PersonRelationshipsWithDetailsResponse,
     PersonRelationshipUpdate,
     PersonRelationshipWithDetails,
-    PersonRelationshipsWithDetailsResponse,
     PersonReligionCreate,
     PersonSearchRequest,
     PersonUpdate,
@@ -39,12 +39,14 @@ from app.services.person import (
     PersonReligionService,
     PersonService,
 )
+from app.utils.logging_decorator import log_route
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
 @router.get("/me", response_model=PersonPublic)
+@log_route
 def get_my_person(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Get current user's person profile.
@@ -62,6 +64,7 @@ def get_my_person(session: SessionDep, current_user: CurrentUser) -> Any:
 
 
 @router.post("/me", response_model=PersonPublic)
+@log_route
 def create_my_person(
     session: SessionDep, current_user: CurrentUser, person_in: PersonCreate
 ) -> Any:
@@ -89,6 +92,7 @@ def create_my_person(
 
 
 @router.post("/family-member", response_model=PersonPublic)
+@log_route
 def create_family_member(
     session: SessionDep, current_user: CurrentUser, person_in: PersonCreate
 ) -> Any:
@@ -108,12 +112,13 @@ def create_family_member(
     person_data = person_in.model_dump()
     person_data["created_by_user_id"] = current_user.id
     person = Person(**person_data)
-    
+
     created_person = person_service.person_repo.create(person)
     return created_person
 
 
 @router.post("/search-matches", response_model=list[PersonMatchResult])
+@log_route
 def search_matching_persons(
     session: SessionDep,
     current_user: CurrentUser,
@@ -121,7 +126,7 @@ def search_matching_persons(
 ) -> Any:
     """
     Search for existing persons matching the provided criteria.
-    
+
     Returns list of potential matches with scores, sorted by match score descending.
     Used to prevent duplicate person records when adding family members.
     """
@@ -131,30 +136,36 @@ def search_matching_persons(
         f"country={search_request.country_id}, state={search_request.state_id}, "
         f"district={search_request.district_id}, religion={search_request.religion_id}"
     )
-    
+
     try:
         # Instantiate PersonMatchingService
         matching_service = PersonMatchingService(session)
-        
+
         # Call search_matching_persons method
         matches = matching_service.search_matching_persons(
             current_user_id=current_user.id,
             search_criteria=search_request,
         )
-        
-        logger.info(f"Found {len(matches)} matching persons for user {current_user.email}")
+
+        logger.info(
+            f"Found {len(matches)} matching persons for user {current_user.email}"
+        )
         return matches
-        
+
     except ValueError as e:
         # Handle validation errors
-        logger.error(f"Validation error in person search for user {current_user.email}: {str(e)}")
+        logger.error(
+            f"Validation error in person search for user {current_user.email}: {str(e)}"
+        )
         raise HTTPException(
             status_code=422,
             detail=str(e),
         )
     except Exception as e:
         # Handle unexpected errors
-        logger.exception(f"Unexpected error in person search for user {current_user.email}: {str(e)}")
+        logger.exception(
+            f"Unexpected error in person search for user {current_user.email}: {str(e)}"
+        )
         raise HTTPException(
             status_code=500,
             detail="An error occurred while searching for matching persons",
@@ -198,7 +209,7 @@ def create_person_religion(
     session: SessionDep,
     current_user: CurrentUser,
     person_id: uuid.UUID,
-    religion_data: dict,
+    religion_data: dict[str, Any],
 ) -> Any:
     """
     Create religion for a specific person.
@@ -222,8 +233,8 @@ def create_person_religion(
 
     religion_service = PersonReligionService(session)
     religion_create = PersonReligionCreate(**religion_data)
-    religion = religion_service.create_person_religion(person_id, religion_create)
-    
+    religion_service.create_person_religion(person_id, religion_create)
+
     # Return the updated person
     return person_service.person_repo.get_by_id(person_id)
 
@@ -350,7 +361,9 @@ def create_my_address(
         )
 
     address_service = PersonAddressService(session)
-    address = address_service.create_address(person.id, address_in)  # Use person.id, not person.id
+    address = address_service.create_address(
+        person.id, address_in
+    )  # Use person.id, not person.id
     return address
 
 
@@ -469,7 +482,9 @@ def get_my_professions(session: SessionDep, current_user: CurrentUser) -> Any:
 
 @router.post("/me/professions", response_model=PersonProfessionPublic)
 def create_my_profession(
-    session: SessionDep, current_user: CurrentUser, profession_in: PersonProfessionCreate
+    session: SessionDep,
+    current_user: CurrentUser,
+    profession_in: PersonProfessionCreate,
 ) -> Any:
     """
     Create new profession for current user's person profile.
@@ -583,6 +598,7 @@ def delete_my_profession(
 
 
 @router.get("/me/relationships", response_model=list[PersonRelationshipPublic])
+@log_route
 def get_my_relationships(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Get all relationships for current user's person profile.
@@ -601,14 +617,22 @@ def get_my_relationships(session: SessionDep, current_user: CurrentUser) -> Any:
     return relationships
 
 
-@router.get("/me/relationships/with-details", response_model=PersonRelationshipsWithDetailsResponse)
-def get_my_relationships_with_details(session: SessionDep, current_user: CurrentUser) -> Any:
+@router.get(
+    "/me/relationships/with-details",
+    response_model=PersonRelationshipsWithDetailsResponse,
+)
+def get_my_relationships_with_details(
+    session: SessionDep, current_user: CurrentUser
+) -> Any:
     """
     Get all relationships for current user with full person details.
     Returns the selected person and list of objects with relationship and related person information.
     """
-    from app.schemas.person.person_relationship import PersonDetails, PersonRelationshipsWithDetailsResponse
-    
+    from app.schemas.person.person_relationship import (
+        PersonDetails,
+        PersonRelationshipsWithDetailsResponse,
+    )
+
     person_service = PersonService(session)
     person = person_service.get_person_by_user_id(current_user.id)
 
@@ -620,7 +644,7 @@ def get_my_relationships_with_details(session: SessionDep, current_user: Current
 
     relationship_service = PersonRelationshipService(session)
     relationships = relationship_service.get_relationships_by_person(person.id)
-    
+
     # Enrich each relationship with person details
     result = []
     for rel in relationships:
@@ -629,31 +653,36 @@ def get_my_relationships_with_details(session: SessionDep, current_user: Current
             result.append(
                 PersonRelationshipWithDetails(
                     relationship=rel,
-                    person=PersonDetails(**related_person.model_dump())
+                    person=PersonDetails(**related_person.model_dump()),
                 )
             )
-    
+
     return PersonRelationshipsWithDetailsResponse(
-        selected_person=PersonDetails(**person.model_dump()),
-        relationships=result
+        selected_person=PersonDetails(**person.model_dump()), relationships=result
     )
 
 
-@router.get("/{person_id}/relationships/with-details", response_model=PersonRelationshipsWithDetailsResponse)
+@router.get(
+    "/{person_id}/relationships/with-details",
+    response_model=PersonRelationshipsWithDetailsResponse,
+)
 def get_person_relationships_with_details(
-    session: SessionDep, 
-    current_user: CurrentUser,
-    person_id: uuid.UUID
+    session: SessionDep,
+    current_user: CurrentUser,  # noqa: ARG001
+    person_id: uuid.UUID,
 ) -> Any:
     """
     Get all relationships for a specific person with full person details.
     Returns the selected person and list of objects with relationship and related person information.
     Used to help users identify the correct person when multiple people have similar names.
     """
-    from app.schemas.person.person_relationship import PersonDetails, PersonRelationshipsWithDetailsResponse
-    
+    from app.schemas.person.person_relationship import (
+        PersonDetails,
+        PersonRelationshipsWithDetailsResponse,
+    )
+
     person_service = PersonService(session)
-    
+
     # Verify the person exists
     person = person_service.person_repo.get_by_id(person_id)
     if not person:
@@ -664,7 +693,7 @@ def get_person_relationships_with_details(
 
     relationship_service = PersonRelationshipService(session)
     relationships = relationship_service.get_relationships_by_person(person_id)
-    
+
     # Enrich each relationship with person details
     result = []
     for rel in relationships:
@@ -673,17 +702,17 @@ def get_person_relationships_with_details(
             result.append(
                 PersonRelationshipWithDetails(
                     relationship=rel,
-                    person=PersonDetails(**related_person.model_dump())
+                    person=PersonDetails(**related_person.model_dump()),
                 )
             )
-    
+
     return PersonRelationshipsWithDetailsResponse(
-        selected_person=PersonDetails(**person.model_dump()),
-        relationships=result
+        selected_person=PersonDetails(**person.model_dump()), relationships=result
     )
 
 
 @router.post("/me/relationships", response_model=PersonRelationshipPublic)
+@log_route
 def create_my_relationship(
     session: SessionDep,
     current_user: CurrentUser,
@@ -691,42 +720,42 @@ def create_my_relationship(
 ) -> Any:
     """
     Create new relationship for current user's person profile.
-    
+
     **Bidirectional Relationships:**
     This endpoint automatically creates both directions of the relationship:
     - Primary relationship: Person A → Person B (as specified)
     - Inverse relationship: Person B → Person A (automatically determined)
-    
+
     **Inverse Relationship Logic:**
     The system determines the correct inverse relationship type based on:
     - The primary relationship type
     - Both persons' genders (when applicable)
-    
+
     **Examples:**
-    
+
     1. Parent-Child Relationships (gender-dependent):
        - Create: A → B as "Father" (B is A's father)
        - System creates: B → A as "Son" (if A is male) or "Daughter" (if A is female)
-       
+
        - Create: A → B as "Mother" (B is A's mother)
        - System creates: B → A as "Son" (if A is male) or "Daughter" (if A is female)
-       
+
        - Create: A → B as "Son" (B is A's son)
        - System creates: B → A as "Father" (if A is male) or "Mother" (if A is female)
-       
+
        - Create: A → B as "Daughter" (B is A's daughter)
        - System creates: B → A as "Father" (if A is male) or "Mother" (if A is female)
-    
+
     2. Spouse Relationships (gender-independent):
        - Create: A → B as "Husband" (B is A's husband)
        - System creates: B → A as "Wife" (A is B's wife)
-       
+
        - Create: A → B as "Wife" (B is A's wife)
        - System creates: B → A as "Husband" (A is B's husband)
-       
+
        - Create: A → B as "Spouse" (B is A's spouse)
        - System creates: B → A as "Spouse" (A is B's spouse)
-    
+
     **Result:**
     Both persons will see each other in their family trees with the correct relationship type.
     """
@@ -744,7 +773,9 @@ def create_my_relationship(
     return relationship
 
 
-@router.get("/me/relationships/{relationship_id}", response_model=PersonRelationshipPublic)
+@router.get(
+    "/me/relationships/{relationship_id}", response_model=PersonRelationshipPublic
+)
 def get_my_relationship(
     session: SessionDep, current_user: CurrentUser, relationship_id: uuid.UUID
 ) -> Any:
@@ -772,7 +803,9 @@ def get_my_relationship(
     return relationship
 
 
-@router.patch("/me/relationships/{relationship_id}", response_model=PersonRelationshipPublic)
+@router.patch(
+    "/me/relationships/{relationship_id}", response_model=PersonRelationshipPublic
+)
 def update_my_relationship(
     session: SessionDep,
     current_user: CurrentUser,
@@ -781,34 +814,34 @@ def update_my_relationship(
 ) -> Any:
     """
     Update relationship for current user.
-    
+
     **Bidirectional Updates:**
     This endpoint automatically updates both directions of the relationship:
     - Updates the primary relationship (the one you're modifying)
     - Finds and updates the inverse relationship automatically
-    
+
     **Synchronized Fields:**
     The following fields are synchronized across both directions:
     - `is_active`: When you activate/deactivate a relationship, both directions are updated
     - `start_date`: Changes to start date are reflected in both directions
     - `end_date`: Changes to end date are reflected in both directions
     - `updated_at`: Timestamp is updated for both relationships
-    
+
     **Non-Synchronized Fields:**
     - `relationship_type`: Each direction maintains its own correct type (e.g., Father/Son)
-    
+
     **Examples:**
-    
+
     1. Deactivating a relationship:
        - Update: A → B relationship, set `is_active=False`
        - System updates: B → A relationship, also sets `is_active=False`
        - Result: Neither person sees the relationship in their family tree
-    
+
     2. Updating dates:
        - Update: A → B relationship, set `start_date="2020-01-01"`
        - System updates: B → A relationship, also sets `start_date="2020-01-01"`
        - Result: Both directions show the same date range
-    
+
     **Graceful Handling:**
     If the inverse relationship is not found (e.g., legacy data), the system:
     - Logs a warning
@@ -845,41 +878,41 @@ def delete_my_relationship(
 ) -> Any:
     """
     Delete relationship for current user.
-    
+
     **Bidirectional Deletion:**
     This endpoint automatically deletes both directions of the relationship:
     - Deletes the primary relationship (the one you're removing)
     - Finds and deletes the inverse relationship automatically
-    
+
     **Transaction Safety:**
     Both deletions are performed within a database transaction:
     - If both deletions succeed, changes are committed
     - If either deletion fails, all changes are rolled back
     - Ensures data consistency (no orphaned relationships)
-    
+
     **Soft Delete Support:**
     If using soft delete (setting `is_active=False` instead of removing records):
     - Both directions are soft-deleted together
     - Maintains referential integrity
-    
+
     **Examples:**
-    
+
     1. Hard delete:
        - Delete: A → B relationship (Father)
        - System deletes: B → A relationship (Son/Daughter)
        - Result: Both records are removed from the database
-    
+
     2. Soft delete:
        - Delete: A → B relationship (sets `is_active=False`)
        - System updates: B → A relationship (also sets `is_active=False`)
        - Result: Both relationships are hidden but data is preserved
-    
+
     **Graceful Handling:**
     If the inverse relationship is not found (e.g., legacy data), the system:
     - Logs a warning
     - Continues with deleting the primary relationship
     - Does not fail the request
-    
+
     **Result:**
     Neither person will see the relationship in their family tree after deletion.
     """

@@ -22,7 +22,9 @@ class PersonAddress(SQLModel, table=True):
         default=None, foreign_key="address_state.id", description="State reference"
     )
     district_id: uuid.UUID | None = Field(
-        default=None, foreign_key="address_district.id", description="District reference"
+        default=None,
+        foreign_key="address_district.id",
+        description="District reference",
     )
     sub_district_id: uuid.UUID | None = Field(
         default=None,
@@ -30,7 +32,9 @@ class PersonAddress(SQLModel, table=True):
         description="Sub-district reference",
     )
     locality_id: uuid.UUID | None = Field(
-        default=None, foreign_key="address_locality.id", description="Locality reference"
+        default=None,
+        foreign_key="address_locality.id",
+        description="Locality reference",
     )
     address_line: str | None = Field(
         default=None, description="Additional address details"

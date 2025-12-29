@@ -14,9 +14,7 @@ class Gender(SQLModel, table=True):
     name: str = Field(
         max_length=100, unique=True, index=True, description="Gender name"
     )
-    code: str = Field(
-        max_length=10, unique=True, index=True, description="Gender code"
-    )
+    code: str = Field(max_length=10, unique=True, index=True, description="Gender code")
     description: str | None = Field(
         default=None, max_length=500, description="Optional description"
     )

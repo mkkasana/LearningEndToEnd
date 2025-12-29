@@ -64,7 +64,9 @@ class LocalityService:
         """Check if locality code exists within a sub-district, optionally excluding a specific locality"""
         if not code:
             return False
-        existing_locality = self.locality_repo.get_by_code(code.upper(), sub_district_id)
+        existing_locality = self.locality_repo.get_by_code(
+            code.upper(), sub_district_id
+        )
         if not existing_locality:
             return False
         if exclude_locality_id and existing_locality.id == exclude_locality_id:

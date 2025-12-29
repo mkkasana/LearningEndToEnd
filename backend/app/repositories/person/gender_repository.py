@@ -16,9 +16,7 @@ class GenderRepository(BaseRepository[Gender]):
 
     def get_active_genders(self) -> list[Gender]:
         """Get all active genders sorted by name."""
-        statement = (
-            select(Gender).where(Gender.is_active == True).order_by(Gender.name)
-        )
+        statement = select(Gender).where(Gender.is_active).order_by(Gender.name)
         return list(self.session.exec(statement).all())
 
     def get_by_code(self, code: str) -> Gender | None:

@@ -12,7 +12,9 @@ class PersonProfessionBase(SQLModel):
     profession_id: uuid.UUID = Field(description="Profession reference")
     start_date: date = Field(description="Profession start date")
     end_date: date | None = Field(default=None, description="Profession end date")
-    is_current: bool = Field(default=False, description="Is this the current profession")
+    is_current: bool = Field(
+        default=False, description="Is this the current profession"
+    )
 
 
 class PersonProfessionCreate(PersonProfessionBase):

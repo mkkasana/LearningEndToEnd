@@ -2,7 +2,7 @@
 
 import uuid
 
-from sqlmodel import select, Session
+from sqlmodel import Session, desc, select
 
 from app.db_models.person.profession import Profession
 from app.repositories.base import BaseRepository
@@ -18,12 +18,14 @@ class ProfessionRepository(BaseRepository[Profession]):
         """Get all active professions sorted by weight (descending) then name."""
         statement = (
             select(Profession)
-            .where(Profession.is_active == True)
-            .order_by(Profession.weight.desc(), Profession.name)
+            .where(Profession.is_active)
+            .order_by(desc(Profession.weight), Profession.name)
         )
         return list(self.session.exec(statement).all())
 
-    def name_exists(self, name: str, exclude_profession_id: uuid.UUID | None = None) -> bool:
+    def name_exists(
+        self, name: str, exclude_profession_id: uuid.UUID | None = None
+    ) -> bool:
         """Check if profession name already exists."""
         statement = select(Profession).where(Profession.name == name)
         if exclude_profession_id:

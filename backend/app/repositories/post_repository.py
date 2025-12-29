@@ -2,7 +2,7 @@
 
 import uuid
 
-from sqlmodel import Session, select
+from sqlmodel import Session, desc, select
 
 from app.db_models.post import Post
 from app.repositories.base import BaseRepository
@@ -21,7 +21,7 @@ class PostRepository(BaseRepository[Post]):
         statement = (
             select(Post)
             .where(Post.user_id == user_id)
-            .order_by(Post.created_at.desc())
+            .order_by(desc(Post.created_at))
             .offset(skip)
             .limit(limit)
         )
@@ -36,8 +36,8 @@ class PostRepository(BaseRepository[Post]):
         """Get all published posts."""
         statement = (
             select(Post)
-            .where(Post.is_published == True)
-            .order_by(Post.created_at.desc())
+            .where(Post.is_published)
+            .order_by(desc(Post.created_at))
             .offset(skip)
             .limit(limit)
         )
@@ -45,5 +45,5 @@ class PostRepository(BaseRepository[Post]):
 
     def count_published(self) -> int:
         """Count all published posts."""
-        statement = select(Post).where(Post.is_published == True)
+        statement = select(Post).where(Post.is_published)
         return len(list(self.session.exec(statement).all()))

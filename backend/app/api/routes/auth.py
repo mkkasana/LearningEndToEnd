@@ -1,3 +1,5 @@
+"""Auth API routes."""
+
 from datetime import timedelta
 from typing import Annotated, Any
 
@@ -19,11 +21,13 @@ from app.utils import (
     send_email,
     verify_password_reset_token,
 )
+from app.utils.logging_decorator import log_route
 
 router = APIRouter(tags=["login"])
 
 
 @router.post("/login/access-token")
+@log_route
 def login_access_token(
     session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Token:
@@ -31,24 +35,25 @@ def login_access_token(
     OAuth2 compatible token login, get an access token for future requests
     """
     auth_service = AuthService(session)
-    
+
     # Authenticate user
     user = auth_service.authenticate_user(
         email=form_data.username, password=form_data.password
     )
-    
+
     if not user:
         raise AuthenticationError("Incorrect email or password")
-    
+
     if not auth_service.is_user_active(user):
         raise InactiveUserError()
-    
+
     # Create access token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return auth_service.create_access_token_for_user(user, access_token_expires)
 
 
 @router.post("/login/test-token", response_model=UserPublic)
+@log_route
 def test_token(current_user: CurrentUser) -> Any:
     """
     Test access token
@@ -57,6 +62,7 @@ def test_token(current_user: CurrentUser) -> Any:
 
 
 @router.post("/password-recovery/{email}")
+@log_route
 def recover_password(email: str, session: SessionDep) -> Message:
     """
     Password Recovery
@@ -69,7 +75,7 @@ def recover_password(email: str, session: SessionDep) -> Message:
             status_code=404,
             detail="The user with this email does not exist in the system.",
         )
-    
+
     password_reset_token = generate_password_reset_token(email=email)
     email_data = generate_reset_password_email(
         email_to=user.email, email=email, token=password_reset_token
@@ -83,6 +89,7 @@ def recover_password(email: str, session: SessionDep) -> Message:
 
 
 @router.post("/reset-password/")
+@log_route
 def reset_password(session: SessionDep, body: NewPassword) -> Message:
     """
     Reset password
@@ -90,10 +97,10 @@ def reset_password(session: SessionDep, body: NewPassword) -> Message:
     email = verify_password_reset_token(token=body.token)
     if not email:
         raise HTTPException(status_code=400, detail="Invalid token")
-    
+
     user_service = UserService(session)
     user = user_service.get_user_by_email(email)
-    
+
     if not user:
         raise HTTPException(
             status_code=404,
@@ -101,7 +108,7 @@ def reset_password(session: SessionDep, body: NewPassword) -> Message:
         )
     elif not user.is_active:
         raise InactiveUserError()
-    
+
     user_service.update_password(user, body.new_password)
     return Message(message="Password updated successfully")
 
@@ -123,7 +130,7 @@ def recover_password_html_content(email: str, session: SessionDep) -> Any:
             status_code=404,
             detail="The user with this username does not exist in the system.",
         )
-    
+
     password_reset_token = generate_password_reset_token(email=email)
     email_data = generate_reset_password_email(
         email_to=user.email, email=email, token=password_reset_token

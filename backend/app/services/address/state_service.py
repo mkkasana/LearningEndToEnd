@@ -17,9 +17,7 @@ class StateService:
     def get_states_by_country(self, country_id: UUID) -> list[StatePublic]:
         """Get all active states for a country formatted for API response"""
         states = self.state_repo.get_by_country(country_id)
-        return [
-            StatePublic(stateId=state.id, stateName=state.name) for state in states
-        ]
+        return [StatePublic(stateId=state.id, stateName=state.name) for state in states]
 
     def get_state_by_id(self, state_id: UUID) -> State | None:
         """Get state by ID"""

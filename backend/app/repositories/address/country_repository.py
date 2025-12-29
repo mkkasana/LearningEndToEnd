@@ -12,7 +12,7 @@ class CountryRepository(BaseRepository[Country]):
 
     def get_active_countries(self) -> list[Country]:
         """Get all active countries ordered by name"""
-        statement = select(Country).where(Country.is_active == True).order_by(Country.name)
+        statement = select(Country).where(Country.is_active).order_by(Country.name)
         return list(self.session.exec(statement).all())
 
     def get_by_code(self, code: str) -> Country | None:

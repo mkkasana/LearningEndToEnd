@@ -41,7 +41,9 @@ class RelationshipTypeHelper:
         try:
             genders = session.exec(select(Gender)).all()
             cls._gender_mapping_cache = {gender.id: gender.code for gender in genders}
-            logger.info(f"Loaded gender mapping with {len(cls._gender_mapping_cache)} entries")
+            logger.info(
+                f"Loaded gender mapping with {len(cls._gender_mapping_cache)} entries"
+            )
             return cls._gender_mapping_cache
         except Exception as e:
             logger.error(f"Failed to fetch gender mapping from database: {e}")
@@ -98,7 +100,7 @@ class RelationshipTypeHelper:
         """
         # Get gender codes from mapping
         person_gender = gender_mapping.get(person_gender_id, "").lower()
-        related_person_gender = gender_mapping.get(related_person_gender_id, "").lower()
+        gender_mapping.get(related_person_gender_id, "").lower()
 
         # Parent → Child relationships
         # When A → B as Father (B is A's father), check A's gender to determine inverse

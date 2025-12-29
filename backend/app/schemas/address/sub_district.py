@@ -7,14 +7,18 @@ class SubDistrictBase(SQLModel):
     """Base sub-district properties"""
 
     name: str = Field(max_length=255, description="Sub-district/Tehsil name")
-    code: str | None = Field(default=None, max_length=10, description="Sub-district code")
+    code: str | None = Field(
+        default=None, max_length=10, description="Sub-district code"
+    )
     is_active: bool = Field(default=True, description="Whether sub-district is active")
 
 
 class SubDistrictCreate(SubDistrictBase):
     """Schema for creating a new sub-district"""
 
-    district_id: uuid.UUID = Field(description="District ID this sub-district belongs to")
+    district_id: uuid.UUID = Field(
+        description="District ID this sub-district belongs to"
+    )
 
 
 class SubDistrictUpdate(SQLModel):

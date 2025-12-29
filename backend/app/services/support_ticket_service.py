@@ -63,7 +63,9 @@ class SupportTicketService:
         count = self.support_ticket_repo.count_all(status=status, issue_type=issue_type)
         return tickets, count
 
-    def get_support_ticket_by_id(self, support_ticket_id: uuid.UUID) -> SupportTicket | None:
+    def get_support_ticket_by_id(
+        self, support_ticket_id: uuid.UUID
+    ) -> SupportTicket | None:
         """Get a single support ticket by ID."""
         return self.support_ticket_repo.get_by_id(support_ticket_id)
 

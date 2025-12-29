@@ -56,5 +56,3 @@ def label_id_relation() -> dict[str, str]:
 def relation_label_id() -> dict[str, str]:
     """Get mapping of relationship labels to IDs."""
     return _RELATION_LABEL_ID.copy()
-
-

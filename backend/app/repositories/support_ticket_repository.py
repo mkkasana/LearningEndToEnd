@@ -2,7 +2,7 @@
 
 import uuid
 
-from sqlmodel import Session, select
+from sqlmodel import Session, desc, select
 
 from app.db_models.support_ticket import SupportTicket
 from app.repositories.base import BaseRepository
@@ -29,14 +29,14 @@ class SupportTicketRepository(BaseRepository[SupportTicket]):
             statement = statement.where(SupportTicket.status == status.value)
 
         statement = (
-            statement.order_by(SupportTicket.created_at.desc()).offset(skip).limit(limit)
+            statement.order_by(desc(SupportTicket.created_at)).offset(skip).limit(limit)
         )
 
         return list(self.session.exec(statement).all())
 
-    def get_all(
+    def get_all(  # type: ignore[override]
         self,
-        status: IssueStatus = IssueStatus.OPEN,
+        status: IssueStatus | None = None,
         issue_type: IssueType | None = None,
         skip: int = 0,
         limit: int = 100,
@@ -51,13 +51,13 @@ class SupportTicketRepository(BaseRepository[SupportTicket]):
             statement = statement.where(SupportTicket.issue_type == issue_type.value)
 
         statement = (
-            statement.order_by(SupportTicket.created_at.desc()).offset(skip).limit(limit)
+            statement.order_by(desc(SupportTicket.created_at)).offset(skip).limit(limit)
         )
 
         return list(self.session.exec(statement).all())
 
     def count_by_user_id(
-        self, user_id: uuid.UUID, status: IssueStatus = IssueStatus.OPEN
+        self, user_id: uuid.UUID, status: IssueStatus | None = None
     ) -> int:
         """Count tickets for a specific user with optional status filter."""
         statement = select(SupportTicket).where(SupportTicket.user_id == user_id)

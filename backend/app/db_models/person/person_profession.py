@@ -20,7 +20,9 @@ class PersonProfession(SQLModel, table=True):
     )
     start_date: date = Field(description="Profession start date")
     end_date: date | None = Field(default=None, description="Profession end date")
-    is_current: bool = Field(default=False, description="Is this the current profession")
+    is_current: bool = Field(
+        default=False, description="Is this the current profession"
+    )
     created_at: datetime = Field(
         default_factory=datetime.utcnow, description="Creation timestamp"
     )

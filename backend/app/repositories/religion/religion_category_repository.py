@@ -2,7 +2,7 @@
 
 import uuid
 
-from sqlmodel import select, Session
+from sqlmodel import Session, select
 
 from app.db_models.religion.religion_category import ReligionCategory
 from app.repositories.base import BaseRepository
@@ -14,12 +14,14 @@ class ReligionCategoryRepository(BaseRepository[ReligionCategory]):
     def __init__(self, session: Session):
         super().__init__(ReligionCategory, session)
 
-    def get_categories_by_religion(self, religion_id: uuid.UUID) -> list[ReligionCategory]:
+    def get_categories_by_religion(
+        self, religion_id: uuid.UUID
+    ) -> list[ReligionCategory]:
         """Get all active categories for a specific religion sorted by name."""
         statement = (
             select(ReligionCategory)
             .where(ReligionCategory.religion_id == religion_id)
-            .where(ReligionCategory.is_active == True)
+            .where(ReligionCategory.is_active)
             .order_by(ReligionCategory.name)
         )
         return list(self.session.exec(statement).all())

@@ -73,7 +73,7 @@ def get_spouses(session: SessionDep, user_id: uuid.UUID) -> Any:
 def get_siblings(session: SessionDep, user_id: uuid.UUID) -> Any:
     """
     Get all siblings for a person.
-    
+
     Finds siblings by:
     1. Getting all parents of the person
     2. For each parent, getting all their children

@@ -2,7 +2,7 @@
 
 import uuid
 
-from sqlmodel import Session, select
+from sqlmodel import Session, col, desc, select
 
 from app.db_models.person.person_relationship import PersonRelationship
 from app.enums import RelationshipType
@@ -20,14 +20,16 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
         statement = (
             select(PersonRelationship)
             .where(PersonRelationship.person_id == person_id)
-            .order_by(PersonRelationship.created_at.desc())
+            .order_by(desc(PersonRelationship.created_at))
         )
         return list(self.session.exec(statement).all())
 
-    def get_active_relationships(self, person_id: uuid.UUID) -> list[PersonRelationship]:
+    def get_active_relationships(
+        self, person_id: uuid.UUID
+    ) -> list[PersonRelationship]:
         """Get active relationships for a person."""
         statement = select(PersonRelationship).where(
-            PersonRelationship.person_id == person_id, PersonRelationship.is_active == True
+            PersonRelationship.person_id == person_id, PersonRelationship.is_active
         )
         return list(self.session.exec(statement).all())
 
@@ -47,7 +49,7 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
         """Get relationships of multiple types for a person."""
         statement = select(PersonRelationship).where(
             PersonRelationship.person_id == person_id,
-            PersonRelationship.relationship_type.in_(relationship_types),
+            col(PersonRelationship.relationship_type).in_(relationship_types),
         )
         return list(self.session.exec(statement).all())
 
@@ -56,21 +58,21 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
     ) -> PersonRelationship | None:
         """
         Find the inverse relationship between two persons.
-        
+
         Query person_relationship where person_id and related_person_id are swapped
         and filter by is_active = True.
-        
+
         Args:
             person_id: The person_id from the primary relationship
             related_person_id: The related_person_id from the primary relationship
-            
+
         Returns:
             The inverse relationship if found, None otherwise
         """
         statement = select(PersonRelationship).where(
             PersonRelationship.person_id == related_person_id,
             PersonRelationship.related_person_id == person_id,
-            PersonRelationship.is_active == True,
+            PersonRelationship.is_active,
         )
         return self.session.exec(statement).first()
 
@@ -79,15 +81,15 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
     ) -> PersonRelationship | None:
         """
         Find the inverse relationship between two persons, including inactive ones.
-        
+
         Same as find_inverse but doesn't filter by is_active.
         Used for update/delete operations where we need to find the inverse
         regardless of its active status.
-        
+
         Args:
             person_id: The person_id from the primary relationship
             related_person_id: The related_person_id from the primary relationship
-            
+
         Returns:
             The inverse relationship if found, None otherwise
         """
@@ -100,7 +102,7 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
     def delete_without_commit(self, obj: PersonRelationship) -> None:
         """
         Delete a record without committing.
-        
+
         Used for transactional operations where multiple deletes
         need to be committed together.
         """
@@ -109,7 +111,7 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
     def update_without_commit(self, obj: PersonRelationship) -> PersonRelationship:
         """
         Update a record without committing.
-        
+
         Used for transactional operations where multiple updates
         need to be committed together.
         """

@@ -8,9 +8,13 @@ from sqlmodel import Field, SQLModel
 class ReligionCategoryBase(SQLModel):
     """Base religion category properties."""
 
-    name: str = Field(max_length=255, description="Category name (e.g., Caste, Sect, Denomination)")
+    name: str = Field(
+        max_length=255, description="Category name (e.g., Caste, Sect, Denomination)"
+    )
     code: str | None = Field(default=None, max_length=10, description="Category code")
-    description: str | None = Field(default=None, max_length=500, description="Optional description")
+    description: str | None = Field(
+        default=None, max_length=500, description="Optional description"
+    )
     is_active: bool = Field(default=True, description="Whether category is active")
 
 

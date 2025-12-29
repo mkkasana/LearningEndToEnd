@@ -16,9 +16,7 @@ class PersonReligionRepository(BaseRepository[PersonReligion]):
 
     def get_by_person_id(self, person_id: uuid.UUID) -> PersonReligion | None:
         """Get religion for a person."""
-        statement = select(PersonReligion).where(
-            PersonReligion.person_id == person_id
-        )
+        statement = select(PersonReligion).where(PersonReligion.person_id == person_id)
         return self.session.exec(statement).first()
 
     def person_has_religion(self, person_id: uuid.UUID) -> bool:

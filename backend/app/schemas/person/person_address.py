@@ -11,12 +11,18 @@ class PersonAddressBase(SQLModel):
 
     country_id: uuid.UUID = Field(description="Country reference")
     state_id: uuid.UUID | None = Field(default=None, description="State reference")
-    district_id: uuid.UUID | None = Field(default=None, description="District reference")
+    district_id: uuid.UUID | None = Field(
+        default=None, description="District reference"
+    )
     sub_district_id: uuid.UUID | None = Field(
         default=None, description="Sub-district reference"
     )
-    locality_id: uuid.UUID | None = Field(default=None, description="Locality reference")
-    address_line: str | None = Field(default=None, description="Additional address details")
+    locality_id: uuid.UUID | None = Field(
+        default=None, description="Locality reference"
+    )
+    address_line: str | None = Field(
+        default=None, description="Additional address details"
+    )
     start_date: date = Field(description="Address start date")
     end_date: date | None = Field(default=None, description="Address end date")
     is_current: bool = Field(default=False, description="Is this the current address")

@@ -17,7 +17,7 @@ class UserRepository(BaseRepository[User]):
 
     def get_active_users(self, skip: int = 0, limit: int = 100) -> list[User]:
         """Get all active users"""
-        statement = select(User).where(User.is_active == True).offset(skip).limit(limit)
+        statement = select(User).where(User.is_active).offset(skip).limit(limit)
         return list(self.session.exec(statement).all())
 
     def email_exists(self, email: str) -> bool:
