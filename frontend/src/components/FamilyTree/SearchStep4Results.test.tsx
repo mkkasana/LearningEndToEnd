@@ -198,8 +198,12 @@ describe("SearchStep4Results", () => {
       />
     )
 
-    // Should show "Not specified" for empty fields
-    const notSpecifiedElements = screen.getAllByText("Not specified")
-    expect(notSpecifiedElements).toHaveLength(2) // One for address, one for religion
+    // Should NOT show "Address:" or "Religion:" labels when fields are empty
+    expect(screen.queryByText(/Address:/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Religion:/)).not.toBeInTheDocument()
+    
+    // Should still show the person's name and match score
+    expect(screen.getByText("Test User")).toBeInTheDocument()
+    expect(screen.getByText(/Match Score: 50%/)).toBeInTheDocument()
   })
 })
