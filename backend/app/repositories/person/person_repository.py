@@ -1,11 +1,14 @@
 """Person repository."""
 
+import logging
 import uuid
 
 from sqlmodel import Session, select
 
 from app.db_models.person.person import Person
 from app.repositories.base import BaseRepository
+
+logger = logging.getLogger(__name__)
 
 
 class PersonRepository(BaseRepository[Person]):
@@ -16,9 +19,18 @@ class PersonRepository(BaseRepository[Person]):
 
     def get_by_user_id(self, user_id: uuid.UUID) -> Person | None:
         """Get person by user ID."""
+        logger.debug(f"Querying person by user_id: {user_id}")
         statement = select(Person).where(Person.user_id == user_id)
-        return self.session.exec(statement).first()
+        result = self.session.exec(statement).first()
+        if result:
+            logger.debug(f"Person found for user_id {user_id}: {result.first_name} {result.last_name} (ID: {result.id})")
+        else:
+            logger.debug(f"No person found for user_id: {user_id}")
+        return result
 
     def user_has_person(self, user_id: uuid.UUID) -> bool:
         """Check if user already has a person record."""
-        return self.get_by_user_id(user_id) is not None
+        logger.debug(f"Checking if user has person record: {user_id}")
+        has_person = self.get_by_user_id(user_id) is not None
+        logger.debug(f"User {user_id} has person record: {has_person}")
+        return has_person

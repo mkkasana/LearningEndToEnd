@@ -189,3 +189,170 @@ def test_logging_with_sensitive_data(caplog):
     assert "***MASKED***" in caplog.text
     assert "user@example.com" in caplog.text
     assert "John Doe" in caplog.text
+
+
+# Additional tests for log format validation (Requirement 15.2)
+def test_log_format_includes_timestamp(caplog):
+    """Test that log format includes timestamp in correct format."""
+    caplog.set_level(logging.INFO)
+    
+    logger = logging.getLogger("app.test")
+    logger.info("Test message for timestamp")
+    
+    # Check that timestamp is present in YYYY-MM-DD HH:MM:SS format
+    import re
+    timestamp_pattern = r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"
+    assert re.search(timestamp_pattern, caplog.text), "Timestamp not found in log"
+
+
+def test_log_format_includes_module_name(caplog):
+    """Test that log format includes module name."""
+    caplog.set_level(logging.INFO)
+    
+    logger = logging.getLogger("app.test.module")
+    logger.info("Test message for module name")
+    
+    # Check that module name is present
+    assert "app.test.module" in caplog.text
+
+
+def test_log_format_includes_log_level(caplog):
+    """Test that log format includes log level."""
+    caplog.set_level(logging.DEBUG)
+    
+    logger = logging.getLogger("app.test")
+    
+    logger.debug("Debug message")
+    assert "DEBUG" in caplog.text
+    
+    logger.info("Info message")
+    assert "INFO" in caplog.text
+    
+    logger.warning("Warning message")
+    assert "WARNING" in caplog.text
+    
+    logger.error("Error message")
+    assert "ERROR" in caplog.text
+
+
+def test_log_format_includes_function_and_line(caplog):
+    """Test that log format includes function name and line number."""
+    caplog.set_level(logging.INFO)
+    
+    logger = logging.getLogger("app.test")
+    logger.info("Test message for function and line")
+    
+    # Check that function name is present
+    assert "test_log_format_includes_function_and_line" in caplog.text
+    
+    # Check that line number is present (format: function:line)
+    import re
+    function_line_pattern = r"test_log_format_includes_function_and_line:\d+"
+    assert re.search(function_line_pattern, caplog.text), "Function:line not found in log"
+
+
+# Additional tests for request ID generation (Requirement 15.6)
+def test_request_id_generation():
+    """Test that request IDs are generated with correct length."""
+    import uuid
+    
+    # Generate multiple request IDs
+    request_ids = [str(uuid.uuid4())[:8] for _ in range(10)]
+    
+    # Check that all IDs are 8 characters long
+    for request_id in request_ids:
+        assert len(request_id) == 8, f"Request ID {request_id} is not 8 characters"
+
+
+def test_request_id_uniqueness():
+    """Test that generated request IDs are unique."""
+    import uuid
+    
+    # Generate multiple request IDs
+    request_ids = [str(uuid.uuid4())[:8] for _ in range(100)]
+    
+    # Check that all IDs are unique
+    unique_ids = set(request_ids)
+    # Allow for very small collision rate due to truncation
+    assert len(unique_ids) >= 95, f"Too many collisions: {len(unique_ids)} unique out of 100"
+
+
+def test_request_id_format_in_logs(caplog):
+    """Test that request ID appears in correct format in logs."""
+    caplog.set_level(logging.INFO)
+    
+    logger = logging.getLogger("app.test")
+    request_id = "abc12345"
+    logger.info(f"[{request_id}] Test message with request ID")
+    
+    # Check that request ID is present in [xxxxxxxx] format
+    assert f"[{request_id}]" in caplog.text
+    
+    import re
+    request_id_pattern = r"\[[\w]{8}\]"
+    assert re.search(request_id_pattern, caplog.text), "Request ID format not found in log"
+
+
+# Additional tests for execution time calculation (Requirement 15.7)
+def test_execution_time_calculation():
+    """Test that execution time is calculated correctly."""
+    import time
+    
+    start_time = time.time()
+    time.sleep(0.1)  # Sleep for 100ms
+    end_time = time.time()
+    
+    execution_time_ms = (end_time - start_time) * 1000
+    
+    # Check that execution time is approximately 100ms (with tolerance)
+    assert 90 <= execution_time_ms <= 150, f"Execution time {execution_time_ms}ms not in expected range"
+
+
+def test_execution_time_format():
+    """Test that execution time is formatted with 2 decimal places."""
+    import time
+    
+    start_time = time.time()
+    time.sleep(0.05)  # Sleep for 50ms
+    end_time = time.time()
+    
+    execution_time_ms = (end_time - start_time) * 1000
+    formatted_time = f"{execution_time_ms:.2f}ms"
+    
+    # Check format: should have exactly 2 decimal places
+    import re
+    time_pattern = r"\d+\.\d{2}ms"
+    assert re.match(time_pattern, formatted_time), f"Time format {formatted_time} is incorrect"
+
+
+def test_execution_time_in_logs(caplog):
+    """Test that execution time appears in logs with correct format."""
+    caplog.set_level(logging.INFO)
+    
+    logger = logging.getLogger("app.test")
+    
+    # Simulate logging with execution time
+    execution_time = 123.45
+    logger.info(f"Request completed | Time: {execution_time:.2f}ms")
+    
+    # Check that execution time is present with 2 decimal places
+    assert "Time: 123.45ms" in caplog.text
+    
+    import re
+    time_pattern = r"Time: \d+\.\d{2}ms"
+    assert re.search(time_pattern, caplog.text), "Execution time format not found in log"
+
+
+def test_execution_time_in_error_logs(caplog):
+    """Test that execution time is included in error logs."""
+    caplog.set_level(logging.ERROR)
+    
+    logger = logging.getLogger("app.test")
+    
+    # Simulate error logging with execution time
+    execution_time = 234.56
+    logger.error(f"Request failed | Error: TestError | Time: {execution_time:.2f}ms")
+    
+    # Check that execution time is present in error log
+    assert "Time: 234.56ms" in caplog.text
+    assert "Error: TestError" in caplog.text

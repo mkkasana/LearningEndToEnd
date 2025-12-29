@@ -28,6 +28,7 @@ from app.services.address import (
     StateService,
     SubDistrictService,
 )
+from app.utils.logging_decorator import log_route
 
 router = APIRouter(
     prefix="/address",
@@ -42,6 +43,7 @@ router = APIRouter(
 
 
 @router.get("/countries")
+@log_route
 def get_countries(session: SessionDep) -> Any:
     """
     Get list of countries for dropdown options.
@@ -53,6 +55,7 @@ def get_countries(session: SessionDep) -> Any:
 
 
 @router.get("/countries/{country_id}", response_model=CountryDetailPublic)
+@log_route
 def get_country_by_id(session: SessionDep, country_id: uuid.UUID) -> Any:
     """
     Get a specific country by ID.
@@ -75,6 +78,7 @@ def get_country_by_id(session: SessionDep, country_id: uuid.UUID) -> Any:
     response_model=CountryDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_country(session: SessionDep, country_in: CountryCreate) -> Any:
     """
     Create a new country.
@@ -98,6 +102,7 @@ def create_country(session: SessionDep, country_in: CountryCreate) -> Any:
     response_model=CountryDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_country(
     session: SessionDep,
     country_id: uuid.UUID,
@@ -133,6 +138,7 @@ def update_country(
     "/countries/{country_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_country(session: SessionDep, country_id: uuid.UUID) -> Any:
     """
     Delete a country.
@@ -158,6 +164,7 @@ def delete_country(session: SessionDep, country_id: uuid.UUID) -> Any:
 
 
 @router.get("/country/{country_id}/states")
+@log_route
 def get_states_by_country(session: SessionDep, country_id: uuid.UUID) -> Any:
     """
     Get list of states for a specific country.
@@ -179,6 +186,7 @@ def get_states_by_country(session: SessionDep, country_id: uuid.UUID) -> Any:
 
 
 @router.get("/states/{state_id}", response_model=StateDetailPublic)
+@log_route
 def get_state_by_id(session: SessionDep, state_id: uuid.UUID) -> Any:
     """
     Get a specific state by ID.
@@ -201,6 +209,7 @@ def get_state_by_id(session: SessionDep, state_id: uuid.UUID) -> Any:
     response_model=StateDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_state(session: SessionDep, state_in: StateCreate) -> Any:
     """
     Create a new state.
@@ -233,6 +242,7 @@ def create_state(session: SessionDep, state_in: StateCreate) -> Any:
     response_model=StateDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_state(
     session: SessionDep,
     state_id: uuid.UUID,
@@ -270,6 +280,7 @@ def update_state(
     "/states/{state_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_state(session: SessionDep, state_id: uuid.UUID) -> Any:
     """
     Delete a state.
@@ -295,6 +306,7 @@ def delete_state(session: SessionDep, state_id: uuid.UUID) -> Any:
 
 
 @router.get("/state/{state_id}/districts")
+@log_route
 def get_districts_by_state(session: SessionDep, state_id: uuid.UUID) -> Any:
     """
     Get list of districts for a specific state.
@@ -316,6 +328,7 @@ def get_districts_by_state(session: SessionDep, state_id: uuid.UUID) -> Any:
 
 
 @router.get("/districts/{district_id}", response_model=DistrictDetailPublic)
+@log_route
 def get_district_by_id(session: SessionDep, district_id: uuid.UUID) -> Any:
     """
     Get a specific district by ID.
@@ -338,6 +351,7 @@ def get_district_by_id(session: SessionDep, district_id: uuid.UUID) -> Any:
     response_model=DistrictDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_district(session: SessionDep, district_in: DistrictCreate) -> Any:
     """
     Create a new district.
@@ -372,6 +386,7 @@ def create_district(session: SessionDep, district_in: DistrictCreate) -> Any:
     response_model=DistrictDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_district(
     session: SessionDep,
     district_id: uuid.UUID,
@@ -409,6 +424,7 @@ def update_district(
     "/districts/{district_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_district(session: SessionDep, district_id: uuid.UUID) -> Any:
     """
     Delete a district.
@@ -434,6 +450,7 @@ def delete_district(session: SessionDep, district_id: uuid.UUID) -> Any:
 
 
 @router.get("/district/{district_id}/sub-districts")
+@log_route
 def get_sub_districts_by_district(session: SessionDep, district_id: uuid.UUID) -> Any:
     """
     Get list of sub-districts (tehsils/counties) for a specific district.
@@ -455,6 +472,7 @@ def get_sub_districts_by_district(session: SessionDep, district_id: uuid.UUID) -
 
 
 @router.get("/sub-districts/{sub_district_id}", response_model=SubDistrictDetailPublic)
+@log_route
 def get_sub_district_by_id(session: SessionDep, sub_district_id: uuid.UUID) -> Any:
     """
     Get a specific sub-district by ID.
@@ -477,6 +495,7 @@ def get_sub_district_by_id(session: SessionDep, sub_district_id: uuid.UUID) -> A
     response_model=SubDistrictDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_sub_district(session: SessionDep, sub_district_in: SubDistrictCreate) -> Any:
     """
     Create a new sub-district (tehsil/county).
@@ -511,6 +530,7 @@ def create_sub_district(session: SessionDep, sub_district_in: SubDistrictCreate)
     response_model=SubDistrictDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_sub_district(
     session: SessionDep,
     sub_district_id: uuid.UUID,
@@ -552,6 +572,7 @@ def update_sub_district(
     "/sub-districts/{sub_district_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_sub_district(session: SessionDep, sub_district_id: uuid.UUID) -> Any:
     """
     Delete a sub-district (tehsil/county).
@@ -577,6 +598,7 @@ def delete_sub_district(session: SessionDep, sub_district_id: uuid.UUID) -> Any:
 
 
 @router.get("/sub-district/{sub_district_id}/localities")
+@log_route
 def get_localities_by_sub_district(
     session: SessionDep, sub_district_id: uuid.UUID
 ) -> Any:
@@ -600,6 +622,7 @@ def get_localities_by_sub_district(
 
 
 @router.get("/localities/{locality_id}", response_model=LocalityDetailPublic)
+@log_route
 def get_locality_by_id(session: SessionDep, locality_id: uuid.UUID) -> Any:
     """
     Get a specific locality by ID.
@@ -622,6 +645,7 @@ def get_locality_by_id(session: SessionDep, locality_id: uuid.UUID) -> Any:
     response_model=LocalityDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_locality(session: SessionDep, locality_in: LocalityCreate) -> Any:
     """
     Create a new locality (village).
@@ -658,6 +682,7 @@ def create_locality(session: SessionDep, locality_in: LocalityCreate) -> Any:
     response_model=LocalityDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_locality(
     session: SessionDep,
     locality_id: uuid.UUID,
@@ -697,6 +722,7 @@ def update_locality(
     "/localities/{locality_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_locality(session: SessionDep, locality_id: uuid.UUID) -> Any:
     """
     Delete a locality (village).

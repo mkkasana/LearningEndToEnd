@@ -15,6 +15,7 @@ from app.schemas.person import (
     ProfessionUpdate,
 )
 from app.services.person import GenderService, ProfessionService
+from app.utils.logging_decorator import log_route
 
 router = APIRouter(
     prefix="/person",
@@ -29,6 +30,7 @@ router = APIRouter(
 
 
 @router.get("/professions")
+@log_route
 def get_professions(session: SessionDep) -> Any:
     """
     Get list of professions for dropdown options.
@@ -40,6 +42,7 @@ def get_professions(session: SessionDep) -> Any:
 
 
 @router.get("/professions/{profession_id}", response_model=ProfessionDetailPublic)
+@log_route
 def get_profession_by_id(session: SessionDep, profession_id: uuid.UUID) -> Any:
     """
     Get a specific profession by ID.
@@ -62,6 +65,7 @@ def get_profession_by_id(session: SessionDep, profession_id: uuid.UUID) -> Any:
     response_model=ProfessionDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_profession(session: SessionDep, profession_in: ProfessionCreate) -> Any:
     """
     Create a new profession.
@@ -85,6 +89,7 @@ def create_profession(session: SessionDep, profession_in: ProfessionCreate) -> A
     response_model=ProfessionDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_profession(
     session: SessionDep,
     profession_id: uuid.UUID,
@@ -122,6 +127,7 @@ def update_profession(
     "/professions/{profession_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_profession(session: SessionDep, profession_id: uuid.UUID) -> Any:
     """
     Delete a profession.
@@ -147,6 +153,7 @@ def delete_profession(session: SessionDep, profession_id: uuid.UUID) -> Any:
 
 
 @router.get("/genders")
+@log_route
 def get_genders(session: SessionDep) -> Any:
     """
     Get list of genders for dropdown options.
@@ -158,6 +165,7 @@ def get_genders(session: SessionDep) -> Any:
 
 
 @router.get("/genders/{gender_id}", response_model=GenderDetailPublic)
+@log_route
 def get_gender_by_id(session: SessionDep, gender_id: uuid.UUID) -> Any:
     """
     Get a specific gender by ID.
@@ -180,6 +188,7 @@ def get_gender_by_id(session: SessionDep, gender_id: uuid.UUID) -> Any:
     response_model=GenderDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_gender(session: SessionDep, gender_in: GenderCreate) -> Any:
     """
     Create a new gender.
@@ -203,6 +212,7 @@ def create_gender(session: SessionDep, gender_in: GenderCreate) -> Any:
     response_model=GenderDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_gender(
     session: SessionDep,
     gender_id: uuid.UUID,
@@ -238,6 +248,7 @@ def update_gender(
     "/genders/{gender_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_gender(session: SessionDep, gender_id: uuid.UUID) -> Any:
     """
     Delete a gender.

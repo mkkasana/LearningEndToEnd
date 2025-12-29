@@ -22,6 +22,7 @@ from app.services.religion import (
     ReligionService,
     ReligionSubCategoryService,
 )
+from app.utils.logging_decorator import log_route
 
 router = APIRouter(
     prefix="/religion",
@@ -36,6 +37,7 @@ router = APIRouter(
 
 
 @router.get("/religions")
+@log_route
 def get_religions(session: SessionDep) -> Any:
     """
     Get list of religions for dropdown options.
@@ -47,6 +49,7 @@ def get_religions(session: SessionDep) -> Any:
 
 
 @router.get("/religions/{religion_id}", response_model=ReligionDetailPublic)
+@log_route
 def get_religion_by_id(session: SessionDep, religion_id: uuid.UUID) -> Any:
     """
     Get a specific religion by ID.
@@ -69,6 +72,7 @@ def get_religion_by_id(session: SessionDep, religion_id: uuid.UUID) -> Any:
     response_model=ReligionDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_religion(session: SessionDep, religion_in: ReligionCreate) -> Any:
     """
     Create a new religion.
@@ -92,6 +96,7 @@ def create_religion(session: SessionDep, religion_in: ReligionCreate) -> Any:
     response_model=ReligionDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_religion(
     session: SessionDep,
     religion_id: uuid.UUID,
@@ -129,6 +134,7 @@ def update_religion(
     "/religions/{religion_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_religion(session: SessionDep, religion_id: uuid.UUID) -> Any:
     """
     Delete a religion.
@@ -154,6 +160,7 @@ def delete_religion(session: SessionDep, religion_id: uuid.UUID) -> Any:
 
 
 @router.get("/religion/{religion_id}/categories")
+@log_route
 def get_categories_by_religion(session: SessionDep, religion_id: uuid.UUID) -> Any:
     """
     Get list of categories for a specific religion.
@@ -175,6 +182,7 @@ def get_categories_by_religion(session: SessionDep, religion_id: uuid.UUID) -> A
 
 
 @router.get("/categories/{category_id}", response_model=ReligionCategoryDetailPublic)
+@log_route
 def get_category_by_id(session: SessionDep, category_id: uuid.UUID) -> Any:
     """
     Get a specific category by ID.
@@ -197,6 +205,7 @@ def get_category_by_id(session: SessionDep, category_id: uuid.UUID) -> Any:
     response_model=ReligionCategoryDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_category(session: SessionDep, category_in: ReligionCategoryCreate) -> Any:
     """
     Create a new religion category.
@@ -231,6 +240,7 @@ def create_category(session: SessionDep, category_in: ReligionCategoryCreate) ->
     response_model=ReligionCategoryDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_category(
     session: SessionDep,
     category_id: uuid.UUID,
@@ -268,6 +278,7 @@ def update_category(
     "/categories/{category_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_category(session: SessionDep, category_id: uuid.UUID) -> Any:
     """
     Delete a religion category.
@@ -293,6 +304,7 @@ def delete_category(session: SessionDep, category_id: uuid.UUID) -> Any:
 
 
 @router.get("/category/{category_id}/sub-categories")
+@log_route
 def get_sub_categories_by_category(session: SessionDep, category_id: uuid.UUID) -> Any:
     """
     Get list of sub-categories for a specific category.
@@ -316,6 +328,7 @@ def get_sub_categories_by_category(session: SessionDep, category_id: uuid.UUID) 
 @router.get(
     "/sub-categories/{sub_category_id}", response_model=ReligionSubCategoryDetailPublic
 )
+@log_route
 def get_sub_category_by_id(session: SessionDep, sub_category_id: uuid.UUID) -> Any:
     """
     Get a specific sub-category by ID.
@@ -338,6 +351,7 @@ def get_sub_category_by_id(session: SessionDep, sub_category_id: uuid.UUID) -> A
     response_model=ReligionSubCategoryDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def create_sub_category(
     session: SessionDep, sub_category_in: ReligionSubCategoryCreate
 ) -> Any:
@@ -374,6 +388,7 @@ def create_sub_category(
     response_model=ReligionSubCategoryDetailPublic,
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def update_sub_category(
     session: SessionDep,
     sub_category_id: uuid.UUID,
@@ -415,6 +430,7 @@ def update_sub_category(
     "/sub-categories/{sub_category_id}",
     dependencies=[Depends(get_current_active_superuser)],
 )
+@log_route
 def delete_sub_category(session: SessionDep, sub_category_id: uuid.UUID) -> Any:
     """
     Delete a religion sub-category.

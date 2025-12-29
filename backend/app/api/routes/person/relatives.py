@@ -8,11 +8,13 @@ from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
 from app.schemas.person import PersonRelationshipPublic
 from app.services.person import PersonRelationshipService, PersonService
+from app.utils.logging_decorator import log_route
 
 router = APIRouter()
 
 
 @router.get("/{user_id}/parents", response_model=list[PersonRelationshipPublic])
+@log_route
 def get_parents(session: SessionDep, user_id: uuid.UUID) -> Any:
     """
     Get all parents (father and mother) for a person.
@@ -32,6 +34,7 @@ def get_parents(session: SessionDep, user_id: uuid.UUID) -> Any:
 
 
 @router.get("/{user_id}/children", response_model=list[PersonRelationshipPublic])
+@log_route
 def get_children(session: SessionDep, user_id: uuid.UUID) -> Any:
     """
     Get all children (sons and daughters) for a person.
@@ -51,6 +54,7 @@ def get_children(session: SessionDep, user_id: uuid.UUID) -> Any:
 
 
 @router.get("/{user_id}/spouses", response_model=list[PersonRelationshipPublic])
+@log_route
 def get_spouses(session: SessionDep, user_id: uuid.UUID) -> Any:
     """
     Get all spouses for a person.
@@ -70,6 +74,7 @@ def get_spouses(session: SessionDep, user_id: uuid.UUID) -> Any:
 
 
 @router.get("/{user_id}/siblings", response_model=list[PersonRelationshipPublic])
+@log_route
 def get_siblings(session: SessionDep, user_id: uuid.UUID) -> Any:
     """
     Get all siblings for a person.
