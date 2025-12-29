@@ -54,14 +54,14 @@ export function SearchStep4Results({
   }
 
   return (
-    <div className="space-y-4 py-4">
+    <div className="space-y-4 py-4 max-h-[60vh]">
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground">
           Found {results.length} {results.length === 1 ? "match" : "matches"}
         </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 overflow-y-auto max-h-[50vh] pr-2">
         {results.map((result) => {
           const birthYear = formatBirthYear(result.date_of_birth)
           const deathYear = formatDeathYear(result.date_of_death)
@@ -88,14 +88,18 @@ export function SearchStep4Results({
                     <Separator />
 
                     <div className="space-y-1 text-sm">
-                      <div>
-                        <span className="font-medium text-muted-foreground">Address: </span>
-                        <span>{result.address_display || "Not specified"}</span>
-                      </div>
-                      <div>
-                        <span className="font-medium text-muted-foreground">Religion: </span>
-                        <span>{result.religion_display || "Not specified"}</span>
-                      </div>
+                      {result.address_display && (
+                        <div>
+                          <span className="font-medium text-muted-foreground">Address: </span>
+                          <span>{result.address_display}</span>
+                        </div>
+                      )}
+                      {result.religion_display && (
+                        <div>
+                          <span className="font-medium text-muted-foreground">Religion: </span>
+                          <span>{result.religion_display}</span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-2 pt-2">
