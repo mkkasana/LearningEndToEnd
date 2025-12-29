@@ -6,57 +6,57 @@ This implementation plan breaks down the "Discover Family Members" feature into 
 
 ## Tasks
 
-- [ ] 1. Create backend data models and schemas
-  - [ ] 1.1 Create PersonDiscoveryResult schema
+- [x] 1. Create backend data models and schemas
+  - [x] 1.1 Create PersonDiscoveryResult schema
     - Add schema file `backend/app/schemas/person/person_discovery.py`
     - Define PersonDiscoveryResult with all required fields
     - Add proximity_score and relationship_priority fields for sorting
     - _Requirements: 8.5_
-  - [ ] 1.2 Add discovery result to person schema exports
+  - [x] 1.2 Add discovery result to person schema exports
     - Update `backend/app/schemas/person/__init__.py`
     - Export PersonDiscoveryResult
     - _Requirements: 8.5_
 
-- [ ] 2. Implement PersonDiscoveryService
-  - [ ] 2.1 Create PersonDiscoveryService class structure
+- [x] 2. Implement PersonDiscoveryService
+  - [x] 2.1 Create PersonDiscoveryService class structure
     - Create file `backend/app/services/person/person_discovery_service.py`
     - Initialize with session and repositories
     - Add main discover_family_members method signature
     - _Requirements: 4.1, 5.1, 6.1, 7.1, 8.1_
-  - [ ] 2.2 Implement _discover_spouses_children method
+  - [x] 2.2 Implement _discover_spouses_children method
     - Query user's spouses (Wife/Husband/Spouse relationships)
     - For each spouse, find their children (Son/Daughter relationships)
     - Filter out already-connected children
     - Infer relationship type based on child's gender
     - Build connection path string
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
-  - [ ] 2.3 Implement _discover_parents_spouse method
+  - [x] 2.3 Implement _discover_parents_spouse method
     - Query user's parents (Father/Mother relationships)
     - For each parent, find their spouse (Wife/Husband/Spouse relationships)
     - Filter out already-connected spouses
     - Infer relationship type based on spouse's gender
     - Build connection path string
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
-  - [ ] 2.4 Implement _discover_childs_parent method
+  - [x] 2.4 Implement _discover_childs_parent method
     - Query user's children (Son/Daughter relationships)
     - For each child, find their parents (Father/Mother relationships)
     - Filter out already-connected parents
     - Infer relationship type as "Spouse"
     - Build connection path string
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
-  - [ ] 2.5 Implement helper methods
+  - [x] 2.5 Implement helper methods
     - Add _infer_child_relationship method (gender → Son/Daughter)
     - Add _infer_parent_relationship method (gender → Father/Mother)
     - Add _build_discovery_result method (person details + metadata)
     - Add _get_connected_person_ids method (get all related person IDs)
     - _Requirements: 4.4, 4.5, 5.4, 5.5_
-  - [ ] 2.6 Implement sorting and filtering logic
+  - [x] 2.6 Implement sorting and filtering logic
     - Combine results from all three discovery patterns
     - Deduplicate persons appearing through multiple paths
     - Sort by proximity_score, relationship_priority, first_name
     - Limit to top 20 results
     - _Requirements: 7.5, 10.1, 10.2, 10.3, 10.4, 10.5_
-  - [ ] 2.7 Add error handling and logging
+  - [x] 2.7 Add error handling and logging
     - Handle user with no person record
     - Handle missing person details gracefully
     - Add comprehensive logging for debugging

@@ -2,6 +2,7 @@
 
 from app.services.person.gender_service import GenderService
 from app.services.person.person_address_service import PersonAddressService
+from app.services.person.person_discovery_service import PersonDiscoveryService
 from app.services.person.person_matching_service import PersonMatchingService
 from app.services.person.person_metadata_service import PersonMetadataService
 from app.services.person.person_profession_service import PersonProfessionService
@@ -13,6 +14,7 @@ from app.services.person.profession_service import ProfessionService
 __all__ = [
     "GenderService",
     "PersonAddressService",
+    "PersonDiscoveryService",
     "PersonMatchingService",
     "PersonMetadataService",
     "PersonProfessionService",
