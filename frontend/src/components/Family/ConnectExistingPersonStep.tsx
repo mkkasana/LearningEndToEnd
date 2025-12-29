@@ -65,7 +65,7 @@ export function ConnectExistingPersonStep({
 
   // Fetch matching persons
   const {
-    data: matchingPersons,
+    data: matchingPersonsRaw,
     isLoading,
     isError,
     error,
@@ -79,6 +79,11 @@ export function ConnectExistingPersonStep({
       }),
     retry: false,
   })
+
+  // Filter out only the current user (but keep already-connected persons to show them)
+  const matchingPersons = matchingPersonsRaw?.filter(
+    (person) => !person.is_current_user
+  ) || []
 
   return (
     <div className="space-y-4">
@@ -194,14 +199,25 @@ export function ConnectExistingPersonStep({
                   </div>
                 )}
 
-                {/* Connect button */}
+                {/* Connect button or status */}
                 <div className="pt-2">
-                  <Button
-                    size="sm"
-                    onClick={() => onConnect(person.person_id, person)}
-                  >
-                    Connect as {relationshipType}
-                  </Button>
+                  {person.is_already_connected ? (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-green-600 border-green-600">
+                        Already Connected
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        This person is already in your family
+                      </span>
+                    </div>
+                  ) : (
+                    <Button
+                      size="sm"
+                      onClick={() => onConnect(person.person_id, person)}
+                    >
+                      Connect as {relationshipType}
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}

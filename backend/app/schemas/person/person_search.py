@@ -90,3 +90,12 @@ class PersonMatchResult(SQLModel):
     # Match scoring
     match_score: float = Field(description="Overall match score 0-100")
     name_match_score: float = Field(description="Name similarity score 0-100")
+
+    # Relationship flags
+    is_current_user: bool = Field(
+        default=False, description="True if this is the current user's person record"
+    )
+    is_already_connected: bool = Field(
+        default=False,
+        description="True if this person is already connected to the current user",
+    )

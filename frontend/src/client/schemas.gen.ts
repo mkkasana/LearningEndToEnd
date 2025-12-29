@@ -1304,6 +1304,18 @@ export const PersonMatchResultSchema = {
             type: 'number',
             title: 'Name Match Score',
             description: 'Name similarity score 0-100'
+        },
+        is_current_user: {
+            type: 'boolean',
+            title: 'Is Current User',
+            description: "True if this is the current user's person record",
+            default: false
+        },
+        is_already_connected: {
+            type: 'boolean',
+            title: 'Is Already Connected',
+            description: 'True if this person is already connected to the current user',
+            default: false
         }
     },
     type: 'object',
@@ -2080,16 +2092,30 @@ export const PersonSearchRequestSchema = {
             description: 'Middle name (optional)'
         },
         gender_id: {
-            type: 'string',
-            format: 'uuid',
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
             title: 'Gender Id',
-            description: 'Gender ID'
+            description: 'Gender ID (optional)'
         },
         date_of_birth: {
-            type: 'string',
-            format: 'date',
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
             title: 'Date Of Birth',
-            description: 'Date of birth'
+            description: 'Date of birth (optional)'
         },
         country_id: {
             type: 'string',
@@ -2120,7 +2146,7 @@ export const PersonSearchRequestSchema = {
                 }
             ],
             title: 'Sub District Id',
-            description: 'Sub-district reference'
+            description: 'Sub-district reference (optional)'
         },
         locality_id: {
             anyOf: [
@@ -2133,7 +2159,7 @@ export const PersonSearchRequestSchema = {
                 }
             ],
             title: 'Locality Id',
-            description: 'Locality reference'
+            description: 'Locality reference (optional)'
         },
         religion_id: {
             type: 'string',
@@ -2152,7 +2178,7 @@ export const PersonSearchRequestSchema = {
                 }
             ],
             title: 'Religion Category Id',
-            description: 'Religion category reference'
+            description: 'Religion category reference (optional)'
         },
         religion_sub_category_id: {
             anyOf: [
@@ -2165,21 +2191,35 @@ export const PersonSearchRequestSchema = {
                 }
             ],
             title: 'Religion Sub Category Id',
-            description: 'Religion sub-category reference'
+            description: 'Religion sub-category reference (optional)'
         },
         address_display: {
-            type: 'string',
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
             title: 'Address Display',
-            description: 'Comma-separated address display string'
+            description: 'Comma-separated address display string (optional)'
         },
         religion_display: {
-            type: 'string',
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
             title: 'Religion Display',
-            description: 'Comma-separated religion display string'
+            description: 'Comma-separated religion display string (optional)'
         }
     },
     type: 'object',
-    required: ['first_name', 'last_name', 'gender_id', 'date_of_birth', 'country_id', 'state_id', 'district_id', 'religion_id', 'address_display', 'religion_display'],
+    required: ['first_name', 'last_name', 'country_id', 'state_id', 'district_id', 'religion_id'],
     title: 'PersonSearchRequest',
     description: 'Request schema for person matching search.'
 } as const;
@@ -3650,9 +3690,7 @@ export const UserCreateSchema = {
             type: 'string',
             maxLength: 255,
             format: 'email',
-            title: 'Email',
-            index: true,
-            unique: true
+            title: 'Email'
         },
         is_active: {
             type: 'boolean',
@@ -3695,9 +3733,7 @@ export const UserPublicSchema = {
             type: 'string',
             maxLength: 255,
             format: 'email',
-            title: 'Email',
-            index: true,
-            unique: true
+            title: 'Email'
         },
         is_active: {
             type: 'boolean',

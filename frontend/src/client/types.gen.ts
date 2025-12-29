@@ -478,6 +478,14 @@ export type PersonMatchResult = {
      * Name similarity score 0-100
      */
     name_match_score: number;
+    /**
+     * True if this is the current user's person record
+     */
+    is_current_user?: boolean;
+    /**
+     * True if this person is already connected to the current user
+     */
+    is_already_connected?: boolean;
 };
 
 /**
@@ -767,13 +775,13 @@ export type PersonSearchRequest = {
      */
     middle_name?: (string | null);
     /**
-     * Gender ID
+     * Gender ID (optional)
      */
-    gender_id: string;
+    gender_id?: (string | null);
     /**
-     * Date of birth
+     * Date of birth (optional)
      */
-    date_of_birth: string;
+    date_of_birth?: (string | null);
     /**
      * Country reference
      */
@@ -787,11 +795,11 @@ export type PersonSearchRequest = {
      */
     district_id: string;
     /**
-     * Sub-district reference
+     * Sub-district reference (optional)
      */
     sub_district_id?: (string | null);
     /**
-     * Locality reference
+     * Locality reference (optional)
      */
     locality_id?: (string | null);
     /**
@@ -799,21 +807,21 @@ export type PersonSearchRequest = {
      */
     religion_id: string;
     /**
-     * Religion category reference
+     * Religion category reference (optional)
      */
     religion_category_id?: (string | null);
     /**
-     * Religion sub-category reference
+     * Religion sub-category reference (optional)
      */
     religion_sub_category_id?: (string | null);
     /**
-     * Comma-separated address display string
+     * Comma-separated address display string (optional)
      */
-    address_display: string;
+    address_display?: (string | null);
     /**
-     * Comma-separated religion display string
+     * Comma-separated religion display string (optional)
      */
-    religion_display: string;
+    religion_display?: (string | null);
 };
 
 /**

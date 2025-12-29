@@ -197,6 +197,8 @@ class PersonMatchingService:
         name_score: float,
         address_display: str,
         religion_display: str,
+        is_current_user: bool = False,
+        is_already_connected: bool = False,
     ) -> PersonMatchResult | None:
         """Build a match result for a person.
 
@@ -205,6 +207,8 @@ class PersonMatchingService:
             name_score: Name match score
             address_display: Pre-built address display string
             religion_display: Pre-built religion display string
+            is_current_user: Whether this is the current user's person record
+            is_already_connected: Whether this person is already connected
 
         Returns:
             PersonMatchResult object or None if person not found
@@ -227,6 +231,8 @@ class PersonMatchingService:
             religion_display=religion_display,
             match_score=name_score,  # For now, match_score equals name_score
             name_match_score=name_score,
+            is_current_user=is_current_user,
+            is_already_connected=is_already_connected,
         )
 
         return match_result
@@ -325,26 +331,17 @@ class PersonMatchingService:
         relationships = self.relationship_repo.get_by_person_id(current_person.id)
         connected_person_ids = {rel.related_person_id for rel in relationships}
         logger.info(
-            f"User has {len(connected_person_ids)} existing relationships to exclude"
+            f"User has {len(connected_person_ids)} existing relationships"
         )
 
-        # Step 6: Exclude current user and already-connected persons
-        persons = [
-            p
-            for p in persons
-            if p.id != current_person.id and p.id not in connected_person_ids
-        ]
-        logger.info(
-            f"After excluding current user and connected persons: {len(persons)} persons remain"
-        )
-
-        if not persons:
-            logger.info("No persons remain after exclusions, returning empty list")
-            return []
-
-        # Step 7: Calculate name match scores for remaining persons
+        # Step 6: Calculate name match scores for all persons (no exclusion)
+        # Instead, we'll mark them with flags
         results = []
         for person in persons:
+            # Determine flags
+            is_current_user = person.id == current_person.id
+            is_already_connected = person.id in connected_person_ids
+            
             name_score = self.calculate_name_match_score(
                 search_criteria.first_name,
                 search_criteria.last_name,
@@ -352,13 +349,15 @@ class PersonMatchingService:
                 person.last_name,
             )
 
-            # Filter by minimum score threshold (60%)
+            # Filter by minimum score threshold (40%)
             if name_score >= 40:
                 match_result = self._build_match_result(
                     person.id,
                     name_score,
                     address_display,
                     religion_display,
+                    is_current_user=is_current_user,
+                    is_already_connected=is_already_connected,
                 )
                 if match_result:  # Only add if result was successfully built
                     results.append(match_result)
