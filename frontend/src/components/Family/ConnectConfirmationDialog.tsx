@@ -32,11 +32,14 @@ export function ConnectConfirmationDialog({
   isLoading = false,
 }: ConnectConfirmationDialogProps) {
   // Fetch relatives of the person user is trying to connect to
-  const { data: relatives, isLoading: isLoadingRelatives } = useQuery({
+  const { data: relationshipsData, isLoading: isLoadingRelatives } = useQuery({
     queryKey: ["personRelationships", personId],
     queryFn: () => PersonService.getPersonRelationshipsWithDetails({ personId }),
     enabled: open && !!personId, // Only fetch when dialog is open and personId exists
   })
+
+  // Extract relationships array from the response
+  const relatives = relationshipsData?.relationships || []
 
   const handleConfirm = () => {
     onConfirm()
