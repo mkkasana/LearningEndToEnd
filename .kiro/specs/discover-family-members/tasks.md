@@ -62,24 +62,24 @@ This implementation plan breaks down the "Discover Family Members" feature into 
     - Add comprehensive logging for debugging
     - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-- [ ] 3. Create API endpoint
-  - [ ] 3.1 Add discover-family-members endpoint
+- [x] 3. Create API endpoint
+  - [x] 3.1 Add discover-family-members endpoint
     - Add GET endpoint to `backend/app/api/routes/person/person.py`
     - Implement authentication and authorization
     - Call PersonDiscoveryService
     - Return list of PersonDiscoveryResult
     - Add error handling and logging
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
-  - [ ] 3.2 Update service exports
+  - [x] 3.2 Update service exports
     - Export PersonDiscoveryService in `backend/app/services/person/__init__.py`
     - _Requirements: 8.1_
 
-- [ ] 4. Add frontend TypeScript types
-  - [ ] 4.1 Generate OpenAPI client types
+- [x] 4. Add frontend TypeScript types
+  - [x] 4.1 Generate OpenAPI client types
     - Run OpenAPI generator to update client types
     - Verify PersonDiscoveryResult type is generated
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
-  - [ ] 4.2 Add PersonService method
+  - [x] 4.2 Add PersonService method
     - Add discoverFamilyMembers method to PersonService
     - Map to GET /api/v1/person/discover-family-members
     - _Requirements: 1.1, 8.1_

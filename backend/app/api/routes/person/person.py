@@ -13,6 +13,7 @@ from app.schemas.person import (
     PersonAddressPublic,
     PersonAddressUpdate,
     PersonCreate,
+    PersonDiscoveryResult,
     PersonMatchResult,
     PersonMetadataCreate,
     PersonMetadataPublic,
@@ -32,6 +33,7 @@ from app.schemas.person import (
 )
 from app.services.person import (
     PersonAddressService,
+    PersonDiscoveryService,
     PersonMatchingService,
     PersonMetadataService,
     PersonProfessionService,
@@ -169,6 +171,50 @@ def search_matching_persons(
         raise HTTPException(
             status_code=500,
             detail="An error occurred while searching for matching persons",
+        )
+
+
+@router.get("/discover-family-members", response_model=list[PersonDiscoveryResult])
+@log_route
+def discover_family_members(
+    session: SessionDep,
+    current_user: CurrentUser,
+) -> Any:
+    """
+    Discover potential family member connections for the current user.
+    
+    This endpoint analyzes existing relationships to find persons who are:
+    - Connected to the user's family members
+    - Not yet directly connected to the user
+    
+    Discovery patterns:
+    1. Spouse's children → Suggested as user's Son/Daughter
+    2. Parent's spouse → Suggested as user's Father/Mother
+    3. Child's parent → Suggested as user's Spouse
+    
+    Returns:
+        List of discovered persons with inferred relationship types,
+        sorted by relationship proximity and type priority.
+        Limited to top 20 results.
+    """
+    logger.info(f"Discovery request from user {current_user.email}")
+    
+    try:
+        discovery_service = PersonDiscoveryService(session)
+        discoveries = discovery_service.discover_family_members(current_user.id)
+        
+        logger.info(
+            f"Found {len(discoveries)} potential connections for user {current_user.email}"
+        )
+        return discoveries
+        
+    except Exception as e:
+        logger.exception(
+            f"Error in family member discovery for user {current_user.email}: {str(e)}"
+        )
+        raise HTTPException(
+            status_code=500,
+            detail="An error occurred while discovering family members",
         )
 
 

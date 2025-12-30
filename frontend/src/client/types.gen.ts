@@ -435,6 +435,72 @@ export type PersonDetails = {
 };
 
 /**
+ * Result of family member discovery.
+ *
+ * Represents a person who is connected to the user's family members
+ * but not yet directly connected to the user, along with metadata
+ * about the inferred relationship and connection path.
+ */
+export type PersonDiscoveryResult = {
+    /**
+     * Person ID
+     */
+    person_id: string;
+    /**
+     * First name
+     */
+    first_name: string;
+    /**
+     * Middle name
+     */
+    middle_name?: (string | null);
+    /**
+     * Last name
+     */
+    last_name: string;
+    /**
+     * Date of birth
+     */
+    date_of_birth: string;
+    /**
+     * Date of death
+     */
+    date_of_death?: (string | null);
+    /**
+     * Gender ID
+     */
+    gender_id: string;
+    /**
+     * Comma-separated address display string
+     */
+    address_display?: (string | null);
+    /**
+     * Comma-separated religion display string
+     */
+    religion_display?: (string | null);
+    /**
+     * Relationship type ID (e.g., 'rel-6a0ede824d104' for Son)
+     */
+    inferred_relationship_type: string;
+    /**
+     * Human-readable relationship label (e.g., 'Son', 'Daughter')
+     */
+    inferred_relationship_label: string;
+    /**
+     * Human-readable explanation of connection (e.g., 'Connected to your spouse Maria Garcia')
+     */
+    connection_path: string;
+    /**
+     * Relationship proximity (1 = direct connection, 2 = 2 degrees, etc.)
+     */
+    proximity_score: number;
+    /**
+     * Relationship type priority (1 = children, 2 = parents, 3 = spouses)
+     */
+    relationship_priority: number;
+};
+
+/**
  * Result schema for person match.
  */
 export type PersonMatchResult = {
@@ -1709,6 +1775,8 @@ export type PersonSearchMatchingPersonsData = {
 };
 
 export type PersonSearchMatchingPersonsResponse = (Array<PersonMatchResult>);
+
+export type PersonDiscoverFamilyMembersResponse = (Array<PersonDiscoveryResult>);
 
 export type PersonCreatePersonAddressData = {
     personId: string;

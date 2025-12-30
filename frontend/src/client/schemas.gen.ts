@@ -1236,6 +1236,121 @@ export const PersonDetailsSchema = {
     description: 'Person details for relationship response.'
 } as const;
 
+export const PersonDiscoveryResultSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'Person ID'
+        },
+        first_name: {
+            type: 'string',
+            title: 'First Name',
+            description: 'First name'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name',
+            description: 'Middle name'
+        },
+        last_name: {
+            type: 'string',
+            title: 'Last Name',
+            description: 'Last name'
+        },
+        date_of_birth: {
+            type: 'string',
+            format: 'date',
+            title: 'Date Of Birth',
+            description: 'Date of birth'
+        },
+        date_of_death: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date Of Death',
+            description: 'Date of death'
+        },
+        gender_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Gender Id',
+            description: 'Gender ID'
+        },
+        address_display: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Address Display',
+            description: 'Comma-separated address display string'
+        },
+        religion_display: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Display',
+            description: 'Comma-separated religion display string'
+        },
+        inferred_relationship_type: {
+            type: 'string',
+            title: 'Inferred Relationship Type',
+            description: "Relationship type ID (e.g., 'rel-6a0ede824d104' for Son)"
+        },
+        inferred_relationship_label: {
+            type: 'string',
+            title: 'Inferred Relationship Label',
+            description: "Human-readable relationship label (e.g., 'Son', 'Daughter')"
+        },
+        connection_path: {
+            type: 'string',
+            title: 'Connection Path',
+            description: "Human-readable explanation of connection (e.g., 'Connected to your spouse Maria Garcia')"
+        },
+        proximity_score: {
+            type: 'integer',
+            title: 'Proximity Score',
+            description: 'Relationship proximity (1 = direct connection, 2 = 2 degrees, etc.)'
+        },
+        relationship_priority: {
+            type: 'integer',
+            title: 'Relationship Priority',
+            description: 'Relationship type priority (1 = children, 2 = parents, 3 = spouses)'
+        }
+    },
+    type: 'object',
+    required: ['person_id', 'first_name', 'last_name', 'date_of_birth', 'gender_id', 'inferred_relationship_type', 'inferred_relationship_label', 'connection_path', 'proximity_score', 'relationship_priority'],
+    title: 'PersonDiscoveryResult',
+    description: `Result of family member discovery.
+
+Represents a person who is connected to the user's family members
+but not yet directly connected to the user, along with metadata
+about the inferred relationship and connection path.`
+} as const;
+
 export const PersonMatchResultSchema = {
     properties: {
         person_id: {
