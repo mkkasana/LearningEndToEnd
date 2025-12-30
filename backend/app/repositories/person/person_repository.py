@@ -34,3 +34,13 @@ class PersonRepository(BaseRepository[Person]):
         has_person = self.get_by_user_id(user_id) is not None
         logger.debug(f"User {user_id} has person record: {has_person}")
         return has_person
+
+    def get_by_creator(self, creator_user_id: uuid.UUID) -> list[Person]:
+        """Get all persons created by a specific user."""
+        logger.debug(f"Querying persons by creator_user_id: {creator_user_id}")
+        statement = select(Person).where(
+            Person.created_by_user_id == creator_user_id
+        )
+        results = list(self.session.exec(statement).all())
+        logger.debug(f"Found {len(results)} persons created by user {creator_user_id}")
+        return results
