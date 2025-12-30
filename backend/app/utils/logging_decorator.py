@@ -1,6 +1,5 @@
 """Logging decorator for API routes."""
 
-import asyncio
 import functools
 import inspect
 import logging
@@ -42,7 +41,7 @@ def log_route(func: Callable[..., Any]) -> Callable[..., Any]:
 
     @functools.wraps(func)
     def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-        return _execute_with_logging(func, logger, args, kwargs, is_async=False)
+        return _execute_with_logging(func, logger, args, kwargs, _is_async=False)
 
     # Return appropriate wrapper based on whether function is async
     if inspect.iscoroutinefunction(func):
@@ -128,7 +127,7 @@ def _execute_with_logging(
     logger: logging.Logger,
     args: tuple[Any, ...],
     kwargs: dict[str, Any],
-    is_async: bool = False,
+    _is_async: bool = False,
 ) -> Any:
     """Execute function with logging (handles both sync and async)."""
     request_id = str(uuid.uuid4())[:8]

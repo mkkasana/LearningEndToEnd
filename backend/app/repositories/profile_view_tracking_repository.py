@@ -20,11 +20,11 @@ class ProfileViewTrackingRepository(BaseRepository[ProfileViewTracking]):
         viewed_person_id: uuid.UUID,
     ) -> ProfileViewTracking | None:
         """Get existing non-aggregated view record for viewer-viewed pair.
-        
+
         Args:
             viewer_person_id: UUID of the person who viewed the profile
             viewed_person_id: UUID of the person whose profile was viewed
-            
+
         Returns:
             ProfileViewTracking record if found, None otherwise
         """
@@ -37,10 +37,10 @@ class ProfileViewTrackingRepository(BaseRepository[ProfileViewTracking]):
 
     def get_total_views_for_person(self, person_id: uuid.UUID) -> int:
         """Get total view count for a person (sum of all view_count).
-        
+
         Args:
             person_id: UUID of the person whose views to count
-            
+
         Returns:
             Total view count (sum of all view_count values)
         """
@@ -55,10 +55,10 @@ class ProfileViewTrackingRepository(BaseRepository[ProfileViewTracking]):
         person_ids: list[uuid.UUID],
     ) -> dict[uuid.UUID, int]:
         """Get total view counts for multiple persons.
-        
+
         Args:
             person_ids: List of person UUIDs to get view counts for
-            
+
         Returns:
             Dictionary mapping person_id to total_view_count
         """
@@ -70,8 +70,8 @@ class ProfileViewTrackingRepository(BaseRepository[ProfileViewTracking]):
                 ProfileViewTracking.viewed_person_id,
                 func.sum(ProfileViewTracking.view_count).label("total_views"),
             )
-            .where(ProfileViewTracking.viewed_person_id.in_(person_ids))
-            .group_by(ProfileViewTracking.viewed_person_id)
+            .where(ProfileViewTracking.viewed_person_id.in_(person_ids))  # type: ignore[attr-defined]
+            .group_by(ProfileViewTracking.viewed_person_id)  # type: ignore[arg-type]
         )
 
         results = self.session.exec(statement).all()

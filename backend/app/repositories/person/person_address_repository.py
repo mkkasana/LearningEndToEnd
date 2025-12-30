@@ -37,7 +37,9 @@ class PersonAddressRepository(BaseRepository[PersonAddress]):
         )
         result = self.session.exec(statement).first()
         if result:
-            logger.debug(f"Current address found for person {person_id} (ID: {result.id})")
+            logger.debug(
+                f"Current address found for person {person_id} (ID: {result.id})"
+            )
         else:
             logger.debug(f"No current address found for person {person_id}")
         return result

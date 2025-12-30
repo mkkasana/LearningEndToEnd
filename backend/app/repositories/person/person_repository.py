@@ -23,7 +23,9 @@ class PersonRepository(BaseRepository[Person]):
         statement = select(Person).where(Person.user_id == user_id)
         result = self.session.exec(statement).first()
         if result:
-            logger.debug(f"Person found for user_id {user_id}: {result.first_name} {result.last_name} (ID: {result.id})")
+            logger.debug(
+                f"Person found for user_id {user_id}: {result.first_name} {result.last_name} (ID: {result.id})"
+            )
         else:
             logger.debug(f"No person found for user_id: {user_id}")
         return result
@@ -38,9 +40,7 @@ class PersonRepository(BaseRepository[Person]):
     def get_by_creator(self, creator_user_id: uuid.UUID) -> list[Person]:
         """Get all persons created by a specific user."""
         logger.debug(f"Querying persons by creator_user_id: {creator_user_id}")
-        statement = select(Person).where(
-            Person.created_by_user_id == creator_user_id
-        )
+        statement = select(Person).where(Person.created_by_user_id == creator_user_id)
         results = list(self.session.exec(statement).all())
         logger.debug(f"Found {len(results)} persons created by user {creator_user_id}")
         return results

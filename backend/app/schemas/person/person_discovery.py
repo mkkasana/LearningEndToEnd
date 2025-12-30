@@ -8,7 +8,7 @@ from sqlmodel import Field, SQLModel
 
 class PersonDiscoveryResult(SQLModel):
     """Result of family member discovery.
-    
+
     Represents a person who is connected to the user's family members
     but not yet directly connected to the user, along with metadata
     about the inferred relationship and connection path.

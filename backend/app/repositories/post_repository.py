@@ -21,7 +21,9 @@ class PostRepository(BaseRepository[Post]):
         self, user_id: uuid.UUID, skip: int = 0, limit: int = 100
     ) -> list[Post]:
         """Get all posts by a specific user."""
-        logger.debug(f"Querying posts by user_id: {user_id}, skip={skip}, limit={limit}")
+        logger.debug(
+            f"Querying posts by user_id: {user_id}, skip={skip}, limit={limit}"
+        )
         statement = (
             select(Post)
             .where(Post.user_id == user_id)

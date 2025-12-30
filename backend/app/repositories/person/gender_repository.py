@@ -40,7 +40,9 @@ class GenderRepository(BaseRepository[Gender]):
         self, code: str, exclude_gender_id: uuid.UUID | None = None
     ) -> bool:
         """Check if gender code already exists."""
-        logger.debug(f"Checking if gender code exists: {code}, exclude_id={exclude_gender_id}")
+        logger.debug(
+            f"Checking if gender code exists: {code}, exclude_id={exclude_gender_id}"
+        )
         statement = select(Gender).where(Gender.code == code.upper())
         if exclude_gender_id:
             statement = statement.where(Gender.id != exclude_gender_id)

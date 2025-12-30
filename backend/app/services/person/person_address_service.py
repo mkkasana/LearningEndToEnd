@@ -40,8 +40,10 @@ class PersonAddressService:
         self, person_id: uuid.UUID, address_create: PersonAddressCreate
     ) -> PersonAddress:
         """Create a new address for a person."""
-        logger.info(f"Creating address for person ID: {person_id}, is_current={address_create.is_current}")
-        
+        logger.info(
+            f"Creating address for person ID: {person_id}, is_current={address_create.is_current}"
+        )
+
         # If marking as current, clear other current addresses
         if address_create.is_current:
             logger.debug(f"Clearing other current addresses for person {person_id}")
@@ -49,7 +51,9 @@ class PersonAddressService:
 
         address = PersonAddress(person_id=person_id, **address_create.model_dump())
         created_address = self.address_repo.create(address)
-        logger.info(f"Address created successfully: ID {created_address.id} for person {person_id}")
+        logger.info(
+            f"Address created successfully: ID {created_address.id} for person {person_id}"
+        )
         return created_address
 
     def update_address(
@@ -58,7 +62,7 @@ class PersonAddressService:
         """Update an address."""
         logger.info(f"Updating address: ID {address.id} for person {address.person_id}")
         update_data = address_update.model_dump(exclude_unset=True)
-        
+
         # Log what fields are being updated
         update_fields = list(update_data.keys())
         if update_fields:
@@ -66,7 +70,9 @@ class PersonAddressService:
 
         # If marking as current, clear other current addresses
         if update_data.get("is_current"):
-            logger.debug(f"Clearing other current addresses for person {address.person_id}")
+            logger.debug(
+                f"Clearing other current addresses for person {address.person_id}"
+            )
             self.address_repo.clear_current_addresses(address.person_id)
 
         for key, value in update_data.items():
@@ -78,6 +84,8 @@ class PersonAddressService:
 
     def delete_address(self, address: PersonAddress) -> None:
         """Delete an address."""
-        logger.warning(f"Deleting address: ID {address.id} for person {address.person_id}")
+        logger.warning(
+            f"Deleting address: ID {address.id} for person {address.person_id}"
+        )
         self.address_repo.delete(address)
         logger.info(f"Address deleted successfully: ID {address.id}")

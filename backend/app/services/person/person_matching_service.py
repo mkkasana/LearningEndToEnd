@@ -330,9 +330,7 @@ class PersonMatchingService:
         # Get all related person IDs (already connected)
         relationships = self.relationship_repo.get_by_person_id(current_person.id)
         connected_person_ids = {rel.related_person_id for rel in relationships}
-        logger.info(
-            f"User has {len(connected_person_ids)} existing relationships"
-        )
+        logger.info(f"User has {len(connected_person_ids)} existing relationships")
 
         # Step 6: Calculate name match scores for all persons (no exclusion)
         # Instead, we'll mark them with flags
@@ -341,7 +339,7 @@ class PersonMatchingService:
             # Determine flags
             is_current_user = person.id == current_person.id
             is_already_connected = person.id in connected_person_ids
-            
+
             name_score = self.calculate_name_match_score(
                 search_criteria.first_name,
                 search_criteria.last_name,

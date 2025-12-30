@@ -59,7 +59,7 @@ class ItemService:
             created_item = self.item_repo.create(item)
             logger.info(f"Item created: {created_item.title} (ID: {created_item.id})")
             return created_item
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to create item: {item_create.title} for owner: {owner_id}",
                 exc_info=True,
@@ -75,7 +75,7 @@ class ItemService:
             updated_item = self.item_repo.update(item)
             logger.info(f"Item updated: {updated_item.title} (ID: {updated_item.id})")
             return updated_item
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to update item: {item.title} (ID: {item.id})", exc_info=True
             )
@@ -87,7 +87,7 @@ class ItemService:
         try:
             self.item_repo.delete(item)
             logger.info(f"Item deleted: {item.title} (ID: {item.id})")
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to delete item: {item.title} (ID: {item.id})", exc_info=True
             )
@@ -114,8 +114,6 @@ class ItemService:
         try:
             self.item_repo.delete_by_owner(owner_id)
             logger.info(f"All items deleted for owner: {owner_id}")
-        except Exception as e:
-            logger.error(
-                f"Failed to delete items for owner: {owner_id}", exc_info=True
-            )
+        except Exception:
+            logger.error(f"Failed to delete items for owner: {owner_id}", exc_info=True)
             raise

@@ -29,7 +29,9 @@ class ReligionRepository(BaseRepository[Religion]):
         self, code: str, exclude_religion_id: uuid.UUID | None = None
     ) -> bool:
         """Check if religion code already exists."""
-        logger.debug(f"Checking if religion code exists: {code}, exclude_id={exclude_religion_id}")
+        logger.debug(
+            f"Checking if religion code exists: {code}, exclude_id={exclude_religion_id}"
+        )
         statement = select(Religion).where(Religion.code == code.upper())
         if exclude_religion_id:
             statement = statement.where(Religion.id != exclude_religion_id)

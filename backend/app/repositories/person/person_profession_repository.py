@@ -37,7 +37,9 @@ class PersonProfessionRepository(BaseRepository[PersonProfession]):
         )
         result = self.session.exec(statement).first()
         if result:
-            logger.debug(f"Current profession found for person {person_id} (ID: {result.id})")
+            logger.debug(
+                f"Current profession found for person {person_id} (ID: {result.id})"
+            )
         else:
             logger.debug(f"No current profession found for person {person_id}")
         return result

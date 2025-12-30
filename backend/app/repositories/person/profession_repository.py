@@ -33,7 +33,9 @@ class ProfessionRepository(BaseRepository[Profession]):
         self, name: str, exclude_profession_id: uuid.UUID | None = None
     ) -> bool:
         """Check if profession name already exists."""
-        logger.debug(f"Checking if profession name exists: {name}, exclude_id={exclude_profession_id}")
+        logger.debug(
+            f"Checking if profession name exists: {name}, exclude_id={exclude_profession_id}"
+        )
         statement = select(Profession).where(Profession.name == name)
         if exclude_profession_id:
             statement = statement.where(Profession.id != exclude_profession_id)

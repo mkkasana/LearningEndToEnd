@@ -39,27 +39,35 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
             PersonRelationship.person_id == person_id, PersonRelationship.is_active
         )
         results = list(self.session.exec(statement).all())
-        logger.debug(f"Retrieved {len(results)} active relationships for person {person_id}")
+        logger.debug(
+            f"Retrieved {len(results)} active relationships for person {person_id}"
+        )
         return results
 
     def get_by_relationship_type(
         self, person_id: uuid.UUID, relationship_type: RelationshipType
     ) -> list[PersonRelationship]:
         """Get relationships of a specific type for a person."""
-        logger.debug(f"Querying relationships for person {person_id} with type: {relationship_type}")
+        logger.debug(
+            f"Querying relationships for person {person_id} with type: {relationship_type}"
+        )
         statement = select(PersonRelationship).where(
             PersonRelationship.person_id == person_id,
             PersonRelationship.relationship_type == relationship_type,
         )
         results = list(self.session.exec(statement).all())
-        logger.debug(f"Retrieved {len(results)} relationships of type {relationship_type} for person {person_id}")
+        logger.debug(
+            f"Retrieved {len(results)} relationships of type {relationship_type} for person {person_id}"
+        )
         return results
 
     def get_by_relationship_types(
         self, person_id: uuid.UUID, relationship_types: list[RelationshipType]
     ) -> list[PersonRelationship]:
         """Get relationships of multiple types for a person."""
-        logger.debug(f"Querying relationships for person {person_id} with types: {relationship_types}")
+        logger.debug(
+            f"Querying relationships for person {person_id} with types: {relationship_types}"
+        )
         statement = select(PersonRelationship).where(
             PersonRelationship.person_id == person_id,
             col(PersonRelationship.relationship_type).in_(relationship_types),
@@ -84,7 +92,9 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
         Returns:
             The inverse relationship if found, None otherwise
         """
-        logger.debug(f"Finding inverse relationship: person={related_person_id}, related={person_id}")
+        logger.debug(
+            f"Finding inverse relationship: person={related_person_id}, related={person_id}"
+        )
         statement = select(PersonRelationship).where(
             PersonRelationship.person_id == related_person_id,
             PersonRelationship.related_person_id == person_id,
@@ -114,14 +124,18 @@ class PersonRelationshipRepository(BaseRepository[PersonRelationship]):
         Returns:
             The inverse relationship if found, None otherwise
         """
-        logger.debug(f"Finding inverse relationship (including inactive): person={related_person_id}, related={person_id}")
+        logger.debug(
+            f"Finding inverse relationship (including inactive): person={related_person_id}, related={person_id}"
+        )
         statement = select(PersonRelationship).where(
             PersonRelationship.person_id == related_person_id,
             PersonRelationship.related_person_id == person_id,
         )
         result = self.session.exec(statement).first()
         if result:
-            logger.debug(f"Inverse relationship found (ID: {result.id}, active: {result.is_active})")
+            logger.debug(
+                f"Inverse relationship found (ID: {result.id}, active: {result.is_active})"
+            )
         else:
             logger.debug("No inverse relationship found")
         return result

@@ -25,12 +25,16 @@ class LocalityRepository(BaseRepository[Locality]):
             .order_by(Locality.name)
         )
         results = list(self.session.exec(statement).all())
-        logger.debug(f"Retrieved {len(results)} localities for sub-district {sub_district_id}")
+        logger.debug(
+            f"Retrieved {len(results)} localities for sub-district {sub_district_id}"
+        )
         return results
 
     def get_by_code(self, code: str, sub_district_id: UUID) -> Locality | None:
         """Get locality by code within a specific sub-district"""
-        logger.debug(f"Querying locality by code: {code}, sub_district_id: {sub_district_id}")
+        logger.debug(
+            f"Querying locality by code: {code}, sub_district_id: {sub_district_id}"
+        )
         statement = select(Locality).where(
             Locality.code == code, Locality.sub_district_id == sub_district_id
         )

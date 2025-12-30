@@ -34,9 +34,7 @@ class PostService:
         self, user_id: uuid.UUID, skip: int = 0, limit: int = 100
     ) -> tuple[list[Post], int]:
         """Get paginated list of posts by user with total count."""
-        logger.debug(
-            f"Fetching posts for user: {user_id}, skip={skip}, limit={limit}"
-        )
+        logger.debug(f"Fetching posts for user: {user_id}, skip={skip}, limit={limit}")
         posts = self.post_repo.get_by_user(user_id, skip=skip, limit=limit)
         count = self.post_repo.count_by_user(user_id)
         logger.info(f"Retrieved {len(posts)} posts for user {user_id} (total: {count})")
@@ -65,7 +63,7 @@ class PostService:
             created_post = self.post_repo.create(post)
             logger.info(f"Post created: {created_post.title} (ID: {created_post.id})")
             return created_post
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to create post: {post_create.title} for user: {user_id}",
                 exc_info=True,
@@ -83,7 +81,7 @@ class PostService:
             updated_post = self.post_repo.update(post)
             logger.info(f"Post updated: {updated_post.title} (ID: {updated_post.id})")
             return updated_post
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to update post: {post.title} (ID: {post.id})", exc_info=True
             )
@@ -95,7 +93,7 @@ class PostService:
         try:
             self.post_repo.delete(post)
             logger.info(f"Post deleted: {post.title} (ID: {post.id})")
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to delete post: {post.title} (ID: {post.id})", exc_info=True
             )

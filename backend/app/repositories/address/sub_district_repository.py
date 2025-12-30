@@ -25,12 +25,16 @@ class SubDistrictRepository(BaseRepository[SubDistrict]):
             .order_by(SubDistrict.name)
         )
         results = list(self.session.exec(statement).all())
-        logger.debug(f"Retrieved {len(results)} sub-districts for district {district_id}")
+        logger.debug(
+            f"Retrieved {len(results)} sub-districts for district {district_id}"
+        )
         return results
 
     def get_by_code(self, code: str, district_id: UUID) -> SubDistrict | None:
         """Get sub-district by code within a specific district"""
-        logger.debug(f"Querying sub-district by code: {code}, district_id: {district_id}")
+        logger.debug(
+            f"Querying sub-district by code: {code}, district_id: {district_id}"
+        )
         statement = select(SubDistrict).where(
             SubDistrict.code == code, SubDistrict.district_id == district_id
         )

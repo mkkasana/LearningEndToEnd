@@ -32,7 +32,9 @@ class ReligionSubCategoryService:
         sub_categories = self.sub_category_repo.get_sub_categories_by_category(
             category_id
         )
-        logger.debug(f"Found {len(sub_categories)} sub-categories for category {category_id}")
+        logger.debug(
+            f"Found {len(sub_categories)} sub-categories for category {category_id}"
+        )
         return [
             ReligionSubCategoryPublic(subCategoryId=sc.id, subCategoryName=sc.name)
             for sc in sub_categories
@@ -45,7 +47,9 @@ class ReligionSubCategoryService:
         logger.debug(f"Fetching religion sub-category by ID: {sub_category_id}")
         sub_category = self.sub_category_repo.get_by_id(sub_category_id)
         if sub_category:
-            logger.debug(f"Religion sub-category found: {sub_category.name} (ID: {sub_category_id})")
+            logger.debug(
+                f"Religion sub-category found: {sub_category.name} (ID: {sub_category_id})"
+            )
         else:
             logger.debug(f"Religion sub-category not found: ID {sub_category_id}")
         return sub_category
@@ -54,12 +58,16 @@ class ReligionSubCategoryService:
         self, sub_category_create: ReligionSubCategoryCreate
     ) -> ReligionSubCategory:
         """Create a new religion sub-category."""
-        logger.info(f"Creating religion sub-category: {sub_category_create.name} for category {sub_category_create.religion_category_id}")
+        logger.info(
+            f"Creating religion sub-category: {sub_category_create.name} for category {sub_category_create.category_id}"
+        )
         sub_category = ReligionSubCategory(**sub_category_create.model_dump())
         if sub_category.code:
             sub_category.code = sub_category.code.upper()
         created_sub_category = self.sub_category_repo.create(sub_category)
-        logger.info(f"Religion sub-category created successfully: {created_sub_category.name} (ID: {created_sub_category.id})")
+        logger.info(
+            f"Religion sub-category created successfully: {created_sub_category.name} (ID: {created_sub_category.id})"
+        )
         return created_sub_category
 
     def update_sub_category(
@@ -68,27 +76,37 @@ class ReligionSubCategoryService:
         sub_category_update: ReligionSubCategoryUpdate,
     ) -> ReligionSubCategory:
         """Update a religion sub-category."""
-        logger.info(f"Updating religion sub-category: {sub_category.name} (ID: {sub_category.id})")
+        logger.info(
+            f"Updating religion sub-category: {sub_category.name} (ID: {sub_category.id})"
+        )
         update_data = sub_category_update.model_dump(exclude_unset=True)
-        
+
         # Log what fields are being updated
         update_fields = list(update_data.keys())
         if update_fields:
-            logger.debug(f"Updating fields for religion sub-category {sub_category.id}: {update_fields}")
-        
+            logger.debug(
+                f"Updating fields for religion sub-category {sub_category.id}: {update_fields}"
+            )
+
         if "code" in update_data and update_data["code"]:
             update_data["code"] = update_data["code"].upper()
         for key, value in update_data.items():
             setattr(sub_category, key, value)
         updated_sub_category = self.sub_category_repo.update(sub_category)
-        logger.info(f"Religion sub-category updated successfully: {updated_sub_category.name} (ID: {updated_sub_category.id})")
+        logger.info(
+            f"Religion sub-category updated successfully: {updated_sub_category.name} (ID: {updated_sub_category.id})"
+        )
         return updated_sub_category
 
     def delete_sub_category(self, sub_category: ReligionSubCategory) -> None:
         """Delete a religion sub-category."""
-        logger.warning(f"Deleting religion sub-category: {sub_category.name} (ID: {sub_category.id})")
+        logger.warning(
+            f"Deleting religion sub-category: {sub_category.name} (ID: {sub_category.id})"
+        )
         self.sub_category_repo.delete(sub_category)
-        logger.info(f"Religion sub-category deleted successfully: {sub_category.name} (ID: {sub_category.id})")
+        logger.info(
+            f"Religion sub-category deleted successfully: {sub_category.name} (ID: {sub_category.id})"
+        )
 
     def code_exists(
         self,
@@ -97,7 +115,9 @@ class ReligionSubCategoryService:
         exclude_sub_category_id: uuid.UUID | None = None,
     ) -> bool:
         """Check if sub-category code exists within the same category."""
-        logger.debug(f"Checking if religion sub-category code exists: {code} in category {category_id}")
+        logger.debug(
+            f"Checking if religion sub-category code exists: {code} in category {category_id}"
+        )
         exists = self.sub_category_repo.code_exists(
             code, category_id, exclude_sub_category_id
         )

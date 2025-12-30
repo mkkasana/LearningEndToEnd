@@ -36,21 +36,25 @@ class PersonMetadataService:
         logger.info(f"Creating metadata for person ID: {person_id}")
         metadata = PersonMetadata(person_id=person_id, **metadata_create.model_dump())
         created_metadata = self.metadata_repo.create(metadata)
-        logger.info(f"Metadata created successfully: ID {created_metadata.id} for person {person_id}")
+        logger.info(
+            f"Metadata created successfully: ID {created_metadata.id} for person {person_id}"
+        )
         return created_metadata
 
     def update_metadata(
         self, metadata: PersonMetadata, metadata_update: PersonMetadataUpdate
     ) -> PersonMetadata:
         """Update person metadata."""
-        logger.info(f"Updating metadata: ID {metadata.id} for person {metadata.person_id}")
+        logger.info(
+            f"Updating metadata: ID {metadata.id} for person {metadata.person_id}"
+        )
         update_data = metadata_update.model_dump(exclude_unset=True)
-        
+
         # Log what fields are being updated
         update_fields = list(update_data.keys())
         if update_fields:
             logger.debug(f"Updating fields for metadata {metadata.id}: {update_fields}")
-        
+
         for key, value in update_data.items():
             setattr(metadata, key, value)
         metadata.updated_at = datetime.utcnow()
@@ -60,6 +64,8 @@ class PersonMetadataService:
 
     def delete_metadata(self, metadata: PersonMetadata) -> None:
         """Delete person metadata."""
-        logger.warning(f"Deleting metadata: ID {metadata.id} for person {metadata.person_id}")
+        logger.warning(
+            f"Deleting metadata: ID {metadata.id} for person {metadata.person_id}"
+        )
         self.metadata_repo.delete(metadata)
         logger.info(f"Metadata deleted successfully: ID {metadata.id}")

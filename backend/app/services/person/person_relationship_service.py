@@ -242,7 +242,7 @@ class PersonRelationshipService:
             # Fetch person records to get user IDs
             person = self.person_repo.get_by_id(relationship.person_id)
             related_person = self.person_repo.get_by_id(relationship.related_person_id)
-            
+
             if person and person.user_id:
                 invalidate_discovery_cache(person.user_id)
             if related_person and related_person.user_id:
@@ -350,7 +350,7 @@ class PersonRelationshipService:
             # Fetch person records to get user IDs
             person = self.person_repo.get_by_id(relationship.person_id)
             related_person = self.person_repo.get_by_id(relationship.related_person_id)
-            
+
             if person and person.user_id:
                 invalidate_discovery_cache(person.user_id)
             if related_person and related_person.user_id:

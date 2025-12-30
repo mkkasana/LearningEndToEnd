@@ -40,16 +40,16 @@ async def health_check() -> bool:
 def delete_cache_key(cache_key: str) -> Message:
     """
     Delete a specific cache key (superuser only).
-    
+
     This endpoint allows superusers to manually invalidate cache entries.
     Useful for debugging or forcing cache refresh.
-    
+
     Args:
         cache_key: The cache key to delete (e.g., "discovery:discover_family_members:user-id")
-    
+
     Returns:
         Success message
-    
+
     Example:
         DELETE /api/v1/utils/cache/discovery:discover_family_members:123e4567-e89b-12d3-a456-426614174000
     """
@@ -66,22 +66,24 @@ def delete_cache_key(cache_key: str) -> Message:
 def delete_cache_pattern(pattern: str) -> Message:
     """
     Delete all cache keys matching a pattern (superuser only).
-    
+
     This endpoint allows superusers to invalidate multiple cache entries at once
     by matching a prefix pattern.
-    
+
     Args:
         pattern: The pattern to match (e.g., "discovery:" to clear all discovery caches)
-    
+
     Returns:
         Success message
-    
+
     Example:
         DELETE /api/v1/utils/cache-pattern/discovery:
     """
     cache_manager = get_cache_manager()
     cache_manager.invalidate_pattern(pattern)
-    return Message(message=f"All cache keys matching pattern '{pattern}' deleted successfully")
+    return Message(
+        message=f"All cache keys matching pattern '{pattern}' deleted successfully"
+    )
 
 
 @router.post(
@@ -92,10 +94,10 @@ def delete_cache_pattern(pattern: str) -> Message:
 def clear_all_cache() -> Message:
     """
     Clear all cache entries (superuser only).
-    
+
     This endpoint clears the entire cache. Use with caution as it will
     invalidate all cached data across the application.
-    
+
     Returns:
         Success message
     """

@@ -27,7 +27,9 @@ class LocalityService:
         """Get all active localities for a sub-district formatted for API response"""
         logger.debug(f"Fetching localities for sub-district ID: {sub_district_id}")
         localities = self.locality_repo.get_by_sub_district(sub_district_id)
-        logger.debug(f"Found {len(localities)} localities for sub-district {sub_district_id}")
+        logger.debug(
+            f"Found {len(localities)} localities for sub-district {sub_district_id}"
+        )
         return [
             LocalityPublic(localityId=locality.id, localityName=locality.name)
             for locality in localities
@@ -45,7 +47,9 @@ class LocalityService:
 
     def create_locality(self, locality_in: LocalityCreate) -> Locality:
         """Create a new locality"""
-        logger.info(f"Creating locality: {locality_in.name} for sub-district {locality_in.sub_district_id}")
+        logger.info(
+            f"Creating locality: {locality_in.name} for sub-district {locality_in.sub_district_id}"
+        )
         locality = Locality(
             name=locality_in.name,
             code=locality_in.code.upper() if locality_in.code else None,
@@ -53,7 +57,9 @@ class LocalityService:
             is_active=locality_in.is_active,
         )
         created_locality = self.locality_repo.create(locality)
-        logger.info(f"Locality created successfully: {created_locality.name} (ID: {created_locality.id})")
+        logger.info(
+            f"Locality created successfully: {created_locality.name} (ID: {created_locality.id})"
+        )
         return created_locality
 
     def update_locality(
@@ -62,7 +68,7 @@ class LocalityService:
         """Update locality information"""
         logger.info(f"Updating locality: {locality.name} (ID: {locality.id})")
         update_data = locality_update.model_dump(exclude_unset=True)
-        
+
         # Log what fields are being updated
         update_fields = list(update_data.keys())
         if update_fields:
@@ -74,7 +80,9 @@ class LocalityService:
 
         locality.sqlmodel_update(update_data)
         updated_locality = self.locality_repo.update(locality)
-        logger.info(f"Locality updated successfully: {updated_locality.name} (ID: {updated_locality.id})")
+        logger.info(
+            f"Locality updated successfully: {updated_locality.name} (ID: {updated_locality.id})"
+        )
         return updated_locality
 
     def code_exists(
@@ -86,7 +94,9 @@ class LocalityService:
         """Check if locality code exists within a sub-district, optionally excluding a specific locality"""
         if not code:
             return False
-        logger.debug(f"Checking if locality code exists: {code} in sub-district {sub_district_id}")
+        logger.debug(
+            f"Checking if locality code exists: {code} in sub-district {sub_district_id}"
+        )
         existing_locality = self.locality_repo.get_by_code(
             code.upper(), sub_district_id
         )
@@ -103,4 +113,6 @@ class LocalityService:
         """Delete a locality"""
         logger.warning(f"Deleting locality: {locality.name} (ID: {locality.id})")
         self.locality_repo.delete(locality)
-        logger.info(f"Locality deleted successfully: {locality.name} (ID: {locality.id})")
+        logger.info(
+            f"Locality deleted successfully: {locality.name} (ID: {locality.id})"
+        )

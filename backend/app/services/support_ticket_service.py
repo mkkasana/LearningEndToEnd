@@ -30,8 +30,7 @@ class SupportTicketService:
     ) -> SupportTicket:
         """Create a new support ticket for a user."""
         logger.info(
-            f"Creating support ticket: {support_ticket_in.title} "
-            f"for user: {user_id}"
+            f"Creating support ticket: {support_ticket_in.title} for user: {user_id}"
         )
         try:
             support_ticket = SupportTicket(
@@ -47,7 +46,7 @@ class SupportTicketService:
                 f"(ID: {created_ticket.id})"
             )
             return created_ticket
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to create support ticket: {support_ticket_in.title} "
                 f"for user: {user_id}",
@@ -113,8 +112,7 @@ class SupportTicketService:
     ) -> SupportTicket:
         """Update a support ticket."""
         logger.info(
-            f"Updating support ticket: {support_ticket.title} "
-            f"(ID: {support_ticket.id})"
+            f"Updating support ticket: {support_ticket.title} (ID: {support_ticket.id})"
         )
         try:
             update_data = support_ticket_in.model_dump(exclude_unset=True)
@@ -127,7 +125,7 @@ class SupportTicketService:
                 f"(ID: {updated_ticket.id})"
             )
             return updated_ticket
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to update support ticket: {support_ticket.title} "
                 f"(ID: {support_ticket.id})",
@@ -154,7 +152,7 @@ class SupportTicketService:
                 f"(ID: {resolved_ticket.id})"
             )
             return resolved_ticket
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to resolve support ticket: {support_ticket.title} "
                 f"(ID: {support_ticket.id})",
@@ -179,7 +177,7 @@ class SupportTicketService:
                 f"(ID: {reopened_ticket.id})"
             )
             return reopened_ticket
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to reopen support ticket: {support_ticket.title} "
                 f"(ID: {support_ticket.id})",
@@ -190,8 +188,7 @@ class SupportTicketService:
     def delete_support_ticket(self, support_ticket: SupportTicket) -> None:
         """Delete a support ticket."""
         logger.info(
-            f"Deleting support ticket: {support_ticket.title} "
-            f"(ID: {support_ticket.id})"
+            f"Deleting support ticket: {support_ticket.title} (ID: {support_ticket.id})"
         )
         try:
             self.support_ticket_repo.delete(support_ticket)
@@ -199,7 +196,7 @@ class SupportTicketService:
                 f"Support ticket deleted: {support_ticket.title} "
                 f"(ID: {support_ticket.id})"
             )
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to delete support ticket: {support_ticket.title} "
                 f"(ID: {support_ticket.id})",

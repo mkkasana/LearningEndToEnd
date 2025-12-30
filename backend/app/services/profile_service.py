@@ -35,6 +35,8 @@ class ProfileService:
             logger.debug(f"User {user_id} missing person record")
             missing_fields.append("person")
         else:
+            # person is guaranteed to be not None here due to has_person check
+            assert person is not None
             logger.debug(f"User {user_id} has person record (Person ID: {person.id})")
 
         # Check if address exists
@@ -67,11 +69,13 @@ class ProfileService:
             missing_fields.append("religion")
 
         is_complete = has_person and has_address and has_religion
-        
+
         if is_complete:
             logger.info(f"Profile complete for user {user_id}")
         else:
-            logger.info(f"Profile incomplete for user {user_id}, missing: {missing_fields}")
+            logger.info(
+                f"Profile incomplete for user {user_id}, missing: {missing_fields}"
+            )
 
         return ProfileCompletionStatus(
             is_complete=is_complete,

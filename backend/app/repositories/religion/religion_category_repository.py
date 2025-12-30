@@ -39,7 +39,9 @@ class ReligionCategoryRepository(BaseRepository[ReligionCategory]):
         exclude_category_id: uuid.UUID | None = None,
     ) -> bool:
         """Check if category code already exists within the same religion."""
-        logger.debug(f"Checking if category code exists: {code}, religion_id={religion_id}, exclude_id={exclude_category_id}")
+        logger.debug(
+            f"Checking if category code exists: {code}, religion_id={religion_id}, exclude_id={exclude_category_id}"
+        )
         statement = select(ReligionCategory).where(
             ReligionCategory.code == code.upper(),
             ReligionCategory.religion_id == religion_id,

@@ -29,7 +29,9 @@ class ReligionSubCategoryRepository(BaseRepository[ReligionSubCategory]):
             .order_by(ReligionSubCategory.name)
         )
         results = list(self.session.exec(statement).all())
-        logger.debug(f"Retrieved {len(results)} sub-categories for category {category_id}")
+        logger.debug(
+            f"Retrieved {len(results)} sub-categories for category {category_id}"
+        )
         return results
 
     def code_exists(
@@ -39,7 +41,9 @@ class ReligionSubCategoryRepository(BaseRepository[ReligionSubCategory]):
         exclude_sub_category_id: uuid.UUID | None = None,
     ) -> bool:
         """Check if sub-category code already exists within the same category."""
-        logger.debug(f"Checking if sub-category code exists: {code}, category_id={category_id}, exclude_id={exclude_sub_category_id}")
+        logger.debug(
+            f"Checking if sub-category code exists: {code}, category_id={category_id}, exclude_id={exclude_sub_category_id}"
+        )
         statement = select(ReligionSubCategory).where(
             ReligionSubCategory.code == code.upper(),
             ReligionSubCategory.category_id == category_id,

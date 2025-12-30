@@ -19,7 +19,9 @@ class ItemRepository(BaseRepository[Item]):
         self, owner_id: UUID, skip: int = 0, limit: int = 100
     ) -> list[Item]:
         """Get all items for a specific owner"""
-        logger.debug(f"Querying items by owner_id: {owner_id}, skip={skip}, limit={limit}")
+        logger.debug(
+            f"Querying items by owner_id: {owner_id}, skip={skip}, limit={limit}"
+        )
         statement = (
             select(Item).where(Item.owner_id == owner_id).offset(skip).limit(limit)
         )

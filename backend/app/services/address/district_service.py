@@ -39,7 +39,9 @@ class DistrictService:
 
     def create_district(self, district_in: DistrictCreate) -> District:
         """Create a new district"""
-        logger.info(f"Creating district: {district_in.name} for state {district_in.state_id}")
+        logger.info(
+            f"Creating district: {district_in.name} for state {district_in.state_id}"
+        )
         district = District(
             name=district_in.name,
             code=district_in.code.upper() if district_in.code else None,
@@ -47,7 +49,9 @@ class DistrictService:
             is_active=district_in.is_active,
         )
         created_district = self.district_repo.create(district)
-        logger.info(f"District created successfully: {created_district.name} (ID: {created_district.id})")
+        logger.info(
+            f"District created successfully: {created_district.name} (ID: {created_district.id})"
+        )
         return created_district
 
     def update_district(
@@ -56,7 +60,7 @@ class DistrictService:
         """Update district information"""
         logger.info(f"Updating district: {district.name} (ID: {district.id})")
         update_data = district_update.model_dump(exclude_unset=True)
-        
+
         # Log what fields are being updated
         update_fields = list(update_data.keys())
         if update_fields:
@@ -68,7 +72,9 @@ class DistrictService:
 
         district.sqlmodel_update(update_data)
         updated_district = self.district_repo.update(district)
-        logger.info(f"District updated successfully: {updated_district.name} (ID: {updated_district.id})")
+        logger.info(
+            f"District updated successfully: {updated_district.name} (ID: {updated_district.id})"
+        )
         return updated_district
 
     def code_exists(
@@ -92,4 +98,6 @@ class DistrictService:
         """Delete a district"""
         logger.warning(f"Deleting district: {district.name} (ID: {district.id})")
         self.district_repo.delete(district)
-        logger.info(f"District deleted successfully: {district.name} (ID: {district.id})")
+        logger.info(
+            f"District deleted successfully: {district.name} (ID: {district.id})"
+        )

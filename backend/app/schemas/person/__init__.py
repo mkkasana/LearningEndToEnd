@@ -17,6 +17,8 @@ from app.schemas.person.person_complete_details import (
     PersonCompleteDetailsResponse,
     PersonReligionDetails,
 )
+from app.schemas.person.person_contribution import PersonContributionPublic
+from app.schemas.person.person_discovery import PersonDiscoveryResult
 from app.schemas.person.person_metadata import (
     PersonMetadataCreate,
     PersonMetadataPublic,
@@ -40,8 +42,6 @@ from app.schemas.person.person_religion import (
     PersonReligionPublic,
     PersonReligionUpdate,
 )
-from app.schemas.person.person_contribution import PersonContributionPublic
-from app.schemas.person.person_discovery import PersonDiscoveryResult
 from app.schemas.person.person_search import PersonMatchResult, PersonSearchRequest
 from app.schemas.person.profession import (
     ProfessionCreate,

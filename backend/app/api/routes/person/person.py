@@ -97,26 +97,24 @@ def create_my_person(
 
 @router.get("/my-contributions", response_model=list[PersonContributionPublic])
 @log_route
-def get_my_contributions(
-    session: SessionDep, current_user: CurrentUser
-) -> Any:
+def get_my_contributions(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Get all persons created by the current user with view statistics.
-    
+
     Returns list of contributed persons with:
     - Person details (name, dates, status)
     - Formatted address
     - Total view count
-    
+
     Results are sorted by view count descending (most viewed first).
     """
     person_service = PersonService(session)
     contributions = person_service.get_my_contributions(current_user.id)
-    
+
     logger.info(
         f"Retrieved {len(contributions)} contributions for user {current_user.email}"
     )
-    
+
     return contributions
 
 
@@ -209,44 +207,46 @@ def discover_family_members(
 ) -> Any:
     """
     Discover potential family member connections for the current user.
-    
+
     This endpoint analyzes existing relationships to find persons who are:
     - Connected to the user's family members
     - Not yet directly connected to the user
-    
+
     Discovery patterns:
     1. Spouse's children → Suggested as user's Son/Daughter
     2. Parent's spouse → Suggested as user's Father/Mother
     3. Child's parent → Suggested as user's Spouse
-    
+
     Returns:
         List of discovered persons with inferred relationship types,
         sorted by relationship proximity and type priority.
         Limited to top 20 results.
-        
+
     Error Handling:
         - Returns empty list if user has no person record
         - Returns 500 if database errors occur
         - Gracefully handles missing person details
         - Continues discovery even if individual patterns fail
     """
-    logger.info(f"Discovery request from user {current_user.email} (ID: {current_user.id})")
-    
+    logger.info(
+        f"Discovery request from user {current_user.email} (ID: {current_user.id})"
+    )
+
     try:
         discovery_service = PersonDiscoveryService(session)
         discoveries = discovery_service.discover_family_members(current_user.id)
-        
+
         logger.info(
             f"Found {len(discoveries)} potential connections for user {current_user.email}"
         )
         return discoveries
-        
+
     except Exception as e:
         # Log the full exception with stack trace
         logger.exception(
             f"Error in family member discovery for user {current_user.email} (ID: {current_user.id}): {str(e)}"
         )
-        
+
         # Return user-friendly error message
         raise HTTPException(
             status_code=500,
@@ -757,7 +757,7 @@ def get_person_relationships_with_details(
     Get all relationships for a specific person with full person details.
     Returns the selected person and list of objects with relationship and related person information.
     Used to help users identify the correct person when multiple people have similar names.
-    
+
     This endpoint also records a profile view event for analytics.
     """
     from app.schemas.person.person_relationship import (
@@ -782,12 +782,10 @@ def get_person_relationships_with_details(
         if viewer_person:
             view_tracking_service = ProfileViewTrackingService(session)
             view_tracking_service.record_view(
-                viewer_person_id=viewer_person.id,
-                viewed_person_id=person_id
+                viewer_person_id=viewer_person.id, viewed_person_id=person_id
             )
             logger.info(
-                f"Recorded profile view: viewer={viewer_person.id}, "
-                f"viewed={person_id}"
+                f"Recorded profile view: viewer={viewer_person.id}, viewed={person_id}"
             )
     except Exception as e:
         # Log but don't fail the request
@@ -828,30 +826,30 @@ def get_person_complete_details(
 ) -> Any:
     """
     Get complete details for a specific person with resolved names.
-    
+
     Returns comprehensive person information including:
     - Core person data (name, dates)
     - Gender name (resolved from gender_id)
     - Current address with location names (country, state, district, sub-district, locality)
     - Religion details with names (religion, category, sub-category)
-    
+
     This endpoint is used by the Person Details Panel in the Family Tree view.
     """
     person_service = PersonService(session)
-    
+
     complete_details = person_service.get_person_complete_details(person_id)
-    
+
     if not complete_details:
         raise HTTPException(
             status_code=404,
             detail="Person not found",
         )
-    
+
     logger.info(
         f"Retrieved complete details for person {person_id} "
         f"by user {current_user.email}"
     )
-    
+
     return complete_details
 
 

@@ -56,7 +56,9 @@ class CountryService:
             is_active=country_in.is_active,
         )
         created_country = self.country_repo.create(country)
-        logger.info(f"Country created successfully: {created_country.name} (ID: {created_country.id})")
+        logger.info(
+            f"Country created successfully: {created_country.name} (ID: {created_country.id})"
+        )
         return created_country
 
     def update_country(
@@ -65,7 +67,7 @@ class CountryService:
         """Update country information"""
         logger.info(f"Updating country: {country.name} (ID: {country.id})")
         update_data = country_update.model_dump(exclude_unset=True)
-        
+
         # Log what fields are being updated
         update_fields = list(update_data.keys())
         if update_fields:
@@ -77,7 +79,9 @@ class CountryService:
 
         country.sqlmodel_update(update_data)
         updated_country = self.country_repo.update(country)
-        logger.info(f"Country updated successfully: {updated_country.name} (ID: {updated_country.id})")
+        logger.info(
+            f"Country updated successfully: {updated_country.name} (ID: {updated_country.id})"
+        )
         return updated_country
 
     def code_exists(self, code: str, exclude_country_id: UUID | None = None) -> bool:

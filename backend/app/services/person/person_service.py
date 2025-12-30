@@ -2,11 +2,12 @@
 
 import logging
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
 from sqlmodel import Session
 
 from app.db_models.person.person import Person
+from app.db_models.person.person_address import PersonAddress
 from app.repositories.address.country_repository import CountryRepository
 from app.repositories.address.district_repository import DistrictRepository
 from app.repositories.address.locality_repository import LocalityRepository
@@ -107,7 +108,9 @@ class PersonService:
         logger.debug(f"User {user_id} has person: {has_person}")
         return has_person
 
-    def get_my_contributions(self, user_id: uuid.UUID) -> list[dict]:
+    def get_my_contributions(
+        self, user_id: uuid.UUID
+    ) -> list[dict[str, str | int | uuid.UUID | date | datetime | None]]:
         """
         Get all persons created by the user with view statistics.
 
@@ -161,8 +164,8 @@ class PersonService:
                 }
             )
 
-        # Sort by view count descending
-        results.sort(key=lambda x: x["total_views"], reverse=True)
+        # Sort by view count descending (total_views is always int)
+        results.sort(key=lambda x: x.get("total_views", 0) or 0, reverse=True)
 
         logger.info(
             f"Returning {len(results)} contributions for user {user_id}, "
@@ -171,7 +174,7 @@ class PersonService:
 
         return results
 
-    def _format_addresses(self, addresses: list) -> str:
+    def _format_addresses(self, addresses: list[PersonAddress]) -> str:
         """Format addresses as comma-separated string."""
         if not addresses:
             return ""
@@ -234,7 +237,9 @@ class PersonService:
             religion=religion_details,
         )
 
-        logger.info(f"Complete details fetched for person: {person.first_name} {person.last_name}")
+        logger.info(
+            f"Complete details fetched for person: {person.first_name} {person.last_name}"
+        )
         return response
 
     def _resolve_address_details(

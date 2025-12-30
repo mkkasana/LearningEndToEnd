@@ -36,7 +36,9 @@ class StateService:
 
     def create_state(self, state_in: StateCreate) -> State:
         """Create a new state"""
-        logger.info(f"Creating state: {state_in.name} for country {state_in.country_id}")
+        logger.info(
+            f"Creating state: {state_in.name} for country {state_in.country_id}"
+        )
         state = State(
             name=state_in.name,
             code=state_in.code.upper() if state_in.code else None,
@@ -44,14 +46,16 @@ class StateService:
             is_active=state_in.is_active,
         )
         created_state = self.state_repo.create(state)
-        logger.info(f"State created successfully: {created_state.name} (ID: {created_state.id})")
+        logger.info(
+            f"State created successfully: {created_state.name} (ID: {created_state.id})"
+        )
         return created_state
 
     def update_state(self, state: State, state_update: StateUpdate) -> State:
         """Update state information"""
         logger.info(f"Updating state: {state.name} (ID: {state.id})")
         update_data = state_update.model_dump(exclude_unset=True)
-        
+
         # Log what fields are being updated
         update_fields = list(update_data.keys())
         if update_fields:
@@ -63,7 +67,9 @@ class StateService:
 
         state.sqlmodel_update(update_data)
         updated_state = self.state_repo.update(state)
-        logger.info(f"State updated successfully: {updated_state.name} (ID: {updated_state.id})")
+        logger.info(
+            f"State updated successfully: {updated_state.name} (ID: {updated_state.id})"
+        )
         return updated_state
 
     def code_exists(

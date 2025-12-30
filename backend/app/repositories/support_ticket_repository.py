@@ -26,7 +26,9 @@ class SupportTicketRepository(BaseRepository[SupportTicket]):
         limit: int = 100,
     ) -> list[SupportTicket]:
         """Get all tickets for a specific user with optional status filter."""
-        logger.debug(f"Querying tickets by user_id: {user_id}, status={status}, skip={skip}, limit={limit}")
+        logger.debug(
+            f"Querying tickets by user_id: {user_id}, status={status}, skip={skip}, limit={limit}"
+        )
         statement = select(SupportTicket).where(SupportTicket.user_id == user_id)
 
         if status is not None:
@@ -48,7 +50,9 @@ class SupportTicketRepository(BaseRepository[SupportTicket]):
         limit: int = 100,
     ) -> list[SupportTicket]:
         """Get all tickets with optional filters (admin only)."""
-        logger.debug(f"Querying all tickets: status={status}, issue_type={issue_type}, skip={skip}, limit={limit}")
+        logger.debug(
+            f"Querying all tickets: status={status}, issue_type={issue_type}, skip={skip}, limit={limit}"
+        )
         statement = select(SupportTicket)
 
         if status is not None:
