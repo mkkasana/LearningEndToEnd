@@ -43,12 +43,32 @@ function FamilyTreeView() {
     enabled: profileStatus?.has_person === true,
   })
 
-  // Initialize selected person to current user's person
+  // Initialize selected person - check sessionStorage first, then fall back to current user
   useEffect(() => {
-    if (myPerson && !selectedPersonId) {
-      setSelectedPersonId(myPerson.id)
+    if (!selectedPersonId) {
+      // Check if there's a person ID passed via sessionStorage (from Explore button)
+      const explorePersonId = sessionStorage.getItem("familyTreeExplorePersonId")
+      if (explorePersonId) {
+        setSelectedPersonId(explorePersonId)
+        // Clear it so subsequent visits start with current user
+        sessionStorage.removeItem("familyTreeExplorePersonId")
+      } else if (myPerson) {
+        setSelectedPersonId(myPerson.id)
+      }
     }
   }, [myPerson, selectedPersonId])
+
+  // Listen for custom event to explore a specific person (from Contribution Stats dialog)
+  useEffect(() => {
+    const handleExplorePerson = (event: CustomEvent<{ personId: string }>) => {
+      setSelectedPersonId(event.detail.personId)
+    }
+
+    window.addEventListener("familyTreeExplorePerson", handleExplorePerson as EventListener)
+    return () => {
+      window.removeEventListener("familyTreeExplorePerson", handleExplorePerson as EventListener)
+    }
+  }, [])
 
   // Fetch family tree data for selected person
   const { familyData, isLoading, error, refetch } = useFamilyTreeData(selectedPersonId)

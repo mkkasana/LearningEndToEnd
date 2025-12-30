@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Loader2, Eye, MapPin, Calendar } from "lucide-react"
+import { useNavigate } from "@tanstack/react-router"
+import { Loader2, Eye, MapPin, Calendar, Network } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -9,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { PersonContributionService, type PersonContributionPublic } from "@/client"
 
 interface ContributionStatsDialogProps {
@@ -30,10 +32,27 @@ function formatDateRange(birthDate: string, deathDate: string | null): string {
   return `${birthYear}`
 }
 
+/**
+ * Navigate to family tree with a specific person selected.
+ * Uses custom event to notify the family tree component, plus sessionStorage as fallback.
+ */
+function handleExplorePerson(personId: string, navigate: ReturnType<typeof useNavigate>, onClose: () => void) {
+  // Store in sessionStorage as fallback for fresh page loads
+  sessionStorage.setItem("familyTreeExplorePersonId", personId)
+  onClose()
+  navigate({ to: "/family-tree" })
+  // Dispatch custom event after a small delay to ensure navigation completes
+  setTimeout(() => {
+    window.dispatchEvent(new CustomEvent("familyTreeExplorePerson", { detail: { personId } }))
+  }, 100)
+}
+
 export function ContributionStatsDialog({
   open,
   onOpenChange,
 }: ContributionStatsDialogProps) {
+  const navigate = useNavigate()
+
   // Fetch contributions when dialog opens
   const {
     data: contributions,
@@ -136,12 +155,21 @@ export function ContributionStatsDialog({
                     )}
                   </div>
 
-                  {/* View Count */}
+                  {/* View Count and Explore Button */}
                   <div className="flex items-center gap-2 ml-4">
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <Eye className="h-4 w-4" />
                       <span>{person.total_views}</span>
                     </Badge>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1"
+                      onClick={() => handleExplorePerson(person.id, navigate, () => onOpenChange(false))}
+                    >
+                      <Network className="h-4 w-4" />
+                      <span className="hidden sm:inline">Explore</span>
+                    </Button>
                   </div>
                 </div>
               </div>
