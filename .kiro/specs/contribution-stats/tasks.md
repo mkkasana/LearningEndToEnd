@@ -18,21 +18,21 @@ This implementation plan breaks down the Contribution Stats feature into discret
   - Test field constraints and types
   - _Requirements: 2.7, 2.8_
 
-- [ ] 2. Implement ProfileViewTrackingRepository
-  - [ ] 2.1 Create ProfileViewTrackingRepository class extending BaseRepository
+- [x] 2. Implement ProfileViewTrackingRepository
+  - [x] 2.1 Create ProfileViewTrackingRepository class extending BaseRepository
     - Implement `get_non_aggregated_view()` method
     - Implement `get_total_views_for_person()` method
     - Implement `get_total_views_for_persons()` bulk method
     - _Requirements: 4.1, 4.2, 4.3, 7.1, 7.3, 7.4_
 
-  - [ ] 2.2 Write unit tests for ProfileViewTrackingRepository
+  - [x] 2.2 Write unit tests for ProfileViewTrackingRepository
     - Test `get_non_aggregated_view()` with existing and non-existing pairs
     - Test `get_total_views_for_person()` with zero views
     - Test `get_total_views_for_persons()` with empty list
     - Test aggregation with mixed aggregated/non-aggregated records
     - _Requirements: 4.3, 4.4, 4.6_
 
-  - [ ] 2.3 Write property test for view count aggregation
+  - [x] 2.3 Write property test for view count aggregation
     - **Property 12: View Count Aggregation**
     - **Validates: Requirements 4.2, 4.3**
 
