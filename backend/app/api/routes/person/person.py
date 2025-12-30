@@ -12,6 +12,7 @@ from app.schemas.person import (
     PersonAddressCreate,
     PersonAddressPublic,
     PersonAddressUpdate,
+    PersonContributionPublic,
     PersonCreate,
     PersonDiscoveryResult,
     PersonMatchResult,
@@ -91,6 +92,31 @@ def create_my_person(
 
     person = person_service.create_person(person_in)
     return person
+
+
+@router.get("/my-contributions", response_model=list[PersonContributionPublic])
+@log_route
+def get_my_contributions(
+    session: SessionDep, current_user: CurrentUser
+) -> Any:
+    """
+    Get all persons created by the current user with view statistics.
+    
+    Returns list of contributed persons with:
+    - Person details (name, dates, status)
+    - Formatted address
+    - Total view count
+    
+    Results are sorted by view count descending (most viewed first).
+    """
+    person_service = PersonService(session)
+    contributions = person_service.get_my_contributions(current_user.id)
+    
+    logger.info(
+        f"Retrieved {len(contributions)} contributions for user {current_user.email}"
+    )
+    
+    return contributions
 
 
 @router.post("/family-member", response_model=PersonPublic)

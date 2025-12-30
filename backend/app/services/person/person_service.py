@@ -7,8 +7,10 @@ from datetime import datetime
 from sqlmodel import Session
 
 from app.db_models.person.person import Person
+from app.repositories.person.person_address_repository import PersonAddressRepository
 from app.repositories.person.person_repository import PersonRepository
 from app.schemas.person import PersonCreate, PersonUpdate
+from app.services.profile_view_tracking_service import ProfileViewTrackingService
 
 logger = logging.getLogger(__name__)
 
@@ -85,3 +87,82 @@ class PersonService:
         has_person = self.person_repo.user_has_person(user_id)
         logger.debug(f"User {user_id} has person: {has_person}")
         return has_person
+
+    def get_my_contributions(self, user_id: uuid.UUID) -> list[dict]:
+        """
+        Get all persons created by the user with view statistics.
+
+        Returns list of dicts with person details, addresses, and view counts.
+        Sorted by view count descending (most viewed first).
+        """
+        logger.info(f"Fetching contributions for user: {user_id}")
+
+        # Get all persons created by this user
+        persons = self.person_repo.get_by_creator(user_id)
+
+        if not persons:
+            logger.debug(f"No contributions found for user {user_id}")
+            return []
+
+        logger.debug(f"Found {len(persons)} contributions for user {user_id}")
+
+        # Get person IDs for bulk operations
+        person_ids = [p.id for p in persons]
+
+        # Get view counts for all persons
+        view_tracking_service = ProfileViewTrackingService(self.person_repo.session)
+        view_counts = view_tracking_service.get_total_views_bulk(person_ids)
+
+        # Get addresses for all persons
+        address_repo = PersonAddressRepository(self.person_repo.session)
+
+        # Build result list
+        results = []
+        for person in persons:
+            # Get addresses for this person
+            addresses = address_repo.get_by_person_id(person.id)
+            address_str = self._format_addresses(addresses)
+
+            # Get view count (default to 0 if no views)
+            view_count = view_counts.get(person.id, 0)
+
+            results.append(
+                {
+                    "id": person.id,
+                    "first_name": person.first_name,
+                    "last_name": person.last_name,
+                    "date_of_birth": person.date_of_birth,
+                    "date_of_death": person.date_of_death,
+                    "is_active": (
+                        person.is_active if hasattr(person, "is_active") else True
+                    ),
+                    "address": address_str,
+                    "total_views": view_count,
+                    "created_at": person.created_at,
+                }
+            )
+
+        # Sort by view count descending
+        results.sort(key=lambda x: x["total_views"], reverse=True)
+
+        logger.info(
+            f"Returning {len(results)} contributions for user {user_id}, "
+            f"sorted by view count"
+        )
+
+        return results
+
+    def _format_addresses(self, addresses: list) -> str:
+        """Format addresses as comma-separated string."""
+        if not addresses:
+            return ""
+
+        address_parts = []
+        for addr in addresses:
+            # For now, use address_line if available
+            # In the future, this can be enhanced to join with location tables
+            # to get country, state, district, sub_district, locality names
+            if addr.address_line:
+                address_parts.append(addr.address_line)
+
+        return ", ".join(address_parts)

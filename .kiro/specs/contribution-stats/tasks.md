@@ -77,14 +77,14 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - **Property 11: Error Resilience**
     - **Validates: Requirements 3.1, 3.6, 3.7, 3.8**
 
-- [ ] 5. Checkpoint - Ensure repository and service tests pass
+- [ ]* 5. Checkpoint - Ensure repository and service tests pass
   - Run all repository and service tests
   - Verify database operations work correctly
   - Ask user if questions arise
 
 
-- [ ] 6. Extend PersonService for contributions
-  - [ ] 6.1 Add `get_my_contributions()` method to PersonService
+- [x] 6. Extend PersonService for contributions
+  - [x] 6.1 Add `get_my_contributions()` method to PersonService
     - Query persons by creator using PersonRepository
     - Fetch addresses for each person
     - Fetch view counts using ProfileViewTrackingService
@@ -93,12 +93,12 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - Sort by total_views descending
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 5.1, 5.2, 5.3, 5.4, 5.5, 7.6_
 
-  - [ ] 6.2 Add `_format_addresses()` helper method
+  - [x] 6.2 Add `_format_addresses()` helper method
     - Concatenate address components with commas
     - Handle empty address lists
     - _Requirements: 1.3, 5.3_
 
-  - [ ] 6.3 Write unit tests for PersonService contributions
+  - [x] 6.3 Write unit tests for PersonService contributions
     - Test `get_my_contributions()` with user who has no contributions
     - Test `get_my_contributions()` with user who has multiple contributions
     - Test `_format_addresses()` with empty list
@@ -107,7 +107,7 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - Verify sorting by view count
     - _Requirements: 1.7, 5.5, 5.6_
 
-  - [ ] 6.4 Write property tests for contribution formatting
+  - [x] 6.4 Write property tests for contribution formatting
     - **Property 2: Name Display Format**
     - **Property 3: Address Formatting**
     - **Property 4: Date Range Formatting for Living Persons**
@@ -115,26 +115,26 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - **Property 15: Contributions Sorted by View Count**
     - **Validates: Requirements 1.2, 1.3, 1.4, 1.5, 5.5**
 
-- [ ] 7. Create API schemas
-  - [ ] 7.1 Create PersonContributionPublic schema
+- [x] 7. Create API schemas
+  - [x] 7.1 Create PersonContributionPublic schema
     - Define all required fields (id, first_name, last_name, dates, address, views)
     - Add Pydantic validation
     - _Requirements: 5.2, 5.3, 5.4_
 
-  - [ ] 7.2 Write unit tests for schemas
+  - [x] 7.2 Write unit tests for schemas
     - Test schema validation with valid data
     - Test schema serialization
     - _Requirements: 5.2_
 
-- [ ] 8. Implement contributions API endpoint
-  - [ ] 8.1 Add GET /api/v1/person/my-contributions endpoint
+- [x] 8. Implement contributions API endpoint
+  - [x] 8.1 Add GET /api/v1/person/my-contributions endpoint
     - Use CurrentUser dependency for authentication
     - Call PersonService.get_my_contributions()
     - Return list of PersonContributionPublic
     - Add logging
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
 
-  - [ ] 8.2 Write integration tests for contributions endpoint
+  - [x] 8.2 Write integration tests for contributions endpoint
     - Test endpoint with authenticated user
     - Test endpoint returns correct data structure
     - Test endpoint with user who has no contributions
@@ -142,7 +142,7 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - Verify sorting by view count
     - _Requirements: 5.1, 5.5, 5.6_
 
-  - [ ] 8.3 Write property test for response completeness
+  - [x]* 8.3 Write property test for response completeness
     - **Property 14: Contributions API Response Completeness**
     - **Validates: Requirements 5.2, 5.3, 5.4**
 
