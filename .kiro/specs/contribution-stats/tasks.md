@@ -32,28 +32,28 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - Test aggregation with mixed aggregated/non-aggregated records
     - _Requirements: 4.3, 4.4, 4.6_
 
-  - [x] 2.3 Write property test for view count aggregation
+  - [ ]* 2.3 Write property test for view count aggregation
     - **Property 12: View Count Aggregation**
     - **Validates: Requirements 4.2, 4.3**
 
-- [ ] 3. Extend PersonRepository
-  - [ ] 3.1 Add `get_by_creator()` method to PersonRepository
+- [x] 3. Extend PersonRepository
+  - [x] 3.1 Add `get_by_creator()` method to PersonRepository
     - Query persons WHERE created_by_user_id matches user ID
     - Return list of Person objects
     - _Requirements: 1.1, 7.5_
 
-  - [ ] 3.2 Write unit tests for `get_by_creator()`
+  - [x] 3.2 Write unit tests for `get_by_creator()`
     - Test with user who created no persons
     - Test with user who created multiple persons
     - Test that only persons by that creator are returned
     - _Requirements: 1.1_
 
-  - [ ] 3.3 Write property test for contribution query correctness
+  - [x] 3.3 Write property test for contribution query correctness
     - **Property 1: Contribution Query Correctness**
     - **Validates: Requirements 1.1**
 
-- [ ] 4. Implement ProfileViewTrackingService
-  - [ ] 4.1 Create ProfileViewTrackingService class
+- [x] 4. Implement ProfileViewTrackingService
+  - [x] 4.1 Create ProfileViewTrackingService class
     - Implement `record_view()` method with create/update logic
     - Implement `get_total_views()` method
     - Implement `get_total_views_bulk()` method
@@ -61,7 +61,7 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - Include self-view prevention logic
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 4.1, 7.2, 7.3_
 
-  - [ ] 4.2 Write unit tests for ProfileViewTrackingService
+  - [x] 4.2 Write unit tests for ProfileViewTrackingService
     - Test `record_view()` with self-view (should not record)
     - Test `record_view()` with first view (creates new record)
     - Test `record_view()` with subsequent view (increments count)
@@ -70,7 +70,7 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - Test `get_total_views_bulk()` with empty list
     - _Requirements: 3.4, 3.5, 3.6, 3.7, 3.8, 4.4, 4.6_
 
-  - [ ] 4.3 Write property tests for view recording
+  - [x] 4.3 Write property tests for view recording
     - **Property 7: View Recording on Endpoint Call**
     - **Property 9: First View Creates New Record**
     - **Property 10: Subsequent Views Increment Count**
