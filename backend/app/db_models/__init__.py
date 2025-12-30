@@ -6,6 +6,7 @@ from app.db_models.person.person_metadata import PersonMetadata
 from app.db_models.person.person_profession import PersonProfession
 from app.db_models.person.person_relationship import PersonRelationship
 from app.db_models.person.profession import Profession
+from app.db_models.profile_view_tracking import ProfileViewTracking
 from app.db_models.user import User
 
 __all__ = [
@@ -17,5 +18,6 @@ __all__ = [
     "PersonProfession",
     "PersonRelationship",
     "Profession",
+    "ProfileViewTracking",
     "User",
 ]
