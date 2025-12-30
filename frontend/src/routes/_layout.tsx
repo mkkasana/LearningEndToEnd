@@ -1,6 +1,6 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
-
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+import { ProfileService } from "@/client"
 import { Footer } from "@/components/Common/Footer"
 import AppSidebar from "@/components/Sidebar/AppSidebar"
 import {
@@ -9,7 +9,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { isLoggedIn } from "@/hooks/useAuth"
-import { ProfileService } from "@/client"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,

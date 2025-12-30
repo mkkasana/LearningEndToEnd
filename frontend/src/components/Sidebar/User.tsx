@@ -1,7 +1,7 @@
-import { useState } from "react"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { BarChart3, ChevronsUpDown, LogOut, Settings } from "lucide-react"
-
+import { useState } from "react"
+import { ContributionStatsDialog } from "@/components/Profile/ContributionStatsDialog"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/sidebar"
 import useAuth from "@/hooks/useAuth"
 import { getInitials } from "@/utils"
-import { ContributionStatsDialog } from "@/components/Profile/ContributionStatsDialog"
 
 interface UserInfoProps {
   fullName?: string

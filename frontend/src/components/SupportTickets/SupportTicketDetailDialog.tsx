@@ -1,6 +1,6 @@
-import { Bug, Lightbulb, Calendar, Clock } from "lucide-react"
+import { Bug, Calendar, Clock, Lightbulb } from "lucide-react"
 
-import { type SupportTicketPublic } from "@/client"
+import type { SupportTicketPublic } from "@/client"
 import { Badge } from "@/components/ui/badge"
 import {
   Dialog,
@@ -93,7 +93,7 @@ const SupportTicketDetailDialog = ({
           {/* Timestamps */}
           <div className="space-y-3">
             <h4 className="text-sm font-semibold">Timeline</h4>
-            
+
             <div className="flex items-start gap-2 text-sm">
               <Calendar className="size-4 text-muted-foreground mt-0.5" />
               <div>

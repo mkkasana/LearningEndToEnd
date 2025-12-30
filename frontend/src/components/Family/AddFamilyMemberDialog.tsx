@@ -1,7 +1,8 @@
 // @ts-nocheck
+
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
-import { useQueryClient, useMutation } from "@tanstack/react-query"
-import { Button } from "@/components/ui/button"
+import { PersonService } from "@/client"
 import {
   Dialog,
   DialogContent,
@@ -10,13 +11,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import useCustomToast from "@/hooks/useCustomToast"
-import { PersonService } from "@/client"
-import { BasicInfoStep } from "./BasicInfoStep"
 import { AddressStep } from "./AddressStep"
-import { ReligionStep } from "./ReligionStep"
-import { ConnectExistingPersonStep } from "./ConnectExistingPersonStep"
+import { BasicInfoStep } from "./BasicInfoStep"
 import { ConfirmationStep } from "./ConfirmationStep"
 import { ConnectConfirmationDialog } from "./ConnectConfirmationDialog"
+import { ConnectExistingPersonStep } from "./ConnectExistingPersonStep"
+import { ReligionStep } from "./ReligionStep"
 
 const STEPS = {
   BASIC_INFO: 0,
@@ -41,10 +41,11 @@ export function AddFamilyMemberDialog({
   const [familyMemberData, setFamilyMemberData] = useState<any>(null)
   const [addressData, setAddressData] = useState<any>(null)
   const [religionData, setReligionData] = useState<any>(null)
-  const [matchingPersons, setMatchingPersons] = useState<any[]>([])
+  const [_matchingPersons, setMatchingPersons] = useState<any[]>([])
   const [showMatchingStep, setShowMatchingStep] = useState(false)
   const [showConnectDialog, setShowConnectDialog] = useState(false)
-  const [selectedPersonToConnect, setSelectedPersonToConnect] = useState<any>(null)
+  const [selectedPersonToConnect, setSelectedPersonToConnect] =
+    useState<any>(null)
 
   // Mutation for creating relationship with existing person
   const createRelationshipMutation = useMutation({
@@ -58,12 +59,16 @@ export function AddFamilyMemberDialog({
       }),
     onSuccess: () => {
       showSuccessToast("Successfully connected to existing person!")
-      queryClient.invalidateQueries({ queryKey: ["myRelationshipsWithDetails"] })
+      queryClient.invalidateQueries({
+        queryKey: ["myRelationshipsWithDetails"],
+      })
       setShowConnectDialog(false)
       handleClose()
     },
     onError: (error: any) => {
-      showErrorToast(error.message || "Failed to create relationship. Please try again.")
+      showErrorToast(
+        error.message || "Failed to create relationship. Please try again.",
+      )
       // Keep dialog open to allow retry
     },
   })
@@ -79,10 +84,10 @@ export function AddFamilyMemberDialog({
       { value: "rel-6a0ede824d106", label: "Husband" },
       { value: "rel-6a0ede824d107", label: "Spouse" },
     ]
-    const relationshipLabel = RELATIONSHIP_TYPES.find(
-      (r) => r.value === data.relationship_type
-    )?.label || data.relationship_type
-    
+    const relationshipLabel =
+      RELATIONSHIP_TYPES.find((r) => r.value === data.relationship_type)
+        ?.label || data.relationship_type
+
     setFamilyMemberData({
       ...data,
       relationshipTypeLabel: relationshipLabel,
@@ -97,23 +102,31 @@ export function AddFamilyMemberDialog({
 
   const handleReligionComplete = async (data: any) => {
     setReligionData(data)
-    
+
     // Build address display string from addressData
     const addressParts = []
-    if (addressData._displayNames?.locality) addressParts.push(addressData._displayNames.locality)
-    if (addressData._displayNames?.subDistrict) addressParts.push(addressData._displayNames.subDistrict)
-    if (addressData._displayNames?.district) addressParts.push(addressData._displayNames.district)
-    if (addressData._displayNames?.state) addressParts.push(addressData._displayNames.state)
-    if (addressData._displayNames?.country) addressParts.push(addressData._displayNames.country)
-    const addressDisplay = addressParts.join(", ")
-    
+    if (addressData._displayNames?.locality)
+      addressParts.push(addressData._displayNames.locality)
+    if (addressData._displayNames?.subDistrict)
+      addressParts.push(addressData._displayNames.subDistrict)
+    if (addressData._displayNames?.district)
+      addressParts.push(addressData._displayNames.district)
+    if (addressData._displayNames?.state)
+      addressParts.push(addressData._displayNames.state)
+    if (addressData._displayNames?.country)
+      addressParts.push(addressData._displayNames.country)
+    const _addressDisplay = addressParts.join(", ")
+
     // Build religion display string from religionData
     const religionParts = []
-    if (data._displayNames?.religion) religionParts.push(data._displayNames.religion)
-    if (data._displayNames?.category) religionParts.push(data._displayNames.category)
-    if (data._displayNames?.subCategory) religionParts.push(data._displayNames.subCategory)
-    const religionDisplay = religionParts.join(", ")
-    
+    if (data._displayNames?.religion)
+      religionParts.push(data._displayNames.religion)
+    if (data._displayNames?.category)
+      religionParts.push(data._displayNames.category)
+    if (data._displayNames?.subCategory)
+      religionParts.push(data._displayNames.subCategory)
+    const _religionDisplay = religionParts.join(", ")
+
     // Always show matching step - it will handle search internally
     setShowMatchingStep(true)
     setCurrentStep(STEPS.MATCHING)
@@ -134,7 +147,7 @@ export function AddFamilyMemberDialog({
     setCurrentStep(STEPS.RELIGION)
   }
 
-  const handleConnectToPerson = (personId: string, personData: any) => {
+  const handleConnectToPerson = (_personId: string, personData: any) => {
     // personData is passed from ConnectExistingPersonStep
     setSelectedPersonToConnect(personData)
     setShowConnectDialog(true)
@@ -208,23 +221,23 @@ export function AddFamilyMemberDialog({
           </div>
 
           {currentStep === STEPS.BASIC_INFO && (
-            <BasicInfoStep 
-              onComplete={handleBasicInfoComplete} 
+            <BasicInfoStep
+              onComplete={handleBasicInfoComplete}
               initialData={familyMemberData}
             />
           )}
 
           {currentStep === STEPS.ADDRESS && (
-            <AddressStep 
-              onComplete={handleAddressComplete} 
+            <AddressStep
+              onComplete={handleAddressComplete}
               onBack={handleBackToBasicInfo}
               initialData={addressData}
             />
           )}
 
           {currentStep === STEPS.RELIGION && (
-            <ReligionStep 
-              onComplete={handleReligionComplete} 
+            <ReligionStep
+              onComplete={handleReligionComplete}
               onBack={handleBackToAddress}
               initialData={religionData}
             />
@@ -248,18 +261,26 @@ export function AddFamilyMemberDialog({
                 religionSubCategoryId: religionData?.religion_sub_category_id,
                 addressDisplay: (() => {
                   const parts = []
-                  if (addressData?._displayNames?.locality) parts.push(addressData._displayNames.locality)
-                  if (addressData?._displayNames?.subDistrict) parts.push(addressData._displayNames.subDistrict)
-                  if (addressData?._displayNames?.district) parts.push(addressData._displayNames.district)
-                  if (addressData?._displayNames?.state) parts.push(addressData._displayNames.state)
-                  if (addressData?._displayNames?.country) parts.push(addressData._displayNames.country)
+                  if (addressData?._displayNames?.locality)
+                    parts.push(addressData._displayNames.locality)
+                  if (addressData?._displayNames?.subDistrict)
+                    parts.push(addressData._displayNames.subDistrict)
+                  if (addressData?._displayNames?.district)
+                    parts.push(addressData._displayNames.district)
+                  if (addressData?._displayNames?.state)
+                    parts.push(addressData._displayNames.state)
+                  if (addressData?._displayNames?.country)
+                    parts.push(addressData._displayNames.country)
                   return parts.join(", ")
                 })(),
                 religionDisplay: (() => {
                   const parts = []
-                  if (religionData?._displayNames?.religion) parts.push(religionData._displayNames.religion)
-                  if (religionData?._displayNames?.category) parts.push(religionData._displayNames.category)
-                  if (religionData?._displayNames?.subCategory) parts.push(religionData._displayNames.subCategory)
+                  if (religionData?._displayNames?.religion)
+                    parts.push(religionData._displayNames.religion)
+                  if (religionData?._displayNames?.category)
+                    parts.push(religionData._displayNames.category)
+                  if (religionData?._displayNames?.subCategory)
+                    parts.push(religionData._displayNames.subCategory)
                   return parts.join(", ")
                 })(),
               }}
@@ -276,7 +297,9 @@ export function AddFamilyMemberDialog({
               addressData={addressData}
               religionData={religionData}
               onFinish={handleFinish}
-              onBack={showMatchingStep ? handleBackToMatching : handleBackToReligion}
+              onBack={
+                showMatchingStep ? handleBackToMatching : handleBackToReligion
+              }
             />
           )}
         </DialogContent>
@@ -288,7 +311,7 @@ export function AddFamilyMemberDialog({
           open={showConnectDialog}
           onOpenChange={setShowConnectDialog}
           personId={selectedPersonToConnect.person_id}
-          personName={`${selectedPersonToConnect.first_name} ${selectedPersonToConnect.middle_name ? selectedPersonToConnect.middle_name + ' ' : ''}${selectedPersonToConnect.last_name}`}
+          personName={`${selectedPersonToConnect.first_name} ${selectedPersonToConnect.middle_name ? `${selectedPersonToConnect.middle_name} ` : ""}${selectedPersonToConnect.last_name}`}
           relationshipType={familyMemberData?.relationshipTypeLabel || ""}
           onConfirm={() => {
             createRelationshipMutation.mutate({

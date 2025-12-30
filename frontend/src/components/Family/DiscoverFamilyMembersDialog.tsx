@@ -1,7 +1,10 @@
 // @ts-nocheck
-import { useState, useEffect } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { type PersonDiscoveryResult, PersonService } from "@/client"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -10,10 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { PersonService, type PersonDiscoveryResult } from "@/client"
-import { ConnectConfirmationDialog } from "./ConnectConfirmationDialog"
 import useCustomToast from "@/hooks/useCustomToast"
+import { ConnectConfirmationDialog } from "./ConnectConfirmationDialog"
 
 interface DiscoverFamilyMembersDialogProps {
   open: boolean
@@ -31,7 +32,8 @@ export function DiscoverFamilyMembersDialog({
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const queryClient = useQueryClient()
   const [showConnectDialog, setShowConnectDialog] = useState(false)
-  const [selectedPerson, setSelectedPerson] = useState<PersonDiscoveryResult | null>(null)
+  const [selectedPerson, setSelectedPerson] =
+    useState<PersonDiscoveryResult | null>(null)
   const [closedAfterConnection, setClosedAfterConnection] = useState(false)
 
   // Fetch discovered family members
@@ -51,7 +53,13 @@ export function DiscoverFamilyMembersDialog({
   // Auto-skip to manual wizard if no discoveries found
   // This handles Requirement 1.4: When API returns no suggestions, proceed directly to wizard
   useEffect(() => {
-    if (!isLoading && !isError && open && discoveries && discoveries.length === 0) {
+    if (
+      !isLoading &&
+      !isError &&
+      open &&
+      discoveries &&
+      discoveries.length === 0
+    ) {
       // Close discovery dialog and open manual wizard
       onOpenChange(false)
       onSkip()
@@ -90,11 +98,15 @@ export function DiscoverFamilyMembersDialog({
     onSuccess: async () => {
       showSuccessToast("Successfully connected to family member!")
       setShowConnectDialog(false)
-      
+
       // Invalidate queries to refresh the discoveries list
-      await queryClient.invalidateQueries({ queryKey: ["myRelationshipsWithDetails"] })
-      await queryClient.invalidateQueries({ queryKey: ["discoverFamilyMembers"] })
-      
+      await queryClient.invalidateQueries({
+        queryKey: ["myRelationshipsWithDetails"],
+      })
+      await queryClient.invalidateQueries({
+        queryKey: ["discoverFamilyMembers"],
+      })
+
       // Auto-close dialog if no more suggestions after this connection
       // We check if the current list has only 1 item (the one we just connected to)
       if (discoveries && discoveries.length <= 1) {
@@ -133,7 +145,9 @@ export function DiscoverFamilyMembersDialog({
             {isLoading && (
               <div className="flex items-center justify-center py-8 space-x-2">
                 <Loader2 className="h-8 w-8 animate-spin" />
-                <p className="text-sm text-muted-foreground">Searching for family members...</p>
+                <p className="text-sm text-muted-foreground">
+                  Searching for family members...
+                </p>
               </div>
             )}
 
@@ -145,7 +159,8 @@ export function DiscoverFamilyMembersDialog({
                     Failed to discover family members
                   </p>
                   <p className="text-sm text-muted-foreground mb-3">
-                    {error?.message || "An error occurred while searching. Please try again or skip to create a new person."}
+                    {error?.message ||
+                      "An error occurred while searching. Please try again or skip to create a new person."}
                   </p>
                   <div className="flex gap-2">
                     <Button
@@ -156,10 +171,7 @@ export function DiscoverFamilyMembersDialog({
                     >
                       Try Again
                     </Button>
-                    <Button
-                      size="sm"
-                      onClick={onSkip}
-                    >
+                    <Button size="sm" onClick={onSkip}>
                       Skip to Manual Entry
                     </Button>
                   </div>
@@ -168,94 +180,103 @@ export function DiscoverFamilyMembersDialog({
             )}
 
             {/* Results will be implemented in sub-task 5.3 */}
-            {!isLoading && !isError && discoveries && discoveries.length > 0 && (
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Found {discoveries.length} potential family member(s)
-                </p>
+            {!isLoading &&
+              !isError &&
+              discoveries &&
+              discoveries.length > 0 && (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Found {discoveries.length} potential family member(s)
+                  </p>
 
-                {/* Scrollable container for results */}
-                <div className="max-h-96 overflow-y-auto space-y-3">
-                  {discoveries.map((person) => (
-                    <div
-                      key={person.person_id}
-                      className="border rounded-lg p-4 space-y-2 hover:bg-muted/50 transition-colors"
-                    >
-                      {/* Name and relationship */}
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium">
-                            {person.first_name}{" "}
-                            {person.middle_name && `${person.middle_name} `}
-                            {person.last_name}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            Suggested as: {person.inferred_relationship_label}
-                          </p>
+                  {/* Scrollable container for results */}
+                  <div className="max-h-96 overflow-y-auto space-y-3">
+                    {discoveries.map((person) => (
+                      <div
+                        key={person.person_id}
+                        className="border rounded-lg p-4 space-y-2 hover:bg-muted/50 transition-colors"
+                      >
+                        {/* Name and relationship */}
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="font-medium">
+                              {person.first_name}{" "}
+                              {person.middle_name && `${person.middle_name} `}
+                              {person.last_name}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              Suggested as: {person.inferred_relationship_label}
+                            </p>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Connection path */}
-                      <div className="text-sm text-muted-foreground">
-                        <span className="font-medium">Connection:</span>{" "}
-                        {person.connection_path}
-                      </div>
+                        {/* Connection path */}
+                        <div className="text-sm text-muted-foreground">
+                          <span className="font-medium">Connection:</span>{" "}
+                          {person.connection_path}
+                        </div>
 
-                      {/* Date of birth */}
-                      <div className="text-sm text-muted-foreground">
-                        <span className="font-medium">DOB:</span>{" "}
-                        {new Date(person.date_of_birth).toLocaleDateString()}
-                        {person.date_of_death && (
-                          <>
-                            {" - "}
-                            <span className="font-medium">DOD:</span>{" "}
-                            {new Date(person.date_of_death).toLocaleDateString()}
-                          </>
+                        {/* Date of birth */}
+                        <div className="text-sm text-muted-foreground">
+                          <span className="font-medium">DOB:</span>{" "}
+                          {new Date(person.date_of_birth).toLocaleDateString()}
+                          {person.date_of_death && (
+                            <>
+                              {" - "}
+                              <span className="font-medium">DOD:</span>{" "}
+                              {new Date(
+                                person.date_of_death,
+                              ).toLocaleDateString()}
+                            </>
+                          )}
+                        </div>
+
+                        {/* Address */}
+                        {person.address_display && (
+                          <div className="text-sm text-muted-foreground">
+                            <span className="font-medium">Address:</span>{" "}
+                            {person.address_display}
+                          </div>
                         )}
-                      </div>
 
-                      {/* Address */}
-                      {person.address_display && (
-                        <div className="text-sm text-muted-foreground">
-                          <span className="font-medium">Address:</span>{" "}
-                          {person.address_display}
+                        {/* Religion */}
+                        {person.religion_display && (
+                          <div className="text-sm text-muted-foreground">
+                            <span className="font-medium">Religion:</span>{" "}
+                            {person.religion_display}
+                          </div>
+                        )}
+
+                        {/* Connect button - will be implemented in sub-task 5.4 */}
+                        <div className="pt-2">
+                          <Button
+                            size="sm"
+                            onClick={() => handleConnect(person)}
+                          >
+                            Connect as {person.inferred_relationship_label}
+                          </Button>
                         </div>
-                      )}
-
-                      {/* Religion */}
-                      {person.religion_display && (
-                        <div className="text-sm text-muted-foreground">
-                          <span className="font-medium">Religion:</span>{" "}
-                          {person.religion_display}
-                        </div>
-                      )}
-
-                      {/* Connect button - will be implemented in sub-task 5.4 */}
-                      <div className="pt-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleConnect(person)}
-                        >
-                          Connect as {person.inferred_relationship_label}
-                        </Button>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* No results */}
-            {!isLoading && !isError && discoveries && discoveries.length === 0 && (
-              <div className="bg-muted p-4 rounded-md">
-                <p className="text-sm font-medium mb-2">
-                  No family members discovered
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  We couldn't find any potential family connections. You can proceed to create a new family member.
-                </p>
-              </div>
-            )}
+            {!isLoading &&
+              !isError &&
+              discoveries &&
+              discoveries.length === 0 && (
+                <div className="bg-muted p-4 rounded-md">
+                  <p className="text-sm font-medium mb-2">
+                    No family members discovered
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    We couldn't find any potential family connections. You can
+                    proceed to create a new family member.
+                  </p>
+                </div>
+              )}
           </div>
 
           {/* Footer buttons */}
@@ -264,9 +285,7 @@ export function DiscoverFamilyMembersDialog({
               Close
             </Button>
             {!isError && (
-              <Button onClick={onSkip}>
-                Skip: Move to create new
-              </Button>
+              <Button onClick={onSkip}>Skip: Move to create new</Button>
             )}
           </DialogFooter>
         </DialogContent>
@@ -278,7 +297,7 @@ export function DiscoverFamilyMembersDialog({
           open={showConnectDialog}
           onOpenChange={setShowConnectDialog}
           personId={selectedPerson.person_id}
-          personName={`${selectedPerson.first_name} ${selectedPerson.middle_name ? selectedPerson.middle_name + ' ' : ''}${selectedPerson.last_name}`}
+          personName={`${selectedPerson.first_name} ${selectedPerson.middle_name ? `${selectedPerson.middle_name} ` : ""}${selectedPerson.last_name}`}
           relationshipType={selectedPerson.inferred_relationship_label}
           onConfirm={handleConfirmConnect}
           isLoading={createRelationshipMutation.isPending}

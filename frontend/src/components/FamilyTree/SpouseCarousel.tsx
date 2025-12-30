@@ -1,9 +1,9 @@
-import { useState, memo } from "react"
-import { PersonCard } from "./PersonCard"
-import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { memo, useState } from "react"
 import type { PersonDetails } from "@/client"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { PersonCard } from "./PersonCard"
 
 export interface SpouseCarouselProps {
   spouses: PersonDetails[]
@@ -15,7 +15,10 @@ export interface SpouseCarouselProps {
  * with prev/next navigation buttons and indicator dots
  * Performance: Memoized to prevent unnecessary re-renders
  */
-export const SpouseCarousel = memo(function SpouseCarousel({ spouses, onPersonClick }: SpouseCarouselProps) {
+export const SpouseCarousel = memo(function SpouseCarousel({
+  spouses,
+  onPersonClick,
+}: SpouseCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   if (spouses.length === 0) {
@@ -52,7 +55,7 @@ export const SpouseCarousel = memo(function SpouseCarousel({ spouses, onPersonCl
             "hover:bg-accent hover:scale-110",
             "active:scale-95",
             "disabled:opacity-30 disabled:cursor-not-allowed",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
           )}
         >
           <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
@@ -82,7 +85,7 @@ export const SpouseCarousel = memo(function SpouseCarousel({ spouses, onPersonCl
             "hover:bg-accent hover:scale-110",
             "active:scale-95",
             "disabled:opacity-30 disabled:cursor-not-allowed",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
           )}
         >
           <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
@@ -91,7 +94,11 @@ export const SpouseCarousel = memo(function SpouseCarousel({ spouses, onPersonCl
 
       {/* Indicator dots */}
       {spouses.length > 1 && (
-        <div className="flex gap-1 md:gap-1.5" role="tablist" aria-label="Spouse navigation">
+        <div
+          className="flex gap-1 md:gap-1.5"
+          role="tablist"
+          aria-label="Spouse navigation"
+        >
           {spouses.map((_, index) => (
             <button
               key={index}
@@ -103,7 +110,7 @@ export const SpouseCarousel = memo(function SpouseCarousel({ spouses, onPersonCl
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                 index === currentIndex
                   ? "bg-primary w-3 md:w-4 shadow-sm"
-                  : "bg-muted-foreground/30 hover:bg-muted-foreground/60 hover:scale-125"
+                  : "bg-muted-foreground/30 hover:bg-muted-foreground/60 hover:scale-125",
               )}
               aria-label={`Go to spouse ${index + 1}`}
               aria-current={index === currentIndex ? "true" : "false"}
@@ -114,7 +121,7 @@ export const SpouseCarousel = memo(function SpouseCarousel({ spouses, onPersonCl
                   "h-1.5 w-1.5 md:h-2 md:w-2 rounded-full transition-all duration-300",
                   index === currentIndex
                     ? "bg-primary w-3 md:w-4"
-                    : "bg-muted-foreground/30"
+                    : "bg-muted-foreground/30",
                 )}
               />
             </button>

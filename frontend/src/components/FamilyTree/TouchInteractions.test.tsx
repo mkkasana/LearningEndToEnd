@@ -1,84 +1,84 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, fireEvent } from '@testing-library/react'
-import { PersonCard } from './PersonCard'
-import { SiblingsList } from './SiblingsList'
-import { SpouseCarousel } from './SpouseCarousel'
-import type { PersonDetails } from '@/client'
+import { fireEvent, render } from "@testing-library/react"
+import { describe, expect, it, vi } from "vitest"
+import type { PersonDetails } from "@/client"
+import { PersonCard } from "./PersonCard"
+import { SiblingsList } from "./SiblingsList"
+import { SpouseCarousel } from "./SpouseCarousel"
 
 /**
  * Unit tests for touch interactions
  * Requirements: 10.5
  */
-describe('Touch Interactions', () => {
+describe("Touch Interactions", () => {
   const mockPerson: PersonDetails = {
-    id: 'person-1',
-    first_name: 'John',
+    id: "person-1",
+    first_name: "John",
     middle_name: null,
-    last_name: 'Doe',
-    gender_id: 'gen-6a0ede824d101',
-    date_of_birth: '1990-01-01',
+    last_name: "Doe",
+    gender_id: "gen-6a0ede824d101",
+    date_of_birth: "1990-01-01",
     date_of_death: null,
     user_id: null,
-    created_by_user_id: 'user-1',
+    created_by_user_id: "user-1",
     is_primary: true,
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
   }
 
   const mockSiblings: PersonDetails[] = [
     {
       ...mockPerson,
-      id: 'sibling-1',
-      first_name: 'Jane',
+      id: "sibling-1",
+      first_name: "Jane",
     },
     {
       ...mockPerson,
-      id: 'sibling-2',
-      first_name: 'Jack',
+      id: "sibling-2",
+      first_name: "Jack",
     },
     {
       ...mockPerson,
-      id: 'sibling-3',
-      first_name: 'Jill',
+      id: "sibling-3",
+      first_name: "Jill",
     },
   ]
 
   const mockSpouses: PersonDetails[] = [
     {
       ...mockPerson,
-      id: 'spouse-1',
-      first_name: 'Mary',
-      gender_id: 'gen-6a0ede824d102',
+      id: "spouse-1",
+      first_name: "Mary",
+      gender_id: "gen-6a0ede824d102",
     },
     {
       ...mockPerson,
-      id: 'spouse-2',
-      first_name: 'Sarah',
-      gender_id: 'gen-6a0ede824d102',
+      id: "spouse-2",
+      first_name: "Sarah",
+      gender_id: "gen-6a0ede824d102",
     },
   ]
 
   /**
    * Test touch events for selecting persons
    */
-  describe('Person Selection Touch Events', () => {
-    it('should handle touch events on PersonCard', () => {
+  describe("Person Selection Touch Events", () => {
+    it("should handle touch events on PersonCard", () => {
       const handleClick = vi.fn()
-      
+
       const { getByRole } = render(
         <PersonCard
           person={mockPerson}
           variant="selected"
           onClick={handleClick}
           showPhoto={true}
-        />
+        />,
       )
 
-      const card = getByRole('button')
+      const card = getByRole("button")
 
       // Simulate touch start
       fireEvent.touchStart(card)
-      
+
       // Simulate touch end (which triggers click)
       fireEvent.touchEnd(card)
       fireEvent.click(card)
@@ -86,9 +86,9 @@ describe('Touch Interactions', () => {
       expect(handleClick).toHaveBeenCalledWith(mockPerson.id)
     })
 
-    it('should handle multiple touch events on different person cards', () => {
+    it("should handle multiple touch events on different person cards", () => {
       const handleClick = vi.fn()
-      
+
       const { getAllByRole } = render(
         <div>
           <PersonCard
@@ -98,15 +98,15 @@ describe('Touch Interactions', () => {
             showPhoto={true}
           />
           <PersonCard
-            person={{ ...mockPerson, id: 'person-2', first_name: 'Jane' }}
+            person={{ ...mockPerson, id: "person-2", first_name: "Jane" }}
             variant="parent"
             onClick={handleClick}
             showPhoto={true}
           />
-        </div>
+        </div>,
       )
 
-      const cards = getAllByRole('button')
+      const cards = getAllByRole("button")
 
       // Touch first card
       fireEvent.touchStart(cards[0])
@@ -120,27 +120,27 @@ describe('Touch Interactions', () => {
       fireEvent.touchEnd(cards[1])
       fireEvent.click(cards[1])
 
-      expect(handleClick).toHaveBeenCalledWith('person-2')
+      expect(handleClick).toHaveBeenCalledWith("person-2")
       expect(handleClick).toHaveBeenCalledTimes(2)
     })
 
-    it('should not trigger click on touch cancel', () => {
+    it("should not trigger click on touch cancel", () => {
       const handleClick = vi.fn()
-      
+
       const { getByRole } = render(
         <PersonCard
           person={mockPerson}
           variant="selected"
           onClick={handleClick}
           showPhoto={true}
-        />
+        />,
       )
 
-      const card = getByRole('button')
+      const card = getByRole("button")
 
       // Simulate touch start
       fireEvent.touchStart(card)
-      
+
       // Simulate touch cancel (user dragged away)
       fireEvent.touchCancel(card)
 
@@ -148,19 +148,19 @@ describe('Touch Interactions', () => {
       expect(handleClick).not.toHaveBeenCalled()
     })
 
-    it('should handle rapid touch events (tap quickly)', () => {
+    it("should handle rapid touch events (tap quickly)", () => {
       const handleClick = vi.fn()
-      
+
       const { getByRole } = render(
         <PersonCard
           person={mockPerson}
           variant="selected"
           onClick={handleClick}
           showPhoto={true}
-        />
+        />,
       )
 
-      const card = getByRole('button')
+      const card = getByRole("button")
 
       // Simulate rapid taps
       for (let i = 0; i < 3; i++) {
@@ -176,19 +176,18 @@ describe('Touch Interactions', () => {
   /**
    * Test touch scrolling for siblings/spouses
    */
-  describe('Touch Scrolling', () => {
-    it('should allow touch scrolling on SiblingsList', () => {
+  describe("Touch Scrolling", () => {
+    it("should allow touch scrolling on SiblingsList", () => {
       const handleClick = vi.fn()
-      
+
       const { container } = render(
-        <SiblingsList
-          siblings={mockSiblings}
-          onPersonClick={handleClick}
-        />
+        <SiblingsList siblings={mockSiblings} onPersonClick={handleClick} />,
       )
 
       // Find the scroll container
-      const scrollContainer = container.querySelector('[data-radix-scroll-area-viewport]')
+      const scrollContainer = container.querySelector(
+        "[data-radix-scroll-area-viewport]",
+      )
       expect(scrollContainer).toBeTruthy()
 
       if (scrollContainer) {
@@ -208,23 +207,22 @@ describe('Touch Interactions', () => {
       }
     })
 
-    it('should allow touch scrolling with momentum', () => {
+    it("should allow touch scrolling with momentum", () => {
       const handleClick = vi.fn()
-      
+
       const { container } = render(
-        <SiblingsList
-          siblings={mockSiblings}
-          onPersonClick={handleClick}
-        />
+        <SiblingsList siblings={mockSiblings} onPersonClick={handleClick} />,
       )
 
-      const scrollContainer = container.querySelector('[data-radix-scroll-area-viewport]')
+      const scrollContainer = container.querySelector(
+        "[data-radix-scroll-area-viewport]",
+      )
 
       if (scrollContainer) {
         // Simulate fast swipe (momentum scroll)
         const startX = 200
         const endX = 50
-        
+
         fireEvent.touchStart(scrollContainer, {
           touches: [{ clientX: startX, clientY: 0 }],
         })
@@ -243,18 +241,15 @@ describe('Touch Interactions', () => {
       }
     })
 
-    it('should handle touch scrolling on SpouseCarousel navigation', () => {
+    it("should handle touch scrolling on SpouseCarousel navigation", () => {
       const handleClick = vi.fn()
-      
+
       const { getByLabelText } = render(
-        <SpouseCarousel
-          spouses={mockSpouses}
-          onPersonClick={handleClick}
-        />
+        <SpouseCarousel spouses={mockSpouses} onPersonClick={handleClick} />,
       )
 
-      const nextButton = getByLabelText('Next spouse')
-      const prevButton = getByLabelText('Previous spouse')
+      const nextButton = getByLabelText("Next spouse")
+      const prevButton = getByLabelText("Previous spouse")
 
       // Touch next button
       fireEvent.touchStart(nextButton)
@@ -271,18 +266,15 @@ describe('Touch Interactions', () => {
       expect(prevButton).toBeTruthy()
     })
 
-    it('should handle touch on carousel indicator dots', () => {
+    it("should handle touch on carousel indicator dots", () => {
       const handleClick = vi.fn()
-      
+
       const { getAllByRole } = render(
-        <SpouseCarousel
-          spouses={mockSpouses}
-          onPersonClick={handleClick}
-        />
+        <SpouseCarousel spouses={mockSpouses} onPersonClick={handleClick} />,
       )
 
       // Get indicator dots (tabs)
-      const dots = getAllByRole('tab')
+      const dots = getAllByRole("tab")
       expect(dots.length).toBe(2)
 
       // Touch second dot
@@ -294,22 +286,22 @@ describe('Touch Interactions', () => {
       expect(dots[1]).toBeTruthy()
     })
 
-    it('should prevent default scroll behavior during touch on cards', () => {
+    it("should prevent default scroll behavior during touch on cards", () => {
       const handleClick = vi.fn()
-      
+
       const { getByRole } = render(
         <PersonCard
           person={mockPerson}
           variant="selected"
           onClick={handleClick}
           showPhoto={true}
-        />
+        />,
       )
 
-      const card = getByRole('button')
+      const card = getByRole("button")
 
       // Simulate touch with preventDefault
-      const touchStartEvent = new TouchEvent('touchstart', {
+      const touchStartEvent = new TouchEvent("touchstart", {
         bubbles: true,
         cancelable: true,
         touches: [
@@ -330,20 +322,20 @@ describe('Touch Interactions', () => {
   /**
    * Test touch interaction accessibility
    */
-  describe('Touch Accessibility', () => {
-    it('should maintain focus after touch interaction', () => {
+  describe("Touch Accessibility", () => {
+    it("should maintain focus after touch interaction", () => {
       const handleClick = vi.fn()
-      
+
       const { getByRole } = render(
         <PersonCard
           person={mockPerson}
           variant="selected"
           onClick={handleClick}
           showPhoto={true}
-        />
+        />,
       )
 
-      const card = getByRole('button')
+      const card = getByRole("button")
 
       // Touch and focus
       fireEvent.touchStart(card)
@@ -354,19 +346,19 @@ describe('Touch Interactions', () => {
       expect(document.activeElement).toBe(card)
     })
 
-    it('should support both touch and keyboard navigation', () => {
+    it("should support both touch and keyboard navigation", () => {
       const handleClick = vi.fn()
-      
+
       const { getByRole } = render(
         <PersonCard
           person={mockPerson}
           variant="selected"
           onClick={handleClick}
           showPhoto={true}
-        />
+        />,
       )
 
-      const card = getByRole('button')
+      const card = getByRole("button")
 
       // Touch interaction
       fireEvent.touchStart(card)
@@ -376,47 +368,46 @@ describe('Touch Interactions', () => {
       expect(handleClick).toHaveBeenCalledTimes(1)
 
       // Keyboard interaction
-      fireEvent.keyDown(card, { key: 'Enter' })
+      fireEvent.keyDown(card, { key: "Enter" })
 
       expect(handleClick).toHaveBeenCalledTimes(2)
     })
 
-    it('should have appropriate touch target size', () => {
+    it("should have appropriate touch target size", () => {
       const handleClick = vi.fn()
-      
+
       const { getByRole } = render(
         <PersonCard
           person={mockPerson}
           variant="selected"
           onClick={handleClick}
           showPhoto={true}
-        />
+        />,
       )
 
-      const card = getByRole('button')
+      const card = getByRole("button")
 
       // Card should be rendered and clickable
       expect(card).toBeTruthy()
-      expect(card.getAttribute('role')).toBe('button')
-      expect(card.getAttribute('tabIndex')).toBe('0')
+      expect(card.getAttribute("role")).toBe("button")
+      expect(card.getAttribute("tabIndex")).toBe("0")
     })
   })
 
   /**
    * Test touch gestures
    */
-  describe('Touch Gestures', () => {
-    it('should handle swipe gesture on siblings list', () => {
+  describe("Touch Gestures", () => {
+    it("should handle swipe gesture on siblings list", () => {
       const handleClick = vi.fn()
-      
+
       const { container } = render(
-        <SiblingsList
-          siblings={mockSiblings}
-          onPersonClick={handleClick}
-        />
+        <SiblingsList siblings={mockSiblings} onPersonClick={handleClick} />,
       )
 
-      const scrollContainer = container.querySelector('[data-radix-scroll-area-viewport]')
+      const scrollContainer = container.querySelector(
+        "[data-radix-scroll-area-viewport]",
+      )
 
       if (scrollContainer) {
         // Simulate swipe left
@@ -434,19 +425,19 @@ describe('Touch Interactions', () => {
       }
     })
 
-    it('should distinguish between tap and swipe', () => {
+    it("should distinguish between tap and swipe", () => {
       const handleClick = vi.fn()
-      
+
       const { getByRole } = render(
         <PersonCard
           person={mockPerson}
           variant="selected"
           onClick={handleClick}
           showPhoto={true}
-        />
+        />,
       )
 
-      const card = getByRole('button')
+      const card = getByRole("button")
 
       // Tap (short touch without movement)
       fireEvent.touchStart(card, {
@@ -462,9 +453,9 @@ describe('Touch Interactions', () => {
       expect(handleClick).toHaveBeenCalledWith(mockPerson.id)
     })
 
-    it('should handle pinch zoom gesture gracefully', () => {
+    it("should handle pinch zoom gesture gracefully", () => {
       const handleClick = vi.fn()
-      
+
       const { container } = render(
         <div>
           <PersonCard
@@ -473,7 +464,7 @@ describe('Touch Interactions', () => {
             onClick={handleClick}
             showPhoto={true}
           />
-        </div>
+        </div>,
       )
 
       // Simulate pinch zoom (two-finger touch)

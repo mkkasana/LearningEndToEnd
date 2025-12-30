@@ -1,13 +1,14 @@
 // @ts-nocheck
-import { useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import {
-  ReligionMetadataService,
-  PersonReligionService,
   type PersonReligionCreate,
+  PersonReligionService,
+  ReligionMetadataService,
 } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,6 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Select,
   SelectContent,
@@ -33,7 +35,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
 
 const formSchema = z.object({

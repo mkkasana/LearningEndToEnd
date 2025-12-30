@@ -1,6 +1,6 @@
+import type { PersonDetails } from "@/client"
 import { PersonCard } from "./PersonCard"
 import { SpouseCarousel } from "./SpouseCarousel"
-import type { PersonDetails } from "@/client"
 
 export interface SpouseSectionProps {
   spouses: PersonDetails[]
@@ -19,7 +19,7 @@ export function SpouseSection({ spouses, onPersonClick }: SpouseSectionProps) {
   // For single spouse, display directly
   if (spouses.length === 1) {
     return (
-      <div 
+      <div
         className="flex items-center"
         role="region"
         aria-label="Spouse section"
@@ -37,7 +37,7 @@ export function SpouseSection({ spouses, onPersonClick }: SpouseSectionProps) {
 
   // For multiple spouses, use SpouseCarousel
   return (
-    <div 
+    <div
       className="flex items-center"
       role="region"
       aria-label="Spouses section"

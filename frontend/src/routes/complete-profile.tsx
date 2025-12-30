@@ -1,7 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
+import { CheckCircle2, Circle } from "lucide-react"
 import { useState } from "react"
 import { ProfileService } from "@/client"
+import { AddAddressDialog } from "@/components/Profile/AddAddressDialog"
+import { AddReligionDialog } from "@/components/Profile/AddReligionDialog"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -10,9 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { CheckCircle2, Circle } from "lucide-react"
-import { AddAddressDialog } from "@/components/Profile/AddAddressDialog"
-import { AddReligionDialog } from "@/components/Profile/AddReligionDialog"
 
 export const Route = createFileRoute("/complete-profile" as any)({
   component: CompleteProfile,
@@ -22,7 +22,11 @@ function CompleteProfile() {
   const [showAddressDialog, setShowAddressDialog] = useState(false)
   const [showReligionDialog, setShowReligionDialog] = useState(false)
 
-  const { data: profileStatus, isLoading, refetch } = useQuery({
+  const {
+    data: profileStatus,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["profileCompletion"],
     queryFn: () => ProfileService.getProfileCompletionStatus(),
   })

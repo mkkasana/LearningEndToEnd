@@ -1,11 +1,13 @@
 // @ts-nocheck
-import { useState, useEffect } from "react"
-import { useForm } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { useQuery } from "@tanstack/react-query"
-import { ReligionMetadataService, PersonReligionService } from "@/client"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import type { PersonDetails } from "@/client"
+import { PersonReligionService, ReligionMetadataService } from "@/client"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -14,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Select,
   SelectContent,
@@ -21,8 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { LoadingButton } from "@/components/ui/loading-button"
 
 const formSchema = z.object({
   religionId: z.string().min(1, "Religion is required"),
@@ -49,8 +50,12 @@ export function SearchStep3Religion({
   onComplete,
   onBack,
 }: SearchStep3ReligionProps) {
-  const [selectedReligion, setSelectedReligion] = useState<string>(initialData.religionId || "")
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialData.religionCategoryId || "")
+  const [selectedReligion, setSelectedReligion] = useState<string>(
+    initialData.religionId || "",
+  )
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    initialData.religionCategoryId || "",
+  )
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<FormData>({
@@ -77,7 +82,10 @@ export function SearchStep3Religion({
         form.setValue("religionCategoryId", myReligion.religion_category_id)
       }
       if (myReligion.religion_sub_category_id) {
-        form.setValue("religionSubCategoryId", myReligion.religion_sub_category_id)
+        form.setValue(
+          "religionSubCategoryId",
+          myReligion.religion_sub_category_id,
+        )
       }
     }
   }, [myReligion, initialData.religionId, form])
@@ -148,7 +156,10 @@ export function SearchStep3Religion({
                 </FormControl>
                 <SelectContent>
                   {religions?.map((religion: any) => (
-                    <SelectItem key={religion.religionId} value={religion.religionId}>
+                    <SelectItem
+                      key={religion.religionId}
+                      value={religion.religionId}
+                    >
                       {religion.religionName}
                     </SelectItem>
                   ))}
@@ -166,7 +177,10 @@ export function SearchStep3Religion({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category (Optional)</FormLabel>
-                <Select onValueChange={handleCategoryChange} value={field.value}>
+                <Select
+                  onValueChange={handleCategoryChange}
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
@@ -174,7 +188,10 @@ export function SearchStep3Religion({
                   </FormControl>
                   <SelectContent>
                     {categories?.map((category: any) => (
-                      <SelectItem key={category.categoryId} value={category.categoryId}>
+                      <SelectItem
+                        key={category.categoryId}
+                        value={category.categoryId}
+                      >
                         {category.categoryName}
                       </SelectItem>
                     ))}
@@ -201,7 +218,10 @@ export function SearchStep3Religion({
                   </FormControl>
                   <SelectContent>
                     {subCategories?.map((subCategory: any) => (
-                      <SelectItem key={subCategory.subCategoryId} value={subCategory.subCategoryId}>
+                      <SelectItem
+                        key={subCategory.subCategoryId}
+                        value={subCategory.subCategoryId}
+                      >
                         {subCategory.subCategoryName}
                       </SelectItem>
                     ))}

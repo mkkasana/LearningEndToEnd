@@ -1,9 +1,9 @@
 // @ts-nocheck
 import { Search, User } from "lucide-react"
 import type { PersonMatchResult } from "@/client"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 
 interface SearchStep4ResultsProps {
@@ -43,7 +43,8 @@ export function SearchStep4Results({
           </div>
           <h3 className="text-lg font-semibold mb-2">No Results Found</h3>
           <p className="text-muted-foreground text-center max-w-md text-sm mb-6">
-            No persons match your search criteria. Try adjusting your search parameters.
+            No persons match your search criteria. Try adjusting your search
+            parameters.
           </p>
           <Button variant="outline" onClick={onBack}>
             Back to Search
@@ -65,10 +66,15 @@ export function SearchStep4Results({
         {results.map((result) => {
           const birthYear = formatBirthYear(result.date_of_birth)
           const deathYear = formatDeathYear(result.date_of_death)
-          const yearsDisplay = deathYear ? `${birthYear} - ${deathYear}` : `${birthYear} -`
+          const yearsDisplay = deathYear
+            ? `${birthYear} - ${deathYear}`
+            : `${birthYear} -`
 
           return (
-            <Card key={result.person_id} className="hover:shadow-md transition-shadow">
+            <Card
+              key={result.person_id}
+              className="hover:shadow-md transition-shadow"
+            >
               <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 space-y-2">
@@ -79,9 +85,12 @@ export function SearchStep4Results({
                       <div>
                         <h4 className="font-semibold text-base">
                           {result.first_name}
-                          {result.middle_name && ` ${result.middle_name}`} {result.last_name}
+                          {result.middle_name && ` ${result.middle_name}`}{" "}
+                          {result.last_name}
                         </h4>
-                        <p className="text-sm text-muted-foreground">{yearsDisplay}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {yearsDisplay}
+                        </p>
                       </div>
                     </div>
 
@@ -90,13 +99,17 @@ export function SearchStep4Results({
                     <div className="space-y-1 text-sm">
                       {result.address_display && (
                         <div>
-                          <span className="font-medium text-muted-foreground">Address: </span>
+                          <span className="font-medium text-muted-foreground">
+                            Address:{" "}
+                          </span>
                           <span>{result.address_display}</span>
                         </div>
                       )}
                       {result.religion_display && (
                         <div>
-                          <span className="font-medium text-muted-foreground">Religion: </span>
+                          <span className="font-medium text-muted-foreground">
+                            Religion:{" "}
+                          </span>
                           <span>{result.religion_display}</span>
                         </div>
                       )}

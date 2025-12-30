@@ -1,14 +1,11 @@
 // @ts-nocheck
-import { useState, useEffect } from "react"
-import { useMutation, useQuery } from "@tanstack/react-query"
+
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import {
-  ReligionMetadataService,
-  PersonReligionService,
-  type PersonReligionCreate,
-} from "@/client"
+import { PersonReligionService, ReligionMetadataService } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -18,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Select,
   SelectContent,
@@ -25,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
 
 const formSchema = z.object({
@@ -42,7 +39,11 @@ interface ReligionStepProps {
   initialData?: any
 }
 
-export function ReligionStep({ onComplete, onBack, initialData }: ReligionStepProps) {
+export function ReligionStep({
+  onComplete,
+  onBack,
+  initialData,
+}: ReligionStepProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
 
   const [selectedReligion, setSelectedReligion] = useState<string>("")
@@ -61,7 +62,8 @@ export function ReligionStep({ onComplete, onBack, initialData }: ReligionStepPr
   useEffect(() => {
     if (initialData) {
       if (initialData.religion_id) setSelectedReligion(initialData.religion_id)
-      if (initialData.religion_category_id) setSelectedCategory(initialData.religion_category_id)
+      if (initialData.religion_category_id)
+        setSelectedCategory(initialData.religion_category_id)
     }
   }, [initialData])
 
@@ -76,17 +78,20 @@ export function ReligionStep({ onComplete, onBack, initialData }: ReligionStepPr
     if (!initialData && myReligion) {
       form.setValue("religion_id", myReligion.religion_id)
       setSelectedReligion(myReligion.religion_id)
-      
+
       if (myReligion.religion_category_id) {
         form.setValue("religion_category_id", myReligion.religion_category_id)
         setSelectedCategory(myReligion.religion_category_id)
       }
-      
+
       if (myReligion.religion_sub_category_id) {
-        form.setValue("religion_sub_category_id", myReligion.religion_sub_category_id)
+        form.setValue(
+          "religion_sub_category_id",
+          myReligion.religion_sub_category_id,
+        )
       }
     }
-  }, [myReligion, initialData])
+  }, [myReligion, initialData, form.setValue])
 
   // Fetch religions
   const { data: religions } = useQuery({
@@ -133,9 +138,14 @@ export function ReligionStep({ onComplete, onBack, initialData }: ReligionStepPr
     const enrichedData = {
       ...data,
       _displayNames: {
-        religion: religions?.find((r: any) => r.religionId === data.religion_id)?.religionName,
-        category: categories?.find((c: any) => c.categoryId === data.religion_category_id)?.categoryName,
-        subCategory: subCategories?.find((sc: any) => sc.subCategoryId === data.religion_sub_category_id)?.subCategoryName,
+        religion: religions?.find((r: any) => r.religionId === data.religion_id)
+          ?.religionName,
+        category: categories?.find(
+          (c: any) => c.categoryId === data.religion_category_id,
+        )?.categoryName,
+        subCategory: subCategories?.find(
+          (sc: any) => sc.subCategoryId === data.religion_sub_category_id,
+        )?.subCategoryName,
       },
     }
     addReligionMutation.mutate(enrichedData)
@@ -159,7 +169,8 @@ export function ReligionStep({ onComplete, onBack, initialData }: ReligionStepPr
     <div className="space-y-4">
       <div className="bg-muted p-3 rounded-md text-sm">
         <p className="text-muted-foreground">
-          Religion details are pre-filled based on your religion. You can modify them if needed.
+          Religion details are pre-filled based on your religion. You can modify
+          them if needed.
         </p>
       </div>
 
@@ -266,7 +277,10 @@ export function ReligionStep({ onComplete, onBack, initialData }: ReligionStepPr
             <Button type="button" variant="outline" onClick={onBack}>
               Back
             </Button>
-            <LoadingButton type="submit" loading={addReligionMutation.isPending}>
+            <LoadingButton
+              type="submit"
+              loading={addReligionMutation.isPending}
+            >
               Next: Check for Duplicates
             </LoadingButton>
           </div>

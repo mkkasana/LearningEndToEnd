@@ -1,14 +1,11 @@
 // @ts-nocheck
-import { useState, useEffect } from "react"
-import { useMutation, useQuery } from "@tanstack/react-query"
+
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import {
-  AddressMetadataService,
-  PersonService,
-  type PersonAddressCreate,
-} from "@/client"
+import { AddressMetadataService, PersonService } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -18,6 +15,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Select,
   SelectContent,
@@ -25,10 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { LoadingButton } from "@/components/ui/loading-button"
-import useCustomToast from "@/hooks/useCustomToast"
 import useAuth from "@/hooks/useAuth"
+import useCustomToast from "@/hooks/useCustomToast"
 
 const formSchema = z.object({
   country_id: z.string().min(1, "Country is required"),
@@ -49,7 +46,11 @@ interface AddressStepProps {
   initialData?: any
 }
 
-export function AddressStep({ onComplete, onBack, initialData }: AddressStepProps) {
+export function AddressStep({
+  onComplete,
+  onBack,
+  initialData,
+}: AddressStepProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const { user } = useAuth()
 
@@ -62,8 +63,10 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
     resolver: zodResolver(formSchema),
     defaultValues: {
       address_line: initialData?.address_line || "",
-      start_date: initialData?.start_date || new Date().toISOString().split("T")[0],
-      is_current: initialData?.is_current !== undefined ? initialData.is_current : true,
+      start_date:
+        initialData?.start_date || new Date().toISOString().split("T")[0],
+      is_current:
+        initialData?.is_current !== undefined ? initialData.is_current : true,
       country_id: initialData?.country_id || "",
       state_id: initialData?.state_id || "",
       district_id: initialData?.district_id || "",
@@ -78,7 +81,8 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
       if (initialData.country_id) setSelectedCountry(initialData.country_id)
       if (initialData.state_id) setSelectedState(initialData.state_id)
       if (initialData.district_id) setSelectedDistrict(initialData.district_id)
-      if (initialData.sub_district_id) setSelectedSubDistrict(initialData.sub_district_id)
+      if (initialData.sub_district_id)
+        setSelectedSubDistrict(initialData.sub_district_id)
     }
   }, [initialData])
 
@@ -91,32 +95,33 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
   // Prefill with user's current address only if no initialData
   useEffect(() => {
     if (!initialData && myAddresses && myAddresses.length > 0) {
-      const currentAddress = myAddresses.find((addr: any) => addr.is_current) || myAddresses[0]
+      const currentAddress =
+        myAddresses.find((addr: any) => addr.is_current) || myAddresses[0]
       if (currentAddress) {
         form.setValue("country_id", currentAddress.country_id)
         setSelectedCountry(currentAddress.country_id)
-        
+
         if (currentAddress.state_id) {
           form.setValue("state_id", currentAddress.state_id)
           setSelectedState(currentAddress.state_id)
         }
-        
+
         if (currentAddress.district_id) {
           form.setValue("district_id", currentAddress.district_id)
           setSelectedDistrict(currentAddress.district_id)
         }
-        
+
         if (currentAddress.sub_district_id) {
           form.setValue("sub_district_id", currentAddress.sub_district_id)
           setSelectedSubDistrict(currentAddress.sub_district_id)
         }
-        
+
         if (currentAddress.locality_id) {
           form.setValue("locality_id", currentAddress.locality_id)
         }
       }
     }
-  }, [myAddresses, initialData])
+  }, [myAddresses, initialData, form.setValue])
 
   // Fetch countries
   const { data: countries } = useQuery({
@@ -179,11 +184,17 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
     const enrichedData = {
       ...data,
       _displayNames: {
-        country: countries?.find((c: any) => c.countryId === data.country_id)?.countryName,
+        country: countries?.find((c: any) => c.countryId === data.country_id)
+          ?.countryName,
         state: states?.find((s: any) => s.stateId === data.state_id)?.stateName,
-        district: districts?.find((d: any) => d.districtId === data.district_id)?.districtName,
-        subDistrict: subDistricts?.find((sd: any) => sd.subDistrictId === data.sub_district_id)?.subDistrictName,
-        locality: localities?.find((l: any) => l.localityId === data.locality_id)?.localityName,
+        district: districts?.find((d: any) => d.districtId === data.district_id)
+          ?.districtName,
+        subDistrict: subDistricts?.find(
+          (sd: any) => sd.subDistrictId === data.sub_district_id,
+        )?.subDistrictName,
+        locality: localities?.find(
+          (l: any) => l.localityId === data.locality_id,
+        )?.localityName,
       },
     }
     addAddressMutation.mutate(enrichedData)
@@ -229,7 +240,8 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
     <div className="space-y-4">
       <div className="bg-muted p-3 rounded-md text-sm">
         <p className="text-muted-foreground">
-          Address details are pre-filled based on your current address. You can modify them if needed.
+          Address details are pre-filled based on your current address. You can
+          modify them if needed.
         </p>
       </div>
 
@@ -242,10 +254,7 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Country *</FormLabel>
-                <Select
-                  onValueChange={handleCountryChange}
-                  value={field.value}
-                >
+                <Select onValueChange={handleCountryChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select country" />
@@ -275,10 +284,7 @@ export function AddressStep({ onComplete, onBack, initialData }: AddressStepProp
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>State *</FormLabel>
-                  <Select
-                    onValueChange={handleStateChange}
-                    value={field.value}
-                  >
+                  <Select onValueChange={handleStateChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select state" />

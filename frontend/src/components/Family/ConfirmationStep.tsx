@@ -1,16 +1,17 @@
 // @ts-nocheck
-import { useState } from "react"
+
 import { useMutation } from "@tanstack/react-query"
 import { CheckCircle2, Loader2 } from "lucide-react"
+import { useState } from "react"
+import {
+  type PersonAddressCreate,
+  type PersonCreate,
+  type PersonRelationshipCreate,
+  type PersonReligionCreate,
+  PersonService,
+} from "@/client"
 import { Button } from "@/components/ui/button"
 import { LoadingButton } from "@/components/ui/loading-button"
-import {
-  PersonService,
-  type PersonCreate,
-  type PersonAddressCreate,
-  type PersonReligionCreate,
-  type PersonRelationshipCreate,
-} from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 
 interface ConfirmationStepProps {
@@ -135,7 +136,7 @@ export function ConfirmationStep({
     onError: (error: any) => {
       setCreationStatus("")
       showErrorToast(
-        error.message || "Failed to create family member. Please try again."
+        error.message || "Failed to create family member. Please try again.",
       )
     },
   })
@@ -165,7 +166,8 @@ export function ConfirmationStep({
             <p className="text-sm text-muted-foreground">Full Name</p>
             <p className="font-medium">
               {familyMemberData.first_name}{" "}
-              {familyMemberData.middle_name && `${familyMemberData.middle_name} `}
+              {familyMemberData.middle_name &&
+                `${familyMemberData.middle_name} `}
               {familyMemberData.last_name}
             </p>
           </div>
@@ -201,15 +203,20 @@ export function ConfirmationStep({
             <div className="text-sm text-muted-foreground space-y-1">
               <p>{addressString || "No address specified"}</p>
               {addressData.address_line && (
-                <p className="text-xs italic">Additional: {addressData.address_line}</p>
+                <p className="text-xs italic">
+                  Additional: {addressData.address_line}
+                </p>
               )}
-              <p className="text-xs">Start Date: {new Date(addressData.start_date).toLocaleDateString()}</p>
+              <p className="text-xs">
+                Start Date:{" "}
+                {new Date(addressData.start_date).toLocaleDateString()}
+              </p>
               {addressData.is_current && (
                 <p className="text-xs text-green-600">Current Address</p>
               )}
             </div>
           </div>
-          
+
           <div>
             <p className="text-sm font-semibold mb-2">Religion</p>
             <div className="text-sm text-muted-foreground">
@@ -227,7 +234,11 @@ export function ConfirmationStep({
       )}
 
       <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack} disabled={createFamilyMemberMutation.isPending}>
+        <Button
+          variant="outline"
+          onClick={onBack}
+          disabled={createFamilyMemberMutation.isPending}
+        >
           Back
         </Button>
         <LoadingButton

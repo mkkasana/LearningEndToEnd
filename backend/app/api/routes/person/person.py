@@ -12,6 +12,7 @@ from app.schemas.person import (
     PersonAddressCreate,
     PersonAddressPublic,
     PersonAddressUpdate,
+    PersonCompleteDetailsResponse,
     PersonContributionPublic,
     PersonCreate,
     PersonDiscoveryResult,
@@ -813,6 +814,45 @@ def get_person_relationships_with_details(
     return PersonRelationshipsWithDetailsResponse(
         selected_person=PersonDetails(**person.model_dump()), relationships=result
     )
+
+
+@router.get(
+    "/{person_id}/complete-details",
+    response_model=PersonCompleteDetailsResponse,
+)
+@log_route
+def get_person_complete_details(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+) -> Any:
+    """
+    Get complete details for a specific person with resolved names.
+    
+    Returns comprehensive person information including:
+    - Core person data (name, dates)
+    - Gender name (resolved from gender_id)
+    - Current address with location names (country, state, district, sub-district, locality)
+    - Religion details with names (religion, category, sub-category)
+    
+    This endpoint is used by the Person Details Panel in the Family Tree view.
+    """
+    person_service = PersonService(session)
+    
+    complete_details = person_service.get_person_complete_details(person_id)
+    
+    if not complete_details:
+        raise HTTPException(
+            status_code=404,
+            detail="Person not found",
+        )
+    
+    logger.info(
+        f"Retrieved complete details for person {person_id} "
+        f"by user {current_user.email}"
+    )
+    
+    return complete_details
 
 
 @router.post("/me/relationships", response_model=PersonRelationshipPublic)

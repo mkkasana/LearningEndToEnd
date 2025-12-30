@@ -1,17 +1,18 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { useState, useEffect, useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Loader2, AlertCircle, Network, Search } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
-import { ProfileService, PersonService } from "@/client"
+import { createFileRoute } from "@tanstack/react-router"
+import { AlertCircle, Loader2, Network, Search } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 import type { PersonDetails } from "@/client"
-import { useFamilyTreeData } from "@/hooks/useFamilyTreeData"
-import { ParentsSection } from "@/components/FamilyTree/ParentsSection"
-import { HorizontalScrollRow } from "@/components/FamilyTree/HorizontalScrollRow"
+import { PersonService, ProfileService } from "@/client"
 import { ChildrenSection } from "@/components/FamilyTree/ChildrenSection"
+import { HorizontalScrollRow } from "@/components/FamilyTree/HorizontalScrollRow"
+import { ParentsSection } from "@/components/FamilyTree/ParentsSection"
+import { PersonDetailsPanel } from "@/components/FamilyTree/PersonDetailsPanel"
 import { RowConnector } from "@/components/FamilyTree/RowConnector"
 import { SearchPersonDialog } from "@/components/FamilyTree/SearchPersonDialog"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { useFamilyTreeData } from "@/hooks/useFamilyTreeData"
 
 export const Route = createFileRoute("/_layout/family-tree")({
   component: FamilyTreeView,
@@ -27,6 +28,9 @@ export const Route = createFileRoute("/_layout/family-tree")({
 function FamilyTreeView() {
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
+  // State for PersonDetailsPanel - Requirements: 1.1, 2.1
+  const [detailsPanelPersonId, setDetailsPanelPersonId] = useState<string | null>(null)
+  const [isDetailsPanelOpen, setIsDetailsPanelOpen] = useState(false)
   const treeContainerRef = useRef<HTMLDivElement>(null)
   const selectedPersonRef = useRef<HTMLDivElement>(null)
 
@@ -47,7 +51,9 @@ function FamilyTreeView() {
   useEffect(() => {
     if (!selectedPersonId) {
       // Check if there's a person ID passed via sessionStorage (from Explore button)
-      const explorePersonId = sessionStorage.getItem("familyTreeExplorePersonId")
+      const explorePersonId = sessionStorage.getItem(
+        "familyTreeExplorePersonId",
+      )
       if (explorePersonId) {
         setSelectedPersonId(explorePersonId)
         // Clear it so subsequent visits start with current user
@@ -64,14 +70,21 @@ function FamilyTreeView() {
       setSelectedPersonId(event.detail.personId)
     }
 
-    window.addEventListener("familyTreeExplorePerson", handleExplorePerson as EventListener)
+    window.addEventListener(
+      "familyTreeExplorePerson",
+      handleExplorePerson as EventListener,
+    )
     return () => {
-      window.removeEventListener("familyTreeExplorePerson", handleExplorePerson as EventListener)
+      window.removeEventListener(
+        "familyTreeExplorePerson",
+        handleExplorePerson as EventListener,
+      )
     }
   }, [])
 
   // Fetch family tree data for selected person
-  const { familyData, isLoading, error, refetch } = useFamilyTreeData(selectedPersonId)
+  const { familyData, isLoading, error, refetch } =
+    useFamilyTreeData(selectedPersonId)
 
   /**
    * Handle person card click - update selected person and fetch new data
@@ -82,11 +95,23 @@ function FamilyTreeView() {
     setSelectedPersonId(personId)
     // Data will be automatically fetched by useFamilyTreeData hook
     // when selectedPersonId changes
-    
+
     // Scroll to top of tree container for better UX
     if (treeContainerRef.current) {
-      treeContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      treeContainerRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      })
     }
+  }
+
+  /**
+   * Handle View button click - open details panel for the person
+   * Requirements: 1.1, 2.1
+   */
+  const handleViewClick = (personId: string) => {
+    setDetailsPanelPersonId(personId)
+    setIsDetailsPanelOpen(true)
   }
 
   // Focus management: Focus the selected person card after navigation
@@ -97,7 +122,7 @@ function FamilyTreeView() {
         selectedPersonRef.current?.focus()
       }, 100)
     }
-  }, [selectedPersonId, isLoading])
+  }, [isLoading])
 
   // Error handling: No person profile (Requirement 1.4)
   if (profileStatus && !profileStatus.has_person) {
@@ -108,7 +133,8 @@ function FamilyTreeView() {
           <AlertTitle>Profile Not Complete</AlertTitle>
           <AlertDescription>
             <p className="mb-4">
-              You need to complete your profile and add your personal information before viewing the family tree.
+              You need to complete your profile and add your personal
+              information before viewing the family tree.
             </p>
             <Button
               className="w-full"
@@ -143,7 +169,8 @@ function FamilyTreeView() {
           <AlertTitle>Error Loading Family Tree</AlertTitle>
           <AlertDescription>
             <p className="mb-4">
-              {error.message || "An unexpected error occurred while loading the family tree."}
+              {error.message ||
+                "An unexpected error occurred while loading the family tree."}
             </p>
             <div className="flex flex-col gap-2">
               <Button
@@ -153,17 +180,19 @@ function FamilyTreeView() {
               >
                 Retry
               </Button>
-              {selectedPersonId && myPerson && selectedPersonId !== myPerson.id && (
-                <Button
-                  className="w-full"
-                  variant="secondary"
-                  onClick={() => {
-                    setSelectedPersonId(myPerson.id)
-                  }}
-                >
-                  Return to My Profile
-                </Button>
-              )}
+              {selectedPersonId &&
+                myPerson &&
+                selectedPersonId !== myPerson.id && (
+                  <Button
+                    className="w-full"
+                    variant="secondary"
+                    onClick={() => {
+                      setSelectedPersonId(myPerson.id)
+                    }}
+                  >
+                    Return to My Profile
+                  </Button>
+                )}
             </div>
           </AlertDescription>
         </Alert>
@@ -213,7 +242,7 @@ function FamilyTreeView() {
         onPersonSelected={handlePersonClick}
       />
 
-      <main 
+      <main
         ref={treeContainerRef}
         className="relative flex flex-col items-center gap-2 md:gap-3 p-4 md:p-6 lg:p-8 border-2 rounded-xl shadow-sm bg-gradient-to-br from-background to-muted/20 transition-all duration-300"
         role="region"
@@ -224,7 +253,9 @@ function FamilyTreeView() {
           <div className="absolute inset-0 bg-background/90 backdrop-blur-sm flex items-center justify-center z-10 rounded-xl transition-all duration-300">
             <div className="flex flex-col items-center">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="mt-4 text-muted-foreground font-medium">Loading family tree...</p>
+              <p className="mt-4 text-muted-foreground font-medium">
+                Loading family tree...
+              </p>
             </div>
           </div>
         )}
@@ -233,43 +264,43 @@ function FamilyTreeView() {
           <ParentsSection
             parents={familyData.parents}
             onPersonClick={handlePersonClick}
+            onViewClick={handleViewClick}
           />
         )}
 
         {/* Connector from parents to center row */}
-        {familyData.parents.length > 0 && (
-          <RowConnector />
-        )}
+        {familyData.parents.length > 0 && <RowConnector />}
 
         {/* Center Section: Siblings, Selected Person, Spouses - All in one horizontal row */}
         {/* Requirements: 9.3 - Single horizontally scrollable row with color-coding */}
         {(() => {
           // Combine siblings, selected person, and spouses into one array
           const centerRowPeople: PersonDetails[] = []
-          const colorCoding = new Map<string, 'sibling' | 'spouse'>()
-          
+          const colorCoding = new Map<string, "sibling" | "spouse">()
+
           // Add siblings on the left
-          familyData.siblings.forEach(sibling => {
+          familyData.siblings.forEach((sibling) => {
             centerRowPeople.push(sibling)
-            colorCoding.set(sibling.id, 'sibling')
+            colorCoding.set(sibling.id, "sibling")
           })
-          
+
           // Add selected person in the center
           if (selectedPerson) {
             centerRowPeople.push(selectedPerson)
           }
-          
+
           // Add spouses on the right
-          familyData.spouses.forEach(spouse => {
+          familyData.spouses.forEach((spouse) => {
             centerRowPeople.push(spouse)
-            colorCoding.set(spouse.id, 'spouse')
+            colorCoding.set(spouse.id, "spouse")
           })
-          
+
           return centerRowPeople.length > 0 ? (
             <HorizontalScrollRow
               people={centerRowPeople}
               selectedPersonId={selectedPersonId || undefined}
               onPersonClick={handlePersonClick}
+              onViewClick={handleViewClick}
               variant="center"
               colorCoding={colorCoding}
             />
@@ -277,15 +308,14 @@ function FamilyTreeView() {
         })()}
 
         {/* Connector from center row to children */}
-        {familyData.children.length > 0 && (
-          <RowConnector />
-        )}
+        {familyData.children.length > 0 && <RowConnector />}
 
         {/* Children Section */}
         {familyData.children.length > 0 && (
           <ChildrenSection
             children={familyData.children}
             onPersonClick={handlePersonClick}
+            onViewClick={handleViewClick}
           />
         )}
 
@@ -298,13 +328,23 @@ function FamilyTreeView() {
               <div className="rounded-full bg-muted/50 p-6 mb-4">
                 <Network className="h-12 w-12 text-muted-foreground" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-2">No Family Relationships</h3>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">
+                No Family Relationships
+              </h3>
               <p className="text-muted-foreground text-center max-w-md text-sm md:text-base">
-                No family relationships have been recorded yet. Add family members to see them in the tree.
+                No family relationships have been recorded yet. Add family
+                members to see them in the tree.
               </p>
             </div>
           )}
       </main>
+
+      {/* Person Details Panel - Requirements: 1.1, 2.1 */}
+      <PersonDetailsPanel
+        personId={detailsPanelPersonId}
+        open={isDetailsPanelOpen}
+        onOpenChange={setIsDetailsPanelOpen}
+      />
     </div>
   )
 }

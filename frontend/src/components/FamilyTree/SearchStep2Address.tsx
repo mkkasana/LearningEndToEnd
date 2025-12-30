@@ -1,11 +1,13 @@
 // @ts-nocheck
-import { useState, useEffect } from "react"
-import { useForm } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { useQuery } from "@tanstack/react-query"
-import { AddressMetadataService, PersonService } from "@/client"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import type { PersonDetails } from "@/client"
+import { AddressMetadataService, PersonService } from "@/client"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -21,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
 
 const formSchema = z.object({
   countryId: z.string().min(1, "Country is required"),
@@ -52,10 +53,18 @@ export function SearchStep2Address({
   onComplete,
   onBack,
 }: SearchStep2AddressProps) {
-  const [selectedCountry, setSelectedCountry] = useState<string>(initialData.countryId || "")
-  const [selectedState, setSelectedState] = useState<string>(initialData.stateId || "")
-  const [selectedDistrict, setSelectedDistrict] = useState<string>(initialData.districtId || "")
-  const [selectedSubDistrict, setSelectedSubDistrict] = useState<string>(initialData.subDistrictId || "")
+  const [selectedCountry, setSelectedCountry] = useState<string>(
+    initialData.countryId || "",
+  )
+  const [selectedState, setSelectedState] = useState<string>(
+    initialData.stateId || "",
+  )
+  const [selectedDistrict, setSelectedDistrict] = useState<string>(
+    initialData.districtId || "",
+  )
+  const [selectedSubDistrict, setSelectedSubDistrict] = useState<string>(
+    initialData.subDistrictId || "",
+  )
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -196,7 +205,10 @@ export function SearchStep2Address({
                 </FormControl>
                 <SelectContent className="max-h-[300px]">
                   {countries?.map((country: any) => (
-                    <SelectItem key={country.countryId} value={country.countryId}>
+                    <SelectItem
+                      key={country.countryId}
+                      value={country.countryId}
+                    >
                       {country.countryName}
                     </SelectItem>
                   ))}
@@ -241,7 +253,10 @@ export function SearchStep2Address({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>District *</FormLabel>
-                <Select onValueChange={handleDistrictChange} value={field.value}>
+                <Select
+                  onValueChange={handleDistrictChange}
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select district" />
@@ -249,7 +264,10 @@ export function SearchStep2Address({
                   </FormControl>
                   <SelectContent>
                     {districts?.map((district: any) => (
-                      <SelectItem key={district.districtId} value={district.districtId}>
+                      <SelectItem
+                        key={district.districtId}
+                        value={district.districtId}
+                      >
                         {district.districtName}
                       </SelectItem>
                     ))}
@@ -268,7 +286,10 @@ export function SearchStep2Address({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Sub-District (Optional)</FormLabel>
-                <Select onValueChange={handleSubDistrictChange} value={field.value}>
+                <Select
+                  onValueChange={handleSubDistrictChange}
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select sub-district" />
@@ -276,7 +297,10 @@ export function SearchStep2Address({
                   </FormControl>
                   <SelectContent>
                     {subDistricts?.map((subDistrict: any) => (
-                      <SelectItem key={subDistrict.tehsilId} value={subDistrict.tehsilId}>
+                      <SelectItem
+                        key={subDistrict.tehsilId}
+                        value={subDistrict.tehsilId}
+                      >
                         {subDistrict.tehsilName}
                       </SelectItem>
                     ))}
@@ -303,7 +327,10 @@ export function SearchStep2Address({
                   </FormControl>
                   <SelectContent>
                     {localities?.map((locality: any) => (
-                      <SelectItem key={locality.localityId} value={locality.localityId}>
+                      <SelectItem
+                        key={locality.localityId}
+                        value={locality.localityId}
+                      >
                         {locality.localityName}
                       </SelectItem>
                     ))}

@@ -1,20 +1,19 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import * as fc from 'fast-check'
-import { renderHook, waitFor, act, render } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState } from 'react'
-import React from 'react'
-import type { ReactNode } from 'react'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { act, render, renderHook, waitFor } from "@testing-library/react"
+import * as fc from "fast-check"
+import type { ReactNode } from "react"
+import React, { useState } from "react"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
 /**
  * Feature: family-tree-view, Property 8: Person Selection Navigation
  * Validates: Requirements 7.1, 7.2, 7.3
- * 
+ *
  * For any person card displayed in the family tree, when clicked, the system
  * should update the selected person to that person, fetch that person's
  * relationship data, and re-render the tree centered on the new person.
  */
-describe('Property 8: Person Selection Navigation', () => {
+describe("Property 8: Person Selection Navigation", () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
@@ -28,15 +27,13 @@ describe('Property 8: Person Selection Navigation', () => {
   })
 
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
 
   /**
    * Test that person selection updates state correctly
    */
-  it('should update selected person when a person is clicked', () => {
+  it("should update selected person when a person is clicked", () => {
     fc.assert(
       fc.property(
         fc.uuid(), // Initial person ID
@@ -45,15 +42,17 @@ describe('Property 8: Person Selection Navigation', () => {
           // Simulate the person selection logic
           const { result } = renderHook(
             () => {
-              const [selectedPersonId, setSelectedPersonId] = useState<string | null>(initialPersonId)
-              
+              const [selectedPersonId, setSelectedPersonId] = useState<
+                string | null
+              >(initialPersonId)
+
               const handlePersonClick = (personId: string) => {
                 setSelectedPersonId(personId)
               }
 
               return { selectedPersonId, handlePersonClick }
             },
-            { wrapper }
+            { wrapper },
           )
 
           // Initial state should be the initial person
@@ -66,16 +65,16 @@ describe('Property 8: Person Selection Navigation', () => {
 
           // Selected person should be updated
           expect(result.current.selectedPersonId).toBe(newPersonId)
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     )
   })
 
   /**
    * Test that clicking the same person doesn't break the state
    */
-  it('should handle clicking the same person multiple times', () => {
+  it("should handle clicking the same person multiple times", () => {
     fc.assert(
       fc.property(
         fc.uuid(),
@@ -83,15 +82,17 @@ describe('Property 8: Person Selection Navigation', () => {
         (personId, clickCount) => {
           const { result } = renderHook(
             () => {
-              const [selectedPersonId, setSelectedPersonId] = useState<string | null>(personId)
-              
+              const [selectedPersonId, setSelectedPersonId] = useState<
+                string | null
+              >(personId)
+
               const handlePersonClick = (id: string) => {
                 setSelectedPersonId(id)
               }
 
               return { selectedPersonId, handlePersonClick }
             },
-            { wrapper }
+            { wrapper },
           )
 
           // Click the same person multiple times
@@ -103,82 +104,84 @@ describe('Property 8: Person Selection Navigation', () => {
 
           // Selected person should still be the same
           expect(result.current.selectedPersonId).toBe(personId)
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     )
   })
 
   /**
    * Test that person selection triggers data fetching
    */
-  it('should trigger data fetch when person is selected', () => {
+  it("should trigger data fetch when person is selected", () => {
     fc.assert(
-      fc.property(
-        fc.uuid(),
-        fc.uuid(),
-        (initialPersonId, newPersonId) => {
-          // Track if data fetch was triggered
-          let fetchTriggered = false
-          const mockFetch = vi.fn(() => {
-            fetchTriggered = true
-            return Promise.resolve({ data: null })
-          })
+      fc.property(fc.uuid(), fc.uuid(), (initialPersonId, newPersonId) => {
+        // Track if data fetch was triggered
+        let fetchTriggered = false
+        const mockFetch = vi.fn(() => {
+          fetchTriggered = true
+          return Promise.resolve({ data: null })
+        })
 
-          const { result } = renderHook(
-            () => {
-              const [selectedPersonId, setSelectedPersonId] = useState<string | null>(initialPersonId)
-              
-              const handlePersonClick = (personId: string) => {
-                setSelectedPersonId(personId)
-                // Simulate data fetch trigger
-                mockFetch()
-              }
+        const { result } = renderHook(
+          () => {
+            const [selectedPersonId, setSelectedPersonId] = useState<
+              string | null
+            >(initialPersonId)
 
-              return { selectedPersonId, handlePersonClick }
-            },
-            { wrapper }
-          )
+            const handlePersonClick = (personId: string) => {
+              setSelectedPersonId(personId)
+              // Simulate data fetch trigger
+              mockFetch()
+            }
 
-          // Reset fetch tracking
-          fetchTriggered = false
-          mockFetch.mockClear()
+            return { selectedPersonId, handlePersonClick }
+          },
+          { wrapper },
+        )
 
-          // Click on a new person
-          act(() => {
-            result.current.handlePersonClick(newPersonId)
-          })
+        // Reset fetch tracking
+        fetchTriggered = false
+        mockFetch.mockClear()
 
-          // Data fetch should be triggered
-          expect(fetchTriggered).toBe(true)
-          expect(mockFetch).toHaveBeenCalledTimes(1)
-        }
-      ),
-      { numRuns: 100 }
+        // Click on a new person
+        act(() => {
+          result.current.handlePersonClick(newPersonId)
+        })
+
+        // Data fetch should be triggered
+        expect(fetchTriggered).toBe(true)
+        expect(mockFetch).toHaveBeenCalledTimes(1)
+      }),
+      { numRuns: 100 },
     )
   })
 
   /**
    * Test that person selection sequence maintains correct state
    */
-  it('should maintain correct state through multiple person selections', () => {
+  it("should maintain correct state through multiple person selections", () => {
     fc.assert(
       fc.property(
         fc.array(fc.uuid(), { minLength: 2, maxLength: 10 }),
         (personIds) => {
           const { result } = renderHook(
             () => {
-              const [selectedPersonId, setSelectedPersonId] = useState<string | null>(personIds[0])
-              const [selectionHistory, setSelectionHistory] = useState<string[]>([personIds[0]])
-              
+              const [selectedPersonId, setSelectedPersonId] = useState<
+                string | null
+              >(personIds[0])
+              const [selectionHistory, setSelectionHistory] = useState<
+                string[]
+              >([personIds[0]])
+
               const handlePersonClick = (personId: string) => {
                 setSelectedPersonId(personId)
-                setSelectionHistory(prev => [...prev, personId])
+                setSelectionHistory((prev) => [...prev, personId])
               }
 
               return { selectedPersonId, handlePersonClick, selectionHistory }
             },
-            { wrapper }
+            { wrapper },
           )
 
           // Click through all persons in sequence
@@ -189,23 +192,24 @@ describe('Property 8: Person Selection Navigation', () => {
           })
 
           // Final selected person should be the last one
-          expect(result.current.selectedPersonId).toBe(personIds[personIds.length - 1])
+          expect(result.current.selectedPersonId).toBe(
+            personIds[personIds.length - 1],
+          )
 
           // Selection history should contain all persons in order
           expect(result.current.selectionHistory).toEqual(personIds)
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     )
   })
 })
-
 
 /**
  * Unit tests for loading indicator
  * Requirements: 7.5
  */
-describe('Loading Indicator', () => {
+describe("Loading Indicator", () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
@@ -221,7 +225,7 @@ describe('Loading Indicator', () => {
   /**
    * Test that loading indicator appears during data fetch
    */
-  it('should display loading indicator during data fetch', async () => {
+  it("should display loading indicator during data fetch", async () => {
     // Simulate a component with loading state
     const TestComponent = () => {
       const [isLoading, setIsLoading] = useState(true)
@@ -230,8 +234,8 @@ describe('Loading Indicator', () => {
       const fetchData = async () => {
         setIsLoading(true)
         // Simulate async data fetch
-        await new Promise(resolve => setTimeout(resolve, 100))
-        setData('loaded')
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        setData("loaded")
         setIsLoading(false)
       }
 
@@ -252,18 +256,18 @@ describe('Loading Indicator', () => {
     const { getByTestId, queryByTestId } = render(
       <QueryClientProvider client={queryClient}>
         <TestComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     // Initially, loading indicator should be visible
-    expect(getByTestId('loading-indicator')).toBeTruthy()
-    expect(queryByTestId('content')).toBeNull()
+    expect(getByTestId("loading-indicator")).toBeTruthy()
+    expect(queryByTestId("content")).toBeNull()
   })
 
   /**
    * Test that loading indicator disappears after data loads
    */
-  it('should hide loading indicator after data loads', async () => {
+  it("should hide loading indicator after data loads", async () => {
     // Simulate a component with loading state
     const TestComponent = () => {
       const [isLoading, setIsLoading] = useState(true)
@@ -272,15 +276,15 @@ describe('Loading Indicator', () => {
       const fetchData = async () => {
         setIsLoading(true)
         // Simulate async data fetch
-        await new Promise(resolve => setTimeout(resolve, 10))
-        setData('loaded')
+        await new Promise((resolve) => setTimeout(resolve, 10))
+        setData("loaded")
         setIsLoading(false)
       }
 
       // Auto-fetch on mount
       React.useEffect(() => {
         fetchData()
-      }, [])
+      }, [fetchData])
 
       return (
         <div>
@@ -296,32 +300,32 @@ describe('Loading Indicator', () => {
     const { getByTestId, queryByTestId } = render(
       <QueryClientProvider client={queryClient}>
         <TestComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     // Initially, loading indicator should be visible
-    expect(getByTestId('loading-indicator')).toBeTruthy()
+    expect(getByTestId("loading-indicator")).toBeTruthy()
 
     // Wait for data to load
     await waitFor(() => {
-      expect(queryByTestId('loading-indicator')).toBeNull()
-      expect(getByTestId('content')).toBeTruthy()
+      expect(queryByTestId("loading-indicator")).toBeNull()
+      expect(getByTestId("content")).toBeTruthy()
     })
   })
 
   /**
    * Test that loading indicator shows during person selection
    */
-  it('should show loading indicator when selecting a new person', async () => {
+  it("should show loading indicator when selecting a new person", async () => {
     const TestComponent = () => {
       const [isLoading, setIsLoading] = useState(false)
-      const [selectedPerson, setSelectedPerson] = useState('person-1')
+      const [selectedPerson, setSelectedPerson] = useState("person-1")
 
       const handlePersonClick = async (personId: string) => {
         setIsLoading(true)
         setSelectedPerson(personId)
         // Simulate data fetch
-        await new Promise(resolve => setTimeout(resolve, 10))
+        await new Promise((resolve) => setTimeout(resolve, 10))
         setIsLoading(false)
       }
 
@@ -330,7 +334,7 @@ describe('Loading Indicator', () => {
           {isLoading && <div data-testid="loading-indicator">Loading...</div>}
           <div data-testid="selected-person">{selectedPerson}</div>
           <button
-            onClick={() => handlePersonClick('person-2')}
+            onClick={() => handlePersonClick("person-2")}
             data-testid="select-button"
           >
             Select Person 2
@@ -342,36 +346,35 @@ describe('Loading Indicator', () => {
     const { getByTestId, queryByTestId } = render(
       <QueryClientProvider client={queryClient}>
         <TestComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     // Initially, no loading indicator
-    expect(queryByTestId('loading-indicator')).toBeNull()
+    expect(queryByTestId("loading-indicator")).toBeNull()
 
     // Click to select new person
     act(() => {
-      getByTestId('select-button').click()
+      getByTestId("select-button").click()
     })
 
     // Loading indicator should appear
     await waitFor(() => {
-      expect(getByTestId('loading-indicator')).toBeTruthy()
+      expect(getByTestId("loading-indicator")).toBeTruthy()
     })
 
     // Wait for loading to complete
     await waitFor(() => {
-      expect(queryByTestId('loading-indicator')).toBeNull()
-      expect(getByTestId('selected-person').textContent).toBe('person-2')
+      expect(queryByTestId("loading-indicator")).toBeNull()
+      expect(getByTestId("selected-person").textContent).toBe("person-2")
     })
   })
 })
-
 
 /**
  * Unit tests for error scenarios
  * Requirements: Error handling for various failure cases
  */
-describe('Error Scenarios', () => {
+describe("Error Scenarios", () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
@@ -387,7 +390,7 @@ describe('Error Scenarios', () => {
   /**
    * Test API fetch failure handling
    */
-  it('should handle API fetch failure gracefully', async () => {
+  it("should handle API fetch failure gracefully", async () => {
     const TestComponent = () => {
       const [error, setError] = useState<Error | null>(null)
       const [isLoading, setIsLoading] = useState(false)
@@ -397,7 +400,7 @@ describe('Error Scenarios', () => {
         setError(null)
         try {
           // Simulate API failure
-          throw new Error('Failed to fetch family tree data')
+          throw new Error("Failed to fetch family tree data")
         } catch (err) {
           setError(err as Error)
         } finally {
@@ -426,36 +429,40 @@ describe('Error Scenarios', () => {
     const { getByTestId } = render(
       <QueryClientProvider client={queryClient}>
         <TestComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     // Trigger fetch
     act(() => {
-      getByTestId('fetch-button').click()
+      getByTestId("fetch-button").click()
     })
 
     // Wait for error to appear
     await waitFor(() => {
-      expect(getByTestId('error-message')).toBeTruthy()
-      expect(getByTestId('error-message').textContent).toContain('Failed to fetch family tree data')
-      expect(getByTestId('retry-button')).toBeTruthy()
+      expect(getByTestId("error-message")).toBeTruthy()
+      expect(getByTestId("error-message").textContent).toContain(
+        "Failed to fetch family tree data",
+      )
+      expect(getByTestId("retry-button")).toBeTruthy()
     })
   })
 
   /**
    * Test invalid person ID handling
    */
-  it('should handle invalid person ID gracefully', async () => {
+  it("should handle invalid person ID gracefully", async () => {
     const TestComponent = () => {
       const [error, setError] = useState<Error | null>(null)
-      const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
+      const [selectedPersonId, setSelectedPersonId] = useState<string | null>(
+        null,
+      )
 
       const handlePersonClick = async (personId: string) => {
         setError(null)
         try {
           // Validate person ID format (basic UUID check)
           if (!personId || personId.length === 0) {
-            throw new Error('Invalid person ID')
+            throw new Error("Invalid person ID")
           }
           setSelectedPersonId(personId)
         } catch (err) {
@@ -466,11 +473,19 @@ describe('Error Scenarios', () => {
       return (
         <div>
           {error && <div data-testid="error-message">{error.message}</div>}
-          {selectedPersonId && <div data-testid="selected-person">{selectedPersonId}</div>}
-          <button onClick={() => handlePersonClick('')} data-testid="invalid-button">
+          {selectedPersonId && (
+            <div data-testid="selected-person">{selectedPersonId}</div>
+          )}
+          <button
+            onClick={() => handlePersonClick("")}
+            data-testid="invalid-button"
+          >
             Select Invalid
           </button>
-          <button onClick={() => handlePersonClick('valid-id')} data-testid="valid-button">
+          <button
+            onClick={() => handlePersonClick("valid-id")}
+            data-testid="valid-button"
+          >
             Select Valid
           </button>
         </div>
@@ -480,37 +495,39 @@ describe('Error Scenarios', () => {
     const { getByTestId, queryByTestId } = render(
       <QueryClientProvider client={queryClient}>
         <TestComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     // Try to select invalid person ID
     act(() => {
-      getByTestId('invalid-button').click()
+      getByTestId("invalid-button").click()
     })
 
     // Error should be displayed
     await waitFor(() => {
-      expect(getByTestId('error-message')).toBeTruthy()
-      expect(getByTestId('error-message').textContent).toContain('Invalid person ID')
-      expect(queryByTestId('selected-person')).toBeNull()
+      expect(getByTestId("error-message")).toBeTruthy()
+      expect(getByTestId("error-message").textContent).toContain(
+        "Invalid person ID",
+      )
+      expect(queryByTestId("selected-person")).toBeNull()
     })
 
     // Try to select valid person ID
     act(() => {
-      getByTestId('valid-button').click()
+      getByTestId("valid-button").click()
     })
 
     // Valid person should be selected
     await waitFor(() => {
-      expect(queryByTestId('error-message')).toBeNull()
-      expect(getByTestId('selected-person')).toBeTruthy()
+      expect(queryByTestId("error-message")).toBeNull()
+      expect(getByTestId("selected-person")).toBeTruthy()
     })
   })
 
   /**
    * Test empty relationship data handling
    */
-  it('should handle empty relationship data gracefully', async () => {
+  it("should handle empty relationship data gracefully", async () => {
     const TestComponent = () => {
       const [familyData, setFamilyData] = useState<{
         parents: any[]
@@ -523,7 +540,7 @@ describe('Error Scenarios', () => {
       const fetchData = async () => {
         setIsLoading(true)
         // Simulate fetching empty relationship data
-        await new Promise(resolve => setTimeout(resolve, 10))
+        await new Promise((resolve) => setTimeout(resolve, 10))
         setFamilyData({
           parents: [],
           spouses: [],
@@ -535,9 +552,10 @@ describe('Error Scenarios', () => {
 
       React.useEffect(() => {
         fetchData()
-      }, [])
+      }, [fetchData])
 
-      const hasNoRelationships = familyData &&
+      const hasNoRelationships =
+        familyData &&
         familyData.parents.length === 0 &&
         familyData.spouses.length === 0 &&
         familyData.siblings.length === 0 &&
@@ -561,22 +579,24 @@ describe('Error Scenarios', () => {
     const { getByTestId, queryByTestId } = render(
       <QueryClientProvider client={queryClient}>
         <TestComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     // Wait for data to load
     await waitFor(() => {
-      expect(queryByTestId('loading')).toBeNull()
-      expect(getByTestId('empty-state')).toBeTruthy()
-      expect(getByTestId('empty-state').textContent).toContain('No family relationships')
-      expect(queryByTestId('family-tree')).toBeNull()
+      expect(queryByTestId("loading")).toBeNull()
+      expect(getByTestId("empty-state")).toBeTruthy()
+      expect(getByTestId("empty-state").textContent).toContain(
+        "No family relationships",
+      )
+      expect(queryByTestId("family-tree")).toBeNull()
     })
   })
 
   /**
    * Test partial data handling
    */
-  it('should handle partial data gracefully', async () => {
+  it("should handle partial data gracefully", async () => {
     const TestComponent = () => {
       const [familyData, setFamilyData] = useState<{
         parents: any[]
@@ -589,11 +609,11 @@ describe('Error Scenarios', () => {
       const fetchData = async () => {
         setIsLoading(true)
         // Simulate fetching partial relationship data
-        await new Promise(resolve => setTimeout(resolve, 10))
+        await new Promise((resolve) => setTimeout(resolve, 10))
         setFamilyData({
-          parents: [{ id: '1', first_name: 'John', last_name: 'Doe' }],
+          parents: [{ id: "1", first_name: "John", last_name: "Doe" }],
           spouses: [], // No spouses
-          siblings: [{ id: '2', first_name: 'Jane', last_name: 'Doe' }],
+          siblings: [{ id: "2", first_name: "Jane", last_name: "Doe" }],
           children: [], // No children
         })
         setIsLoading(false)
@@ -601,7 +621,7 @@ describe('Error Scenarios', () => {
 
       React.useEffect(() => {
         fetchData()
-      }, [])
+      }, [fetchData])
 
       return (
         <div>
@@ -609,16 +629,24 @@ describe('Error Scenarios', () => {
           {familyData && (
             <div data-testid="family-tree">
               {familyData.parents.length > 0 && (
-                <div data-testid="parents-section">Parents: {familyData.parents.length}</div>
+                <div data-testid="parents-section">
+                  Parents: {familyData.parents.length}
+                </div>
               )}
               {familyData.spouses.length > 0 && (
-                <div data-testid="spouses-section">Spouses: {familyData.spouses.length}</div>
+                <div data-testid="spouses-section">
+                  Spouses: {familyData.spouses.length}
+                </div>
               )}
               {familyData.siblings.length > 0 && (
-                <div data-testid="siblings-section">Siblings: {familyData.siblings.length}</div>
+                <div data-testid="siblings-section">
+                  Siblings: {familyData.siblings.length}
+                </div>
               )}
               {familyData.children.length > 0 && (
-                <div data-testid="children-section">Children: {familyData.children.length}</div>
+                <div data-testid="children-section">
+                  Children: {familyData.children.length}
+                </div>
               )}
             </div>
           )}
@@ -629,28 +657,28 @@ describe('Error Scenarios', () => {
     const { getByTestId, queryByTestId } = render(
       <QueryClientProvider client={queryClient}>
         <TestComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     // Wait for data to load
     await waitFor(() => {
-      expect(queryByTestId('loading')).toBeNull()
-      expect(getByTestId('family-tree')).toBeTruthy()
-      
+      expect(queryByTestId("loading")).toBeNull()
+      expect(getByTestId("family-tree")).toBeTruthy()
+
       // Should show sections with data
-      expect(getByTestId('parents-section')).toBeTruthy()
-      expect(getByTestId('siblings-section')).toBeTruthy()
-      
+      expect(getByTestId("parents-section")).toBeTruthy()
+      expect(getByTestId("siblings-section")).toBeTruthy()
+
       // Should not show sections without data
-      expect(queryByTestId('spouses-section')).toBeNull()
-      expect(queryByTestId('children-section')).toBeNull()
+      expect(queryByTestId("spouses-section")).toBeNull()
+      expect(queryByTestId("children-section")).toBeNull()
     })
   })
 
   /**
    * Test retry mechanism after API failure
    */
-  it('should allow retry after API failure', async () => {
+  it("should allow retry after API failure", async () => {
     let attemptCount = 0
 
     const TestComponent = () => {
@@ -665,10 +693,10 @@ describe('Error Scenarios', () => {
           attemptCount++
           if (attemptCount === 1) {
             // First attempt fails
-            throw new Error('Network error')
+            throw new Error("Network error")
           }
           // Second attempt succeeds
-          setData('Success')
+          setData("Success")
         } catch (err) {
           setError(err as Error)
         } finally {
@@ -698,81 +726,82 @@ describe('Error Scenarios', () => {
     const { getByTestId, queryByTestId } = render(
       <QueryClientProvider client={queryClient}>
         <TestComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     // First attempt - should fail
     act(() => {
-      getByTestId('fetch-button').click()
+      getByTestId("fetch-button").click()
     })
 
     await waitFor(() => {
-      expect(getByTestId('error-message')).toBeTruthy()
-      expect(getByTestId('retry-button')).toBeTruthy()
+      expect(getByTestId("error-message")).toBeTruthy()
+      expect(getByTestId("retry-button")).toBeTruthy()
     })
 
     // Retry - should succeed
     act(() => {
-      getByTestId('retry-button').click()
+      getByTestId("retry-button").click()
     })
 
     await waitFor(() => {
-      expect(queryByTestId('error-message')).toBeNull()
-      expect(getByTestId('success')).toBeTruthy()
-      expect(getByTestId('success').textContent).toBe('Success')
+      expect(queryByTestId("error-message")).toBeNull()
+      expect(getByTestId("success")).toBeTruthy()
+      expect(getByTestId("success").textContent).toBe("Success")
     })
   })
 })
 
-
 /**
  * Feature: family-tree-view, Property 10: Responsive Layout Adaptation
  * Validates: Requirements 10.4
- * 
+ *
  * For any viewport size change, the family tree layout should adapt appropriately
  * by adjusting card sizes, spacing, and section arrangement based on the current
  * breakpoint (desktop, tablet, or mobile).
  */
-describe('Property 10: Responsive Layout Adaptation', () => {
+describe("Property 10: Responsive Layout Adaptation", () => {
   /**
    * Test that layout adapts to different viewport widths
    */
-  it('should adapt layout based on viewport width', () => {
+  it("should adapt layout based on viewport width", () => {
     fc.assert(
       fc.property(
         fc.integer({ min: 320, max: 2560 }), // Viewport width range
         (viewportWidth) => {
           // Determine expected breakpoint
-          const getBreakpoint = (width: number): 'mobile' | 'tablet' | 'desktop' => {
-            if (width <= 640) return 'mobile'
-            if (width <= 1024) return 'tablet'
-            return 'desktop'
+          const getBreakpoint = (
+            width: number,
+          ): "mobile" | "tablet" | "desktop" => {
+            if (width <= 640) return "mobile"
+            if (width <= 1024) return "tablet"
+            return "desktop"
           }
 
           const breakpoint = getBreakpoint(viewportWidth)
 
           // Simulate layout adaptation logic
-          const getLayoutConfig = (bp: 'mobile' | 'tablet' | 'desktop') => {
+          const getLayoutConfig = (bp: "mobile" | "tablet" | "desktop") => {
             switch (bp) {
-              case 'mobile':
+              case "mobile":
                 return {
-                  cardSize: 'small',
-                  spacing: 'compact',
-                  arrangement: 'vertical',
+                  cardSize: "small",
+                  spacing: "compact",
+                  arrangement: "vertical",
                   maxCardsPerRow: 1,
                 }
-              case 'tablet':
+              case "tablet":
                 return {
-                  cardSize: 'medium',
-                  spacing: 'normal',
-                  arrangement: 'mixed',
+                  cardSize: "medium",
+                  spacing: "normal",
+                  arrangement: "mixed",
                   maxCardsPerRow: 2,
                 }
-              case 'desktop':
+              case "desktop":
                 return {
-                  cardSize: 'large',
-                  spacing: 'spacious',
-                  arrangement: 'horizontal',
+                  cardSize: "large",
+                  spacing: "spacious",
+                  arrangement: "horizontal",
                   maxCardsPerRow: 4,
                 }
             }
@@ -782,40 +811,40 @@ describe('Property 10: Responsive Layout Adaptation', () => {
 
           // Verify layout configuration matches breakpoint
           if (viewportWidth <= 640) {
-            expect(layoutConfig.cardSize).toBe('small')
-            expect(layoutConfig.arrangement).toBe('vertical')
+            expect(layoutConfig.cardSize).toBe("small")
+            expect(layoutConfig.arrangement).toBe("vertical")
             expect(layoutConfig.maxCardsPerRow).toBe(1)
           } else if (viewportWidth <= 1024) {
-            expect(layoutConfig.cardSize).toBe('medium')
-            expect(layoutConfig.arrangement).toBe('mixed')
+            expect(layoutConfig.cardSize).toBe("medium")
+            expect(layoutConfig.arrangement).toBe("mixed")
             expect(layoutConfig.maxCardsPerRow).toBe(2)
           } else {
-            expect(layoutConfig.cardSize).toBe('large')
-            expect(layoutConfig.arrangement).toBe('horizontal')
+            expect(layoutConfig.cardSize).toBe("large")
+            expect(layoutConfig.arrangement).toBe("horizontal")
             expect(layoutConfig.maxCardsPerRow).toBe(4)
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     )
   })
 
   /**
    * Test that card sizes scale appropriately with viewport
    */
-  it('should scale card sizes based on breakpoint', () => {
+  it("should scale card sizes based on breakpoint", () => {
     fc.assert(
       fc.property(
-        fc.constantFrom('mobile', 'tablet', 'desktop'),
+        fc.constantFrom("mobile", "tablet", "desktop"),
         (breakpoint) => {
           // Simulate card size calculation
-          const getCardDimensions = (bp: 'mobile' | 'tablet' | 'desktop') => {
+          const getCardDimensions = (bp: "mobile" | "tablet" | "desktop") => {
             switch (bp) {
-              case 'mobile':
+              case "mobile":
                 return { width: 140, height: 180, avatarSize: 48 }
-              case 'tablet':
+              case "tablet":
                 return { width: 170, height: 220, avatarSize: 56 }
-              case 'desktop':
+              case "desktop":
                 return { width: 200, height: 260, avatarSize: 64 }
             }
           }
@@ -823,10 +852,10 @@ describe('Property 10: Responsive Layout Adaptation', () => {
           const dimensions = getCardDimensions(breakpoint)
 
           // Verify dimensions are appropriate for breakpoint
-          if (breakpoint === 'mobile') {
+          if (breakpoint === "mobile") {
             expect(dimensions.width).toBeLessThanOrEqual(160)
             expect(dimensions.avatarSize).toBeLessThanOrEqual(48)
-          } else if (breakpoint === 'tablet') {
+          } else if (breakpoint === "tablet") {
             expect(dimensions.width).toBeGreaterThan(140)
             expect(dimensions.width).toBeLessThanOrEqual(180)
             expect(dimensions.avatarSize).toBeGreaterThan(48)
@@ -835,28 +864,28 @@ describe('Property 10: Responsive Layout Adaptation', () => {
             expect(dimensions.width).toBeGreaterThan(170)
             expect(dimensions.avatarSize).toBeGreaterThan(56)
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     )
   })
 
   /**
    * Test that spacing adjusts based on viewport
    */
-  it('should adjust spacing based on breakpoint', () => {
+  it("should adjust spacing based on breakpoint", () => {
     fc.assert(
       fc.property(
-        fc.constantFrom('mobile', 'tablet', 'desktop'),
+        fc.constantFrom("mobile", "tablet", "desktop"),
         (breakpoint) => {
           // Simulate spacing calculation
-          const getSpacing = (bp: 'mobile' | 'tablet' | 'desktop') => {
+          const getSpacing = (bp: "mobile" | "tablet" | "desktop") => {
             switch (bp) {
-              case 'mobile':
+              case "mobile":
                 return { gap: 8, padding: 16, sectionGap: 16 }
-              case 'tablet':
+              case "tablet":
                 return { gap: 16, padding: 24, sectionGap: 24 }
-              case 'desktop':
+              case "desktop":
                 return { gap: 24, padding: 32, sectionGap: 32 }
             }
           }
@@ -864,10 +893,10 @@ describe('Property 10: Responsive Layout Adaptation', () => {
           const spacing = getSpacing(breakpoint)
 
           // Verify spacing increases with larger viewports
-          if (breakpoint === 'mobile') {
+          if (breakpoint === "mobile") {
             expect(spacing.gap).toBeLessThanOrEqual(12)
             expect(spacing.padding).toBeLessThanOrEqual(16)
-          } else if (breakpoint === 'tablet') {
+          } else if (breakpoint === "tablet") {
             expect(spacing.gap).toBeGreaterThan(8)
             expect(spacing.gap).toBeLessThanOrEqual(20)
             expect(spacing.padding).toBeGreaterThan(16)
@@ -876,79 +905,82 @@ describe('Property 10: Responsive Layout Adaptation', () => {
             expect(spacing.gap).toBeGreaterThan(16)
             expect(spacing.padding).toBeGreaterThan(24)
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     )
   })
 
   /**
    * Test that section arrangement changes with viewport
    */
-  it('should change section arrangement based on breakpoint', () => {
+  it("should change section arrangement based on breakpoint", () => {
     fc.assert(
       fc.property(
-        fc.constantFrom('mobile', 'tablet', 'desktop'),
-        fc.array(fc.record({
-          id: fc.uuid(),
-          type: fc.constantFrom('parent', 'spouse', 'sibling', 'child'),
-        }), { minLength: 1, maxLength: 10 }),
+        fc.constantFrom("mobile", "tablet", "desktop"),
+        fc.array(
+          fc.record({
+            id: fc.uuid(),
+            type: fc.constantFrom("parent", "spouse", "sibling", "child"),
+          }),
+          { minLength: 1, maxLength: 10 },
+        ),
         (breakpoint, sections) => {
           // Simulate section arrangement logic
           const arrangeSections = (
-            bp: 'mobile' | 'tablet' | 'desktop',
-            secs: Array<{ id: string; type: string }>
+            bp: "mobile" | "tablet" | "desktop",
+            secs: Array<{ id: string; type: string }>,
           ) => {
-            if (bp === 'mobile') {
+            if (bp === "mobile") {
               // Mobile: vertical stack
               return {
-                layout: 'vertical',
+                layout: "vertical",
                 columns: 1,
-                sections: secs.map(s => ({ ...s, width: '100%' })),
+                sections: secs.map((s) => ({ ...s, width: "100%" })),
               }
-            } else if (bp === 'tablet') {
+            }
+            if (bp === "tablet") {
               // Tablet: mixed layout
               return {
-                layout: 'mixed',
+                layout: "mixed",
                 columns: 2,
-                sections: secs.map(s => ({ ...s, width: '50%' })),
+                sections: secs.map((s) => ({ ...s, width: "50%" })),
               }
-            } else {
-              // Desktop: horizontal layout
-              return {
-                layout: 'horizontal',
-                columns: 4,
-                sections: secs.map(s => ({ ...s, width: '25%' })),
-              }
+            }
+            // Desktop: horizontal layout
+            return {
+              layout: "horizontal",
+              columns: 4,
+              sections: secs.map((s) => ({ ...s, width: "25%" })),
             }
           }
 
           const arrangement = arrangeSections(breakpoint, sections)
 
           // Verify arrangement matches breakpoint
-          if (breakpoint === 'mobile') {
-            expect(arrangement.layout).toBe('vertical')
+          if (breakpoint === "mobile") {
+            expect(arrangement.layout).toBe("vertical")
             expect(arrangement.columns).toBe(1)
-            arrangement.sections.forEach(s => {
-              expect(s.width).toBe('100%')
+            arrangement.sections.forEach((s) => {
+              expect(s.width).toBe("100%")
             })
-          } else if (breakpoint === 'tablet') {
-            expect(arrangement.layout).toBe('mixed')
+          } else if (breakpoint === "tablet") {
+            expect(arrangement.layout).toBe("mixed")
             expect(arrangement.columns).toBe(2)
           } else {
-            expect(arrangement.layout).toBe('horizontal')
+            expect(arrangement.layout).toBe("horizontal")
             expect(arrangement.columns).toBe(4)
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     )
   })
 
   /**
    * Test that viewport resize triggers layout recalculation
    */
-  it('should recalculate layout on viewport resize', () => {
+  it("should recalculate layout on viewport resize", () => {
     fc.assert(
       fc.property(
         fc.integer({ min: 320, max: 2560 }),
@@ -959,9 +991,9 @@ describe('Property 10: Responsive Layout Adaptation', () => {
           let layoutRecalculated = false
 
           const getBreakpoint = (width: number) => {
-            if (width <= 640) return 'mobile'
-            if (width <= 1024) return 'tablet'
-            return 'desktop'
+            if (width <= 640) return "mobile"
+            if (width <= 1024) return "tablet"
+            return "desktop"
           }
 
           const initialBreakpoint = getBreakpoint(currentWidth)
@@ -978,19 +1010,19 @@ describe('Property 10: Responsive Layout Adaptation', () => {
           // Verify layout recalculation logic
           const breakpointChanged = initialBreakpoint !== newBreakpoint
           expect(layoutRecalculated).toBe(breakpointChanged)
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     )
   })
 
   /**
    * Test that all sections remain visible across breakpoints
    */
-  it('should keep all sections visible across breakpoints', () => {
+  it("should keep all sections visible across breakpoints", () => {
     fc.assert(
       fc.property(
-        fc.constantFrom('mobile', 'tablet', 'desktop'),
+        fc.constantFrom("mobile", "tablet", "desktop"),
         fc.record({
           hasParents: fc.boolean(),
           hasSpouses: fc.boolean(),
@@ -1000,13 +1032,13 @@ describe('Property 10: Responsive Layout Adaptation', () => {
         (breakpoint, familyData) => {
           // Simulate section visibility logic
           const getSectionVisibility = (
-            _bp: 'mobile' | 'tablet' | 'desktop',
+            _bp: "mobile" | "tablet" | "desktop",
             data: {
               hasParents: boolean
               hasSpouses: boolean
               hasSiblings: boolean
               hasChildren: boolean
-            }
+            },
           ) => {
             // All sections should be visible if they have data,
             // regardless of breakpoint
@@ -1025,9 +1057,9 @@ describe('Property 10: Responsive Layout Adaptation', () => {
           expect(visibility.spousesVisible).toBe(familyData.hasSpouses)
           expect(visibility.siblingsVisible).toBe(familyData.hasSiblings)
           expect(visibility.childrenVisible).toBe(familyData.hasChildren)
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     )
   })
 })

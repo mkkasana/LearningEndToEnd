@@ -1,18 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Eye, Trash2, Bug, Lightbulb } from "lucide-react"
+import { Bug, Eye, Lightbulb, Trash2 } from "lucide-react"
 import { useState } from "react"
 
-import { type SupportTicketPublic, IssuesService } from "@/client"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { IssuesService, type SupportTicketPublic } from "@/client"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +13,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 

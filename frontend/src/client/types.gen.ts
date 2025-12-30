@@ -318,6 +318,18 @@ export type PersonAddressCreate = {
 };
 
 /**
+ * Address details with resolved location names.
+ */
+export type PersonAddressDetails = {
+    locality_name?: (string | null);
+    sub_district_name?: (string | null);
+    district_name?: (string | null);
+    state_name?: (string | null);
+    country_name: string;
+    address_line?: (string | null);
+};
+
+/**
  * Person address response schema.
  */
 export type PersonAddressPublic = {
@@ -376,6 +388,63 @@ export type PersonAddressUpdate = {
     start_date?: (string | null);
     end_date?: (string | null);
     is_current?: (boolean | null);
+};
+
+/**
+ * Complete person details with resolved names.
+ */
+export type PersonCompleteDetailsResponse = {
+    id: string;
+    first_name: string;
+    middle_name?: (string | null);
+    last_name: string;
+    date_of_birth: string;
+    date_of_death?: (string | null);
+    gender_name: string;
+    address?: (PersonAddressDetails | null);
+    religion?: (PersonReligionDetails | null);
+};
+
+/**
+ * Schema for person contribution with statistics.
+ */
+export type PersonContributionPublic = {
+    /**
+     * Person ID
+     */
+    id: string;
+    /**
+     * First name
+     */
+    first_name: string;
+    /**
+     * Last name
+     */
+    last_name: string;
+    /**
+     * Date of birth
+     */
+    date_of_birth: string;
+    /**
+     * Date of death
+     */
+    date_of_death?: (string | null);
+    /**
+     * Whether the person is active
+     */
+    is_active: boolean;
+    /**
+     * Formatted address string
+     */
+    address: string;
+    /**
+     * Total profile view count
+     */
+    total_views: number;
+    /**
+     * Record creation timestamp
+     */
+    created_at: string;
 };
 
 /**
@@ -791,6 +860,15 @@ export type PersonReligionCreate = {
      * Religion sub-category reference
      */
     religion_sub_category_id?: (string | null);
+};
+
+/**
+ * Religion details with resolved names.
+ */
+export type PersonReligionDetails = {
+    religion_name: string;
+    category_name?: (string | null);
+    sub_category_name?: (string | null);
 };
 
 /**
@@ -1764,6 +1842,8 @@ export type PersonUpdateMyPersonData = {
 
 export type PersonUpdateMyPersonResponse = (PersonPublic);
 
+export type PersonGetMyContributionsResponse = (Array<PersonContributionPublic>);
+
 export type PersonCreateFamilyMemberData = {
     requestBody: PersonCreate;
 };
@@ -1875,6 +1955,12 @@ export type PersonGetPersonRelationshipsWithDetailsData = {
 };
 
 export type PersonGetPersonRelationshipsWithDetailsResponse = (PersonRelationshipsWithDetailsResponse);
+
+export type PersonGetPersonCompleteDetailsData = {
+    personId: string;
+};
+
+export type PersonGetPersonCompleteDetailsResponse = (PersonCompleteDetailsResponse);
 
 export type PersonGetMyRelationshipData = {
     relationshipId: string;
@@ -2202,3 +2288,17 @@ export type UtilsTestEmailData = {
 export type UtilsTestEmailResponse = (Message);
 
 export type UtilsHealthCheckResponse = (boolean);
+
+export type UtilsDeleteCacheKeyData = {
+    cacheKey: string;
+};
+
+export type UtilsDeleteCacheKeyResponse = (Message);
+
+export type UtilsDeleteCachePatternData = {
+    pattern: string;
+};
+
+export type UtilsDeleteCachePatternResponse = (Message);
+
+export type UtilsClearAllCacheResponse = (Message);

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useQuery } from "@tanstack/react-query"
+import { PersonService } from "@/client"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -10,7 +11,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { LoadingButton } from "@/components/ui/loading-button"
-import { PersonService } from "@/client"
 
 interface ConnectConfirmationDialogProps {
   open: boolean
@@ -34,7 +34,8 @@ export function ConnectConfirmationDialog({
   // Fetch relatives of the person user is trying to connect to
   const { data: relationshipsData, isLoading: isLoadingRelatives } = useQuery({
     queryKey: ["personRelationships", personId],
-    queryFn: () => PersonService.getPersonRelationshipsWithDetails({ personId }),
+    queryFn: () =>
+      PersonService.getPersonRelationshipsWithDetails({ personId }),
     enabled: open && !!personId, // Only fetch when dialog is open and personId exists
   })
 
@@ -53,7 +54,10 @@ export function ConnectConfirmationDialog({
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={isLoading ? undefined : onOpenChange}>
+    <AlertDialog
+      open={open}
+      onOpenChange={isLoading ? undefined : onOpenChange}
+    >
       <AlertDialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle>Connect to Existing Person</AlertDialogTitle>
@@ -66,8 +70,10 @@ export function ConnectConfirmationDialog({
         {/* Show relatives to help identify the correct person */}
         {isLoadingRelatives && (
           <div className="flex items-center justify-center py-4 space-x-2">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-            <p className="text-sm text-muted-foreground">Loading relatives...</p>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+            <p className="text-sm text-muted-foreground">
+              Loading relatives...
+            </p>
           </div>
         )}
 
@@ -90,14 +96,19 @@ export function ConnectConfirmationDialog({
                       {rel.person.last_name}
                     </strong>
                     <span className="text-muted-foreground">
-                      {" "}({rel.relationship.relationship_type_label || rel.relationship.relationship_type})
+                      {" "}
+                      (
+                      {rel.relationship.relationship_type_label ||
+                        rel.relationship.relationship_type}
+                      )
                     </span>
                   </span>
                 </div>
               ))}
             </div>
             <p className="text-xs text-muted-foreground italic">
-              This information helps you verify you're connecting to the correct person.
+              This information helps you verify you're connecting to the correct
+              person.
             </p>
           </div>
         )}

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 
-export type RelationshipLineType = 'parent-child' | 'spouse' | 'sibling'
+export type RelationshipLineType = "parent-child" | "spouse" | "sibling"
 
 export interface Position {
   x: number
@@ -22,7 +22,7 @@ function calculateParentChildPath(from: Position, to: Position): string {
   // Vertical line from parent to child
   // We'll use a simple straight line for now, can be enhanced with curves
   const midY = (from.y + to.y) / 2
-  
+
   // Path: Start at parent bottom, go down to midpoint, then to child top
   return `M ${from.x} ${from.y} L ${from.x} ${midY} L ${to.x} ${midY} L ${to.x} ${to.y}`
 }
@@ -44,7 +44,7 @@ function calculateSiblingPath(from: Position, to: Position): string {
   // For siblings, we show a connection through their shared parent
   // This creates an inverted U shape
   const midY = Math.min(from.y, to.y) - 30 // Go up 30px above the higher sibling
-  
+
   // Path: Start at first sibling, go up, across, then down to second sibling
   return `M ${from.x} ${from.y} L ${from.x} ${midY} L ${to.x} ${midY} L ${to.x} ${to.y}`
 }
@@ -58,22 +58,22 @@ function getLineStyle(type: RelationshipLineType): {
   strokeDasharray?: string
 } {
   switch (type) {
-    case 'parent-child':
+    case "parent-child":
       return {
-        stroke: 'currentColor',
+        stroke: "currentColor",
         strokeWidth: 2,
       }
-    case 'spouse':
+    case "spouse":
       return {
-        stroke: 'currentColor',
+        stroke: "currentColor",
         strokeWidth: 2,
-        strokeDasharray: '5,5', // Dashed line for spouse
+        strokeDasharray: "5,5", // Dashed line for spouse
       }
-    case 'sibling':
+    case "sibling":
       return {
-        stroke: 'currentColor',
+        stroke: "currentColor",
         strokeWidth: 1,
-        strokeDasharray: '3,3', // Dotted line for siblings
+        strokeDasharray: "3,3", // Dotted line for siblings
       }
   }
 }
@@ -81,7 +81,11 @@ function getLineStyle(type: RelationshipLineType): {
 /**
  * Calculate the bounding box for the SVG container
  */
-function calculateViewBox(from: Position, to: Position, type: RelationshipLineType): {
+function calculateViewBox(
+  from: Position,
+  to: Position,
+  type: RelationshipLineType,
+): {
   x: number
   y: number
   width: number
@@ -91,10 +95,10 @@ function calculateViewBox(from: Position, to: Position, type: RelationshipLineTy
   const maxX = Math.max(from.x, to.x)
   const minY = Math.min(from.y, to.y)
   const maxY = Math.max(from.y, to.y)
-  
+
   // Add padding
-  const padding = type === 'sibling' ? 40 : 20
-  
+  const padding = type === "sibling" ? 40 : 20
+
   return {
     x: minX - padding,
     y: minY - padding,
@@ -105,7 +109,7 @@ function calculateViewBox(from: Position, to: Position, type: RelationshipLineTy
 
 /**
  * RelationshipLines component renders SVG lines showing relationships between people
- * 
+ *
  * Supports three types of relationships:
  * - parent-child: Vertical lines with branches
  * - spouse: Horizontal dashed lines
@@ -120,25 +124,25 @@ export function RelationshipLines({
   // Calculate the path based on relationship type
   let path: string
   switch (type) {
-    case 'parent-child':
+    case "parent-child":
       path = calculateParentChildPath(fromPosition, toPosition)
       break
-    case 'spouse':
+    case "spouse":
       path = calculateSpousePath(fromPosition, toPosition)
       break
-    case 'sibling':
+    case "sibling":
       path = calculateSiblingPath(fromPosition, toPosition)
       break
   }
-  
+
   const lineStyle = getLineStyle(type)
   const viewBox = calculateViewBox(fromPosition, toPosition, type)
-  
+
   return (
     <svg
       className={cn(
         "absolute pointer-events-none text-muted-foreground/30",
-        className
+        className,
       )}
       style={{
         left: viewBox.x,

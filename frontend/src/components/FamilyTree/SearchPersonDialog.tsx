@@ -1,7 +1,11 @@
 // @ts-nocheck
-import { useState } from "react"
+
 import { useQuery } from "@tanstack/react-query"
-import { ArrowLeft, Search, Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2 } from "lucide-react"
+import { useState } from "react"
+import type { PersonMatchResult } from "@/client"
+import { PersonService, ProfileService } from "@/client"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -9,10 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { PersonService, ProfileService } from "@/client"
-import type { PersonMatchResult } from "@/client"
 import { SearchStep1NameGender } from "./SearchStep1NameGender"
 import { SearchStep2Address } from "./SearchStep2Address"
 import { SearchStep3Religion } from "./SearchStep3Religion"
@@ -29,14 +30,14 @@ export interface SearchCriteria {
   firstName: string
   lastName: string
   genderId?: string
-  
+
   // Step 2
   countryId: string
   stateId: string
   districtId: string
   subDistrictId?: string
   localityId?: string
-  
+
   // Step 3
   religionId: string
   religionCategoryId?: string
@@ -49,7 +50,9 @@ export function SearchPersonDialog({
   onPersonSelected,
 }: SearchPersonDialogProps) {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1)
-  const [searchCriteria, setSearchCriteria] = useState<Partial<SearchCriteria>>({})
+  const [searchCriteria, setSearchCriteria] = useState<Partial<SearchCriteria>>(
+    {},
+  )
   const [searchResults, setSearchResults] = useState<PersonMatchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
 
@@ -66,8 +69,12 @@ export function SearchPersonDialog({
     enabled: open && profileStatus?.has_person === true,
   })
 
-  const handleStep1Complete = (data: { firstName: string; lastName: string; genderId?: string }) => {
-    setSearchCriteria(prev => ({
+  const handleStep1Complete = (data: {
+    firstName: string
+    lastName: string
+    genderId?: string
+  }) => {
+    setSearchCriteria((prev) => ({
       ...prev,
       firstName: data.firstName,
       lastName: data.lastName,
@@ -83,7 +90,7 @@ export function SearchPersonDialog({
     subDistrictId?: string
     localityId?: string
   }) => {
-    setSearchCriteria(prev => ({
+    setSearchCriteria((prev) => ({
       ...prev,
       countryId: data.countryId,
       stateId: data.stateId,
@@ -186,7 +193,8 @@ export function SearchPersonDialog({
             {currentStep === 1 && "Enter the person's name and gender"}
             {currentStep === 2 && "Enter address details"}
             {currentStep === 3 && "Enter religion details"}
-            {currentStep === 4 && "Select a person to explore their family tree"}
+            {currentStep === 4 &&
+              "Select a person to explore their family tree"}
           </DialogDescription>
         </DialogHeader>
 

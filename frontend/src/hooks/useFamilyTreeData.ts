@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query"
+import type { PersonDetails, PersonRelationshipWithDetails } from "@/client"
 import { PersonService } from "@/client"
-import type { PersonRelationshipWithDetails, PersonDetails } from "@/client"
 
 // Relationship type constants
 export const RELATIONSHIP_TYPES = {
-  FATHER: 'rel-6a0ede824d101',
-  MOTHER: 'rel-6a0ede824d102',
-  DAUGHTER: 'rel-6a0ede824d103',
-  SON: 'rel-6a0ede824d104',
-  WIFE: 'rel-6a0ede824d105',
-  HUSBAND: 'rel-6a0ede824d106',
-  SPOUSE: 'rel-6a0ede824d107',
+  FATHER: "rel-6a0ede824d101",
+  MOTHER: "rel-6a0ede824d102",
+  DAUGHTER: "rel-6a0ede824d103",
+  SON: "rel-6a0ede824d104",
+  WIFE: "rel-6a0ede824d105",
+  HUSBAND: "rel-6a0ede824d106",
+  SPOUSE: "rel-6a0ede824d107",
 } as const
 
 export const PARENT_TYPES = [
@@ -24,10 +24,7 @@ export const SPOUSE_TYPES = [
   RELATIONSHIP_TYPES.SPOUSE,
 ]
 
-export const CHILD_TYPES = [
-  RELATIONSHIP_TYPES.DAUGHTER,
-  RELATIONSHIP_TYPES.SON,
-]
+export const CHILD_TYPES = [RELATIONSHIP_TYPES.DAUGHTER, RELATIONSHIP_TYPES.SON]
 
 export interface CategorizedRelationships {
   parents: PersonDetails[]
@@ -45,7 +42,7 @@ export interface FamilyTreeData extends CategorizedRelationships {
  * Custom hook for fetching and processing family tree data
  * @param personId - The ID of the person to fetch relationships for (null for current user)
  * @returns Family tree data with loading and error states
- * 
+ *
  * Performance optimizations:
  * - Data is cached for 5 minutes (staleTime) to avoid redundant API calls
  * - Cache is kept in memory for 10 minutes (gcTime) for quick navigation
@@ -53,7 +50,7 @@ export interface FamilyTreeData extends CategorizedRelationships {
  */
 export function useFamilyTreeData(personId: string | null) {
   const query = useQuery({
-    queryKey: ['familyTreeData', personId],
+    queryKey: ["familyTreeData", personId],
     queryFn: async () => {
       try {
         // Fetch relationship data - now returns selected person + relationships
@@ -68,11 +65,11 @@ export function useFamilyTreeData(personId: string | null) {
         let siblings: PersonDetails[] = []
         try {
           siblings = await calculateSiblings(
-            personId || 'me',
-            categorized.parentIds
+            personId || "me",
+            categorized.parentIds,
           )
         } catch (error) {
-          console.error('Failed to calculate siblings:', error)
+          console.error("Failed to calculate siblings:", error)
           // Continue with empty siblings array if calculation fails
         }
 
@@ -86,7 +83,7 @@ export function useFamilyTreeData(personId: string | null) {
         if (error instanceof Error) {
           throw new Error(`Failed to load family tree data: ${error.message}`)
         }
-        throw new Error('Failed to load family tree data')
+        throw new Error("Failed to load family tree data")
       }
     },
     enabled: personId !== null,
@@ -108,7 +105,7 @@ export function useFamilyTreeData(personId: string | null) {
  * @returns Categorized relationships with parent IDs
  */
 export function categorizeRelationships(
-  relationships: PersonRelationshipWithDetails[]
+  relationships: PersonRelationshipWithDetails[],
 ): CategorizedRelationships {
   const parents: PersonDetails[] = []
   const spouses: PersonDetails[] = []
@@ -144,7 +141,7 @@ export function categorizeRelationships(
  */
 export async function calculateSiblings(
   selectedPersonId: string,
-  parentIds: string[]
+  parentIds: string[],
 ): Promise<PersonDetails[]> {
   if (parentIds.length === 0) {
     return []
@@ -155,9 +152,10 @@ export async function calculateSiblings(
   // For each parent, fetch their relationships to find their children
   for (const parentId of parentIds) {
     try {
-      const parentRelationshipsResponse = await PersonService.getPersonRelationshipsWithDetails({
-        personId: parentId,
-      })
+      const parentRelationshipsResponse =
+        await PersonService.getPersonRelationshipsWithDetails({
+          personId: parentId,
+        })
 
       // Find all children of this parent
       for (const rel of parentRelationshipsResponse.relationships) {
@@ -173,7 +171,10 @@ export async function calculateSiblings(
         }
       }
     } catch (error) {
-      console.error(`Failed to fetch relationships for parent ${parentId}:`, error)
+      console.error(
+        `Failed to fetch relationships for parent ${parentId}:`,
+        error,
+      )
       // Continue with other parents even if one fails
     }
   }

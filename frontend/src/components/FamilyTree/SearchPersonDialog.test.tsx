@@ -1,9 +1,10 @@
 // @ts-nocheck
-import { describe, it, expect, vi, beforeEach } from "vitest"
-import { render, screen, waitFor, fireEvent } from "@testing-library/react"
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { PersonMetadataService, PersonService, ProfileService } from "@/client"
 import { SearchPersonDialog } from "./SearchPersonDialog"
-import { PersonService, ProfileService, PersonMetadataService } from "@/client"
 
 // Mock the API services
 vi.mock("@/client", () => ({
@@ -54,18 +55,18 @@ describe("SearchPersonDialog", () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Setup default mocks
     ProfileService.getProfileCompletionStatus.mockResolvedValue({
       has_person: true,
     })
-    
+
     PersonService.getMyPerson.mockResolvedValue({
       id: "user-123",
       first_name: "John",
       last_name: "Doe",
     })
-    
+
     PersonMetadataService.getGenders.mockResolvedValue([
       { genderId: "gender-1", genderName: "Male" },
       { genderId: "gender-2", genderName: "Female" },
@@ -79,7 +80,7 @@ describe("SearchPersonDialog", () => {
         onOpenChange={mockOnOpenChange}
         onPersonSelected={mockOnPersonSelected}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     )
 
     expect(screen.getByText("Search Person")).toBeInTheDocument()
@@ -93,7 +94,7 @@ describe("SearchPersonDialog", () => {
         onOpenChange={mockOnOpenChange}
         onPersonSelected={mockOnPersonSelected}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     )
 
     expect(screen.queryByText("Search Person")).not.toBeInTheDocument()
@@ -106,7 +107,7 @@ describe("SearchPersonDialog", () => {
         onOpenChange={mockOnOpenChange}
         onPersonSelected={mockOnPersonSelected}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     )
 
     await waitFor(() => {
@@ -122,7 +123,7 @@ describe("SearchPersonDialog", () => {
         onOpenChange={mockOnOpenChange}
         onPersonSelected={mockOnPersonSelected}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     )
 
     await waitFor(() => {
@@ -146,14 +147,14 @@ describe("SearchPersonDialog", () => {
         onOpenChange={mockOnOpenChange}
         onPersonSelected={mockOnPersonSelected}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     )
 
     // Fill some data
     await waitFor(() => {
       expect(screen.getByLabelText(/First Name/i)).toBeInTheDocument()
     })
-    
+
     const firstNameInput = screen.getByLabelText(/First Name/i)
     fireEvent.change(firstNameInput, { target: { value: "Test" } })
 
@@ -163,7 +164,7 @@ describe("SearchPersonDialog", () => {
         open={false}
         onOpenChange={mockOnOpenChange}
         onPersonSelected={mockOnPersonSelected}
-      />
+      />,
     )
 
     // Reopen dialog
@@ -172,7 +173,7 @@ describe("SearchPersonDialog", () => {
         open={true}
         onOpenChange={mockOnOpenChange}
         onPersonSelected={mockOnPersonSelected}
-      />
+      />,
     )
 
     // Check that state is reset

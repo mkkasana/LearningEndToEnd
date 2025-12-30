@@ -1,12 +1,12 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
 import { Bug, CheckCircle, Lightbulb, RotateCcw, Trash2 } from "lucide-react"
 import { useState } from "react"
 
-import {
-  type IssueStatus,
-  type IssueType,
-  IssuesService,
-} from "@/client"
+import { type IssueStatus, IssuesService, type IssueType } from "@/client"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -185,7 +185,9 @@ const AdminSupportTicketsPanel = () => {
         <div className="w-[180px]">
           <Select
             value={statusFilter}
-            onValueChange={(value) => setStatusFilter(value as IssueStatus | "all")}
+            onValueChange={(value) =>
+              setStatusFilter(value as IssueStatus | "all")
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Filter by status" />

@@ -1,7 +1,7 @@
-import { PersonCard } from "./PersonCard"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import type { PersonDetails } from "@/client"
 import { memo } from "react"
+import type { PersonDetails } from "@/client"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { PersonCard } from "./PersonCard"
 
 export interface SiblingsListProps {
   siblings: PersonDetails[]
@@ -13,7 +13,10 @@ export interface SiblingsListProps {
  * with scroll indicators if overflow occurs
  * Performance: Memoized to prevent unnecessary re-renders
  */
-export const SiblingsList = memo(function SiblingsList({ siblings, onPersonClick }: SiblingsListProps) {
+export const SiblingsList = memo(function SiblingsList({
+  siblings,
+  onPersonClick,
+}: SiblingsListProps) {
   if (siblings.length === 0) {
     return null
   }

@@ -1,9 +1,11 @@
 // @ts-nocheck
-import { useForm } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { useQuery } from "@tanstack/react-query"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import { PersonMetadataService } from "@/client"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -12,6 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -19,8 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),

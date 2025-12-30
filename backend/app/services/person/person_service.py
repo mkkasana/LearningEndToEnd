@@ -7,9 +7,28 @@ from datetime import datetime
 from sqlmodel import Session
 
 from app.db_models.person.person import Person
+from app.repositories.address.country_repository import CountryRepository
+from app.repositories.address.district_repository import DistrictRepository
+from app.repositories.address.locality_repository import LocalityRepository
+from app.repositories.address.state_repository import StateRepository
+from app.repositories.address.sub_district_repository import SubDistrictRepository
+from app.repositories.person.gender_repository import GenderRepository
 from app.repositories.person.person_address_repository import PersonAddressRepository
+from app.repositories.person.person_religion_repository import PersonReligionRepository
 from app.repositories.person.person_repository import PersonRepository
+from app.repositories.religion.religion_category_repository import (
+    ReligionCategoryRepository,
+)
+from app.repositories.religion.religion_repository import ReligionRepository
+from app.repositories.religion.religion_sub_category_repository import (
+    ReligionSubCategoryRepository,
+)
 from app.schemas.person import PersonCreate, PersonUpdate
+from app.schemas.person.person_complete_details import (
+    PersonAddressDetails,
+    PersonCompleteDetailsResponse,
+    PersonReligionDetails,
+)
 from app.services.profile_view_tracking_service import ProfileViewTrackingService
 
 logger = logging.getLogger(__name__)
@@ -166,3 +185,155 @@ class PersonService:
                 address_parts.append(addr.address_line)
 
         return ", ".join(address_parts)
+
+    def get_person_complete_details(
+        self, person_id: uuid.UUID
+    ) -> PersonCompleteDetailsResponse | None:
+        """
+        Get complete person details with resolved names for gender, address, and religion.
+
+        Args:
+            person_id: The UUID of the person to fetch
+
+        Returns:
+            PersonCompleteDetailsResponse with all resolved names, or None if person not found
+        """
+        logger.info(f"Fetching complete details for person ID: {person_id}")
+
+        # 1. Fetch person by ID
+        person = self.person_repo.get_by_id(person_id)
+        if not person:
+            logger.debug(f"Person not found: {person_id}")
+            return None
+
+        # 2. Resolve gender name
+        gender_name = "Unknown"
+        if person.gender_id:
+            gender_repo = GenderRepository(self.person_repo.session)
+            gender = gender_repo.get_by_id(person.gender_id)
+            if gender:
+                gender_name = gender.name
+                logger.debug(f"Resolved gender: {gender_name}")
+
+        # 3. Fetch current address and resolve location names
+        address_details = self._resolve_address_details(person_id)
+
+        # 4. Fetch religion and resolve names
+        religion_details = self._resolve_religion_details(person_id)
+
+        # 5. Build and return response
+        response = PersonCompleteDetailsResponse(
+            id=person.id,
+            first_name=person.first_name,
+            middle_name=person.middle_name,
+            last_name=person.last_name,
+            date_of_birth=person.date_of_birth,
+            date_of_death=person.date_of_death,
+            gender_name=gender_name,
+            address=address_details,
+            religion=religion_details,
+        )
+
+        logger.info(f"Complete details fetched for person: {person.first_name} {person.last_name}")
+        return response
+
+    def _resolve_address_details(
+        self, person_id: uuid.UUID
+    ) -> PersonAddressDetails | None:
+        """Resolve address details with location names."""
+        address_repo = PersonAddressRepository(self.person_repo.session)
+        current_address = address_repo.get_current_address(person_id)
+
+        if not current_address:
+            logger.debug(f"No current address found for person {person_id}")
+            return None
+
+        # Initialize repositories for location lookups
+        country_repo = CountryRepository(self.person_repo.session)
+        state_repo = StateRepository(self.person_repo.session)
+        district_repo = DistrictRepository(self.person_repo.session)
+        sub_district_repo = SubDistrictRepository(self.person_repo.session)
+        locality_repo = LocalityRepository(self.person_repo.session)
+
+        # Resolve country name (required)
+        country = country_repo.get_by_id(current_address.country_id)
+        country_name = country.name if country else "Unknown"
+
+        # Resolve optional location names
+        state_name = None
+        if current_address.state_id:
+            state = state_repo.get_by_id(current_address.state_id)
+            state_name = state.name if state else None
+
+        district_name = None
+        if current_address.district_id:
+            district = district_repo.get_by_id(current_address.district_id)
+            district_name = district.name if district else None
+
+        sub_district_name = None
+        if current_address.sub_district_id:
+            sub_district = sub_district_repo.get_by_id(current_address.sub_district_id)
+            sub_district_name = sub_district.name if sub_district else None
+
+        locality_name = None
+        if current_address.locality_id:
+            locality = locality_repo.get_by_id(current_address.locality_id)
+            locality_name = locality.name if locality else None
+
+        logger.debug(
+            f"Resolved address for person {person_id}: "
+            f"{locality_name}, {sub_district_name}, {district_name}, {state_name}, {country_name}"
+        )
+
+        return PersonAddressDetails(
+            locality_name=locality_name,
+            sub_district_name=sub_district_name,
+            district_name=district_name,
+            state_name=state_name,
+            country_name=country_name,
+            address_line=current_address.address_line,
+        )
+
+    def _resolve_religion_details(
+        self, person_id: uuid.UUID
+    ) -> PersonReligionDetails | None:
+        """Resolve religion details with names."""
+        religion_repo = PersonReligionRepository(self.person_repo.session)
+        person_religion = religion_repo.get_by_person_id(person_id)
+
+        if not person_religion:
+            logger.debug(f"No religion found for person {person_id}")
+            return None
+
+        # Initialize repositories for religion lookups
+        religion_master_repo = ReligionRepository(self.person_repo.session)
+        category_repo = ReligionCategoryRepository(self.person_repo.session)
+        sub_category_repo = ReligionSubCategoryRepository(self.person_repo.session)
+
+        # Resolve religion name (required)
+        religion = religion_master_repo.get_by_id(person_religion.religion_id)
+        religion_name = religion.name if religion else "Unknown"
+
+        # Resolve optional category and sub-category names
+        category_name = None
+        if person_religion.religion_category_id:
+            category = category_repo.get_by_id(person_religion.religion_category_id)
+            category_name = category.name if category else None
+
+        sub_category_name = None
+        if person_religion.religion_sub_category_id:
+            sub_category = sub_category_repo.get_by_id(
+                person_religion.religion_sub_category_id
+            )
+            sub_category_name = sub_category.name if sub_category else None
+
+        logger.debug(
+            f"Resolved religion for person {person_id}: "
+            f"{religion_name}, {category_name}, {sub_category_name}"
+        )
+
+        return PersonReligionDetails(
+            religion_name=religion_name,
+            category_name=category_name,
+            sub_category_name=sub_category_name,
+        )

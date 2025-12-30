@@ -834,6 +834,74 @@ export const PersonAddressCreateSchema = {
     description: 'Schema for creating a new person address.'
 } as const;
 
+export const PersonAddressDetailsSchema = {
+    properties: {
+        locality_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Name'
+        },
+        sub_district_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub District Name'
+        },
+        district_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'District Name'
+        },
+        state_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State Name'
+        },
+        country_name: {
+            type: 'string',
+            title: 'Country Name'
+        },
+        address_line: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Address Line'
+        }
+    },
+    type: 'object',
+    required: ['country_name'],
+    title: 'PersonAddressDetails',
+    description: 'Address details with resolved location names.'
+} as const;
+
 export const PersonAddressPublicSchema = {
     properties: {
         country_id: {
@@ -1070,6 +1138,145 @@ export const PersonAddressUpdateSchema = {
     type: 'object',
     title: 'PersonAddressUpdate',
     description: 'Schema for updating a person address (all fields optional).'
+} as const;
+
+export const PersonCompleteDetailsResponseSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        first_name: {
+            type: 'string',
+            title: 'First Name'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name'
+        },
+        last_name: {
+            type: 'string',
+            title: 'Last Name'
+        },
+        date_of_birth: {
+            type: 'string',
+            format: 'date',
+            title: 'Date Of Birth'
+        },
+        date_of_death: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date Of Death'
+        },
+        gender_name: {
+            type: 'string',
+            title: 'Gender Name'
+        },
+        address: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/PersonAddressDetails'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        religion: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/PersonReligionDetails'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        }
+    },
+    type: 'object',
+    required: ['id', 'first_name', 'last_name', 'date_of_birth', 'gender_name'],
+    title: 'PersonCompleteDetailsResponse',
+    description: 'Complete person details with resolved names.'
+} as const;
+
+export const PersonContributionPublicSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id',
+            description: 'Person ID'
+        },
+        first_name: {
+            type: 'string',
+            title: 'First Name',
+            description: 'First name'
+        },
+        last_name: {
+            type: 'string',
+            title: 'Last Name',
+            description: 'Last name'
+        },
+        date_of_birth: {
+            type: 'string',
+            format: 'date',
+            title: 'Date Of Birth',
+            description: 'Date of birth'
+        },
+        date_of_death: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date Of Death',
+            description: 'Date of death'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether the person is active'
+        },
+        address: {
+            type: 'string',
+            title: 'Address',
+            description: 'Formatted address string'
+        },
+        total_views: {
+            type: 'integer',
+            title: 'Total Views',
+            description: 'Total profile view count'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At',
+            description: 'Record creation timestamp'
+        }
+    },
+    type: 'object',
+    required: ['id', 'first_name', 'last_name', 'date_of_birth', 'is_active', 'address', 'total_views', 'created_at'],
+    title: 'PersonContributionPublic',
+    description: 'Schema for person contribution with statistics.'
 } as const;
 
 export const PersonCreateSchema = {
@@ -2072,6 +2279,41 @@ export const PersonReligionCreateSchema = {
     required: ['religion_id'],
     title: 'PersonReligionCreate',
     description: 'Schema for creating person religion.'
+} as const;
+
+export const PersonReligionDetailsSchema = {
+    properties: {
+        religion_name: {
+            type: 'string',
+            title: 'Religion Name'
+        },
+        category_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Name'
+        },
+        sub_category_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub Category Name'
+        }
+    },
+    type: 'object',
+    required: ['religion_name'],
+    title: 'PersonReligionDetails',
+    description: 'Religion details with resolved names.'
 } as const;
 
 export const PersonReligionPublicSchema = {

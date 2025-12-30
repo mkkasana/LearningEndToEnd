@@ -1,8 +1,9 @@
 // @ts-nocheck
-import { describe, it, expect, vi } from "vitest"
-import { render, screen, fireEvent } from "@testing-library/react"
-import { SearchStep4Results } from "./SearchStep4Results"
+
+import { fireEvent, render, screen } from "@testing-library/react"
+import { describe, expect, it, vi } from "vitest"
 import type { PersonMatchResult } from "@/client"
+import { SearchStep4Results } from "./SearchStep4Results"
 
 describe("SearchStep4Results", () => {
   const mockOnExplore = vi.fn()
@@ -41,7 +42,7 @@ describe("SearchStep4Results", () => {
         results={mockResults}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     // Check that both results are displayed
@@ -67,7 +68,7 @@ describe("SearchStep4Results", () => {
         results={mockResults}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     // Match scores should be rounded
@@ -81,7 +82,7 @@ describe("SearchStep4Results", () => {
         results={mockResults}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     expect(screen.getByText("Found 2 matches")).toBeInTheDocument()
@@ -89,13 +90,13 @@ describe("SearchStep4Results", () => {
 
   it("should show singular 'match' for single result", () => {
     const singleResult = [mockResults[0]]
-    
+
     render(
       <SearchStep4Results
         results={singleResult}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     expect(screen.getByText("Found 1 match")).toBeInTheDocument()
@@ -107,12 +108,12 @@ describe("SearchStep4Results", () => {
         results={[]}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     expect(screen.getByText("No Results Found")).toBeInTheDocument()
     expect(
-      screen.getByText(/No persons match your search criteria/i)
+      screen.getByText(/No persons match your search criteria/i),
     ).toBeInTheDocument()
   })
 
@@ -122,7 +123,7 @@ describe("SearchStep4Results", () => {
         results={mockResults}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     const exploreButtons = screen.getAllByText("Explore")
@@ -137,7 +138,7 @@ describe("SearchStep4Results", () => {
         results={mockResults}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     const backButton = screen.getByText("Back to Search")
@@ -152,7 +153,7 @@ describe("SearchStep4Results", () => {
         results={mockResults}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     // Jane Smith has no middle name
@@ -166,7 +167,7 @@ describe("SearchStep4Results", () => {
         results={mockResults}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     // Check that comma-separated displays are shown correctly
@@ -195,13 +196,13 @@ describe("SearchStep4Results", () => {
         results={resultWithEmptyFields}
         onExplore={mockOnExplore}
         onBack={mockOnBack}
-      />
+      />,
     )
 
     // Should NOT show "Address:" or "Religion:" labels when fields are empty
     expect(screen.queryByText(/Address:/)).not.toBeInTheDocument()
     expect(screen.queryByText(/Religion:/)).not.toBeInTheDocument()
-    
+
     // Should still show the person's name and match score
     expect(screen.getByText("Test User")).toBeInTheDocument()
     expect(screen.getByText(/Match Score: 50%/)).toBeInTheDocument()

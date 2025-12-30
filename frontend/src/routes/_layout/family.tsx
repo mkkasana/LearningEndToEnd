@@ -1,9 +1,10 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { Users, UserPlus, Trash2 } from "lucide-react"
+import { Trash2, UserPlus, Users } from "lucide-react"
 import { useState } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PersonService } from "@/client"
+import { AddFamilyMemberDialog } from "@/components/Family/AddFamilyMemberDialog"
+import { DiscoverFamilyMembersDialog } from "@/components/Family/DiscoverFamilyMembersDialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,9 +15,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { AddFamilyMemberDialog } from "@/components/Family/AddFamilyMemberDialog"
-import { DiscoverFamilyMembersDialog } from "@/components/Family/DiscoverFamilyMembersDialog"
-import { PersonService } from "@/client"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import useCustomToast from "@/hooks/useCustomToast"
 
 export const Route = createFileRoute("/_layout/family" as any)({
@@ -55,14 +55,14 @@ function Family() {
       PersonService.deleteMyRelationship({ relationshipId }),
     onSuccess: () => {
       showSuccessToast("Family member removed successfully")
-      queryClient.invalidateQueries({ queryKey: ["myRelationshipsWithDetails"] })
+      queryClient.invalidateQueries({
+        queryKey: ["myRelationshipsWithDetails"],
+      })
       setDeleteDialogOpen(false)
       setSelectedRelationship(null)
     },
     onError: (error: any) => {
-      showErrorToast(
-        error.body?.detail || "Failed to remove family member"
-      )
+      showErrorToast(error.body?.detail || "Failed to remove family member")
     },
   })
 
@@ -156,9 +156,7 @@ function Family() {
                           Date of Birth:{" "}
                         </span>
                         <span>
-                          {new Date(
-                            person.date_of_birth,
-                          ).toLocaleDateString()}
+                          {new Date(person.date_of_birth).toLocaleDateString()}
                         </span>
                       </div>
                     )}
@@ -168,9 +166,7 @@ function Family() {
                           Date of Death:{" "}
                         </span>
                         <span>
-                          {new Date(
-                            person.date_of_death,
-                          ).toLocaleDateString()}
+                          {new Date(person.date_of_death).toLocaleDateString()}
                         </span>
                       </div>
                     )}

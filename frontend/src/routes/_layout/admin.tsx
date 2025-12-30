@@ -69,7 +69,9 @@ function Admin() {
       {/* Issue Management Section */}
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Issue Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Issue Management
+          </h1>
           <p className="text-muted-foreground">
             Manage user-submitted bugs and feature requests
           </p>

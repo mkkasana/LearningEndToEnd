@@ -1,15 +1,11 @@
 // @ts-nocheck
-import { useMutation, useQuery } from "@tanstack/react-query"
+
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import {
-  PersonService,
-  PersonMetadataService,
-  type PersonCreate,
-  type PersonRelationshipCreate,
-} from "@/client"
-import { Button } from "@/components/ui/button"
+import { PersonMetadataService } from "@/client"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
@@ -18,6 +14,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Select,
   SelectContent,
@@ -25,10 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
-import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
 
 const RELATIONSHIP_TYPES = [

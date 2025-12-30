@@ -2,12 +2,16 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense, useState } from "react"
 
-import { type IssueStatus, type SupportTicketPublic, IssuesService } from "@/client"
+import {
+  type IssueStatus,
+  IssuesService,
+  type SupportTicketPublic,
+} from "@/client"
 import CreateSupportTicketDialog from "@/components/SupportTickets/CreateSupportTicketDialog"
 import SupportTicketDetailDialog from "@/components/SupportTickets/SupportTicketDetailDialog"
 import SupportTicketListTable from "@/components/SupportTickets/SupportTicketListTable"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 function getSupportTicketsQueryOptions(status?: IssueStatus | null) {
   return {
@@ -34,7 +38,8 @@ export const Route = createFileRoute("/_layout/support-tickets" as any)({
 
 function SupportTicketsContent({ status }: { status?: IssueStatus | null }) {
   const { data } = useSuspenseQuery(getSupportTicketsQueryOptions(status))
-  const [selectedTicket, setSelectedTicket] = useState<SupportTicketPublic | null>(null)
+  const [selectedTicket, setSelectedTicket] =
+    useState<SupportTicketPublic | null>(null)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
 
   const handleViewDetails = (ticket: SupportTicketPublic) => {
@@ -82,7 +87,6 @@ function SupportTicketsPage() {
         return "open"
       case "closed":
         return "closed"
-      case "all":
       default:
         return undefined
     }

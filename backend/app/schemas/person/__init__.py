@@ -12,6 +12,11 @@ from app.schemas.person.person_address import (
     PersonAddressPublic,
     PersonAddressUpdate,
 )
+from app.schemas.person.person_complete_details import (
+    PersonAddressDetails,
+    PersonCompleteDetailsResponse,
+    PersonReligionDetails,
+)
 from app.schemas.person.person_metadata import (
     PersonMetadataCreate,
     PersonMetadataPublic,
@@ -51,8 +56,10 @@ __all__ = [
     "GenderPublic",
     "GenderUpdate",
     "PersonAddressCreate",
+    "PersonAddressDetails",
     "PersonAddressPublic",
     "PersonAddressUpdate",
+    "PersonCompleteDetailsResponse",
     "PersonContributionPublic",
     "PersonCreate",
     "PersonDetails",
@@ -71,6 +78,7 @@ __all__ = [
     "PersonRelationshipWithDetails",
     "PersonRelationshipsWithDetailsResponse",
     "PersonReligionCreate",
+    "PersonReligionDetails",
     "PersonReligionPublic",
     "PersonReligionUpdate",
     "PersonSearchRequest",
