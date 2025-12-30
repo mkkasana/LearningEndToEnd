@@ -84,73 +84,73 @@ This implementation plan breaks down the "Discover Family Members" feature into 
     - Map to GET /api/v1/person/discover-family-members
     - _Requirements: 1.1, 8.1_
 
-- [ ] 5. Create DiscoverFamilyMembersDialog component
-  - [ ] 5.1 Create component file and basic structure
+- [x] 5. Create DiscoverFamilyMembersDialog component
+  - [x] 5.1 Create component file and basic structure
     - Create `frontend/src/components/Family/DiscoverFamilyMembersDialog.tsx`
     - Add component props interface
     - Add Dialog wrapper with header
     - _Requirements: 1.2, 2.1_
-  - [ ] 5.2 Implement discovery API query
+  - [x] 5.2 Implement discovery API query
     - Use useQuery to fetch discovered family members
     - Handle loading state with spinner
     - Handle error state with error message
     - Enable query only when dialog is open
     - _Requirements: 1.1, 1.2_
-  - [ ] 5.3 Implement discovered persons list UI
+  - [x] 5.3 Implement discovered persons list UI
     - Create scrollable container (max-h-96)
     - Display person cards with all details
     - Show: Name, DOB, Address, Religion, Connection path
     - Show inferred relationship label
     - Add "Connect as <Relationship>" button for each person
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
-  - [ ] 5.4 Implement connection flow
+  - [x] 5.4 Implement connection flow
     - Add state for selected person and confirmation dialog
     - Handle "Connect as <Relationship>" button click
     - Show ConnectConfirmationDialog with person details
     - _Requirements: 3.1, 3.2_
-  - [ ] 5.5 Implement connection mutation
+  - [x] 5.5 Implement connection mutation
     - Create useMutation for creating relationship
     - Call PersonService.createMyRelationship
     - Handle success: show toast, invalidate queries, close dialog
     - Handle error: show error toast, keep dialog open
     - _Requirements: 3.3, 3.4, 3.5_
-  - [ ] 5.6 Add skip functionality
+  - [x] 5.6 Add skip functionality
     - Add "Skip: Move to create new" button in footer
     - Call onSkip callback when clicked
     - Add "Close" button to close dialog
     - _Requirements: 1.3, 9.1, 9.2, 9.3_
-  - [ ] 5.7 Handle auto-close after all connections
+  - [x] 5.7 Handle auto-close after all connections
     - Check if discoveries list is empty after connection
     - Auto-close dialog if no more suggestions
     - _Requirements: 9.4, 9.5_
 
-- [ ] 6. Integrate discovery dialog with Add Family Member flow
-  - [ ] 6.1 Update family.tsx component
+- [x] 6. Integrate discovery dialog with Add Family Member flow
+  - [x] 6.1 Update family.tsx component
     - Add state for showDiscoveryDialog
     - Update "Add Family Member" button click handler
     - Show DiscoverFamilyMembersDialog first
     - _Requirements: 1.1, 1.2_
-  - [ ] 6.2 Implement skip to manual wizard flow
+  - [x] 6.2 Implement skip to manual wizard flow
     - Add handleSkipDiscovery callback
     - Close discovery dialog and open AddFamilyMemberDialog
     - _Requirements: 1.3, 9.1, 9.2_
-  - [ ] 6.3 Handle no discoveries scenario
+  - [x] 6.3 Handle no discoveries scenario
     - If API returns empty list, skip discovery dialog
     - Proceed directly to AddFamilyMemberDialog
     - _Requirements: 1.4_
-  - [ ] 6.4 Handle dialog close without connecting
+  - [x] 6.4 Handle dialog close without connecting
     - When user closes discovery dialog, open manual wizard
     - _Requirements: 1.5_
 
-- [ ] 7. Add database indexes for performance
-  - [ ] 7.1 Create migration for relationship indexes
+- [ ]* 7. Add database indexes for performance
+  - [ ]* 7.1 Create migration for relationship indexes
     - Add index on person_relationship.person_id
     - Add index on person_relationship.related_person_id
     - Add index on person_relationship.relationship_type
     - Add composite index on (person_id, is_active)
     - _Requirements: 8.1_
 
-- [ ] 8. Checkpoint - Test discovery patterns
+- [ ]* 8. Checkpoint - Test discovery patterns
   - Ensure all tests pass, ask the user if questions arise.
   - Test spouse's children discovery
   - Test parent's spouse discovery
@@ -158,48 +158,48 @@ This implementation plan breaks down the "Discover Family Members" feature into 
   - Test with various family structures
   - _Requirements: 4.1, 5.1, 6.1_
 
-- [ ] 9. Add comprehensive error handling
-  - [ ] 9.1 Backend error handling
+- [x] 9. Add comprehensive error handling
+  - [x] 9.1 Backend error handling
     - Handle user with no person record gracefully
     - Handle database query failures
     - Handle missing person details
     - Add comprehensive logging
     - _Requirements: 8.3_
-  - [ ] 9.2 Frontend error handling
+  - [x] 9.2 Frontend error handling
     - Display error message in dialog
     - Provide "Try Again" button
     - Allow skip to manual wizard on error
     - _Requirements: 1.1, 9.1_
 
-- [ ] 10. Implement sorting and deduplication
-  - [ ] 10.1 Add sorting logic
+- [x] 10. Implement sorting and deduplication
+  - [x] 10.1 Add sorting logic
     - Sort by proximity_score (ascending)
     - Then by relationship_priority (ascending)
     - Then by first_name (alphabetical)
     - _Requirements: 10.1, 10.2, 10.3_
-  - [ ] 10.2 Add deduplication logic
+  - [x] 10.2 Add deduplication logic
     - Detect persons appearing through multiple paths
     - Keep most direct connection (lowest proximity)
     - If same proximity, keep highest priority relationship
     - _Requirements: 7.5_
-  - [ ] 10.3 Add result limiting
+  - [x] 10.3 Add result limiting
     - Limit to maximum 20 suggestions
     - _Requirements: 10.4, 10.5_
 
-- [ ] 11. Add caching for performance
-  - [ ] 11.1 Implement backend caching
+- [x] 11. Add caching for performance
+  - [x] 11.1 Implement backend caching
     - Add cache decorator to discover_family_members
     - Set 5-minute TTL
     - Cache key: discovery:{user_id}
     - _Requirements: 8.1_
-  - [ ] 11.2 Implement cache invalidation
+  - [x] 11.2 Implement cache invalidation
     - Invalidate on relationship create
     - Invalidate on relationship update
     - Invalidate on relationship delete
     - _Requirements: 3.5_
 
-- [ ] 12. Write unit tests
-  - [ ] 12.1 Test PersonDiscoveryService methods
+- [ ]* 12. Write unit tests
+  - [ ]* 12.1 Test PersonDiscoveryService methods
     - Test _discover_spouses_children with various scenarios
     - Test _discover_parents_spouse with various scenarios
     - Test _discover_childs_parent with various scenarios
@@ -207,13 +207,13 @@ This implementation plan breaks down the "Discover Family Members" feature into 
     - Test sorting and filtering
     - Test deduplication
     - _Requirements: 4.1, 5.1, 6.1, 7.5, 10.1_
-  - [ ] 12.2 Test API endpoint
+  - [ ]* 12.2 Test API endpoint
     - Test successful discovery
     - Test empty results
     - Test authentication
     - Test error handling
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
-  - [ ] 12.3 Test frontend component
+  - [ ]* 12.3 Test frontend component
     - Test dialog rendering with mock data
     - Test connection flow
     - Test skip functionality
@@ -221,14 +221,14 @@ This implementation plan breaks down the "Discover Family Members" feature into 
     - Test loading states
     - _Requirements: 1.1, 1.2, 1.3, 3.1, 9.1_
 
-- [ ] 13. Write integration tests
-  - [ ] 13.1 Test complete discovery flow
+- [ ]* 13. Write integration tests
+  - [ ]* 13.1 Test complete discovery flow
     - Create test users with various family structures
     - Test discovery API returns correct suggestions
     - Test connection creation after discovery
     - Test bidirectional relationship creation
     - _Requirements: 1.1, 1.2, 3.3, 4.1, 5.1, 6.1_
-  - [ ] 13.2 Test edge cases
+  - [ ]* 13.2 Test edge cases
     - Test user with no relationships
     - Test circular relationships
     - Test deceased persons in suggestions
@@ -236,7 +236,7 @@ This implementation plan breaks down the "Discover Family Members" feature into 
     - Test gender unknown scenario
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 14. Final checkpoint - End-to-end testing
+- [ ]* 14. Final checkpoint - End-to-end testing
   - Ensure all tests pass, ask the user if questions arise.
   - Test complete user flow from button click to connection
   - Test skip flow to manual wizard

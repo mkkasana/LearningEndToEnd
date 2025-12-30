@@ -15,6 +15,7 @@ from app.repositories.person.person_relationship_repository import (
 from app.repositories.person.person_religion_repository import PersonReligionRepository
 from app.repositories.person.person_repository import PersonRepository
 from app.schemas.person.person_discovery import PersonDiscoveryResult
+from app.utils.cache import cached
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +53,7 @@ class PersonDiscoveryService:
         self.address_repo = PersonAddressRepository(session)
         self.religion_repo = PersonReligionRepository(session)
 
+    @cached(ttl_seconds=60, key_prefix="discovery")
     def discover_family_members(
         self,
         current_user_id: uuid.UUID
@@ -63,66 +65,119 @@ class PersonDiscoveryService:
         2. Parent's spouse → User's parent
         3. Child's parent → User's spouse
         
+        Results are cached for 1 minute to improve performance.
+        Cache is invalidated when relationships are created, updated, or deleted.
+        
         Args:
             current_user_id: Current user's ID
             
         Returns:
             List of discovered persons with inferred relationships,
             sorted by proximity and relationship priority, limited to 20 results
+            
+        Raises:
+            Exception: Re-raises any database or unexpected errors for API layer to handle
         """
         logger.info(f"Starting family member discovery for user: {current_user_id}")
         
-        # Get user's person record
-        person = self.person_repo.get_by_user_id(current_user_id)
-        if not person:
-            logger.warning(f"No person record found for user: {current_user_id}")
-            return []
-        
-        logger.debug(f"Found person record: {person.first_name} {person.last_name} (ID: {person.id})")
-        
-        # Fetch all active relationships for the user ONCE
-        user_relationships = self.relationship_repo.get_active_relationships(person.id)
-        logger.debug(f"Fetched {len(user_relationships)} active relationships for user")
-        
-        # Get all connected person IDs to filter out existing connections
-        connected_person_ids = self._get_connected_person_ids_from_relationships(
-            person.id, user_relationships
-        )
-        logger.debug(f"User has {len(connected_person_ids)} existing connections")
-        
-        # Discover from all three patterns
-        discoveries: list[PersonDiscoveryResult] = []
-        
-        # Pattern 1: Spouse's children
-        spouses_children = self._discover_spouses_children(
-            person.id, user_relationships, connected_person_ids
-        )
-        logger.debug(f"Found {len(spouses_children)} potential children from spouse(s)")
-        discoveries.extend(spouses_children)
-        
-        # Pattern 2: Parent's spouse
-        parents_spouse = self._discover_parents_spouse(
-            person.id, user_relationships, connected_person_ids
-        )
-        logger.debug(f"Found {len(parents_spouse)} potential parents from parent's spouse")
-        discoveries.extend(parents_spouse)
-        
-        # Pattern 3: Child's parent
-        childs_parent = self._discover_childs_parent(
-            person.id, user_relationships, connected_person_ids
-        )
-        logger.debug(f"Found {len(childs_parent)} potential spouses from child's parent")
-        discoveries.extend(childs_parent)
-        
-        # Sort and filter results
-        sorted_discoveries = self._sort_and_limit_discoveries(discoveries)
-        
-        logger.info(
-            f"Discovery complete for user {current_user_id}: "
-            f"Found {len(sorted_discoveries)} suggestions"
-        )
-        
-        return sorted_discoveries
+        try:
+            # Get user's person record
+            person = self.person_repo.get_by_user_id(current_user_id)
+            if not person:
+                logger.warning(
+                    f"No person record found for user: {current_user_id}. "
+                    "User may not have completed profile setup."
+                )
+                return []
+            
+            logger.debug(f"Found person record: {person.first_name} {person.last_name} (ID: {person.id})")
+            
+            # Fetch all active relationships for the user ONCE
+            try:
+                user_relationships = self.relationship_repo.get_active_relationships(person.id)
+                logger.debug(f"Fetched {len(user_relationships)} active relationships for user")
+            except Exception as e:
+                logger.error(
+                    f"Database error fetching relationships for person {person.id}: {str(e)}",
+                    exc_info=True
+                )
+                raise
+            
+            # Get all connected person IDs to filter out existing connections
+            connected_person_ids = self._get_connected_person_ids_from_relationships(
+                person.id, user_relationships
+            )
+            logger.debug(f"User has {len(connected_person_ids)} existing connections")
+            
+            # Discover from all three patterns
+            discoveries: list[PersonDiscoveryResult] = []
+            
+            # Pattern 1: Spouse's children
+            try:
+                spouses_children = self._discover_spouses_children(
+                    person.id, user_relationships, connected_person_ids
+                )
+                logger.debug(f"Found {len(spouses_children)} potential children from spouse(s)")
+                discoveries.extend(spouses_children)
+            except Exception as e:
+                logger.error(
+                    f"Error discovering spouse's children for person {person.id}: {str(e)}",
+                    exc_info=True
+                )
+                # Continue with other patterns even if this one fails
+            
+            # Pattern 2: Parent's spouse
+            try:
+                parents_spouse = self._discover_parents_spouse(
+                    person.id, user_relationships, connected_person_ids
+                )
+                logger.debug(f"Found {len(parents_spouse)} potential parents from parent's spouse")
+                discoveries.extend(parents_spouse)
+            except Exception as e:
+                logger.error(
+                    f"Error discovering parent's spouse for person {person.id}: {str(e)}",
+                    exc_info=True
+                )
+                # Continue with other patterns even if this one fails
+            
+            # Pattern 3: Child's parent
+            try:
+                childs_parent = self._discover_childs_parent(
+                    person.id, user_relationships, connected_person_ids
+                )
+                logger.debug(f"Found {len(childs_parent)} potential spouses from child's parent")
+                discoveries.extend(childs_parent)
+            except Exception as e:
+                logger.error(
+                    f"Error discovering child's parent for person {person.id}: {str(e)}",
+                    exc_info=True
+                )
+                # Continue even if this pattern fails
+            
+            # Sort and filter results
+            try:
+                sorted_discoveries = self._sort_and_limit_discoveries(discoveries)
+            except Exception as e:
+                logger.error(
+                    f"Error sorting discoveries for person {person.id}: {str(e)}",
+                    exc_info=True
+                )
+                # Return unsorted results rather than failing completely
+                sorted_discoveries = discoveries[:20]
+            
+            logger.info(
+                f"Discovery complete for user {current_user_id}: "
+                f"Found {len(sorted_discoveries)} suggestions"
+            )
+            
+            return sorted_discoveries
+            
+        except Exception as e:
+            # Log the error and re-raise for API layer to handle
+            logger.exception(
+                f"Unexpected error in family member discovery for user {current_user_id}: {str(e)}"
+            )
+            raise
 
     def _get_connected_person_ids_from_relationships(
         self, 
@@ -204,7 +259,7 @@ class PersonDiscoveryService:
         connection_path: str,
         proximity_score: int,
         relationship_priority: int
-    ) -> PersonDiscoveryResult:
+    ) -> PersonDiscoveryResult | None:
         """Build a discovery result with person details.
         
         Args:
@@ -215,30 +270,46 @@ class PersonDiscoveryService:
             relationship_priority: Relationship type priority (1 = children, 2 = parents, 3 = spouses)
             
         Returns:
-            PersonDiscoveryResult
+            PersonDiscoveryResult or None if person data is invalid
         """
-        # Get relationship label
-        inferred_relationship_label = inferred_relationship_type.label
-        
-        # Build and return discovery result
-        # Note: address_display and religion_display are set to None for performance
-        # These fields are optional and can be populated later if needed
-        return PersonDiscoveryResult(
-            person_id=person.id,
-            first_name=person.first_name,
-            middle_name=person.middle_name,
-            last_name=person.last_name,
-            date_of_birth=person.date_of_birth,
-            date_of_death=person.date_of_death,
-            gender_id=person.gender_id,
-            address_display=None,  # Optional - not populated for performance
-            religion_display=None,  # Optional - not populated for performance
-            inferred_relationship_type=inferred_relationship_type.value,
-            inferred_relationship_label=inferred_relationship_label,
-            connection_path=connection_path,
-            proximity_score=proximity_score,
-            relationship_priority=relationship_priority
-        )
+        try:
+            # Validate required fields
+            if not person.first_name or not person.last_name or not person.date_of_birth:
+                logger.warning(
+                    f"Person {person.id} missing required fields "
+                    f"(first_name: {person.first_name}, last_name: {person.last_name}, "
+                    f"date_of_birth: {person.date_of_birth}). Skipping."
+                )
+                return None
+            
+            # Get relationship label
+            inferred_relationship_label = inferred_relationship_type.label
+            
+            # Build and return discovery result
+            # Note: address_display and religion_display are set to None for performance
+            # These fields are optional and can be populated later if needed
+            return PersonDiscoveryResult(
+                person_id=person.id,
+                first_name=person.first_name,
+                middle_name=person.middle_name,
+                last_name=person.last_name,
+                date_of_birth=person.date_of_birth,
+                date_of_death=person.date_of_death,
+                gender_id=person.gender_id,
+                address_display=None,  # Optional - not populated for performance
+                religion_display=None,  # Optional - not populated for performance
+                inferred_relationship_type=inferred_relationship_type.value,
+                inferred_relationship_label=inferred_relationship_label,
+                connection_path=connection_path,
+                proximity_score=proximity_score,
+                relationship_priority=relationship_priority
+            )
+        except Exception as e:
+            logger.error(
+                f"Error building discovery result for person {person.id}: {str(e)}",
+                exc_info=True
+            )
+            return None
 
     def _discover_spouses_children(
         self,
@@ -327,11 +398,14 @@ class PersonDiscoveryService:
                     relationship_priority=1  # Children have priority 1
                 )
                 
-                discoveries.append(discovery)
-                logger.debug(
-                    f"Added discovery: {discovery.first_name} {discovery.last_name} "
-                    f"as {discovery.inferred_relationship_label}"
-                )
+                if discovery:
+                    discoveries.append(discovery)
+                    logger.debug(
+                        f"Added discovery: {discovery.first_name} {discovery.last_name} "
+                        f"as {discovery.inferred_relationship_label}"
+                    )
+                else:
+                    logger.warning(f"Failed to build discovery result for child {child_id}")
         
         return discoveries
 
@@ -422,11 +496,14 @@ class PersonDiscoveryService:
                     relationship_priority=2  # Parents have priority 2
                 )
                 
-                discoveries.append(discovery)
-                logger.debug(
-                    f"Added discovery: {discovery.first_name} {discovery.last_name} "
-                    f"as {discovery.inferred_relationship_label}"
-                )
+                if discovery:
+                    discoveries.append(discovery)
+                    logger.debug(
+                        f"Added discovery: {discovery.first_name} {discovery.last_name} "
+                        f"as {discovery.inferred_relationship_label}"
+                    )
+                else:
+                    logger.warning(f"Failed to build discovery result for spouse {spouse_id}")
         
         return discoveries
 
@@ -517,11 +594,14 @@ class PersonDiscoveryService:
                     relationship_priority=3  # Spouses have priority 3
                 )
                 
-                discoveries.append(discovery)
-                logger.debug(
-                    f"Added discovery: {discovery.first_name} {discovery.last_name} "
-                    f"as {discovery.inferred_relationship_label}"
-                )
+                if discovery:
+                    discoveries.append(discovery)
+                    logger.debug(
+                        f"Added discovery: {discovery.first_name} {discovery.last_name} "
+                        f"as {discovery.inferred_relationship_label}"
+                    )
+                else:
+                    logger.warning(f"Failed to build discovery result for parent {parent_id}")
         
         return discoveries
 

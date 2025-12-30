@@ -196,8 +196,14 @@ def discover_family_members(
         List of discovered persons with inferred relationship types,
         sorted by relationship proximity and type priority.
         Limited to top 20 results.
+        
+    Error Handling:
+        - Returns empty list if user has no person record
+        - Returns 500 if database errors occur
+        - Gracefully handles missing person details
+        - Continues discovery even if individual patterns fail
     """
-    logger.info(f"Discovery request from user {current_user.email}")
+    logger.info(f"Discovery request from user {current_user.email} (ID: {current_user.id})")
     
     try:
         discovery_service = PersonDiscoveryService(session)
@@ -209,12 +215,15 @@ def discover_family_members(
         return discoveries
         
     except Exception as e:
+        # Log the full exception with stack trace
         logger.exception(
-            f"Error in family member discovery for user {current_user.email}: {str(e)}"
+            f"Error in family member discovery for user {current_user.email} (ID: {current_user.id}): {str(e)}"
         )
+        
+        # Return user-friendly error message
         raise HTTPException(
             status_code=500,
-            detail="An error occurred while discovering family members",
+            detail="An error occurred while discovering family members. Please try again later.",
         )
 
 

@@ -13,6 +13,7 @@ from app.repositories.person.person_relationship_repository import (
 )
 from app.repositories.person.person_repository import PersonRepository
 from app.schemas.person import PersonRelationshipCreate, PersonRelationshipUpdate
+from app.utils.cache import invalidate_discovery_cache
 from app.utils.relationship_helper import RelationshipTypeHelper
 
 logger = logging.getLogger(__name__)
@@ -144,6 +145,13 @@ class PersonRelationshipService:
             self.session.commit()
             logger.info("Successfully committed bidirectional relationship creation")
 
+            # Invalidate discovery cache for both persons
+            # Get user IDs for both persons to invalidate their caches
+            if person.user_id:
+                invalidate_discovery_cache(person.user_id)
+            if related_person.user_id:
+                invalidate_discovery_cache(related_person.user_id)
+
             return primary_relationship
 
         except Exception as e:
@@ -229,6 +237,16 @@ class PersonRelationshipService:
             # Commit transaction
             self.session.commit()
             logger.info("Successfully committed bidirectional relationship update")
+
+            # Invalidate discovery cache for both persons
+            # Fetch person records to get user IDs
+            person = self.person_repo.get_by_id(relationship.person_id)
+            related_person = self.person_repo.get_by_id(relationship.related_person_id)
+            
+            if person and person.user_id:
+                invalidate_discovery_cache(person.user_id)
+            if related_person and related_person.user_id:
+                invalidate_discovery_cache(related_person.user_id)
 
             return updated_primary
 
@@ -327,6 +345,16 @@ class PersonRelationshipService:
             # Commit transaction
             self.session.commit()
             logger.info("Successfully committed bidirectional relationship deletion")
+
+            # Invalidate discovery cache for both persons
+            # Fetch person records to get user IDs
+            person = self.person_repo.get_by_id(relationship.person_id)
+            related_person = self.person_repo.get_by_id(relationship.related_person_id)
+            
+            if person and person.user_id:
+                invalidate_discovery_cache(person.user_id)
+            if related_person and related_person.user_id:
+                invalidate_discovery_cache(related_person.user_id)
 
         except Exception as e:
             # Rollback transaction on any error

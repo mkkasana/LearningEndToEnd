@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { AddFamilyMemberDialog } from "@/components/Family/AddFamilyMemberDialog"
+import { DiscoverFamilyMembersDialog } from "@/components/Family/DiscoverFamilyMembersDialog"
 import { PersonService } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 
@@ -34,6 +35,7 @@ const RELATIONSHIP_LABELS: Record<string, string> = {
 
 function Family() {
   const [showAddDialog, setShowAddDialog] = useState(false)
+  const [showDiscoveryDialog, setShowDiscoveryDialog] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedRelationship, setSelectedRelationship] = useState<any>(null)
   const queryClient = useQueryClient()
@@ -69,6 +71,23 @@ function Family() {
     setDeleteDialogOpen(true)
   }
 
+  const handleAddFamilyMember = () => {
+    // First show discovery dialog
+    setShowDiscoveryDialog(true)
+  }
+
+  const handleSkipDiscovery = () => {
+    // Close discovery dialog and open manual wizard
+    setShowDiscoveryDialog(false)
+    setShowAddDialog(true)
+  }
+
+  const handleDiscoveryDialogClose = () => {
+    // When user closes discovery dialog without connecting, open manual wizard
+    // This handles Requirement 1.5: When user closes dialog without connecting, proceed to wizard
+    setShowAddDialog(true)
+  }
+
   const handleConfirmDelete = () => {
     if (selectedRelationship?.relationship?.id) {
       deleteMutation.mutate(selectedRelationship.relationship.id)
@@ -86,7 +105,7 @@ function Family() {
             Add and manage your family members
           </p>
         </div>
-        <Button onClick={() => setShowAddDialog(true)} className="sm:shrink-0">
+        <Button onClick={handleAddFamilyMember} className="sm:shrink-0">
           <UserPlus className="mr-2 h-4 w-4" />
           Add Family Member
         </Button>
@@ -170,12 +189,19 @@ function Family() {
           <p className="text-muted-foreground mb-4">
             Add your first family member to get started
           </p>
-          <Button onClick={() => setShowAddDialog(true)}>
+          <Button onClick={handleAddFamilyMember}>
             <UserPlus className="mr-2 h-4 w-4" />
             Add Family Member
           </Button>
         </div>
       )}
+
+      <DiscoverFamilyMembersDialog
+        open={showDiscoveryDialog}
+        onOpenChange={setShowDiscoveryDialog}
+        onSkip={handleSkipDiscovery}
+        onClose={handleDiscoveryDialogClose}
+      />
 
       <AddFamilyMemberDialog
         open={showAddDialog}
