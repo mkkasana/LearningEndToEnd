@@ -749,18 +749,21 @@ def get_my_relationships_with_details(
 )
 def get_person_relationships_with_details(
     session: SessionDep,
-    current_user: CurrentUser,  # noqa: ARG001
+    current_user: CurrentUser,
     person_id: uuid.UUID,
 ) -> Any:
     """
     Get all relationships for a specific person with full person details.
     Returns the selected person and list of objects with relationship and related person information.
     Used to help users identify the correct person when multiple people have similar names.
+    
+    This endpoint also records a profile view event for analytics.
     """
     from app.schemas.person.person_relationship import (
         PersonDetails,
         PersonRelationshipsWithDetailsResponse,
     )
+    from app.services.profile_view_tracking_service import ProfileViewTrackingService
 
     person_service = PersonService(session)
 
@@ -771,6 +774,23 @@ def get_person_relationships_with_details(
             status_code=404,
             detail="Person not found",
         )
+
+    # Record profile view (non-blocking, fail gracefully)
+    try:
+        viewer_person = person_service.get_person_by_user_id(current_user.id)
+        if viewer_person:
+            view_tracking_service = ProfileViewTrackingService(session)
+            view_tracking_service.record_view(
+                viewer_person_id=viewer_person.id,
+                viewed_person_id=person_id
+            )
+            logger.info(
+                f"Recorded profile view: viewer={viewer_person.id}, "
+                f"viewed={person_id}"
+            )
+    except Exception as e:
+        # Log but don't fail the request
+        logger.error(f"Failed to record profile view: {e}", exc_info=True)
 
     relationship_service = PersonRelationshipService(session)
     relationships = relationship_service.get_relationships_by_person(person_id)

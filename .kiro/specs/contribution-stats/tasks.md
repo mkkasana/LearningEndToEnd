@@ -146,15 +146,15 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - **Property 14: Contributions API Response Completeness**
     - **Validates: Requirements 5.2, 5.3, 5.4**
 
-- [ ] 9. Add profile view tracking to relationships endpoint
-  - [ ] 9.1 Modify GET /person/{person_id}/relationships/with-details endpoint
+- [x] 9. Add profile view tracking to relationships endpoint
+  - [x] 9.1 Modify GET /person/{person_id}/relationships/with-details endpoint
     - Get viewer's person record from current_user
     - Call ProfileViewTrackingService.record_view()
     - Wrap in try-except to prevent failures
     - Add logging
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.8_
 
-  - [ ] 9.2 Write integration tests for view tracking
+  - [x]* 9.2 Write integration tests for view tracking
     - Test view is recorded when endpoint is called
     - Test self-view is not recorded
     - Test viewer without person record doesn't create view
@@ -162,11 +162,11 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - Test view tracking error doesn't break endpoint
     - _Requirements: 3.1, 3.4, 3.5, 3.7, 3.8_
 
-  - [ ] 9.3 Write property test for correct viewer/viewed mapping
+  - [x]* 9.3 Write property test for correct viewer/viewed mapping
     - **Property 8: Correct Viewer and Viewed Mapping**
     - **Validates: Requirements 3.2, 3.3**
 
-- [ ] 10. Checkpoint - Ensure all backend tests pass
+- [ ]* 10. Checkpoint - Ensure all backend tests pass
   - Run full backend test suite
   - Verify API endpoints work correctly
   - Test view tracking in development environment
