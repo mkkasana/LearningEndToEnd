@@ -173,21 +173,21 @@ This implementation plan breaks down the Contribution Stats feature into discret
   - Ask user if questions arise
 
 
-- [ ] 11. Create frontend TypeScript types
-  - [ ] 11.1 Add PersonContributionPublic interface to types
+- [x] 11. Create frontend TypeScript types
+  - [x] 11.1 Add PersonContributionPublic interface to types
     - Define all fields matching backend schema
     - Export from types file
     - _Requirements: 5.2, 5.3, 5.4_
 
-- [ ] 12. Implement frontend API client
-  - [ ] 12.1 Add getMyContributions() method to PersonService
+- [x] 12. Implement frontend API client
+  - [x] 12.1 Add getMyContributions() method to PersonService
     - Make GET request to /api/v1/person/my-contributions
     - Return typed response
     - Handle errors
     - _Requirements: 5.1_
 
-- [ ] 13. Create ContributionStatsDialog component
-  - [ ] 13.1 Create ContributionStatsDialog.tsx component
+- [x] 13. Create ContributionStatsDialog component
+  - [x] 13.1 Create ContributionStatsDialog.tsx component
     - Implement dialog with open/close state
     - Add loading state with spinner
     - Add error state with message
@@ -195,7 +195,7 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - Fetch contributions on dialog open
     - _Requirements: 6.1, 6.2, 6.3, 6.9, 6.10_
 
-  - [ ] 13.2 Implement contribution list display
+  - [x] 13.2 Implement contribution list display
     - Display person name (first + last)
     - Display formatted address with MapPin icon
     - Display date range with Calendar icon
@@ -204,13 +204,13 @@ This implementation plan breaks down the Contribution Stats feature into discret
     - Add hover effects
     - _Requirements: 6.4, 6.5, 6.6, 6.7, 6.8_
 
-  - [ ] 13.3 Add date formatting helper
+  - [x] 13.3 Add date formatting helper
     - Format birth-death range for deceased persons
     - Format birth year only for living persons
     - _Requirements: 6.6_
 
-- [ ] 14. Integrate ContributionStatsDialog into navigation
-  - [ ] 14.1 Add "Contribution Stats" menu item
+- [x] 14. Integrate ContributionStatsDialog into navigation
+  - [x] 14.1 Add "Contribution Stats" menu item
     - Add to user profile menu or navigation
     - Add appropriate icon (BarChart or similar)
     - Wire up dialog open/close state

@@ -4,3 +4,7 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI, type OpenAPIConfig } from './core/OpenAPI';
 export * from './sdk.gen';
 export * from './types.gen';
+// Custom types for features not yet in OpenAPI spec
+export * from './types.custom';
+// Custom services for features not yet in OpenAPI spec
+export * from './services.custom';

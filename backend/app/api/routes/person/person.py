@@ -792,6 +792,9 @@ def get_person_relationships_with_details(
         # Log but don't fail the request
         logger.error(f"Failed to record profile view: {e}", exc_info=True)
 
+    # Refresh person after potential session commit from view tracking
+    session.refresh(person)
+
     relationship_service = PersonRelationshipService(session)
     relationships = relationship_service.get_relationships_by_person(person_id)
 

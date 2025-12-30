@@ -1,5 +1,6 @@
+import { useState } from "react"
 import { Link as RouterLink } from "@tanstack/react-router"
-import { ChevronsUpDown, LogOut, Settings } from "lucide-react"
+import { BarChart3, ChevronsUpDown, LogOut, Settings } from "lucide-react"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/sidebar"
 import useAuth from "@/hooks/useAuth"
 import { getInitials } from "@/utils"
+import { ContributionStatsDialog } from "@/components/Profile/ContributionStatsDialog"
 
 interface UserInfoProps {
   fullName?: string
@@ -43,6 +45,7 @@ function UserInfo({ fullName, email }: UserInfoProps) {
 export function User({ user }: { user: any }) {
   const { logout } = useAuth()
   const { isMobile, setOpenMobile } = useSidebar()
+  const [contributionStatsOpen, setContributionStatsOpen] = useState(false)
 
   if (!user) return null
 
@@ -53,6 +56,11 @@ export function User({ user }: { user: any }) {
   }
   const handleLogout = async () => {
     logout()
+  }
+
+  const handleContributionStatsClick = () => {
+    handleMenuClick()
+    setContributionStatsOpen(true)
   }
 
   return (
@@ -79,6 +87,10 @@ export function User({ user }: { user: any }) {
               <UserInfo fullName={user?.full_name} email={user?.email} />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleContributionStatsClick}>
+              <BarChart3 />
+              Contribution Stats
+            </DropdownMenuItem>
             <RouterLink to="/settings" onClick={handleMenuClick}>
               <DropdownMenuItem>
                 <Settings />
@@ -92,6 +104,12 @@ export function User({ user }: { user: any }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
+
+      {/* Contribution Stats Dialog */}
+      <ContributionStatsDialog
+        open={contributionStatsOpen}
+        onOpenChange={setContributionStatsOpen}
+      />
     </SidebarMenu>
   )
 }
