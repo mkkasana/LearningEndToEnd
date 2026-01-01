@@ -5,6 +5,7 @@ from sqlmodel import Session
 
 from app.core.security import get_password_hash, verify_password
 from app.db_models.user import User
+from app.enums.user_role import UserRole
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserUpdate
 
@@ -53,13 +54,13 @@ class UserService:
             email=user_create.email,
             hashed_password=get_password_hash(user_create.password),
             is_active=user_create.is_active,
-            is_superuser=user_create.is_superuser,
+            role=user_create.role,
             full_name=user_create.full_name,
         )
         created_user = self.user_repo.create(user)
         logger.info(
             f"User created successfully: {created_user.email} (ID: {created_user.id}), "
-            f"is_superuser={created_user.is_superuser}, is_active={created_user.is_active}"
+            f"role={created_user.role.value}, is_active={created_user.is_active}"
         )
         return created_user
 
@@ -119,4 +120,27 @@ class UserService:
         user.hashed_password = get_password_hash(new_password)
         updated_user = self.user_repo.update(user)
         logger.info(f"Password updated successfully for user: {user.email}")
+        return updated_user
+
+    def update_user_role(self, user: User, new_role: UserRole) -> User:
+        """Update user role
+        
+        Args:
+            user: The user to update
+            new_role: The new role to assign
+            
+        Returns:
+            The updated user
+        """
+        old_role = user.role
+        logger.info(
+            f"Updating role for user: {user.email} (ID: {user.id}) "
+            f"from {old_role.value} to {new_role.value}"
+        )
+        user.role = new_role
+        updated_user = self.user_repo.update(user)
+        logger.info(
+            f"Role updated successfully for user: {updated_user.email} "
+            f"(ID: {updated_user.id}), new role: {updated_user.role.value}"
+        )
         return updated_user

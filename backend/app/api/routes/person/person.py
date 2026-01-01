@@ -254,6 +254,149 @@ def discover_family_members(
         )
 
 
+# ============================================================================
+# Person Address Endpoints (for current user - /me/addresses)
+# NOTE: These routes MUST be defined BEFORE /{person_id}/addresses routes
+# to prevent FastAPI from matching "me" as a UUID person_id
+# ============================================================================
+
+
+@router.get("/me/addresses", response_model=list[PersonAddressPublic])
+def get_my_addresses(session: SessionDep, current_user: CurrentUser) -> Any:
+    """
+    Get all addresses for current user's person profile.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    address_service = PersonAddressService(session)
+    addresses = address_service.get_addresses_by_person(person.id)
+    return addresses
+
+
+@router.post("/me/addresses", response_model=PersonAddressPublic)
+def create_my_address(
+    session: SessionDep, current_user: CurrentUser, address_in: PersonAddressCreate
+) -> Any:
+    """
+    Create new address for current user's person profile.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    address_service = PersonAddressService(session)
+    address = address_service.create_address(
+        person.id, address_in
+    )  # Use person.id, not person.id
+    return address
+
+
+@router.get("/me/addresses/{address_id}", response_model=PersonAddressPublic)
+def get_my_address(
+    session: SessionDep, current_user: CurrentUser, address_id: uuid.UUID
+) -> Any:
+    """
+    Get specific address by ID for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    address_service = PersonAddressService(session)
+    address = address_service.get_address_by_id(address_id)
+
+    if not address or address.person_id != person.id:
+        raise HTTPException(
+            status_code=404,
+            detail="Address not found",
+        )
+
+    return address
+
+
+@router.patch("/me/addresses/{address_id}", response_model=PersonAddressPublic)
+def update_my_address(
+    session: SessionDep,
+    current_user: CurrentUser,
+    address_id: uuid.UUID,
+    address_in: PersonAddressUpdate,
+) -> Any:
+    """
+    Update address for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    address_service = PersonAddressService(session)
+    address = address_service.get_address_by_id(address_id)
+
+    if not address or address.person_id != person.id:
+        raise HTTPException(
+            status_code=404,
+            detail="Address not found",
+        )
+
+    updated_address = address_service.update_address(address, address_in)
+    return updated_address
+
+
+@router.delete("/me/addresses/{address_id}")
+def delete_my_address(
+    session: SessionDep, current_user: CurrentUser, address_id: uuid.UUID
+) -> Any:
+    """
+    Delete address for current user.
+    """
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person profile not found",
+        )
+
+    address_service = PersonAddressService(session)
+    address = address_service.get_address_by_id(address_id)
+
+    if not address or address.person_id != person.id:
+        raise HTTPException(
+            status_code=404,
+            detail="Address not found",
+        )
+
+    address_service.delete_address(address)
+    return {"message": "Address deleted successfully"}
+
+
+# ============================================================================
+# Person Address Endpoints (for specific person - /{person_id}/addresses)
+# ============================================================================
+
+
 @router.post("/{person_id}/addresses", response_model=PersonAddressPublic)
 def create_person_address(
     session: SessionDep,
@@ -400,142 +543,6 @@ def delete_person_by_user_id(session: SessionDep, user_id: uuid.UUID) -> Any:
 
     person_service.delete_person(person)
     return {"message": "Person deleted successfully"}
-
-
-# ============================================================================
-# Person Address Endpoints
-# ============================================================================
-
-
-@router.get("/me/addresses", response_model=list[PersonAddressPublic])
-def get_my_addresses(session: SessionDep, current_user: CurrentUser) -> Any:
-    """
-    Get all addresses for current user's person profile.
-    """
-    person_service = PersonService(session)
-    person = person_service.get_person_by_user_id(current_user.id)
-
-    if not person:
-        raise HTTPException(
-            status_code=404,
-            detail="Person profile not found",
-        )
-
-    address_service = PersonAddressService(session)
-    addresses = address_service.get_addresses_by_person(person.id)
-    return addresses
-
-
-@router.post("/me/addresses", response_model=PersonAddressPublic)
-def create_my_address(
-    session: SessionDep, current_user: CurrentUser, address_in: PersonAddressCreate
-) -> Any:
-    """
-    Create new address for current user's person profile.
-    """
-    person_service = PersonService(session)
-    person = person_service.get_person_by_user_id(current_user.id)
-
-    if not person:
-        raise HTTPException(
-            status_code=404,
-            detail="Person profile not found",
-        )
-
-    address_service = PersonAddressService(session)
-    address = address_service.create_address(
-        person.id, address_in
-    )  # Use person.id, not person.id
-    return address
-
-
-@router.get("/me/addresses/{address_id}", response_model=PersonAddressPublic)
-def get_my_address(
-    session: SessionDep, current_user: CurrentUser, address_id: uuid.UUID
-) -> Any:
-    """
-    Get specific address by ID for current user.
-    """
-    person_service = PersonService(session)
-    person = person_service.get_person_by_user_id(current_user.id)
-
-    if not person:
-        raise HTTPException(
-            status_code=404,
-            detail="Person profile not found",
-        )
-
-    address_service = PersonAddressService(session)
-    address = address_service.get_address_by_id(address_id)
-
-    if not address or address.person_id != person.id:
-        raise HTTPException(
-            status_code=404,
-            detail="Address not found",
-        )
-
-    return address
-
-
-@router.patch("/me/addresses/{address_id}", response_model=PersonAddressPublic)
-def update_my_address(
-    session: SessionDep,
-    current_user: CurrentUser,
-    address_id: uuid.UUID,
-    address_in: PersonAddressUpdate,
-) -> Any:
-    """
-    Update address for current user.
-    """
-    person_service = PersonService(session)
-    person = person_service.get_person_by_user_id(current_user.id)
-
-    if not person:
-        raise HTTPException(
-            status_code=404,
-            detail="Person profile not found",
-        )
-
-    address_service = PersonAddressService(session)
-    address = address_service.get_address_by_id(address_id)
-
-    if not address or address.person_id != person.id:
-        raise HTTPException(
-            status_code=404,
-            detail="Address not found",
-        )
-
-    updated_address = address_service.update_address(address, address_in)
-    return updated_address
-
-
-@router.delete("/me/addresses/{address_id}")
-def delete_my_address(
-    session: SessionDep, current_user: CurrentUser, address_id: uuid.UUID
-) -> Any:
-    """
-    Delete address for current user.
-    """
-    person_service = PersonService(session)
-    person = person_service.get_person_by_user_id(current_user.id)
-
-    if not person:
-        raise HTTPException(
-            status_code=404,
-            detail="Person profile not found",
-        )
-
-    address_service = PersonAddressService(session)
-    address = address_service.get_address_by_id(address_id)
-
-    if not address or address.person_id != person.id:
-        raise HTTPException(
-            status_code=404,
-            detail="Address not found",
-        )
-
-    address_service.delete_address(address)
-    return {"message": "Address deleted successfully"}
 
 
 # ============================================================================

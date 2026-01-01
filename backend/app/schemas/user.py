@@ -3,13 +3,15 @@ import uuid
 from pydantic import EmailStr, Field
 from sqlmodel import SQLModel
 
+from app.enums.user_role import UserRole
+
 
 class UserBase(SQLModel):
     """Shared user properties"""
 
     email: EmailStr = Field(max_length=255)
     is_active: bool = True
-    is_superuser: bool = False
+    role: UserRole = UserRole.USER
     full_name: str | None = Field(default=None, max_length=255)
 
 
@@ -50,6 +52,12 @@ class UpdatePassword(SQLModel):
 
     current_password: str = Field(min_length=8, max_length=128)
     new_password: str = Field(min_length=8, max_length=128)
+
+
+class UserRoleUpdate(SQLModel):
+    """Schema for updating user role (admin only)"""
+
+    role: UserRole
 
 
 class UserPublic(UserBase):

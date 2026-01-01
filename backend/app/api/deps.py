@@ -12,6 +12,7 @@ from app.core import security
 from app.core.config import settings
 from app.core.db import engine
 from app.db_models.user import User
+from app.enums.user_role import UserRole
 from app.schemas.auth import TokenPayload
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -51,7 +52,17 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 def get_current_active_superuser(current_user: CurrentUser) -> User:
-    if not current_user.is_superuser:
+    """Require superuser or admin role (level 1+)."""
+    if not current_user.role.has_permission(UserRole.SUPERUSER):
+        raise HTTPException(
+            status_code=403, detail="The user doesn't have enough privileges"
+        )
+    return current_user
+
+
+def get_current_active_admin(current_user: CurrentUser) -> User:
+    """Require admin role only (level 10+)."""
+    if not current_user.role.has_permission(UserRole.ADMIN):
         raise HTTPException(
             status_code=403, detail="The user doesn't have enough privileges"
         )

@@ -17,39 +17,50 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # Create profile_view_tracking table
-    op.create_table(
-        'profile_view_tracking',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, server_default=sa.text('gen_random_uuid()')),
-        sa.Column('viewed_person_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('viewer_person_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('view_count', sa.Integer(), nullable=False, server_default='1'),
-        sa.Column('last_viewed_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
-        sa.Column('is_aggregated', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
-        sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
-        
-        # Foreign key constraints
-        sa.ForeignKeyConstraint(['viewed_person_id'], ['person.id'], ondelete='CASCADE'),
-        sa.ForeignKeyConstraint(['viewer_person_id'], ['person.id'], ondelete='CASCADE'),
-    )
+    # Check if table already exists (may have been created by SQLModel.metadata.create_all)
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    tables = inspector.get_table_names()
     
-    # Create indexes for performance
-    op.create_index(
-        'idx_profile_view_tracking_viewed_person',
-        'profile_view_tracking',
-        ['viewed_person_id']
-    )
-    op.create_index(
-        'idx_profile_view_tracking_viewer_person',
-        'profile_view_tracking',
-        ['viewer_person_id']
-    )
-    op.create_index(
-        'idx_profile_view_tracking_composite',
-        'profile_view_tracking',
-        ['viewed_person_id', 'viewer_person_id', 'is_aggregated']
-    )
+    if 'profile_view_tracking' not in tables:
+        # Create profile_view_tracking table
+        op.create_table(
+            'profile_view_tracking',
+            sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, server_default=sa.text('gen_random_uuid()')),
+            sa.Column('viewed_person_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('viewer_person_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('view_count', sa.Integer(), nullable=False, server_default='1'),
+            sa.Column('last_viewed_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
+            sa.Column('is_aggregated', sa.Boolean(), nullable=False, server_default='false'),
+            sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
+            sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
+            
+            # Foreign key constraints
+            sa.ForeignKeyConstraint(['viewed_person_id'], ['person.id'], ondelete='CASCADE'),
+            sa.ForeignKeyConstraint(['viewer_person_id'], ['person.id'], ondelete='CASCADE'),
+        )
+    
+    # Create indexes if they don't exist
+    indexes = [idx['name'] for idx in inspector.get_indexes('profile_view_tracking')]
+    
+    if 'idx_profile_view_tracking_viewed_person' not in indexes:
+        op.create_index(
+            'idx_profile_view_tracking_viewed_person',
+            'profile_view_tracking',
+            ['viewed_person_id']
+        )
+    if 'idx_profile_view_tracking_viewer_person' not in indexes:
+        op.create_index(
+            'idx_profile_view_tracking_viewer_person',
+            'profile_view_tracking',
+            ['viewer_person_id']
+        )
+    if 'idx_profile_view_tracking_composite' not in indexes:
+        op.create_index(
+            'idx_profile_view_tracking_composite',
+            'profile_view_tracking',
+            ['viewed_person_id', 'viewer_person_id', 'is_aggregated']
+        )
 
 
 def downgrade() -> None:

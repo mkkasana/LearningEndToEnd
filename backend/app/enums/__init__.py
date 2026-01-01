@@ -16,6 +16,7 @@ from app.enums.relationship_type import (
     label_id_relation,
     relation_label_id,
 )
+from app.enums.user_role import UserRole
 
 __all__ = [
     "GenderData",
@@ -24,6 +25,7 @@ __all__ = [
     "GENDER_BY_ID",
     "GENDER_DATA",
     "RelationshipType",
+    "UserRole",
     "get_all_genders",
     "get_gender_by_code",
     "get_gender_by_id",

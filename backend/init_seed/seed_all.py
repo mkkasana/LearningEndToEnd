@@ -14,9 +14,39 @@ from sqlmodel import Session, select
 
 from app.core.db import engine
 from app.db_models.address import Country, District, Locality, State, SubDistrict
+from app.db_models.person.gender import Gender
 from app.db_models.religion.religion import Religion
 from app.db_models.religion.religion_category import ReligionCategory
 from app.db_models.religion.religion_sub_category import ReligionSubCategory
+
+
+def seed_genders():
+    """Seed gender data."""
+    genders_data = [
+        {"name": "Male", "code": "MALE", "description": "Male gender"},
+        {"name": "Female", "code": "FEMALE", "description": "Female gender"},
+    ]
+    
+    with Session(engine) as session:
+        existing = session.exec(select(Gender)).first()
+        if existing:
+            print("✓ Genders already seeded")
+            return
+        
+        print("Seeding genders...")
+        for gender_data in genders_data:
+            gender = Gender(
+                id=uuid.uuid4(),
+                name=gender_data["name"],
+                code=gender_data["code"],
+                description=gender_data["description"],
+                is_active=True
+            )
+            session.add(gender)
+            print(f"  ✓ Added {gender_data['name']}")
+        
+        session.commit()
+        print("✅ Successfully seeded genders!")
 
 
 def seed_religions():

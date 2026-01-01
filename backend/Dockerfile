@@ -34,6 +34,7 @@ COPY ./pyproject.toml ./alembic.ini /app/
 
 COPY ./app /app/app
 COPY ./tests /app/tests
+COPY ./init_seed /app/init_seed
 
 # Sync the project
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers

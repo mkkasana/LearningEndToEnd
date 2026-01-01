@@ -9,15 +9,18 @@ from app.api.deps import (
     CurrentUser,
     SessionDep,
     get_current_active_superuser,
+    get_current_active_admin,
 )
 from app.core.config import settings
 from app.core.exceptions import EmailAlreadyExistsError, PermissionDeniedError
+from app.db_models.user import User
 from app.schemas.common import Message
 from app.schemas.user import (
     UpdatePassword,
     UserCreate,
     UserPublic,
     UserRegister,
+    UserRoleUpdate,
     UsersPublic,
     UserUpdate,
     UserUpdateMe,
@@ -193,7 +196,6 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
         password=user_in.password,
         full_name=full_name,
         is_active=True,
-        is_superuser=False,
     )
     user = user_service.create_user(user_create)
 
@@ -270,6 +272,45 @@ def update_user(
 
     db_user = user_service.update_user(db_user, user_in)
     return db_user
+
+
+@router.patch(
+    "/{user_id}/role",
+    response_model=UserPublic,
+)
+@log_route
+def update_user_role(
+    *,
+    session: SessionDep,
+    user_id: uuid.UUID,
+    role_update: UserRoleUpdate,
+    current_user: CurrentUser,
+    _admin: User = Depends(get_current_active_admin),
+) -> Any:
+    """
+    Update a user's role. Admin only.
+    """
+    user_service = UserService(session)
+
+    # Prevent admin from changing their own role
+    if user_id == current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="Cannot change your own role",
+        )
+
+    # Get the target user
+    db_user = user_service.get_user_by_id(user_id)
+    if not db_user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found",
+        )
+
+    # Update the role using the service method
+    updated_user = user_service.update_user_role(db_user, role_update.role)
+
+    return updated_user
 
 
 @router.delete("/{user_id}", dependencies=[Depends(get_current_active_superuser)])
