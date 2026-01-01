@@ -9,11 +9,10 @@ from sqlmodel import Session, select
 from app.db_models.person.gender import Gender
 from app.db_models.person.person import Person
 from app.db_models.person.person_relationship import PersonRelationship
-from app.enums import RelationshipType
+from app.enums import RelationshipType, GENDER_BY_CODE
 from app.models import User
 from app.schemas.person import PersonRelationshipCreate
 from app.services.person.person_relationship_service import PersonRelationshipService
-from app.utils.relationship_helper import RelationshipTypeHelper
 
 
 @pytest.fixture
@@ -33,18 +32,32 @@ def test_user(db: Session) -> User:
 
 @pytest.fixture
 def male_gender(db: Session) -> Gender:
-    """Get male gender from database."""
-    gender = db.exec(select(Gender).where(Gender.code == "male")).first()
-    assert gender is not None, "Male gender must exist in database"
-    return gender
+    """Get male gender from hardcoded enum."""
+    gender_data = GENDER_BY_CODE.get("MALE")
+    assert gender_data is not None, "Male gender must exist in enum"
+    # Return a Gender-like object for compatibility
+    return Gender(
+        id=gender_data.id,
+        name=gender_data.name,
+        code=gender_data.code,
+        description=gender_data.description,
+        is_active=gender_data.is_active,
+    )
 
 
 @pytest.fixture
 def female_gender(db: Session) -> Gender:
-    """Get female gender from database."""
-    gender = db.exec(select(Gender).where(Gender.code == "female")).first()
-    assert gender is not None, "Female gender must exist in database"
-    return gender
+    """Get female gender from hardcoded enum."""
+    gender_data = GENDER_BY_CODE.get("FEMALE")
+    assert gender_data is not None, "Female gender must exist in enum"
+    # Return a Gender-like object for compatibility
+    return Gender(
+        id=gender_data.id,
+        name=gender_data.name,
+        code=gender_data.code,
+        description=gender_data.description,
+        is_active=gender_data.is_active,
+    )
 
 
 @pytest.fixture
@@ -90,9 +103,6 @@ class TestCreateRelationshipBidirectional:
         self, db: Session, male_person: Person, female_person: Person
     ) -> None:
         """Test that creating a relationship creates both primary and inverse."""
-        # Clear gender cache to ensure fresh data
-        RelationshipTypeHelper.clear_gender_cache()
-        
         service = PersonRelationshipService(db)
         
         # Create relationship: male_person → female_person as Mother
@@ -132,15 +142,11 @@ class TestCreateRelationshipBidirectional:
         db.commit()
 
     def test_correct_inverse_type_for_father_male_child(
-        self, db: Session, male_person: Person, female_person: Gender
+        self, db: Session, male_person: Person, male_gender: Gender
     ) -> None:
         """Test Father → Son inverse for male child."""
-        # Clear gender cache
-        RelationshipTypeHelper.clear_gender_cache()
-        
         # Create a male father person
         test_user = db.exec(select(User)).first()
-        male_gender = db.exec(select(Gender).where(Gender.code == "male")).first()
         
         father = Person(
             user_id=None,
@@ -189,9 +195,6 @@ class TestCreateRelationshipBidirectional:
         self, db: Session, test_user: User
     ) -> None:
         """Test that missing gender information doesn't fail the request."""
-        # Clear gender cache
-        RelationshipTypeHelper.clear_gender_cache()
-        
         # Create persons without gender_id (this would normally fail due to NOT NULL constraint,
         # but we'll test the service logic by mocking)
         # For this test, we'll just verify the service doesn't crash
@@ -206,9 +209,6 @@ class TestCreateRelationshipBidirectional:
         self, db: Session, male_person: Person
     ) -> None:
         """Test that transaction is rolled back on error."""
-        # Clear gender cache
-        RelationshipTypeHelper.clear_gender_cache()
-        
         service = PersonRelationshipService(db)
         
         # Try to create relationship with non-existent person

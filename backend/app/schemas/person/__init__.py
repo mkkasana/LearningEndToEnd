@@ -1,10 +1,8 @@
 """Person schemas."""
 
 from app.schemas.person.gender import (
-    GenderCreate,
     GenderDetailPublic,
     GenderPublic,
-    GenderUpdate,
 )
 from app.schemas.person.person import PersonCreate, PersonPublic, PersonUpdate
 from app.schemas.person.person_address import (
@@ -51,10 +49,8 @@ from app.schemas.person.profession import (
 )
 
 __all__ = [
-    "GenderCreate",
     "GenderDetailPublic",
     "GenderPublic",
-    "GenderUpdate",
     "PersonAddressCreate",
     "PersonAddressDetails",
     "PersonAddressPublic",

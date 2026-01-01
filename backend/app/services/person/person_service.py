@@ -8,12 +8,12 @@ from sqlmodel import Session
 
 from app.db_models.person.person import Person
 from app.db_models.person.person_address import PersonAddress
+from app.enums import get_gender_by_id
 from app.repositories.address.country_repository import CountryRepository
 from app.repositories.address.district_repository import DistrictRepository
 from app.repositories.address.locality_repository import LocalityRepository
 from app.repositories.address.state_repository import StateRepository
 from app.repositories.address.sub_district_repository import SubDistrictRepository
-from app.repositories.person.gender_repository import GenderRepository
 from app.repositories.person.person_address_repository import PersonAddressRepository
 from app.repositories.person.person_religion_repository import PersonReligionRepository
 from app.repositories.person.person_repository import PersonRepository
@@ -209,11 +209,10 @@ class PersonService:
             logger.debug(f"Person not found: {person_id}")
             return None
 
-        # 2. Resolve gender name
+        # 2. Resolve gender name from hardcoded enum (no database call)
         gender_name = "Unknown"
         if person.gender_id:
-            gender_repo = GenderRepository(self.person_repo.session)
-            gender = gender_repo.get_by_id(person.gender_id)
+            gender = get_gender_by_id(person.gender_id)
             if gender:
                 gender_name = gender.name
                 logger.debug(f"Resolved gender: {gender_name}")

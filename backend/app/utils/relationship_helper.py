@@ -3,10 +3,7 @@
 import logging
 import uuid
 
-from sqlmodel import Session, select
-
-from app.db_models.person.gender import Gender
-from app.enums import RelationshipType
+from app.enums import RelationshipType, get_gender_mapping
 
 logger = logging.getLogger(__name__)
 
@@ -14,51 +11,18 @@ logger = logging.getLogger(__name__)
 class RelationshipTypeHelper:
     """Helper class for relationship type operations and inverse determination."""
 
-    # In-memory cache for gender mapping
-    _gender_mapping_cache: dict[uuid.UUID, str] | None = None
-
     @classmethod
-    def get_gender_mapping(cls, session: Session) -> dict[uuid.UUID, str]:
+    def get_gender_mapping(cls, session=None) -> dict[uuid.UUID, str]:
         """
-        Fetch gender mapping from database and cache it in memory.
+        Get gender mapping from hardcoded enum values.
 
         Args:
-            session: Database session
+            session: Database session (kept for API compatibility but not used)
 
         Returns:
-            Dictionary mapping gender_id to gender code (e.g., 'male', 'female')
-
-        Note:
-            The mapping is cached in memory after the first fetch to avoid
-            repeated database queries. The cache is class-level and shared
-            across all instances.
+            Dictionary mapping gender_id to gender code (e.g., 'MALE', 'FEMALE')
         """
-        # Return cached mapping if available
-        if cls._gender_mapping_cache is not None:
-            return cls._gender_mapping_cache
-
-        # Fetch from database
-        try:
-            genders = session.exec(select(Gender)).all()
-            cls._gender_mapping_cache = {gender.id: gender.code for gender in genders}
-            logger.info(
-                f"Loaded gender mapping with {len(cls._gender_mapping_cache)} entries"
-            )
-            return cls._gender_mapping_cache
-        except Exception as e:
-            logger.error(f"Failed to fetch gender mapping from database: {e}")
-            # Return empty dict to handle gracefully
-            return {}
-
-    @classmethod
-    def clear_gender_cache(cls) -> None:
-        """
-        Clear the gender mapping cache.
-
-        This is useful for testing or when gender data is updated in the database.
-        """
-        cls._gender_mapping_cache = None
-        logger.debug("Gender mapping cache cleared")
+        return get_gender_mapping()
 
     @staticmethod
     def get_inverse_type(

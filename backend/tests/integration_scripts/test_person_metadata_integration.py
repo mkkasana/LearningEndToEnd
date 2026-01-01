@@ -130,79 +130,48 @@ def test_professions(headers: dict[str, str]) -> None:
 
 
 def test_genders(headers: dict[str, str]) -> None:
-    print_header("GENDERS - CRUD Operations")
+    print_header("GENDERS - Read-Only Operations (Hardcoded)")
 
-    # CREATE
-    print_test("CREATE gender")
-    try:
-        response = requests.post(
-            f"{BASE_URL}/metadata/person/genders",
-            json={
-                "name": "Test Gender",
-                "code": "TG",
-                "description": "Test gender option",
-                "is_active": True,
-            },
-            headers=headers,
-        )
-        response.raise_for_status()
-        gender = response.json()
-        assert "id" in gender
-        pass_test(f"ID: {gender['id']}")
-    except Exception as e:
-        fail_test(str(e))
-        return
-
-    # READ
-    print_test("READ gender by ID")
-    try:
-        response = requests.get(f"{BASE_URL}/metadata/person/genders/{gender['id']}")
-        response.raise_for_status()
-        pass_test()
-    except Exception as e:
-        fail_test(str(e))
-
-    # READ ALL
+    # READ ALL (genders are now hardcoded, no CRUD)
     print_test("READ all genders")
     try:
         response = requests.get(f"{BASE_URL}/metadata/person/genders")
         response.raise_for_status()
         genders = response.json()
         assert isinstance(genders, list)
+        assert len(genders) >= 2  # Should have at least Male and Female
         pass_test(f"Found {len(genders)} genders")
     except Exception as e:
         fail_test(str(e))
+        return
 
-    # UPDATE
-    print_test("UPDATE gender")
+    # READ by ID
+    print_test("READ gender by ID")
     try:
-        response = requests.patch(
-            f"{BASE_URL}/metadata/person/genders/{gender['id']}",
-            json={"name": "Updated Test Gender"},
-            headers=headers,
-        )
+        gender_id = genders[0]["genderId"]
+        response = requests.get(f"{BASE_URL}/metadata/person/genders/{gender_id}")
         response.raise_for_status()
-        pass_test()
+        gender = response.json()
+        assert gender["id"] == gender_id
+        pass_test(f"Got gender: {gender['name']}")
     except Exception as e:
         fail_test(str(e))
 
-    # DELETE
-    print_test("DELETE gender")
+    # Verify Male exists
+    print_test("VERIFY Male gender exists")
     try:
-        response = requests.delete(
-            f"{BASE_URL}/metadata/person/genders/{gender['id']}", headers=headers
-        )
-        response.raise_for_status()
-        pass_test()
+        male_gender = next((g for g in genders if g["genderCode"] == "MALE"), None)
+        assert male_gender is not None
+        pass_test(f"Male ID: {male_gender['genderId']}")
     except Exception as e:
         fail_test(str(e))
 
-    # VERIFY DELETE
-    print_test("VERIFY deletion (404)")
+    # Verify Female exists
+    print_test("VERIFY Female gender exists")
     try:
-        response = requests.get(f"{BASE_URL}/metadata/person/genders/{gender['id']}")
-        assert response.status_code == 404
-        pass_test()
+        female_gender = next((g for g in genders if g["genderCode"] == "FEMALE"), None)
+        assert female_gender is not None
+        pass_test(f"Female ID: {female_gender['genderId']}")
     except Exception as e:
         fail_test(str(e))
 
@@ -210,32 +179,12 @@ def test_genders(headers: dict[str, str]) -> None:
 def test_validations(headers: dict[str, str]) -> None:
     print_header("VALIDATION Tests")
 
-    # Duplicate code
-    print_test("CREATE gender with duplicate code (should fail)")
+    # Test non-existent gender ID returns 404
+    print_test("GET non-existent gender (should return 404)")
     try:
-        requests.post(
-            f"{BASE_URL}/metadata/person/genders",
-            json={"name": "Test1", "code": "DUP", "is_active": True},
-            headers=headers,
-        )
-        response = requests.post(
-            f"{BASE_URL}/metadata/person/genders",
-            json={"name": "Test2", "code": "DUP", "is_active": True},
-            headers=headers,
-        )
-        assert response.status_code == 400
-        pass_test()
-    except Exception as e:
-        fail_test(str(e))
-
-    # No auth
-    print_test("CREATE without auth (should fail)")
-    try:
-        response = requests.post(
-            f"{BASE_URL}/metadata/person/genders",
-            json={"name": "Test", "code": "T", "is_active": True},
-        )
-        assert response.status_code == 401
+        fake_id = str(uuid.uuid4())
+        response = requests.get(f"{BASE_URL}/metadata/person/genders/{fake_id}")
+        assert response.status_code == 404
         pass_test()
     except Exception as e:
         fail_test(str(e))
