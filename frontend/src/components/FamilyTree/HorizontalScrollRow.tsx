@@ -2,6 +2,7 @@ import { memo, useEffect, useRef } from "react"
 import type { PersonDetails } from "@/client"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
+import { AddFamilyMemberCard } from "./AddFamilyMemberCard"
 import { PersonCard } from "./PersonCard"
 
 export interface HorizontalScrollRowProps {
@@ -11,6 +12,8 @@ export interface HorizontalScrollRowProps {
   onViewClick?: (personId: string) => void
   variant: "parent" | "center" | "child"
   colorCoding?: Map<string, "sibling" | "spouse">
+  showAddCard?: boolean
+  onAddClick?: () => void
 }
 
 /**
@@ -33,6 +36,8 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
   onViewClick,
   variant,
   colorCoding,
+  showAddCard,
+  onAddClick,
 }: HorizontalScrollRowProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const selectedPersonRef = useRef<HTMLDivElement>(null)
@@ -58,7 +63,7 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
     }
   }, [selectedPersonId, variant])
 
-  if (people.length === 0 && !selectedPersonId) {
+  if (people.length === 0 && !selectedPersonId && !showAddCard) {
     return null
   }
 
@@ -190,6 +195,12 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
               </div>
             )
           })}
+          {/* Add Card at rightmost position - Requirements: 1.1, 1.2, 1.3, 1.4 */}
+          {showAddCard && onAddClick && (
+            <div className="inline-block flex-shrink-0">
+              <AddFamilyMemberCard variant={variant} onClick={onAddClick} />
+            </div>
+          )}
         </div>
         <ScrollBar
           orientation="horizontal"

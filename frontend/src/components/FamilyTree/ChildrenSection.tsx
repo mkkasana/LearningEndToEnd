@@ -5,6 +5,8 @@ export interface ChildrenSectionProps {
   children: PersonDetails[]
   onPersonClick: (personId: string) => void
   onViewClick?: (personId: string) => void
+  showAddCard?: boolean
+  onAddClick?: () => void
 }
 
 /**
@@ -14,14 +16,16 @@ export interface ChildrenSectionProps {
  *
  * Note: This component displays ALL children of the selected person,
  * regardless of which spouse they are associated with (Requirement 6.5)
- * Requirements: 9.4
+ * Requirements: 1.3, 9.4
  */
 export function ChildrenSection({
   children,
   onPersonClick,
   onViewClick,
+  showAddCard,
+  onAddClick,
 }: ChildrenSectionProps) {
-  if (children.length === 0) {
+  if (children.length === 0 && !showAddCard) {
     return null
   }
 
@@ -31,6 +35,8 @@ export function ChildrenSection({
       onPersonClick={onPersonClick}
       onViewClick={onViewClick}
       variant="child"
+      showAddCard={showAddCard}
+      onAddClick={onAddClick}
     />
   )
 }

@@ -1332,4 +1332,178 @@ describe("HorizontalScrollRow", () => {
       )
     })
   })
+
+  /**
+   * Feature: family-tree-add-member, Property 1: Add Card Position Invariant
+   * Validates: Requirements 1.1, 1.2, 1.3, 1.4
+   *
+   * For any row in the Family Tree View with N family member cards (where N >= 0),
+   * the Add_Card SHALL appear at position N+1 (rightmost position).
+   */
+  describe("Property 1: Add Card Position Invariant", () => {
+    it("should display Add Card at rightmost position after all person cards", () => {
+      fc.assert(
+        fc.property(
+          // Generate people (0 to 10)
+          fc.array(personDetailsArbitrary, { minLength: 0, maxLength: 10 }),
+          // Generate variant
+          fc.constantFrom("parent", "center", "child") as fc.Arbitrary<
+            "parent" | "center" | "child"
+          >,
+          (people, variant) => {
+            const mockOnClick = vi.fn()
+            const mockAddClick = vi.fn()
+
+            const { container } = render(
+              <HorizontalScrollRow
+                people={people}
+                onPersonClick={mockOnClick}
+                variant={variant}
+                showAddCard={true}
+                onAddClick={mockAddClick}
+              />,
+            )
+
+            // Get all buttons (person cards + add card)
+            const allButtons = container.querySelectorAll('[role="button"]')
+
+            // Should have N person cards + 1 add card
+            expect(allButtons.length).toBe(people.length + 1)
+
+            // The Add Card should be the last button (rightmost position)
+            const lastButton = allButtons[allButtons.length - 1]
+            expect(lastButton.getAttribute("data-testid")).toBe(
+              "add-family-member-card",
+            )
+
+            // Verify all person cards come before the add card
+            for (let i = 0; i < people.length; i++) {
+              const button = allButtons[i]
+              // Person cards don't have the add-family-member-card testid
+              expect(button.getAttribute("data-testid")).not.toBe(
+                "add-family-member-card",
+              )
+            }
+          },
+        ),
+        { numRuns: 100 },
+      )
+    })
+
+    it("should display Add Card even when row has no people", () => {
+      fc.assert(
+        fc.property(
+          fc.constantFrom("parent", "center", "child") as fc.Arbitrary<
+            "parent" | "center" | "child"
+          >,
+          (variant) => {
+            const mockOnClick = vi.fn()
+            const mockAddClick = vi.fn()
+
+            const { container } = render(
+              <HorizontalScrollRow
+                people={[]}
+                onPersonClick={mockOnClick}
+                variant={variant}
+                showAddCard={true}
+                onAddClick={mockAddClick}
+              />,
+            )
+
+            // Should render the row with just the Add Card
+            const region = container.querySelector('[role="region"]')
+            expect(region).toBeTruthy()
+
+            // Should have exactly 1 button (the add card)
+            const allButtons = container.querySelectorAll('[role="button"]')
+            expect(allButtons.length).toBe(1)
+
+            // That button should be the Add Card
+            expect(allButtons[0].getAttribute("data-testid")).toBe(
+              "add-family-member-card",
+            )
+          },
+        ),
+        { numRuns: 100 },
+      )
+    })
+
+    it("should not display Add Card when showAddCard is false", () => {
+      fc.assert(
+        fc.property(
+          fc.array(personDetailsArbitrary, { minLength: 1, maxLength: 5 }),
+          fc.constantFrom("parent", "center", "child") as fc.Arbitrary<
+            "parent" | "center" | "child"
+          >,
+          (people, variant) => {
+            const mockOnClick = vi.fn()
+            const mockAddClick = vi.fn()
+
+            const { container } = render(
+              <HorizontalScrollRow
+                people={people}
+                onPersonClick={mockOnClick}
+                variant={variant}
+                showAddCard={false}
+                onAddClick={mockAddClick}
+              />,
+            )
+
+            // Should have only person cards, no add card
+            const allButtons = container.querySelectorAll('[role="button"]')
+            expect(allButtons.length).toBe(people.length)
+
+            // None of the buttons should be the Add Card
+            allButtons.forEach((button) => {
+              expect(button.getAttribute("data-testid")).not.toBe(
+                "add-family-member-card",
+              )
+            })
+          },
+        ),
+        { numRuns: 100 },
+      )
+    })
+
+    it("should pass correct variant to Add Card based on row variant", () => {
+      fc.assert(
+        fc.property(
+          fc.constantFrom("parent", "center", "child") as fc.Arbitrary<
+            "parent" | "center" | "child"
+          >,
+          (variant) => {
+            const mockOnClick = vi.fn()
+            const mockAddClick = vi.fn()
+
+            const { container } = render(
+              <HorizontalScrollRow
+                people={[]}
+                onPersonClick={mockOnClick}
+                variant={variant}
+                showAddCard={true}
+                onAddClick={mockAddClick}
+              />,
+            )
+
+            // The Add Card should be rendered
+            const addCard = container.querySelector(
+              '[data-testid="add-family-member-card"]',
+            )
+            expect(addCard).toBeTruthy()
+
+            // Check that the Add Card has appropriate sizing based on variant
+            // Parent and center variants have larger dimensions than child
+            if (variant === "child") {
+              expect(addCard?.className).toContain("min-w-[130px]")
+              expect(addCard?.className).toContain("min-h-[150px]")
+            } else {
+              expect(addCard?.className).toContain("min-w-[140px]")
+              expect(addCard?.className).toContain("min-h-[160px]")
+            }
+          },
+        ),
+        { numRuns: 100 },
+      )
+    })
+  })
 })

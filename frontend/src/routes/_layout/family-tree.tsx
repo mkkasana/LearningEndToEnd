@@ -1,9 +1,11 @@
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { AlertCircle, Loader2, Network, Search } from "lucide-react"
+import { AlertCircle, Loader2, Search } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import type { PersonDetails } from "@/client"
 import { PersonService, ProfileService } from "@/client"
+import { AddFamilyMemberDialog } from "@/components/Family/AddFamilyMemberDialog"
+import { DiscoverFamilyMembersDialog } from "@/components/Family/DiscoverFamilyMembersDialog"
 import { ChildrenSection } from "@/components/FamilyTree/ChildrenSection"
 import { HorizontalScrollRow } from "@/components/FamilyTree/HorizontalScrollRow"
 import { ParentsSection } from "@/components/FamilyTree/ParentsSection"
@@ -26,11 +28,15 @@ export const Route = createFileRoute("/_layout/family-tree")({
 })
 
 function FamilyTreeView() {
+  const queryClient = useQueryClient()
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   // State for PersonDetailsPanel - Requirements: 1.1, 2.1
   const [detailsPanelPersonId, setDetailsPanelPersonId] = useState<string | null>(null)
   const [isDetailsPanelOpen, setIsDetailsPanelOpen] = useState(false)
+  // State for Add Family Member flow - Requirements: 2.1, 3.1
+  const [showDiscoveryDialog, setShowDiscoveryDialog] = useState(false)
+  const [showAddDialog, setShowAddDialog] = useState(false)
   const treeContainerRef = useRef<HTMLDivElement>(null)
   const selectedPersonRef = useRef<HTMLDivElement>(null)
 
@@ -112,6 +118,45 @@ function FamilyTreeView() {
   const handleViewClick = (personId: string) => {
     setDetailsPanelPersonId(personId)
     setIsDetailsPanelOpen(true)
+  }
+
+  /**
+   * Handle Add Family Member card click - open discovery dialog
+   * Requirements: 2.1, 3.1
+   */
+  const handleAddFamilyMember = () => {
+    setShowDiscoveryDialog(true)
+  }
+
+  /**
+   * Handle skip discovery - close discovery dialog and open add dialog
+   * Requirements: 2.1
+   */
+  const handleSkipDiscovery = () => {
+    setShowDiscoveryDialog(false)
+    setShowAddDialog(true)
+  }
+
+  /**
+   * Handle discovery dialog close - open add dialog for manual entry
+   * Requirements: 2.1
+   */
+  const handleDiscoveryDialogClose = () => {
+    setShowAddDialog(true)
+  }
+
+  /**
+   * Handle successful family member addition - refresh tree data
+   * Requirements: 3.1, 3.2, 3.3
+   */
+  const handleAddDialogClose = (open: boolean) => {
+    setShowAddDialog(open)
+    if (!open) {
+      // Invalidate family tree data to refresh after addition
+      queryClient.invalidateQueries({ queryKey: ["familyTreeData", selectedPersonId] })
+      // Also invalidate relationships query used by other components
+      queryClient.invalidateQueries({ queryKey: ["myRelationshipsWithDetails"] })
+    }
   }
 
   // Focus management: Focus the selected person card after navigation
@@ -213,6 +258,9 @@ function FamilyTreeView() {
   // Get the selected person from the API response (not from cache)
   const selectedPerson = familyData?.selectedPerson || null
 
+  // Check if user is viewing their own family tree (Add Cards only visible for own tree)
+  const isViewingOwnTree = myPerson && selectedPersonId === myPerson.id
+
   // Main content - Family Tree View
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-500">
@@ -259,20 +307,23 @@ function FamilyTreeView() {
             </div>
           </div>
         )}
-        {/* Parents Section */}
-        {familyData.parents.length > 0 && (
+        {/* Parents Section - Requirements: 1.1, 5.1, 5.2 */}
+        {/* Add Card only visible when viewing own family tree */}
+        {(familyData.parents.length > 0 || isViewingOwnTree) && (
           <ParentsSection
             parents={familyData.parents}
             onPersonClick={handlePersonClick}
             onViewClick={handleViewClick}
+            showAddCard={isViewingOwnTree}
+            onAddClick={handleAddFamilyMember}
           />
         )}
 
         {/* Connector from parents to center row */}
-        {familyData.parents.length > 0 && <RowConnector />}
+        {(familyData.parents.length > 0 || isViewingOwnTree) && <RowConnector />}
 
         {/* Center Section: Siblings, Selected Person, Spouses - All in one horizontal row */}
-        {/* Requirements: 9.3 - Single horizontally scrollable row with color-coding */}
+        {/* Requirements: 5.1, 5.2, 9.3 - Single horizontally scrollable row with color-coding */}
         {(() => {
           // Combine siblings, selected person, and spouses into one array
           const centerRowPeople: PersonDetails[] = []
@@ -295,7 +346,9 @@ function FamilyTreeView() {
             colorCoding.set(spouse.id, "spouse")
           })
 
-          return centerRowPeople.length > 0 ? (
+          // Always render the center row - it will have at least the selected person
+          // Add Card only visible when viewing own family tree
+          return (
             <HorizontalScrollRow
               people={centerRowPeople}
               selectedPersonId={selectedPersonId || undefined}
@@ -303,40 +356,26 @@ function FamilyTreeView() {
               onViewClick={handleViewClick}
               variant="center"
               colorCoding={colorCoding}
+              showAddCard={isViewingOwnTree}
+              onAddClick={handleAddFamilyMember}
             />
-          ) : null
+          )
         })()}
 
         {/* Connector from center row to children */}
-        {familyData.children.length > 0 && <RowConnector />}
+        {(familyData.children.length > 0 || isViewingOwnTree) && <RowConnector />}
 
-        {/* Children Section */}
-        {familyData.children.length > 0 && (
+        {/* Children Section - Requirements: 1.3, 5.1, 5.2 */}
+        {/* Add Card only visible when viewing own family tree */}
+        {(familyData.children.length > 0 || isViewingOwnTree) && (
           <ChildrenSection
             children={familyData.children}
             onPersonClick={handlePersonClick}
             onViewClick={handleViewClick}
+            showAddCard={isViewingOwnTree}
+            onAddClick={handleAddFamilyMember}
           />
         )}
-
-        {/* Empty state if no relationships */}
-        {familyData.parents.length === 0 &&
-          familyData.spouses.length === 0 &&
-          familyData.siblings.length === 0 &&
-          familyData.children.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 px-4">
-              <div className="rounded-full bg-muted/50 p-6 mb-4">
-                <Network className="h-12 w-12 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-2">
-                No Family Relationships
-              </h3>
-              <p className="text-muted-foreground text-center max-w-md text-sm md:text-base">
-                No family relationships have been recorded yet. Add family
-                members to see them in the tree.
-              </p>
-            </div>
-          )}
       </main>
 
       {/* Person Details Panel - Requirements: 1.1, 2.1 */}
@@ -344,6 +383,20 @@ function FamilyTreeView() {
         personId={detailsPanelPersonId}
         open={isDetailsPanelOpen}
         onOpenChange={setIsDetailsPanelOpen}
+      />
+
+      {/* Discover Family Members Dialog - Requirements: 2.1, 3.1 */}
+      <DiscoverFamilyMembersDialog
+        open={showDiscoveryDialog}
+        onOpenChange={setShowDiscoveryDialog}
+        onSkip={handleSkipDiscovery}
+        onClose={handleDiscoveryDialogClose}
+      />
+
+      {/* Add Family Member Dialog - Requirements: 2.1, 3.1 */}
+      <AddFamilyMemberDialog
+        open={showAddDialog}
+        onOpenChange={handleAddDialogClose}
       />
     </div>
   )
