@@ -309,18 +309,18 @@ This implementation plan breaks down the backend testing coverage initiative int
     - **Property 2: Non-Existent Resource Returns 404**
     - **Validates: Requirements 11.11**
 
-- [ ] 20. Checkpoint - Verify profile and metadata integration tests
+- [*] 20. Checkpoint - Verify profile and metadata integration tests
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 21. Integration tests for Support Tickets API
-  - [ ] 21.1 Write integration tests for ticket CRUD
+- [x] 21. Integration tests for Support Tickets API
+  - [x] 21.1 Write integration tests for ticket CRUD
     - Test POST /support-tickets/
     - Test GET /support-tickets/
     - Test GET /support-tickets/{ticket_id}
     - Test PATCH /support-tickets/{ticket_id}
     - Test DELETE /support-tickets/{ticket_id}
     - _Requirements: 12.1-12.5_
-  - [ ] 21.2 Write integration tests for admin ticket management
+  - [x] 21.2 Write integration tests for admin ticket management
     - Test GET /support-tickets/admin/all
     - _Requirements: 12.6_
   - [ ]* 21.3 Write property test for non-admin access
