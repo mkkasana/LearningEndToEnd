@@ -17,6 +17,33 @@ depends_on = None
 
 
 def upgrade() -> None:
+    # Check if table already exists (created by SQLModel.metadata.create_all in initial migration)
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    if 'profile_view_tracking' in inspector.get_table_names():
+        # Table already exists, just create indexes if they don't exist
+        existing_indexes = [idx['name'] for idx in inspector.get_indexes('profile_view_tracking')]
+        
+        if 'idx_profile_view_tracking_viewed_person' not in existing_indexes:
+            op.create_index(
+                'idx_profile_view_tracking_viewed_person',
+                'profile_view_tracking',
+                ['viewed_person_id']
+            )
+        if 'idx_profile_view_tracking_viewer_person' not in existing_indexes:
+            op.create_index(
+                'idx_profile_view_tracking_viewer_person',
+                'profile_view_tracking',
+                ['viewer_person_id']
+            )
+        if 'idx_profile_view_tracking_composite' not in existing_indexes:
+            op.create_index(
+                'idx_profile_view_tracking_composite',
+                'profile_view_tracking',
+                ['viewed_person_id', 'viewer_person_id', 'is_aggregated']
+            )
+        return
+    
     # Create profile_view_tracking table
     op.create_table(
         'profile_view_tracking',

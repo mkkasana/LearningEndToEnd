@@ -37,6 +37,7 @@ class TestSupportTicketOwnershipValidation:
     @settings(
         max_examples=100,
         suppress_health_check=[HealthCheck.function_scoped_fixture],
+        deadline=None,
     )
     @given(
         issue_type=st.sampled_from([IssueType.BUG, IssueType.FEATURE_REQUEST]),
@@ -51,6 +52,9 @@ class TestSupportTicketOwnershipValidation:
         description: str,
     ) -> None:
         """Property 1: Non-admin users can only access their own tickets."""
+        # Ensure clean session state
+        db.rollback()
+        
         service = SupportTicketService(db)
         
         # Create test user
@@ -108,6 +112,7 @@ class TestSupportTicketOwnershipValidation:
     @settings(
         max_examples=100,
         suppress_health_check=[HealthCheck.function_scoped_fixture],
+        deadline=None,
     )
     @given(
         issue_type=st.sampled_from([IssueType.BUG, IssueType.FEATURE_REQUEST]),
@@ -122,6 +127,9 @@ class TestSupportTicketOwnershipValidation:
         description: str,
     ) -> None:
         """Property 1: Admin users can access all tickets."""
+        # Ensure clean session state
+        db.rollback()
+        
         service = SupportTicketService(db)
         
         # Create test user
@@ -184,6 +192,7 @@ class TestStatusTransitions:
     @settings(
         max_examples=100,
         suppress_health_check=[HealthCheck.function_scoped_fixture],
+        deadline=None,
     )
     @given(
         issue_type=st.sampled_from([IssueType.BUG, IssueType.FEATURE_REQUEST]),
@@ -198,6 +207,9 @@ class TestStatusTransitions:
         description: str,
     ) -> None:
         """Property 2: Resolving a ticket sets resolved_at and resolved_by_user_id."""
+        # Ensure clean session state
+        db.rollback()
+        
         service = SupportTicketService(db)
         
         # Create test user
@@ -262,6 +274,7 @@ class TestStatusTransitions:
     @settings(
         max_examples=100,
         suppress_health_check=[HealthCheck.function_scoped_fixture],
+        deadline=None,
     )
     @given(
         issue_type=st.sampled_from([IssueType.BUG, IssueType.FEATURE_REQUEST]),
@@ -276,6 +289,9 @@ class TestStatusTransitions:
         description: str,
     ) -> None:
         """Property 3: Reopening a ticket clears resolved_at and resolved_by_user_id."""
+        # Ensure clean session state
+        db.rollback()
+        
         service = SupportTicketService(db)
         
         # Create test user

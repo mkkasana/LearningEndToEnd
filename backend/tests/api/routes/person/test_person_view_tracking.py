@@ -26,7 +26,7 @@ def test_view_is_recorded_when_endpoint_is_called(
     Requirements: 3.1
     """
     # Get gender from database
-    gender = db.exec(select(Gender).where(Gender.code == "male")).first()
+    gender = db.exec(select(Gender).where(Gender.code == "MALE")).first()
     assert gender is not None, "Male gender must exist in database"
     
     # Create viewer user
@@ -107,7 +107,7 @@ def test_self_view_is_not_recorded(client: TestClient, db: Session) -> None:
     Requirements: 3.4
     """
     # Get gender from database
-    gender = db.exec(select(Gender).where(Gender.code == "male")).first()
+    gender = db.exec(select(Gender).where(Gender.code == "MALE")).first()
     assert gender is not None, "Male gender must exist in database"
     
     # Create user with person
@@ -164,7 +164,7 @@ def test_viewer_without_person_record_does_not_create_view(
     Requirements: 3.5
     """
     # Get gender from database
-    gender = db.exec(select(Gender).where(Gender.code == "male")).first()
+    gender = db.exec(select(Gender).where(Gender.code == "MALE")).first()
     assert gender is not None, "Male gender must exist in database"
     
     # Create viewer user WITHOUT person record
@@ -228,7 +228,7 @@ def test_subsequent_views_increment_count(client: TestClient, db: Session) -> No
     Requirements: 3.7
     """
     # Get gender from database
-    gender = db.exec(select(Gender).where(Gender.code == "male")).first()
+    gender = db.exec(select(Gender).where(Gender.code == "MALE")).first()
     assert gender is not None, "Male gender must exist in database"
     
     # Create viewer user
@@ -332,7 +332,7 @@ def test_view_tracking_error_does_not_break_endpoint(
     Requirements: 3.8
     """
     # Get gender from database
-    gender = db.exec(select(Gender).where(Gender.code == "male")).first()
+    gender = db.exec(select(Gender).where(Gender.code == "MALE")).first()
     assert gender is not None, "Male gender must exist in database"
     
     # Create user with person

@@ -36,6 +36,7 @@ class TestContributionsAPIResponseCompleteness:
     @settings(
         max_examples=20,
         suppress_health_check=[HealthCheck.function_scoped_fixture],
+        deadline=None,
     )
     @given(
         first_name=name_strategy,

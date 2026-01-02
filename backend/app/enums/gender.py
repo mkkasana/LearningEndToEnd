@@ -42,8 +42,12 @@ GENDER_DATA: dict[GenderEnum, GenderData] = {
 }
 
 # Lookup maps for quick access
-GENDER_BY_ID: dict[uuid.UUID, GenderData] = {data.id: data for data in GENDER_DATA.values()}
-GENDER_BY_CODE: dict[str, GenderData] = {data.code: data for data in GENDER_DATA.values()}
+GENDER_BY_ID: dict[uuid.UUID, GenderData] = {
+    data.id: data for data in GENDER_DATA.values()
+}
+GENDER_BY_CODE: dict[str, GenderData] = {
+    data.code: data for data in GENDER_DATA.values()
+}
 
 
 def get_gender_by_id(gender_id: uuid.UUID) -> GenderData | None:

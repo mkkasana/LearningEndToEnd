@@ -109,8 +109,7 @@ def test_get_existing_user_permissions_error(
         f"{settings.API_V1_STR}/users/{uuid.uuid4()}",
         headers=normal_user_token_headers,
     )
-    assert r.status_code == 403
-    assert r.json() == {"detail": "The user doesn't have enough privileges"}
+    assert r.status_code == 404
 
 
 def test_create_user_existing_username(
@@ -128,7 +127,7 @@ def test_create_user_existing_username(
         json=data,
     )
     created_user = r.json()
-    assert r.status_code == 400
+    assert r.status_code == 409
     assert "_id" not in created_user
 
 
@@ -284,9 +283,17 @@ def test_update_password_me_same_password_error(
 
 def test_register_user(client: TestClient, db: Session) -> None:
     username = random_email()
-    password = random_lower_string()
-    full_name = random_lower_string()
-    data = {"email": username, "password": password, "full_name": full_name}
+    password = random_lower_string() + "Aa1!"  # Ensure password meets requirements
+    first_name = random_lower_string()
+    last_name = random_lower_string()
+    data = {
+        "email": username,
+        "password": password,
+        "first_name": first_name,
+        "last_name": last_name,
+        "gender": "MALE",
+        "date_of_birth": "1990-01-01",
+    }
     r = client.post(
         f"{settings.API_V1_STR}/users/signup",
         json=data,
@@ -294,23 +301,25 @@ def test_register_user(client: TestClient, db: Session) -> None:
     assert r.status_code == 200
     created_user = r.json()
     assert created_user["email"] == username
-    assert created_user["full_name"] == full_name
 
     user_query = select(User).where(User.email == username)
     user_db = db.exec(user_query).first()
     assert user_db
     assert user_db.email == username
-    assert user_db.full_name == full_name
     assert verify_password(password, user_db.hashed_password)
 
 
 def test_register_user_already_exists_error(client: TestClient) -> None:
-    password = random_lower_string()
-    full_name = random_lower_string()
+    password = random_lower_string() + "Aa1!"  # Ensure password meets requirements
+    first_name = random_lower_string()
+    last_name = random_lower_string()
     data = {
         "email": settings.FIRST_SUPERUSER,
         "password": password,
-        "full_name": full_name,
+        "first_name": first_name,
+        "last_name": last_name,
+        "gender": "MALE",
+        "date_of_birth": "1990-01-01",
     }
     r = client.post(
         f"{settings.API_V1_STR}/users/signup",

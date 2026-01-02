@@ -12,7 +12,7 @@ class RelationshipTypeHelper:
     """Helper class for relationship type operations and inverse determination."""
 
     @classmethod
-    def get_gender_mapping(cls, session=None) -> dict[uuid.UUID, str]:
+    def get_gender_mapping(cls, session: object = None) -> dict[uuid.UUID, str]:
         """
         Get gender mapping from hardcoded enum values.
 

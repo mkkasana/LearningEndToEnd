@@ -103,6 +103,9 @@ class TestCreateRelationshipBidirectional:
         self, db: Session, male_person: Person, female_person: Person
     ) -> None:
         """Test that creating a relationship creates both primary and inverse."""
+        # Ensure clean session state
+        db.rollback()
+        
         service = PersonRelationshipService(db)
         
         # Create relationship: male_person → female_person as Mother
@@ -135,7 +138,7 @@ class TestCreateRelationshipBidirectional:
         # male_person is male, so inverse should be SON
         assert inverse.relationship_type == RelationshipType.SON
         
-        # Clean up
+        # Clean up - delete relationships first (before persons are deleted by fixture)
         db.delete(primary)
         if inverse:
             db.delete(inverse)
@@ -145,6 +148,9 @@ class TestCreateRelationshipBidirectional:
         self, db: Session, male_person: Person, male_gender: Gender
     ) -> None:
         """Test Father → Son inverse for male child."""
+        # Ensure clean session state
+        db.rollback()
+        
         # Create a male father person
         test_user = db.exec(select(User)).first()
         
@@ -184,10 +190,11 @@ class TestCreateRelationshipBidirectional:
         assert inverse is not None
         assert inverse.relationship_type == RelationshipType.SON
         
-        # Clean up
+        # Clean up - delete relationships FIRST, then persons
         db.delete(primary)
         if inverse:
             db.delete(inverse)
+        db.commit()
         db.delete(father)
         db.commit()
 
@@ -195,6 +202,9 @@ class TestCreateRelationshipBidirectional:
         self, db: Session, test_user: User
     ) -> None:
         """Test that missing gender information doesn't fail the request."""
+        # Ensure clean session state
+        db.rollback()
+        
         # Create persons without gender_id (this would normally fail due to NOT NULL constraint,
         # but we'll test the service logic by mocking)
         # For this test, we'll just verify the service doesn't crash
@@ -209,6 +219,9 @@ class TestCreateRelationshipBidirectional:
         self, db: Session, male_person: Person
     ) -> None:
         """Test that transaction is rolled back on error."""
+        # Ensure clean session state
+        db.rollback()
+        
         service = PersonRelationshipService(db)
         
         # Try to create relationship with non-existent person

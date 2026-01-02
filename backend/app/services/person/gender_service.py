@@ -5,7 +5,11 @@ import uuid
 from app.enums import (
     GenderData,
     get_all_genders,
+)
+from app.enums import (
     get_gender_by_code as _get_gender_by_code,
+)
+from app.enums import (
     get_gender_by_id as _get_gender_by_id,
 )
 from app.schemas.person import GenderDetailPublic, GenderPublic
@@ -14,7 +18,7 @@ from app.schemas.person import GenderDetailPublic, GenderPublic
 class GenderService:
     """Service for gender business logic using hardcoded enum values."""
 
-    def __init__(self, session=None):
+    def __init__(self, session: object = None) -> None:
         """Initialize service. Session parameter kept for API compatibility but not used."""
         pass
 
