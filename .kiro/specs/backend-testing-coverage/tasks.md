@@ -267,45 +267,45 @@ This implementation plan breaks down the backend testing coverage initiative int
     - **Property 2: Non-Existent Resource Returns 404**
     - **Validates: Requirements 9.10**
 
-- [ ] 17. Checkpoint - Verify person and relatives integration tests
+- [*] 17. Checkpoint - Verify person and relatives integration tests
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 18. Integration tests for Profile API
-  - [ ] 18.1 Write integration tests for profile endpoints
+- [x] 18. Integration tests for Profile API
+  - [x] 18.1 Write integration tests for profile endpoints
     - Test GET /profile/me
     - Test GET /profile/completion-status
     - Test GET /profile/onboarding-status
     - Test PATCH /profile/me
     - _Requirements: 10.1-10.4_
-  - [ ] 18.2 Write integration tests for profile views
+  - [x] 18.2 Write integration tests for profile views
     - Test GET /profile/{person_id}/views
     - Test POST /profile/{person_id}/view
     - _Requirements: 10.5, 10.6_
-  - [ ]* 18.3 Write property test for self-view exclusion
+  - [x] 18.3 Write property test for self-view exclusion
     - **Property 5: Self-View Does Not Increment Count**
     - **Validates: Requirements 10.7**
-  - [ ]* 18.4 Write property test for completion percentage
+  - [x] 18.4 Write property test for completion percentage
     - **Property 6: Profile Completion Percentage Accuracy**
     - **Validates: Requirements 10.8**
 
-- [ ] 19. Integration tests for Metadata API
-  - [ ] 19.1 Write integration tests for address metadata
+- [x] 19. Integration tests for Metadata API
+  - [x] 19.1 Write integration tests for address metadata
     - Test GET /metadata/countries
     - Test GET /metadata/states/{country_id}
     - Test GET /metadata/districts/{state_id}
     - Test GET /metadata/sub-districts/{district_id}
     - Test GET /metadata/localities/{sub_district_id}
     - _Requirements: 11.1-11.5_
-  - [ ] 19.2 Write integration tests for religion metadata
+  - [x] 19.2 Write integration tests for religion metadata
     - Test GET /metadata/religions
     - Test GET /metadata/religion-categories/{religion_id}
     - Test GET /metadata/religion-sub-categories/{category_id}
     - _Requirements: 11.6-11.8_
-  - [ ] 19.3 Write integration tests for person metadata
+  - [x] 19.3 Write integration tests for person metadata
     - Test GET /metadata/genders
     - Test GET /metadata/professions
     - _Requirements: 11.9, 11.10_
-  - [ ]* 19.4 Write property test for non-existent parent
+  - [x] 19.4 Write property test for non-existent parent
     - **Property 2: Non-Existent Resource Returns 404**
     - **Validates: Requirements 11.11**
 
