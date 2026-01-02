@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from unittest.mock import MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
@@ -18,6 +19,7 @@ from app.db_models.profile_view_tracking import ProfileViewTracking
 from app.db_models.support_ticket import SupportTicket
 from tests.utils.user import authentication_token_from_email
 from tests.utils.utils import get_superuser_token_headers
+from tests.factories import UserFactory, PersonFactory
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -64,4 +66,86 @@ def superuser_token_headers(client: TestClient) -> dict[str, str]:
 def normal_user_token_headers(client: TestClient, db: Session) -> dict[str, str]:
     return authentication_token_from_email(
         client=client, email=settings.EMAIL_TEST_USER, db=db
+    )
+
+
+# ============================================================================
+# Unit Test Fixtures (Mocked Dependencies)
+# ============================================================================
+
+
+@pytest.fixture
+def mock_session() -> MagicMock:
+    """Mock database session for isolated unit tests.
+
+    Use this fixture when testing services/repositories in isolation
+    without requiring a real database connection.
+    """
+    mock = MagicMock(spec=Session)
+    # Configure common session methods
+    mock.add = MagicMock()
+    mock.commit = MagicMock()
+    mock.refresh = MagicMock()
+    mock.delete = MagicMock()
+    mock.exec = MagicMock()
+    mock.get = MagicMock()
+    return mock
+
+
+@pytest.fixture
+def test_user(db: Session) -> User:
+    """Create a test user for use in tests.
+
+    This fixture creates a new user for each test that uses it.
+    The user is automatically cleaned up at the end of the test session.
+    """
+    return UserFactory.create(db)
+
+
+@pytest.fixture
+def test_superuser(db: Session) -> User:
+    """Create a test superuser for admin functionality tests."""
+    return UserFactory.create_superuser(db)
+
+
+@pytest.fixture
+def test_person(db: Session, test_user: User) -> Person:
+    """Create a test person linked to the test user.
+
+    This fixture creates a person record associated with the test_user.
+    """
+    return PersonFactory.create_with_user(db, test_user)
+
+
+@pytest.fixture
+def auth_headers(client: TestClient, db: Session) -> dict[str, str]:
+    """Get authentication headers for a test user.
+
+    Creates a new user and returns valid authentication headers.
+    Use this for tests that need authenticated API access.
+    """
+    from tests.utils.user import user_authentication_headers
+
+    user = UserFactory.create(db, password="testauth123")
+    return user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="testauth123",
+    )
+
+
+@pytest.fixture
+def admin_auth_headers(client: TestClient, db: Session) -> dict[str, str]:
+    """Get authentication headers for a superuser.
+
+    Creates a new superuser and returns valid authentication headers.
+    Use this for tests that need admin API access.
+    """
+    from tests.utils.user import user_authentication_headers
+
+    user = UserFactory.create_superuser(db, password="adminauth123")
+    return user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="adminauth123",
     )

@@ -122,3 +122,10 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 # Exclude integration scripts that are meant to be run standalone
 norecursedirs = ["tests/integration_scripts"]
+# Custom markers for test categorization
+markers = [
+    "unit: Unit tests with mocked dependencies (fast, isolated)",
+    "integration: Integration tests with real database (slower, end-to-end)",
+    "slow: Slow running tests that may take significant time",
+]
+addopts = "-v --strict-markers"
