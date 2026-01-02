@@ -6,8 +6,9 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, delete
 
 from app.core.config import settings
-from app.core.db import engine, init_db
+from app.core.db import init_db
 from app.main import app
+from app.api.deps import get_db
 from app.models import Item, User
 from app.db_models.person.person import Person
 from app.db_models.person.person_relationship import PersonRelationship
@@ -17,14 +18,25 @@ from app.db_models.person.person_metadata import PersonMetadata
 from app.db_models.person.person_profession import PersonProfession
 from app.db_models.profile_view_tracking import ProfileViewTracking
 from app.db_models.support_ticket import SupportTicket
+from tests.test_db import test_engine
 from tests.utils.user import authentication_token_from_email
 from tests.utils.utils import get_superuser_token_headers
 from tests.factories import UserFactory, PersonFactory
 
 
+# Override the get_db dependency to use test database
+def get_test_db() -> Generator[Session, None, None]:
+    with Session(test_engine) as session:
+        yield session
+
+
+# Apply the override globally
+app.dependency_overrides[get_db] = get_test_db
+
+
 @pytest.fixture(scope="session", autouse=True)
 def db() -> Generator[Session, None, None]:
-    with Session(engine) as session:
+    with Session(test_engine) as session:
         init_db(session)
         yield session
         # Clean up in correct order (respecting foreign key constraints)

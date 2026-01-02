@@ -14,12 +14,12 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app.core.db import engine
 from app.db_models.user import User
 from app.db_models.person.person import Person
 from app.db_models.person.person_relationship import PersonRelationship
 from app.db_models.person.gender import Gender
 from app.enums import GENDER_DATA, GenderEnum
+from tests.test_db import test_engine
 
 
 # ============================================================================
@@ -57,7 +57,7 @@ def integration_db() -> Generator[Session, None, None]:
     the seeded test data. No cleanup is performed to preserve
     the seeded data for other tests.
     """
-    with Session(engine) as session:
+    with Session(test_engine) as session:
         yield session
 
 
