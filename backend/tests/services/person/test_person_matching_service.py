@@ -6,6 +6,7 @@ from sqlmodel import Session
 from app.services.person.person_matching_service import PersonMatchingService
 
 
+@pytest.mark.unit
 class TestCalculateNameMatchScore:
     """Tests for the calculate_name_match_score method."""
 

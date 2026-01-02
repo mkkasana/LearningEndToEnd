@@ -27,6 +27,7 @@ def text_without_nul(min_size: int = 0, max_size: int | None = None) -> st.Searc
     )
 
 
+@pytest.mark.integration
 class TestSupportTicketOwnershipValidation:
     """Tests for Property 1: SupportTicket ownership validation.
     
@@ -179,6 +180,7 @@ class TestSupportTicketOwnershipValidation:
         db.commit()
 
 
+@pytest.mark.integration
 class TestStatusTransitions:
     """Tests for Property 2 and 3: Status transition validity and reversal.
     
@@ -348,3 +350,253 @@ class TestStatusTransitions:
         db.delete(admin_user)
         db.delete(test_user)
         db.commit()
+
+
+
+# Unit tests with mocking
+from unittest.mock import MagicMock, patch
+
+from app.schemas.support_ticket import SupportTicketCreate, SupportTicketUpdate
+
+
+@pytest.mark.unit
+class TestSupportTicketServiceCreate:
+    """Unit tests for support ticket creation."""
+
+    def test_create_support_ticket_with_valid_data(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test creating support ticket with valid data."""
+        # Arrange
+        user_id = uuid.uuid4()
+        ticket_create = SupportTicketCreate(
+            issue_type=IssueType.BUG,
+            title="Test Bug",
+            description="Test Description",
+        )
+
+        service = SupportTicketService(mock_session)
+
+        def return_ticket(ticket: SupportTicket) -> SupportTicket:
+            return ticket
+
+        with patch.object(
+            service.support_ticket_repo, "create", side_effect=return_ticket
+        ):
+            # Act
+            result = service.create_support_ticket(user_id, ticket_create)
+
+            # Assert
+            assert result.user_id == user_id
+            assert result.title == "Test Bug"
+            assert result.description == "Test Description"
+            assert result.status == IssueStatus.OPEN.value
+
+
+@pytest.mark.unit
+class TestSupportTicketServiceQueries:
+    """Unit tests for support ticket queries."""
+
+    def test_get_support_ticket_by_id_returns_ticket(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test getting support ticket by ID returns the ticket."""
+        # Arrange
+        ticket_id = uuid.uuid4()
+        mock_ticket = SupportTicket(
+            id=ticket_id,
+            user_id=uuid.uuid4(),
+            issue_type=IssueType.BUG.value,
+            title="Test Ticket",
+            description="Description",
+            status=IssueStatus.OPEN.value,
+        )
+
+        service = SupportTicketService(mock_session)
+        with patch.object(
+            service.support_ticket_repo, "get_by_id", return_value=mock_ticket
+        ):
+            # Act
+            result = service.get_support_ticket_by_id(ticket_id)
+
+            # Assert
+            assert result is not None
+            assert result.id == ticket_id
+
+    def test_get_support_ticket_by_id_returns_none_for_nonexistent(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test getting nonexistent support ticket returns None."""
+        # Arrange
+        service = SupportTicketService(mock_session)
+        with patch.object(
+            service.support_ticket_repo, "get_by_id", return_value=None
+        ):
+            # Act
+            result = service.get_support_ticket_by_id(uuid.uuid4())
+
+            # Assert
+            assert result is None
+
+    def test_get_user_support_tickets_returns_list(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test getting user support tickets returns list with count."""
+        # Arrange
+        user_id = uuid.uuid4()
+        mock_tickets = [
+            SupportTicket(
+                id=uuid.uuid4(),
+                user_id=user_id,
+                issue_type=IssueType.BUG.value,
+                title="Ticket 1",
+                description="Desc 1",
+                status=IssueStatus.OPEN.value,
+            ),
+        ]
+
+        service = SupportTicketService(mock_session)
+        with patch.object(
+            service.support_ticket_repo, "get_by_user_id", return_value=mock_tickets
+        ), patch.object(
+            service.support_ticket_repo, "count_by_user_id", return_value=1
+        ):
+            # Act
+            tickets, count = service.get_user_support_tickets(user_id)
+
+            # Assert
+            assert len(tickets) == 1
+            assert count == 1
+
+
+@pytest.mark.unit
+class TestSupportTicketServiceUpdate:
+    """Unit tests for support ticket updates."""
+
+    def test_update_support_ticket_title(self, mock_session: MagicMock) -> None:
+        """Test updating support ticket title."""
+        # Arrange
+        mock_ticket = SupportTicket(
+            id=uuid.uuid4(),
+            user_id=uuid.uuid4(),
+            issue_type=IssueType.BUG.value,
+            title="Old Title",
+            description="Description",
+            status=IssueStatus.OPEN.value,
+        )
+        ticket_update = SupportTicketUpdate(title="New Title")
+
+        service = SupportTicketService(mock_session)
+
+        def return_ticket(ticket: SupportTicket) -> SupportTicket:
+            return ticket
+
+        with patch.object(
+            service.support_ticket_repo, "update", side_effect=return_ticket
+        ):
+            # Act
+            result = service.update_support_ticket(mock_ticket, ticket_update)
+
+            # Assert
+            assert result.title == "New Title"
+
+
+@pytest.mark.unit
+class TestSupportTicketServiceDelete:
+    """Unit tests for support ticket deletion."""
+
+    def test_delete_support_ticket_calls_repository(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test that delete calls the repository delete method."""
+        # Arrange
+        mock_ticket = SupportTicket(
+            id=uuid.uuid4(),
+            user_id=uuid.uuid4(),
+            issue_type=IssueType.BUG.value,
+            title="Ticket to Delete",
+            description="Description",
+            status=IssueStatus.OPEN.value,
+        )
+
+        service = SupportTicketService(mock_session)
+        mock_delete = MagicMock()
+
+        with patch.object(service.support_ticket_repo, "delete", mock_delete):
+            # Act
+            service.delete_support_ticket(mock_ticket)
+
+            # Assert
+            mock_delete.assert_called_once_with(mock_ticket)
+
+
+@pytest.mark.unit
+class TestSupportTicketServiceAccess:
+    """Unit tests for support ticket access control."""
+
+    def test_owner_can_access_own_ticket(self, mock_session: MagicMock) -> None:
+        """Test that owner can access their own ticket."""
+        # Arrange
+        user_id = uuid.uuid4()
+        mock_ticket = SupportTicket(
+            id=uuid.uuid4(),
+            user_id=user_id,
+            issue_type=IssueType.BUG.value,
+            title="My Ticket",
+            description="Description",
+            status=IssueStatus.OPEN.value,
+        )
+
+        service = SupportTicketService(mock_session)
+
+        # Act
+        result = service.can_user_access_support_ticket(
+            mock_ticket, user_id, is_superuser=False
+        )
+
+        # Assert
+        assert result is True
+
+    def test_non_owner_cannot_access_ticket(self, mock_session: MagicMock) -> None:
+        """Test that non-owner cannot access ticket."""
+        # Arrange
+        mock_ticket = SupportTicket(
+            id=uuid.uuid4(),
+            user_id=uuid.uuid4(),
+            issue_type=IssueType.BUG.value,
+            title="Other Ticket",
+            description="Description",
+            status=IssueStatus.OPEN.value,
+        )
+
+        service = SupportTicketService(mock_session)
+
+        # Act
+        result = service.can_user_access_support_ticket(
+            mock_ticket, uuid.uuid4(), is_superuser=False
+        )
+
+        # Assert
+        assert result is False
+
+    def test_superuser_can_access_any_ticket(self, mock_session: MagicMock) -> None:
+        """Test that superuser can access any ticket."""
+        # Arrange
+        mock_ticket = SupportTicket(
+            id=uuid.uuid4(),
+            user_id=uuid.uuid4(),
+            issue_type=IssueType.BUG.value,
+            title="Any Ticket",
+            description="Description",
+            status=IssueStatus.OPEN.value,
+        )
+
+        service = SupportTicketService(mock_session)
+
+        # Act
+        result = service.can_user_access_support_ticket(
+            mock_ticket, uuid.uuid4(), is_superuser=True
+        )
+
+        # Assert
+        assert result is True

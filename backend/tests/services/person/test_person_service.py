@@ -1,4 +1,13 @@
-"""Unit tests for PersonService."""
+"""Unit tests for PersonService.
+
+Tests cover:
+- Person creation with valid data
+- Person updates
+- get_my_contributions method
+- Person queries
+
+Requirements: 2.3, 2.18, 2.19
+"""
 
 import uuid
 from datetime import date, datetime
@@ -9,9 +18,291 @@ from sqlmodel import Session
 
 from app.db_models.person.person import Person
 from app.db_models.person.person_address import PersonAddress
+from app.enums import GENDER_DATA, GenderEnum
+from app.schemas.person import PersonCreate, PersonUpdate
 from app.services.person.person_service import PersonService
 
 
+@pytest.mark.unit
+class TestPersonServiceQueries:
+    """Tests for person query operations."""
+
+    def test_get_person_by_user_id_returns_person(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test getting person by user ID returns the person."""
+        # Arrange
+        user_id = uuid.uuid4()
+        mock_person = Person(
+            id=uuid.uuid4(),
+            user_id=user_id,
+            created_by_user_id=user_id,
+            first_name="John",
+            last_name="Doe",
+            gender_id=GENDER_DATA[GenderEnum.MALE].id,
+            date_of_birth=date(1990, 1, 1),
+        )
+
+        service = PersonService(mock_session)
+        with patch.object(service.person_repo, "get_by_user_id", return_value=mock_person):
+            # Act
+            result = service.get_person_by_user_id(user_id)
+
+            # Assert
+            assert result is not None
+            assert result.user_id == user_id
+            assert result.first_name == "John"
+
+    def test_get_person_by_user_id_returns_none_for_nonexistent(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test getting nonexistent person by user ID returns None."""
+        # Arrange
+        service = PersonService(mock_session)
+        with patch.object(service.person_repo, "get_by_user_id", return_value=None):
+            # Act
+            result = service.get_person_by_user_id(uuid.uuid4())
+
+            # Assert
+            assert result is None
+
+    def test_user_has_person_returns_true_when_exists(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test user_has_person returns True when person exists."""
+        # Arrange
+        user_id = uuid.uuid4()
+        service = PersonService(mock_session)
+        with patch.object(service.person_repo, "user_has_person", return_value=True):
+            # Act
+            result = service.user_has_person(user_id)
+
+            # Assert
+            assert result is True
+
+    def test_user_has_person_returns_false_when_not_exists(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test user_has_person returns False when person doesn't exist."""
+        # Arrange
+        service = PersonService(mock_session)
+        with patch.object(service.person_repo, "user_has_person", return_value=False):
+            # Act
+            result = service.user_has_person(uuid.uuid4())
+
+            # Assert
+            assert result is False
+
+
+@pytest.mark.unit
+class TestPersonServiceCreate:
+    """Tests for person creation."""
+
+    def test_create_person_with_valid_data(self, mock_session: MagicMock) -> None:
+        """Test creating person with valid data."""
+        # Arrange
+        user_id = uuid.uuid4()
+        person_create = PersonCreate(
+            user_id=user_id,
+            first_name="John",
+            last_name="Doe",
+            gender_id=GENDER_DATA[GenderEnum.MALE].id,
+            date_of_birth=date(1990, 1, 1),
+            is_primary=True,
+        )
+
+        service = PersonService(mock_session)
+        
+        def return_person(person: Person) -> Person:
+            return person
+
+        with patch.object(service.person_repo, "create", side_effect=return_person):
+            # Act
+            result = service.create_person(person_create)
+
+            # Assert
+            assert result.first_name == "John"
+            assert result.last_name == "Doe"
+            assert result.user_id == user_id
+            assert result.is_primary is True
+
+    def test_create_person_with_middle_name(self, mock_session: MagicMock) -> None:
+        """Test creating person with middle name."""
+        # Arrange
+        user_id = uuid.uuid4()
+        person_create = PersonCreate(
+            user_id=user_id,
+            first_name="John",
+            middle_name="Michael",
+            last_name="Doe",
+            gender_id=GENDER_DATA[GenderEnum.MALE].id,
+            date_of_birth=date(1990, 1, 1),
+        )
+
+        service = PersonService(mock_session)
+        
+        def return_person(person: Person) -> Person:
+            return person
+
+        with patch.object(service.person_repo, "create", side_effect=return_person):
+            # Act
+            result = service.create_person(person_create)
+
+            # Assert
+            assert result.middle_name == "Michael"
+
+    def test_create_person_without_user_id(self, mock_session: MagicMock) -> None:
+        """Test creating person without linked user (family member)."""
+        # Arrange
+        person_create = PersonCreate(
+            user_id=None,
+            first_name="Jane",
+            last_name="Doe",
+            gender_id=GENDER_DATA[GenderEnum.FEMALE].id,
+            date_of_birth=date(1995, 5, 15),
+            is_primary=False,
+        )
+
+        service = PersonService(mock_session)
+        
+        def return_person(person: Person) -> Person:
+            return person
+
+        with patch.object(service.person_repo, "create", side_effect=return_person):
+            # Act
+            result = service.create_person(person_create)
+
+            # Assert
+            assert result.user_id is None
+            assert result.is_primary is False
+            assert result.first_name == "Jane"
+
+
+@pytest.mark.unit
+class TestPersonServiceUpdate:
+    """Tests for person update operations."""
+
+    def test_update_person_first_name(self, mock_session: MagicMock) -> None:
+        """Test updating person first name."""
+        # Arrange
+        mock_person = Person(
+            id=uuid.uuid4(),
+            user_id=uuid.uuid4(),
+            created_by_user_id=uuid.uuid4(),
+            first_name="John",
+            last_name="Doe",
+            gender_id=GENDER_DATA[GenderEnum.MALE].id,
+            date_of_birth=date(1990, 1, 1),
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+        )
+        person_update = PersonUpdate(first_name="Jonathan")
+
+        service = PersonService(mock_session)
+        
+        def return_person(person: Person) -> Person:
+            return person
+
+        with patch.object(service.person_repo, "update", side_effect=return_person):
+            # Act
+            result = service.update_person(mock_person, person_update)
+
+            # Assert
+            assert result.first_name == "Jonathan"
+
+    def test_update_person_multiple_fields(self, mock_session: MagicMock) -> None:
+        """Test updating multiple person fields."""
+        # Arrange
+        mock_person = Person(
+            id=uuid.uuid4(),
+            user_id=uuid.uuid4(),
+            created_by_user_id=uuid.uuid4(),
+            first_name="John",
+            last_name="Doe",
+            gender_id=GENDER_DATA[GenderEnum.MALE].id,
+            date_of_birth=date(1990, 1, 1),
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+        )
+        person_update = PersonUpdate(
+            first_name="Jonathan",
+            middle_name="Michael",
+            last_name="Smith",
+        )
+
+        service = PersonService(mock_session)
+        
+        def return_person(person: Person) -> Person:
+            return person
+
+        with patch.object(service.person_repo, "update", side_effect=return_person):
+            # Act
+            result = service.update_person(mock_person, person_update)
+
+            # Assert
+            assert result.first_name == "Jonathan"
+            assert result.middle_name == "Michael"
+            assert result.last_name == "Smith"
+
+    def test_update_person_updates_timestamp(self, mock_session: MagicMock) -> None:
+        """Test that updating person updates the updated_at timestamp."""
+        # Arrange
+        old_timestamp = datetime(2020, 1, 1, 0, 0, 0)
+        mock_person = Person(
+            id=uuid.uuid4(),
+            user_id=uuid.uuid4(),
+            created_by_user_id=uuid.uuid4(),
+            first_name="John",
+            last_name="Doe",
+            gender_id=GENDER_DATA[GenderEnum.MALE].id,
+            date_of_birth=date(1990, 1, 1),
+            created_at=old_timestamp,
+            updated_at=old_timestamp,
+        )
+        person_update = PersonUpdate(first_name="Jonathan")
+
+        service = PersonService(mock_session)
+        
+        def return_person(person: Person) -> Person:
+            return person
+
+        with patch.object(service.person_repo, "update", side_effect=return_person):
+            # Act
+            result = service.update_person(mock_person, person_update)
+
+            # Assert
+            assert result.updated_at > old_timestamp
+
+
+@pytest.mark.unit
+class TestPersonServiceDelete:
+    """Tests for person deletion."""
+
+    def test_delete_person_calls_repository(self, mock_session: MagicMock) -> None:
+        """Test that delete_person calls the repository delete method."""
+        # Arrange
+        mock_person = Person(
+            id=uuid.uuid4(),
+            user_id=uuid.uuid4(),
+            created_by_user_id=uuid.uuid4(),
+            first_name="John",
+            last_name="Doe",
+            gender_id=GENDER_DATA[GenderEnum.MALE].id,
+            date_of_birth=date(1990, 1, 1),
+        )
+
+        service = PersonService(mock_session)
+        mock_delete = MagicMock()
+        
+        with patch.object(service.person_repo, "delete", mock_delete):
+            # Act
+            service.delete_person(mock_person)
+
+            # Assert
+            mock_delete.assert_called_once_with(mock_person)
+
+
+@pytest.mark.unit
 class TestGetMyContributions:
     """Tests for get_my_contributions method."""
 
@@ -166,6 +457,7 @@ class TestGetMyContributions:
             assert result[2]["address"] == ""  # No addresses
 
 
+@pytest.mark.unit
 class TestFormatAddresses:
     """Tests for _format_addresses helper method."""
 

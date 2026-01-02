@@ -9,6 +9,7 @@ from app.schemas.person.person_discovery import PersonDiscoveryResult
 from app.services.person.person_discovery_service import PersonDiscoveryService
 
 
+@pytest.mark.unit
 class TestPersonDiscoveryServiceSortingAndDeduplication:
     """Test sorting and deduplication logic in PersonDiscoveryService."""
 
@@ -333,3 +334,149 @@ class TestPersonDiscoveryServiceSortingAndDeduplication:
 
         assert len(sorted_discoveries) == 0
         assert sorted_discoveries == []
+
+
+
+@pytest.mark.unit
+class TestPersonDiscoveryServiceGenderInference:
+    """Tests for gender-based relationship inference."""
+
+    def test_infer_child_relationship_male(self):
+        """Test that male gender infers Son relationship."""
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        male_gender_id = uuid.UUID("4eb743f7-0a50-4da2-a20d-3473b3b3db83")
+        
+        result = service._infer_child_relationship(male_gender_id)
+        
+        from app.enums.relationship_type import RelationshipType
+        assert result == RelationshipType.SON
+
+    def test_infer_child_relationship_female(self):
+        """Test that female gender infers Daughter relationship."""
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        female_gender_id = uuid.UUID("691fde27-f82c-4a84-832f-4243acef4b95")
+        
+        result = service._infer_child_relationship(female_gender_id)
+        
+        from app.enums.relationship_type import RelationshipType
+        assert result == RelationshipType.DAUGHTER
+
+    def test_infer_child_relationship_unknown_defaults_to_son(self):
+        """Test that unknown gender defaults to Son relationship."""
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        unknown_gender_id = uuid.uuid4()  # Random UUID not in mapping
+        
+        result = service._infer_child_relationship(unknown_gender_id)
+        
+        from app.enums.relationship_type import RelationshipType
+        assert result == RelationshipType.SON
+
+    def test_infer_parent_relationship_male(self):
+        """Test that male gender infers Father relationship."""
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        male_gender_id = uuid.UUID("4eb743f7-0a50-4da2-a20d-3473b3b3db83")
+        
+        result = service._infer_parent_relationship(male_gender_id)
+        
+        from app.enums.relationship_type import RelationshipType
+        assert result == RelationshipType.FATHER
+
+    def test_infer_parent_relationship_female(self):
+        """Test that female gender infers Mother relationship."""
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        female_gender_id = uuid.UUID("691fde27-f82c-4a84-832f-4243acef4b95")
+        
+        result = service._infer_parent_relationship(female_gender_id)
+        
+        from app.enums.relationship_type import RelationshipType
+        assert result == RelationshipType.MOTHER
+
+    def test_infer_parent_relationship_unknown_defaults_to_father(self):
+        """Test that unknown gender defaults to Father relationship."""
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        unknown_gender_id = uuid.uuid4()  # Random UUID not in mapping
+        
+        result = service._infer_parent_relationship(unknown_gender_id)
+        
+        from app.enums.relationship_type import RelationshipType
+        assert result == RelationshipType.FATHER
+
+
+@pytest.mark.unit
+class TestPersonDiscoveryServiceGenderCode:
+    """Tests for gender code lookup."""
+
+    def test_get_gender_code_male(self):
+        """Test getting gender code for male."""
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        male_gender_id = uuid.UUID("4eb743f7-0a50-4da2-a20d-3473b3b3db83")
+        
+        result = service._get_gender_code(male_gender_id)
+        
+        assert result == "male"
+
+    def test_get_gender_code_female(self):
+        """Test getting gender code for female."""
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        female_gender_id = uuid.UUID("691fde27-f82c-4a84-832f-4243acef4b95")
+        
+        result = service._get_gender_code(female_gender_id)
+        
+        assert result == "female"
+
+    def test_get_gender_code_unknown(self):
+        """Test getting gender code for unknown gender returns 'unknown'."""
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        unknown_gender_id = uuid.uuid4()
+        
+        result = service._get_gender_code(unknown_gender_id)
+        
+        assert result == "unknown"
+
+
+@pytest.mark.unit
+class TestPersonDiscoveryServiceConnectedIds:
+    """Tests for connected person ID extraction."""
+
+    def test_get_connected_person_ids_includes_self(self):
+        """Test that connected IDs include the person's own ID."""
+        from unittest.mock import MagicMock
+        
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        person_id = uuid.uuid4()
+        
+        # Empty relationships
+        relationships = []
+        
+        result = service._get_connected_person_ids_from_relationships(
+            person_id, relationships
+        )
+        
+        assert person_id in result
+
+    def test_get_connected_person_ids_includes_related_persons(self):
+        """Test that connected IDs include all related person IDs."""
+        from unittest.mock import MagicMock
+        from app.db_models.person.person_relationship import PersonRelationship
+        
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        person_id = uuid.uuid4()
+        related_id_1 = uuid.uuid4()
+        related_id_2 = uuid.uuid4()
+        
+        # Create mock relationships
+        rel1 = MagicMock(spec=PersonRelationship)
+        rel1.related_person_id = related_id_1
+        rel2 = MagicMock(spec=PersonRelationship)
+        rel2.related_person_id = related_id_2
+        
+        relationships = [rel1, rel2]
+        
+        result = service._get_connected_person_ids_from_relationships(
+            person_id, relationships
+        )
+        
+        assert person_id in result
+        assert related_id_1 in result
+        assert related_id_2 in result
+        assert len(result) == 3

@@ -1,7 +1,17 @@
-"""Unit tests for PersonRelationshipService - Bidirectional Relationships."""
+"""Unit tests for PersonRelationshipService - Bidirectional Relationships.
+
+Tests cover:
+- Bidirectional relationship creation
+- Relationship updates
+- Relationship deletion with inverse cleanup
+- Inverse relationship type calculation
+
+Requirements: 2.4, 2.18, 2.19
+"""
 
 import uuid
-from datetime import date
+from datetime import date, datetime
+from unittest.mock import MagicMock, patch
 
 import pytest
 from sqlmodel import Session, select
@@ -9,10 +19,204 @@ from sqlmodel import Session, select
 from app.db_models.person.gender import Gender
 from app.db_models.person.person import Person
 from app.db_models.person.person_relationship import PersonRelationship
-from app.enums import RelationshipType, GENDER_BY_CODE
+from app.enums import RelationshipType, GENDER_BY_CODE, GENDER_DATA, GenderEnum
 from app.models import User
-from app.schemas.person import PersonRelationshipCreate
+from app.schemas.person import PersonRelationshipCreate, PersonRelationshipUpdate
 from app.services.person.person_relationship_service import PersonRelationshipService
+
+
+# ============================================================================
+# Unit Tests with Mocking
+# ============================================================================
+
+
+@pytest.mark.unit
+class TestPersonRelationshipServiceQueries:
+    """Unit tests for relationship query operations."""
+
+    def test_get_relationships_by_person_returns_list(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test getting relationships by person ID returns list."""
+        # Arrange
+        person_id = uuid.uuid4()
+        mock_relationships = [
+            PersonRelationship(
+                id=uuid.uuid4(),
+                person_id=person_id,
+                related_person_id=uuid.uuid4(),
+                relationship_type=RelationshipType.FATHER,
+            ),
+            PersonRelationship(
+                id=uuid.uuid4(),
+                person_id=person_id,
+                related_person_id=uuid.uuid4(),
+                relationship_type=RelationshipType.MOTHER,
+            ),
+        ]
+
+        service = PersonRelationshipService(mock_session)
+        with patch.object(
+            service.relationship_repo, "get_by_person_id", return_value=mock_relationships
+        ):
+            # Act
+            result = service.get_relationships_by_person(person_id)
+
+            # Assert
+            assert len(result) == 2
+            assert result[0].relationship_type == RelationshipType.FATHER
+            assert result[1].relationship_type == RelationshipType.MOTHER
+
+    def test_get_relationship_by_id_returns_relationship(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test getting relationship by ID returns the relationship."""
+        # Arrange
+        relationship_id = uuid.uuid4()
+        mock_relationship = PersonRelationship(
+            id=relationship_id,
+            person_id=uuid.uuid4(),
+            related_person_id=uuid.uuid4(),
+            relationship_type=RelationshipType.SPOUSE,
+        )
+
+        service = PersonRelationshipService(mock_session)
+        with patch.object(
+            service.relationship_repo, "get_by_id", return_value=mock_relationship
+        ):
+            # Act
+            result = service.get_relationship_by_id(relationship_id)
+
+            # Assert
+            assert result is not None
+            assert result.id == relationship_id
+
+    def test_get_relationship_by_id_returns_none_for_nonexistent(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test getting nonexistent relationship returns None."""
+        # Arrange
+        service = PersonRelationshipService(mock_session)
+        with patch.object(service.relationship_repo, "get_by_id", return_value=None):
+            # Act
+            result = service.get_relationship_by_id(uuid.uuid4())
+
+            # Assert
+            assert result is None
+
+
+@pytest.mark.unit
+class TestPersonRelationshipServiceFamilyQueries:
+    """Unit tests for family-specific query operations."""
+
+    def test_get_parents_returns_father_and_mother(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test get_parents returns father and mother relationships."""
+        # Arrange
+        person_id = uuid.uuid4()
+        mock_parents = [
+            PersonRelationship(
+                id=uuid.uuid4(),
+                person_id=person_id,
+                related_person_id=uuid.uuid4(),
+                relationship_type=RelationshipType.FATHER,
+            ),
+            PersonRelationship(
+                id=uuid.uuid4(),
+                person_id=person_id,
+                related_person_id=uuid.uuid4(),
+                relationship_type=RelationshipType.MOTHER,
+            ),
+        ]
+
+        service = PersonRelationshipService(mock_session)
+        with patch.object(
+            service.relationship_repo, "get_by_relationship_types", return_value=mock_parents
+        ):
+            # Act
+            result = service.get_parents(person_id)
+
+            # Assert
+            assert len(result) == 2
+
+    def test_get_children_returns_sons_and_daughters(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test get_children returns son and daughter relationships."""
+        # Arrange
+        person_id = uuid.uuid4()
+        mock_children = [
+            PersonRelationship(
+                id=uuid.uuid4(),
+                person_id=person_id,
+                related_person_id=uuid.uuid4(),
+                relationship_type=RelationshipType.SON,
+            ),
+            PersonRelationship(
+                id=uuid.uuid4(),
+                person_id=person_id,
+                related_person_id=uuid.uuid4(),
+                relationship_type=RelationshipType.DAUGHTER,
+            ),
+        ]
+
+        service = PersonRelationshipService(mock_session)
+        with patch.object(
+            service.relationship_repo, "get_by_relationship_types", return_value=mock_children
+        ):
+            # Act
+            result = service.get_children(person_id)
+
+            # Assert
+            assert len(result) == 2
+
+    def test_get_spouses_returns_spouse_relationships(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test get_spouses returns spouse relationships."""
+        # Arrange
+        person_id = uuid.uuid4()
+        mock_spouses = [
+            PersonRelationship(
+                id=uuid.uuid4(),
+                person_id=person_id,
+                related_person_id=uuid.uuid4(),
+                relationship_type=RelationshipType.WIFE,
+            ),
+        ]
+
+        service = PersonRelationshipService(mock_session)
+        with patch.object(
+            service.relationship_repo, "get_by_relationship_types", return_value=mock_spouses
+        ):
+            # Act
+            result = service.get_spouses(person_id)
+
+            # Assert
+            assert len(result) == 1
+
+    def test_get_siblings_returns_empty_when_no_parents(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test get_siblings returns empty list when person has no parents."""
+        # Arrange
+        person_id = uuid.uuid4()
+
+        service = PersonRelationshipService(mock_session)
+        with patch.object(
+            service.relationship_repo, "get_by_relationship_types", return_value=[]
+        ):
+            # Act
+            result = service.get_siblings(person_id)
+
+            # Assert
+            assert result == []
+
+
+# ============================================================================
+# Integration Tests (using real database)
+# ============================================================================
 
 
 @pytest.fixture
@@ -96,6 +300,7 @@ def female_person(db: Session, test_user: User, female_gender: Gender) -> Person
     return person
 
 
+@pytest.mark.integration
 class TestCreateRelationshipBidirectional:
     """Tests for bidirectional relationship creation."""
 

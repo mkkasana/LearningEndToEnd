@@ -11,6 +11,7 @@ from app.db_models.profile_view_tracking import ProfileViewTracking
 from app.services.profile_view_tracking_service import ProfileViewTrackingService
 
 
+@pytest.mark.unit
 class TestRecordView:
     """Tests for record_view method."""
 
@@ -115,6 +116,7 @@ class TestRecordView:
                 pytest.fail(f"record_view should not raise exception, but raised: {e}")
 
 
+@pytest.mark.unit
 class TestGetTotalViews:
     """Tests for get_total_views method."""
 
@@ -138,6 +140,7 @@ class TestGetTotalViews:
             assert total_views == 0
 
 
+@pytest.mark.unit
 class TestGetTotalViewsBulk:
     """Tests for get_total_views_bulk method."""
 

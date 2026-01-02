@@ -1,0 +1,392 @@
+# Implementation Plan: Backend Testing Coverage
+
+## Overview
+
+This implementation plan breaks down the backend testing coverage initiative into discrete, incremental tasks. Each task builds on previous work and focuses on achieving 90% unit test coverage and comprehensive integration tests for all API endpoints.
+
+## Tasks
+
+- [x] 1. Set up test infrastructure and fixtures
+  - [x] 1.1 Create test factories module
+    - Create `tests/factories/__init__.py` with UserFactory, PersonFactory, RelationshipFactory
+    - Implement factory methods for creating test entities with sensible defaults
+    - _Requirements: 1.1, 1.2, 1.5_
+  - [x] 1.2 Update conftest.py with enhanced fixtures
+    - Add mock_session fixture for isolated unit tests
+    - Add integration-specific fixtures for seeded data access
+    - Add auth_headers fixture for authenticated requests
+    - _Requirements: 1.1, 1.4, 5.2_
+  - [x] 1.3 Configure pytest markers
+    - Add marker definitions to pyproject.toml (unit, integration, slow)
+    - Update test files to use appropriate markers
+    - _Requirements: 1.3, 5.5, 16.6_
+  - [x] 1.4 Create integration test conftest
+    - Create `tests/integration/conftest.py` with database setup/teardown
+    - Add fixtures that use seeded test data
+    - _Requirements: 5.1, 5.3, 5.6_
+
+- [ ]* 2. Checkpoint - Verify test infrastructure
+  - Ensure all fixtures work correctly, ask the user if questions arise.
+
+- [x] 3. Unit tests for core services
+  - [x] 3.1 Write unit tests for AuthService
+    - Test login with valid/invalid credentials
+    - Test token generation and validation
+    - Test password hashing and verification
+    - _Requirements: 2.1, 2.18_
+  - [x] 3.2 Write unit tests for UserService
+    - Test user CRUD operations
+    - Test user queries (by email, by id)
+    - Test user activation/deactivation
+    - _Requirements: 2.2, 2.18, 2.19_
+  - [x] 3.3 Write unit tests for PersonService
+    - Test person creation with valid data
+    - Test person updates
+    - Test get_my_contributions method
+    - Test person queries
+    - _Requirements: 2.3, 2.18, 2.19_
+  - [x] 3.4 Write unit tests for PersonRelationshipService
+    - Test bidirectional relationship creation
+    - Test relationship updates
+    - Test relationship deletion with inverse cleanup
+    - Test inverse relationship type calculation
+    - _Requirements: 2.4, 2.18, 2.19_
+  - [x] 3.5 Write unit tests for PersonAddressService
+    - Test address CRUD operations
+    - Test current address management
+    - _Requirements: 2.5, 2.18_
+  - [x] 3.6 Write unit tests for PersonReligionService
+    - Test religion assignment
+    - Test religion updates with category/subcategory
+    - _Requirements: 2.6, 2.18_
+  - [x] 3.7 Write unit tests for PersonProfessionService
+    - Test profession assignment
+    - Test profession updates
+    - _Requirements: 2.7, 2.18_
+
+- [x] 4. Checkpoint - Verify core service tests
+  - All 125 service tests pass, verified with `hatch run build-all`
+
+- [x] 5. Unit tests for discovery and matching services
+  - [x] 5.1 Write unit tests for PersonDiscoveryService
+    - Test person search functionality
+    - Test filtering and pagination
+    - _Requirements: 2.8, 2.18_
+  - [x] 5.2 Write unit tests for PersonMatchingService
+    - Test fuzzy matching algorithms
+    - Test match scoring
+    - _Requirements: 2.9, 2.18_
+  - [x] 5.3 Write unit tests for ProfileService
+    - Test profile completion calculation
+    - Test onboarding status
+    - _Requirements: 2.10, 2.18_
+  - [x] 5.4 Write unit tests for ProfileViewTrackingService
+    - Test view recording
+    - Test view statistics retrieval
+    - Test self-view exclusion
+    - _Requirements: 2.11, 2.18_
+  - [ ]* 5.5 Write property test for self-view exclusion
+    - **Property 5: Self-View Does Not Increment Count**
+    - **Validates: Requirements 10.7**
+
+- [x] 6. Unit tests for remaining services
+  - [x] 6.1 Write unit tests for SupportTicketService
+    - Test ticket CRUD operations
+    - Test ticket status transitions
+    - _Requirements: 2.12, 2.18_
+  - [x] 6.2 Write unit tests for ItemService
+    - Test item CRUD operations
+    - Test owner validation
+    - _Requirements: 2.13, 2.18_
+  - [x] 6.3 Write unit tests for PostService
+    - Test post CRUD operations
+    - Test owner validation
+    - _Requirements: 2.14, 2.18_
+  - [x] 6.4 Write unit tests for GenderService
+    - Test gender retrieval
+    - Test gender validation
+    - _Requirements: 2.15, 2.18_
+  - [x] 6.5 Write unit tests for address services
+    - Test CountryService, StateService, DistrictService
+    - Test SubDistrictService, LocalityService
+    - Test hierarchical queries
+    - _Requirements: 2.16, 2.18_
+  - [x] 6.6 Write unit tests for religion services
+    - Test ReligionService, ReligionCategoryService
+    - Test ReligionSubCategoryService
+    - Test hierarchical queries
+    - _Requirements: 2.17, 2.18_
+
+- [ ] 7. Checkpoint - Verify all service unit tests
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 8. Unit tests for repositories
+  - [ ] 8.1 Write unit tests for PersonRepository
+    - Test all query methods
+    - Test filtering and pagination
+    - _Requirements: 3.1, 3.15_
+  - [ ] 8.2 Write unit tests for PersonRelationshipRepository
+    - Test relationship queries
+    - Test bidirectional lookups
+    - _Requirements: 3.2, 3.15_
+  - [ ] 8.3 Write unit tests for PersonAddressRepository
+    - Test address queries
+    - Test current address lookup
+    - _Requirements: 3.3, 3.15_
+  - [ ] 8.4 Write unit tests for PersonReligionRepository
+    - Test religion queries
+    - _Requirements: 3.4, 3.15_
+  - [ ] 8.5 Write unit tests for PersonProfessionRepository
+    - Test profession queries
+    - _Requirements: 3.5, 3.15_
+  - [ ] 8.6 Write unit tests for UserRepository
+    - Test user queries
+    - _Requirements: 3.6, 3.15_
+  - [ ] 8.7 Write unit tests for remaining repositories
+    - Test ProfileViewTrackingRepository
+    - Test SupportTicketRepository
+    - Test ItemRepository, PostRepository
+    - Test all address and religion repositories
+    - _Requirements: 3.7-3.14, 3.15_
+
+- [ ] 9. Checkpoint - Verify all repository unit tests
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 10. Schema validation tests
+  - [ ] 10.1 Write unit tests for Person schemas
+    - Test PersonCreate, PersonUpdate, PersonResponse validation
+    - Test required field validation
+    - Test optional field defaults
+    - _Requirements: 4.1, 4.7, 4.8_
+  - [ ] 10.2 Write unit tests for User schemas
+    - Test UserCreate, UserUpdate validation
+    - Test email format validation
+    - Test password requirements
+    - _Requirements: 4.2, 4.7_
+  - [ ] 10.3 Write unit tests for Address schemas
+    - Test hierarchical relationship validation
+    - _Requirements: 4.3, 4.7_
+  - [ ] 10.4 Write unit tests for Religion schemas
+    - Test category relationship validation
+    - _Requirements: 4.4, 4.7_
+  - [ ] 10.5 Write unit tests for Relationship schemas
+    - Test relationship type validation
+    - _Requirements: 4.5, 4.7_
+  - [ ] 10.6 Write unit tests for Auth schemas
+    - Test token format validation
+    - _Requirements: 4.6, 4.7_
+  - [ ]* 10.7 Write property test for schema round-trip
+    - **Property 1: Schema Validation Round-Trip**
+    - **Validates: Requirements 4.1-4.6**
+
+- [ ] 11. Checkpoint - Verify all schema tests
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 12. Integration tests for Auth API
+  - [ ] 12.1 Write integration tests for login endpoints
+    - Test POST /login/access-token with valid credentials
+    - Test POST /login/access-token with invalid credentials
+    - Test POST /login/access-token with inactive user
+    - Test POST /login/test-token
+    - _Requirements: 6.1-6.4_
+  - [ ] 12.2 Write integration tests for password recovery
+    - Test POST /password-recovery/{email} with valid email
+    - Test POST /password-recovery/{email} with non-existent email
+    - Test POST /reset-password with valid/expired token
+    - _Requirements: 6.5-6.8_
+  - [ ] 12.3 Write integration tests for signup
+    - Test POST /signup with valid data
+    - Test POST /signup with duplicate email
+    - _Requirements: 6.9, 6.10_
+
+- [ ] 13. Integration tests for Users API
+  - [ ] 13.1 Write integration tests for user CRUD
+    - Test GET /users/ (admin only)
+    - Test GET /users/me
+    - Test PATCH /users/me
+    - Test DELETE /users/me
+    - _Requirements: 7.1-7.4_
+  - [ ] 13.2 Write integration tests for admin user management
+    - Test POST /users/ (admin only)
+    - Test GET /users/{user_id}
+    - Test PATCH /users/{user_id}
+    - Test DELETE /users/{user_id}
+    - _Requirements: 7.5-7.8_
+  - [ ]* 13.3 Write property test for unauthorized access
+    - **Property 3: Unauthorized Access Returns 403**
+    - **Validates: Requirements 7.9**
+  - [ ]* 13.4 Write property test for non-existent user
+    - **Property 2: Non-Existent Resource Returns 404**
+    - **Validates: Requirements 7.10**
+
+- [ ] 14. Checkpoint - Verify auth and users integration tests
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 15. Integration tests for Person API
+  - [ ] 15.1 Write integration tests for person CRUD
+    - Test POST /person/
+    - Test GET /person/{person_id}
+    - Test PATCH /person/{person_id}
+    - Test DELETE /person/{person_id}
+    - _Requirements: 8.1-8.4_
+  - [ ] 15.2 Write integration tests for person queries
+    - Test GET /person/me/contributions
+    - Test GET /person/{person_id}/complete-details
+    - Test POST /person/search
+    - Test POST /person/match
+    - _Requirements: 8.5-8.8_
+  - [ ]* 15.3 Write property test for invalid gender
+    - **Property 4: Invalid Input Returns 400**
+    - **Validates: Requirements 8.9**
+  - [ ]* 15.4 Write property test for unauthorized person access
+    - **Property 3: Unauthorized Access Returns 403**
+    - **Validates: Requirements 8.10**
+  - [ ]* 15.5 Write property test for non-existent person
+    - **Property 2: Non-Existent Resource Returns 404**
+    - **Validates: Requirements 8.11**
+
+- [ ] 16. Integration tests for Relatives API
+  - [ ] 16.1 Write integration tests for relationship CRUD
+    - Test POST /relatives/{person_id}/relationships
+    - Test GET /relatives/{person_id}/relationships
+    - Test GET /relatives/{person_id}/family-tree
+    - Test PATCH /relatives/{person_id}/relationships/{relationship_id}
+    - Test DELETE /relatives/{person_id}/relationships/{relationship_id}
+    - _Requirements: 9.1-9.5_
+  - [ ] 16.2 Write integration tests for bidirectional relationships
+    - Test bidirectional creation
+    - Test bidirectional deletion
+    - _Requirements: 9.6, 9.7_
+  - [ ]* 16.3 Write property test for duplicate relationship
+    - Test duplicate relationship error handling
+    - **Validates: Requirements 9.8**
+  - [ ]* 16.4 Write property test for self-referential relationship
+    - **Property 4: Invalid Input Returns 400**
+    - **Validates: Requirements 9.9**
+  - [ ]* 16.5 Write property test for non-existent relationship
+    - **Property 2: Non-Existent Resource Returns 404**
+    - **Validates: Requirements 9.10**
+
+- [ ] 17. Checkpoint - Verify person and relatives integration tests
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 18. Integration tests for Profile API
+  - [ ] 18.1 Write integration tests for profile endpoints
+    - Test GET /profile/me
+    - Test GET /profile/completion-status
+    - Test GET /profile/onboarding-status
+    - Test PATCH /profile/me
+    - _Requirements: 10.1-10.4_
+  - [ ] 18.2 Write integration tests for profile views
+    - Test GET /profile/{person_id}/views
+    - Test POST /profile/{person_id}/view
+    - _Requirements: 10.5, 10.6_
+  - [ ]* 18.3 Write property test for self-view exclusion
+    - **Property 5: Self-View Does Not Increment Count**
+    - **Validates: Requirements 10.7**
+  - [ ]* 18.4 Write property test for completion percentage
+    - **Property 6: Profile Completion Percentage Accuracy**
+    - **Validates: Requirements 10.8**
+
+- [ ] 19. Integration tests for Metadata API
+  - [ ] 19.1 Write integration tests for address metadata
+    - Test GET /metadata/countries
+    - Test GET /metadata/states/{country_id}
+    - Test GET /metadata/districts/{state_id}
+    - Test GET /metadata/sub-districts/{district_id}
+    - Test GET /metadata/localities/{sub_district_id}
+    - _Requirements: 11.1-11.5_
+  - [ ] 19.2 Write integration tests for religion metadata
+    - Test GET /metadata/religions
+    - Test GET /metadata/religion-categories/{religion_id}
+    - Test GET /metadata/religion-sub-categories/{category_id}
+    - _Requirements: 11.6-11.8_
+  - [ ] 19.3 Write integration tests for person metadata
+    - Test GET /metadata/genders
+    - Test GET /metadata/professions
+    - _Requirements: 11.9, 11.10_
+  - [ ]* 19.4 Write property test for non-existent parent
+    - **Property 2: Non-Existent Resource Returns 404**
+    - **Validates: Requirements 11.11**
+
+- [ ] 20. Checkpoint - Verify profile and metadata integration tests
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 21. Integration tests for Support Tickets API
+  - [ ] 21.1 Write integration tests for ticket CRUD
+    - Test POST /support-tickets/
+    - Test GET /support-tickets/
+    - Test GET /support-tickets/{ticket_id}
+    - Test PATCH /support-tickets/{ticket_id}
+    - Test DELETE /support-tickets/{ticket_id}
+    - _Requirements: 12.1-12.5_
+  - [ ] 21.2 Write integration tests for admin ticket management
+    - Test GET /support-tickets/admin/all
+    - _Requirements: 12.6_
+  - [ ]* 21.3 Write property test for non-admin access
+    - **Property 3: Unauthorized Access Returns 403**
+    - **Validates: Requirements 12.7**
+  - [ ]* 21.4 Write property test for non-existent ticket
+    - **Property 2: Non-Existent Resource Returns 404**
+    - **Validates: Requirements 12.8**
+
+- [ ] 22. Integration tests for Posts API
+  - [ ] 22.1 Write integration tests for post CRUD
+    - Test POST /posts/
+    - Test GET /posts/
+    - Test GET /posts/{post_id}
+    - Test PATCH /posts/{post_id}
+    - Test DELETE /posts/{post_id}
+    - _Requirements: 13.1-13.5_
+  - [ ]* 22.2 Write property test for unauthorized post update
+    - **Property 3: Unauthorized Access Returns 403**
+    - **Validates: Requirements 13.6**
+  - [ ]* 22.3 Write property test for non-existent post
+    - **Property 2: Non-Existent Resource Returns 404**
+    - **Validates: Requirements 13.7**
+
+- [ ] 23. Integration tests for Items API
+  - [ ] 23.1 Write integration tests for item CRUD
+    - Test POST /items/
+    - Test GET /items/
+    - Test GET /items/{item_id}
+    - Test PATCH /items/{item_id}
+    - Test DELETE /items/{item_id}
+    - _Requirements: 14.1-14.5_
+  - [ ]* 23.2 Write property test for unauthorized item update
+    - **Property 3: Unauthorized Access Returns 403**
+    - **Validates: Requirements 14.6**
+  - [ ]* 23.3 Write property test for non-existent item
+    - **Property 2: Non-Existent Resource Returns 404**
+    - **Validates: Requirements 14.7**
+
+- [ ] 24. Checkpoint - Verify all remaining integration tests
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 25. Coverage verification and CI setup
+  - [ ] 25.1 Run coverage report and identify gaps
+    - Run full test suite with coverage
+    - Identify files below 90% coverage
+    - Add missing tests for uncovered code paths
+    - _Requirements: 15.1-15.5_
+  - [ ] 25.2 Update pyproject.toml with coverage thresholds
+    - Set fail_under=80 for overall coverage
+    - Configure coverage exclusions
+    - _Requirements: 15.6, 15.7_
+  - [ ] 25.3 Create test execution scripts
+    - Update scripts/test.sh for marker-based execution
+    - Add scripts/test-unit.sh for unit tests only
+    - Add scripts/test-integration.sh for integration tests only
+    - _Requirements: 16.6_
+
+- [ ] 26. Final checkpoint - Verify complete test suite
+  - Ensure all tests pass with 90%+ coverage, ask the user if questions arise.
+
+## Notes
+
+- Tasks marked with `*` are optional property-based tests that can be skipped for faster MVP
+- Each task references specific requirements for traceability
+- Checkpoints ensure incremental validation
+- Property tests validate universal correctness properties
+- Unit tests validate specific examples and edge cases
+- Integration tests run against seeded database data
