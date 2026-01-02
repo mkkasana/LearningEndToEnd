@@ -345,8 +345,8 @@ This implementation plan breaks down the backend testing coverage initiative int
     - **Property 2: Non-Existent Resource Returns 404**
     - **Validates: Requirements 13.7**
 
-- [ ] 23. Integration tests for Items API
-  - [ ] 23.1 Write integration tests for item CRUD
+- [ ]* 23. Integration tests for Items API
+  - [ ]* 23.1 Write integration tests for item CRUD
     - Test POST /items/
     - Test GET /items/
     - Test GET /items/{item_id}
@@ -363,24 +363,76 @@ This implementation plan breaks down the backend testing coverage initiative int
 - [ ] 24. Checkpoint - Verify all remaining integration tests
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 25. Coverage verification and CI setup
-  - [ ] 25.1 Run coverage report and identify gaps
+- [x] 25. Coverage verification and CI setup
+  - [x] 25.1 Run coverage report and identify gaps
     - Run full test suite with coverage
     - Identify files below 90% coverage
     - Add missing tests for uncovered code paths
     - _Requirements: 15.1-15.5_
-  - [ ] 25.2 Update pyproject.toml with coverage thresholds
+  - [x] 25.2 Update pyproject.toml with coverage thresholds
     - Set fail_under=80 for overall coverage
     - Configure coverage exclusions
     - _Requirements: 15.6, 15.7_
-  - [ ] 25.3 Create test execution scripts
+  - [x] 25.3 Create test execution scripts
     - Update scripts/test.sh for marker-based execution
     - Add scripts/test-unit.sh for unit tests only
     - Add scripts/test-integration.sh for integration tests only
     - _Requirements: 16.6_
 
-- [ ] 26. Final checkpoint - Verify complete test suite
+- [*] 26. Final checkpoint - Verify complete test suite
   - Ensure all tests pass with 90%+ coverage, ask the user if questions arise.
+
+- [ ] 27. Unit tests for low coverage files (target: 80%+ overall)
+  - [x] 27.1 Write unit tests for address services (currently 47%)
+    - Test StateService: get_all, get_by_id, get_by_country
+    - Test DistrictService: get_all, get_by_id, get_by_state
+    - Test SubDistrictService: get_all, get_by_id, get_by_district
+    - Test LocalityService: get_all, get_by_id, get_by_sub_district
+    - _Requirements: 2.16, 2.18_
+  - [x] 27.2 Write unit tests for religion category services (currently 48%)
+    - Test ReligionCategoryService: get_all, get_by_id, get_by_religion
+    - Test ReligionSubCategoryService: get_all, get_by_id, get_by_category
+    - _Requirements: 2.17, 2.18_
+  - [x] 27.3 Write unit tests for PersonDiscoveryService (currently 52%)
+    - Test advanced search with multiple filters
+    - Test pagination edge cases
+    - Test search with no results
+    - _Requirements: 2.8, 2.18_
+  - [x] 27.4 Write unit tests for PersonMatchingService (currently 61%)
+    - Test match scoring with various input combinations
+    - Test fuzzy matching edge cases
+    - Test match threshold filtering
+    - _Requirements: 2.9, 2.18_
+  - [x] 27.5 Write unit tests for address repositories (currently 57%)
+    - Test DistrictRepository: get_by_state, get_all
+    - Test SubDistrictRepository: get_by_district, get_all
+    - Test LocalityRepository: get_by_sub_district, get_all
+    - _Requirements: 3.11-3.13, 3.15_
+  - [x] 27.6 Write unit tests for GenderRepository (currently 35%)
+    - Test get_all, get_by_id, get_by_name
+    - Test filtering and validation
+    - _Requirements: 3.13, 3.15_
+  - [x] 27.7 Write unit tests for PersonMetadataService (currently 35%)
+    - Test metadata retrieval
+    - Test metadata updates
+    - _Requirements: 2.18_
+  - [x] 27.8 Write unit tests for ProfessionService (currently 68%)
+    - Test get_all, get_by_id
+    - Test profession queries
+    - _Requirements: 2.7, 2.18_
+  - [x] 27.9 Write unit tests for ReligionSubCategoryRepository (currently 70%)
+    - Test get_by_category, get_all
+    - Test filtering
+    - _Requirements: 3.12, 3.15_
+  - [x] 27.10 Write unit tests for ProfessionRepository (currently 70%)
+    - Test get_all, get_by_id
+    - Test filtering
+    - _Requirements: 3.14, 3.15_
+
+- [ ] 28. Checkpoint - Verify 80%+ overall coverage
+  - Run full test suite with coverage
+  - Verify overall coverage meets 80% threshold
+  - Ask the user if questions arise
 
 ## Notes
 

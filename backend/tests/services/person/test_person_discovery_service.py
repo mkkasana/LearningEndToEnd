@@ -480,3 +480,332 @@ class TestPersonDiscoveryServiceConnectedIds:
         assert related_id_1 in result
         assert related_id_2 in result
         assert len(result) == 3
+
+
+@pytest.mark.unit
+class TestPersonDiscoveryServiceDiscoveryPatterns:
+    """Tests for discovery pattern methods with mocked repositories."""
+
+    def test_discover_family_members_no_person_record(self):
+        """Test discovery returns empty list when user has no person record."""
+        from unittest.mock import MagicMock, patch
+        
+        mock_session = MagicMock()
+        service = PersonDiscoveryService(mock_session)
+        
+        user_id = uuid.uuid4()
+        
+        with patch.object(service.person_repo, "get_by_user_id", return_value=None):
+            result = service.discover_family_members(user_id)
+        
+        assert result == []
+
+    def test_discover_family_members_no_relationships(self):
+        """Test discovery returns empty list when user has no relationships."""
+        from unittest.mock import MagicMock, patch
+        from app.db_models.person.person import Person
+        
+        mock_session = MagicMock()
+        service = PersonDiscoveryService(mock_session)
+        
+        user_id = uuid.uuid4()
+        person_id = uuid.uuid4()
+        mock_person = MagicMock(spec=Person)
+        mock_person.id = person_id
+        mock_person.first_name = "John"
+        mock_person.last_name = "Doe"
+        
+        with patch.object(service.person_repo, "get_by_user_id", return_value=mock_person):
+            with patch.object(service.relationship_repo, "get_active_relationships", return_value=[]):
+                result = service.discover_family_members(user_id)
+        
+        assert result == []
+
+    def test_discover_spouses_children_empty_when_no_spouses(self):
+        """Test spouse's children discovery returns empty when user has no spouses."""
+        from unittest.mock import MagicMock
+        
+        mock_session = MagicMock()
+        service = PersonDiscoveryService(mock_session)
+        
+        person_id = uuid.uuid4()
+        user_relationships = []  # No relationships
+        connected_person_ids = {person_id}
+        
+        result = service._discover_spouses_children(
+            person_id, user_relationships, connected_person_ids
+        )
+        
+        assert result == []
+
+    def test_discover_parents_spouse_empty_when_no_parents(self):
+        """Test parent's spouse discovery returns empty when user has no parents."""
+        from unittest.mock import MagicMock
+        
+        mock_session = MagicMock()
+        service = PersonDiscoveryService(mock_session)
+        
+        person_id = uuid.uuid4()
+        user_relationships = []  # No relationships
+        connected_person_ids = {person_id}
+        
+        result = service._discover_parents_spouse(
+            person_id, user_relationships, connected_person_ids
+        )
+        
+        assert result == []
+
+    def test_discover_childs_parent_empty_when_no_children(self):
+        """Test child's parent discovery returns empty when user has no children."""
+        from unittest.mock import MagicMock
+        
+        mock_session = MagicMock()
+        service = PersonDiscoveryService(mock_session)
+        
+        person_id = uuid.uuid4()
+        user_relationships = []  # No relationships
+        connected_person_ids = {person_id}
+        
+        result = service._discover_childs_parent(
+            person_id, user_relationships, connected_person_ids
+        )
+        
+        assert result == []
+
+
+@pytest.mark.unit
+class TestPersonDiscoveryServiceBuildResult:
+    """Tests for building discovery results."""
+
+    def test_build_discovery_result_success(self):
+        """Test building discovery result with valid person data."""
+        from unittest.mock import MagicMock
+        from app.db_models.person.person import Person
+        from app.enums.relationship_type import RelationshipType
+        
+        mock_session = MagicMock()
+        service = PersonDiscoveryService(mock_session)
+        
+        person_id = uuid.uuid4()
+        gender_id = uuid.uuid4()
+        mock_person = MagicMock(spec=Person)
+        mock_person.id = person_id
+        mock_person.first_name = "John"
+        mock_person.middle_name = "Michael"
+        mock_person.last_name = "Doe"
+        mock_person.date_of_birth = date(1990, 1, 1)
+        mock_person.date_of_death = None
+        mock_person.gender_id = gender_id
+        
+        result = service._build_discovery_result(
+            person=mock_person,
+            inferred_relationship_type=RelationshipType.SON,
+            connection_path="Connected to your spouse",
+            proximity_score=2,
+            relationship_priority=1,
+        )
+        
+        assert result is not None
+        assert result.person_id == person_id
+        assert result.first_name == "John"
+        assert result.middle_name == "Michael"
+        assert result.last_name == "Doe"
+        assert result.proximity_score == 2
+        assert result.relationship_priority == 1
+
+    def test_build_discovery_result_missing_first_name(self):
+        """Test building discovery result returns None when first_name is missing."""
+        from unittest.mock import MagicMock
+        from app.db_models.person.person import Person
+        from app.enums.relationship_type import RelationshipType
+        
+        mock_session = MagicMock()
+        service = PersonDiscoveryService(mock_session)
+        
+        mock_person = MagicMock(spec=Person)
+        mock_person.id = uuid.uuid4()
+        mock_person.first_name = None  # Missing
+        mock_person.last_name = "Doe"
+        mock_person.date_of_birth = date(1990, 1, 1)
+        
+        result = service._build_discovery_result(
+            person=mock_person,
+            inferred_relationship_type=RelationshipType.SON,
+            connection_path="Connected to your spouse",
+            proximity_score=2,
+            relationship_priority=1,
+        )
+        
+        assert result is None
+
+    def test_build_discovery_result_missing_last_name(self):
+        """Test building discovery result returns None when last_name is missing."""
+        from unittest.mock import MagicMock
+        from app.db_models.person.person import Person
+        from app.enums.relationship_type import RelationshipType
+        
+        mock_session = MagicMock()
+        service = PersonDiscoveryService(mock_session)
+        
+        mock_person = MagicMock(spec=Person)
+        mock_person.id = uuid.uuid4()
+        mock_person.first_name = "John"
+        mock_person.last_name = None  # Missing
+        mock_person.date_of_birth = date(1990, 1, 1)
+        
+        result = service._build_discovery_result(
+            person=mock_person,
+            inferred_relationship_type=RelationshipType.SON,
+            connection_path="Connected to your spouse",
+            proximity_score=2,
+            relationship_priority=1,
+        )
+        
+        assert result is None
+
+    def test_build_discovery_result_missing_date_of_birth(self):
+        """Test building discovery result returns None when date_of_birth is missing."""
+        from unittest.mock import MagicMock
+        from app.db_models.person.person import Person
+        from app.enums.relationship_type import RelationshipType
+        
+        mock_session = MagicMock()
+        service = PersonDiscoveryService(mock_session)
+        
+        mock_person = MagicMock(spec=Person)
+        mock_person.id = uuid.uuid4()
+        mock_person.first_name = "John"
+        mock_person.last_name = "Doe"
+        mock_person.date_of_birth = None  # Missing
+        
+        result = service._build_discovery_result(
+            person=mock_person,
+            inferred_relationship_type=RelationshipType.SON,
+            connection_path="Connected to your spouse",
+            proximity_score=2,
+            relationship_priority=1,
+        )
+        
+        assert result is None
+
+
+@pytest.mark.unit
+class TestPersonDiscoveryServicePaginationEdgeCases:
+    """Tests for pagination and limit edge cases."""
+
+    def test_sort_and_limit_exactly_20_results(self):
+        """Test that exactly 20 results are returned unchanged."""
+        discoveries = []
+        for i in range(20):
+            discoveries.append(
+                PersonDiscoveryResult(
+                    person_id=uuid.uuid4(),
+                    first_name=f"Person{i:02d}",
+                    middle_name=None,
+                    last_name="Smith",
+                    date_of_birth=date(1990, 1, 1),
+                    date_of_death=None,
+                    gender_id=uuid.uuid4(),
+                    address_display=None,
+                    religion_display=None,
+                    inferred_relationship_type="rel-6a0ede824d104",
+                    inferred_relationship_label="Son",
+                    connection_path="Connected to your spouse",
+                    proximity_score=2,
+                    relationship_priority=1,
+                )
+            )
+
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        sorted_discoveries = service._sort_and_limit_discoveries(discoveries)
+
+        assert len(sorted_discoveries) == 20
+
+    def test_sort_and_limit_less_than_20_results(self):
+        """Test that fewer than 20 results are returned as-is."""
+        discoveries = []
+        for i in range(5):
+            discoveries.append(
+                PersonDiscoveryResult(
+                    person_id=uuid.uuid4(),
+                    first_name=f"Person{i:02d}",
+                    middle_name=None,
+                    last_name="Smith",
+                    date_of_birth=date(1990, 1, 1),
+                    date_of_death=None,
+                    gender_id=uuid.uuid4(),
+                    address_display=None,
+                    religion_display=None,
+                    inferred_relationship_type="rel-6a0ede824d104",
+                    inferred_relationship_label="Son",
+                    connection_path="Connected to your spouse",
+                    proximity_score=2,
+                    relationship_priority=1,
+                )
+            )
+
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        sorted_discoveries = service._sort_and_limit_discoveries(discoveries)
+
+        assert len(sorted_discoveries) == 5
+
+    def test_sort_and_limit_single_result(self):
+        """Test that a single result is returned correctly."""
+        discoveries = [
+            PersonDiscoveryResult(
+                person_id=uuid.uuid4(),
+                first_name="Alice",
+                middle_name=None,
+                last_name="Smith",
+                date_of_birth=date(1990, 1, 1),
+                date_of_death=None,
+                gender_id=uuid.uuid4(),
+                address_display=None,
+                religion_display=None,
+                inferred_relationship_type="rel-6a0ede824d104",
+                inferred_relationship_label="Son",
+                connection_path="Connected to your spouse",
+                proximity_score=2,
+                relationship_priority=1,
+            )
+        ]
+
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        sorted_discoveries = service._sort_and_limit_discoveries(discoveries)
+
+        assert len(sorted_discoveries) == 1
+        assert sorted_discoveries[0].first_name == "Alice"
+
+    def test_deduplication_with_many_duplicates(self):
+        """Test deduplication when same person appears many times."""
+        person_id = uuid.uuid4()
+        discoveries = []
+        
+        # Same person appearing 10 times with different proximity scores
+        for i in range(10):
+            discoveries.append(
+                PersonDiscoveryResult(
+                    person_id=person_id,
+                    first_name="Alice",
+                    middle_name=None,
+                    last_name="Smith",
+                    date_of_birth=date(1990, 1, 1),
+                    date_of_death=None,
+                    gender_id=uuid.uuid4(),
+                    address_display=None,
+                    religion_display=None,
+                    inferred_relationship_type="rel-6a0ede824d104",
+                    inferred_relationship_label="Son",
+                    connection_path=f"Path {i}",
+                    proximity_score=i + 1,  # Different proximity scores
+                    relationship_priority=1,
+                )
+            )
+
+        service = PersonDiscoveryService(session=None)  # type: ignore
+        sorted_discoveries = service._sort_and_limit_discoveries(discoveries)
+
+        # Should deduplicate to single result with lowest proximity
+        assert len(sorted_discoveries) == 1
+        assert sorted_discoveries[0].proximity_score == 1
+        assert sorted_discoveries[0].connection_path == "Path 0"

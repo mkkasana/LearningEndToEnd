@@ -107,10 +107,26 @@ keep-runtime-typing = true
 [tool.coverage.run]
 source = ["app"]
 dynamic_context = "test_function"
+omit = [
+    "app/alembic/*",
+    "app/tests_pre_start.py",
+    "app/backend_pre_start.py",
+    "app/initial_data.py",
+    "app/utils.py",
+]
 
 [tool.coverage.report]
 show_missing = true
 sort = "-Cover"
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@abstractmethod",
+]
 
 [tool.coverage.html]
 show_contexts = true

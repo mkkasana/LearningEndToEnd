@@ -112,3 +112,162 @@ class TestCalculateNameMatchScore:
             long_first, long_last, long_first, long_last
         )
         assert score == 100.0, f"Expected 100 for exact long name match, got {score}"
+
+
+@pytest.mark.unit
+class TestMatchScoreThresholds:
+    """Tests for match score threshold filtering."""
+
+    @pytest.fixture
+    def service(self, db: Session) -> PersonMatchingService:
+        """Create a PersonMatchingService instance for testing."""
+        return PersonMatchingService(db)
+
+    def test_score_above_threshold_40(self, service: PersonMatchingService) -> None:
+        """Test that scores above 40% threshold are valid matches."""
+        # Similar names should score above 40%
+        score = service.calculate_name_match_score("John", "Smith", "Jon", "Smith")
+        assert score >= 40, f"Expected score >= 40, got {score}"
+
+    def test_score_below_threshold_40(self, service: PersonMatchingService) -> None:
+        """Test that completely different names score below 40%."""
+        score = service.calculate_name_match_score("Xyz", "Abc", "John", "Smith")
+        assert score < 40, f"Expected score < 40 for completely different names, got {score}"
+
+    def test_boundary_score_near_40(self, service: PersonMatchingService) -> None:
+        """Test names that produce scores near the 40% boundary."""
+        # Names with some similarity but not much
+        score = service.calculate_name_match_score("Mike", "Brown", "John", "Smith")
+        # This should be below 40% as names are quite different
+        assert score < 40, f"Expected score < 40 for different names, got {score}"
+
+
+@pytest.mark.unit
+class TestFuzzyMatchingEdgeCases:
+    """Tests for fuzzy matching edge cases."""
+
+    @pytest.fixture
+    def service(self, db: Session) -> PersonMatchingService:
+        """Create a PersonMatchingService instance for testing."""
+        return PersonMatchingService(db)
+
+    def test_transposed_letters(self, service: PersonMatchingService) -> None:
+        """Test matching with transposed letters (common typo)."""
+        score = service.calculate_name_match_score("Jhon", "Smtih", "John", "Smith")
+        # Should still have reasonable score due to fuzzy matching
+        assert score > 70, f"Expected score > 70 for transposed letters, got {score}"
+
+    def test_missing_letter(self, service: PersonMatchingService) -> None:
+        """Test matching with missing letter."""
+        score = service.calculate_name_match_score("Jon", "Smth", "John", "Smith")
+        assert score > 70, f"Expected score > 70 for missing letters, got {score}"
+
+    def test_extra_letter(self, service: PersonMatchingService) -> None:
+        """Test matching with extra letter."""
+        score = service.calculate_name_match_score("Johnn", "Smithh", "John", "Smith")
+        assert score > 80, f"Expected score > 80 for extra letters, got {score}"
+
+    def test_phonetically_similar_names(self, service: PersonMatchingService) -> None:
+        """Test matching phonetically similar names."""
+        # Catherine vs Katherine
+        score = service.calculate_name_match_score("Catherine", "Smith", "Katherine", "Smith")
+        assert score > 80, f"Expected score > 80 for phonetically similar names, got {score}"
+
+    def test_nickname_vs_full_name(self, service: PersonMatchingService) -> None:
+        """Test matching nickname against full name."""
+        # Bob vs Robert - these are quite different strings
+        score = service.calculate_name_match_score("Bob", "Smith", "Robert", "Smith")
+        # Last name matches (60% weight), first name is different
+        assert score > 50, f"Expected score > 50 due to last name match, got {score}"
+
+    def test_double_letters(self, service: PersonMatchingService) -> None:
+        """Test matching with double letters."""
+        score = service.calculate_name_match_score("Annn", "Smitth", "Ann", "Smith")
+        assert score > 80, f"Expected score > 80 for double letters, got {score}"
+
+    def test_mixed_case_variations(self, service: PersonMatchingService) -> None:
+        """Test matching with various case combinations."""
+        score = service.calculate_name_match_score("jOhN", "sMiTh", "JoHn", "SmItH")
+        assert score == 100.0, f"Expected 100 for case-insensitive match, got {score}"
+
+
+@pytest.mark.unit
+class TestBuildMatchResult:
+    """Tests for building match results."""
+
+    @pytest.fixture
+    def service(self, db: Session) -> PersonMatchingService:
+        """Create a PersonMatchingService instance for testing."""
+        return PersonMatchingService(db)
+
+    def test_build_match_result_nonexistent_person(self, service: PersonMatchingService) -> None:
+        """Test building match result for non-existent person returns None."""
+        import uuid
+        
+        result = service._build_match_result(
+            person_id=uuid.uuid4(),  # Non-existent ID
+            name_score=85.0,
+            address_display="Test Address",
+            religion_display="Test Religion",
+            is_current_user=False,
+            is_already_connected=False,
+        )
+        
+        assert result is None
+
+
+@pytest.mark.unit
+class TestNameMatchScoreVariations:
+    """Tests for various name match score scenarios."""
+
+    @pytest.fixture
+    def service(self, db: Session) -> PersonMatchingService:
+        """Create a PersonMatchingService instance for testing."""
+        return PersonMatchingService(db)
+
+    def test_first_name_only_different(self, service: PersonMatchingService) -> None:
+        """Test score when only first name is different."""
+        score = service.calculate_name_match_score("Alice", "Smith", "Bob", "Smith")
+        # Last name matches (60% weight), first name different
+        # Expected: 0 * 0.4 + 100 * 0.6 = 60
+        assert 55 <= score <= 65, f"Expected score around 60, got {score}"
+
+    def test_last_name_only_different(self, service: PersonMatchingService) -> None:
+        """Test score when only last name is different."""
+        score = service.calculate_name_match_score("John", "Smith", "John", "Jones")
+        # First name matches (40% weight), last name different
+        # Expected: 100 * 0.4 + ~20 * 0.6 = 40 + 12 = ~52
+        assert 45 <= score <= 60, f"Expected score around 52, got {score}"
+
+    def test_both_names_partially_similar(self, service: PersonMatchingService) -> None:
+        """Test score when both names are partially similar."""
+        score = service.calculate_name_match_score("John", "Smith", "Jon", "Smyth")
+        # Both names similar but not exact
+        assert 80 <= score <= 95, f"Expected score between 80-95, got {score}"
+
+    def test_swapped_first_and_last_names(self, service: PersonMatchingService) -> None:
+        """Test score when first and last names are swapped."""
+        score = service.calculate_name_match_score("Smith", "John", "John", "Smith")
+        # Names are swapped, so neither matches well
+        assert score < 50, f"Expected low score for swapped names, got {score}"
+
+    def test_numeric_characters_in_names(self, service: PersonMatchingService) -> None:
+        """Test handling of numeric characters in names."""
+        score = service.calculate_name_match_score("John3", "Smith2", "John3", "Smith2")
+        assert score == 100.0, f"Expected 100 for exact match with numbers, got {score}"
+
+    def test_very_short_vs_very_long_name(self, service: PersonMatchingService) -> None:
+        """Test matching very short name against very long name."""
+        score = service.calculate_name_match_score("Jo", "S", "Jonathan", "Smitherson")
+        # Very different lengths should result in low score
+        assert score < 50, f"Expected low score for length mismatch, got {score}"
+
+    def test_repeated_characters(self, service: PersonMatchingService) -> None:
+        """Test names with repeated characters."""
+        score = service.calculate_name_match_score("Aaa", "Bbb", "Aaa", "Bbb")
+        assert score == 100.0, f"Expected 100 for exact match, got {score}"
+
+    def test_all_same_character(self, service: PersonMatchingService) -> None:
+        """Test names that are all the same character."""
+        score = service.calculate_name_match_score("aaaa", "bbbb", "aaaa", "bbbb")
+        assert score == 100.0, f"Expected 100 for exact match, got {score}"
