@@ -21,10 +21,21 @@ from app.db_models.religion.religion_sub_category import ReligionSubCategory
 
 
 def seed_genders():
-    """Seed gender data."""
+    """Seed gender data with hardcoded UUIDs matching the enum."""
+    # These UUIDs must match the hardcoded values in app/enums/gender.py
     genders_data = [
-        {"name": "Male", "code": "MALE", "description": "Male gender"},
-        {"name": "Female", "code": "FEMALE", "description": "Female gender"},
+        {
+            "id": uuid.UUID("4eb743f7-0a50-4da2-a20d-3473b3b3db83"),
+            "name": "Male",
+            "code": "MALE",
+            "description": "Male gender"
+        },
+        {
+            "id": uuid.UUID("691fde27-f82c-4a84-832f-4243acef4b95"),
+            "name": "Female",
+            "code": "FEMALE",
+            "description": "Female gender"
+        },
     ]
     
     with Session(engine) as session:
@@ -36,14 +47,14 @@ def seed_genders():
         print("Seeding genders...")
         for gender_data in genders_data:
             gender = Gender(
-                id=uuid.uuid4(),
+                id=gender_data["id"],
                 name=gender_data["name"],
                 code=gender_data["code"],
                 description=gender_data["description"],
                 is_active=True
             )
             session.add(gender)
-            print(f"  ✓ Added {gender_data['name']}")
+            print(f"  ✓ Added {gender_data['name']} ({gender_data['id']})")
         
         session.commit()
         print("✅ Successfully seeded genders!")
@@ -535,6 +546,10 @@ def main():
     print()
     
     try:
+        # Seed genders first (required for person creation)
+        seed_genders()
+        print()
+        
         # Seed address hierarchy first (dependencies)
         seed_countries()
         print()
