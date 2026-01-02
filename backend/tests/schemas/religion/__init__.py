@@ -1,0 +1,1 @@
+"""Religion schema tests."""

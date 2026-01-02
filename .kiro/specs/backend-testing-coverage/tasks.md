@@ -117,96 +117,96 @@ This implementation plan breaks down the backend testing coverage initiative int
     - Test hierarchical queries
     - _Requirements: 2.17, 2.18_
 
-- [ ] 7. Checkpoint - Verify all service unit tests
+- [*] 7. Checkpoint - Verify all service unit tests
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Unit tests for repositories
-  - [ ] 8.1 Write unit tests for PersonRepository
+- [x] 8. Unit tests for repositories
+  - [x] 8.1 Write unit tests for PersonRepository
     - Test all query methods
     - Test filtering and pagination
     - _Requirements: 3.1, 3.15_
-  - [ ] 8.2 Write unit tests for PersonRelationshipRepository
+  - [x] 8.2 Write unit tests for PersonRelationshipRepository
     - Test relationship queries
     - Test bidirectional lookups
     - _Requirements: 3.2, 3.15_
-  - [ ] 8.3 Write unit tests for PersonAddressRepository
+  - [x] 8.3 Write unit tests for PersonAddressRepository
     - Test address queries
     - Test current address lookup
     - _Requirements: 3.3, 3.15_
-  - [ ] 8.4 Write unit tests for PersonReligionRepository
+  - [x] 8.4 Write unit tests for PersonReligionRepository
     - Test religion queries
     - _Requirements: 3.4, 3.15_
-  - [ ] 8.5 Write unit tests for PersonProfessionRepository
+  - [x] 8.5 Write unit tests for PersonProfessionRepository
     - Test profession queries
     - _Requirements: 3.5, 3.15_
-  - [ ] 8.6 Write unit tests for UserRepository
+  - [x] 8.6 Write unit tests for UserRepository
     - Test user queries
     - _Requirements: 3.6, 3.15_
-  - [ ] 8.7 Write unit tests for remaining repositories
+  - [x] 8.7 Write unit tests for remaining repositories
     - Test ProfileViewTrackingRepository
     - Test SupportTicketRepository
     - Test ItemRepository, PostRepository
     - Test all address and religion repositories
     - _Requirements: 3.7-3.14, 3.15_
 
-- [ ] 9. Checkpoint - Verify all repository unit tests
+- [*] 9. Checkpoint - Verify all repository unit tests
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Schema validation tests
-  - [ ] 10.1 Write unit tests for Person schemas
+- [x] 10. Schema validation tests
+  - [x] 10.1 Write unit tests for Person schemas
     - Test PersonCreate, PersonUpdate, PersonResponse validation
     - Test required field validation
     - Test optional field defaults
     - _Requirements: 4.1, 4.7, 4.8_
-  - [ ] 10.2 Write unit tests for User schemas
+  - [x] 10.2 Write unit tests for User schemas
     - Test UserCreate, UserUpdate validation
     - Test email format validation
     - Test password requirements
     - _Requirements: 4.2, 4.7_
-  - [ ] 10.3 Write unit tests for Address schemas
+  - [x] 10.3 Write unit tests for Address schemas
     - Test hierarchical relationship validation
     - _Requirements: 4.3, 4.7_
-  - [ ] 10.4 Write unit tests for Religion schemas
+  - [x] 10.4 Write unit tests for Religion schemas
     - Test category relationship validation
     - _Requirements: 4.4, 4.7_
-  - [ ] 10.5 Write unit tests for Relationship schemas
+  - [x] 10.5 Write unit tests for Relationship schemas
     - Test relationship type validation
     - _Requirements: 4.5, 4.7_
-  - [ ] 10.6 Write unit tests for Auth schemas
+  - [x] 10.6 Write unit tests for Auth schemas
     - Test token format validation
     - _Requirements: 4.6, 4.7_
   - [ ]* 10.7 Write property test for schema round-trip
     - **Property 1: Schema Validation Round-Trip**
     - **Validates: Requirements 4.1-4.6**
 
-- [ ] 11. Checkpoint - Verify all schema tests
+- [*] 11. Checkpoint - Verify all schema tests
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 12. Integration tests for Auth API
-  - [ ] 12.1 Write integration tests for login endpoints
+- [x] 12. Integration tests for Auth API
+  - [x] 12.1 Write integration tests for login endpoints
     - Test POST /login/access-token with valid credentials
     - Test POST /login/access-token with invalid credentials
     - Test POST /login/access-token with inactive user
     - Test POST /login/test-token
     - _Requirements: 6.1-6.4_
-  - [ ] 12.2 Write integration tests for password recovery
+  - [x] 12.2 Write integration tests for password recovery
     - Test POST /password-recovery/{email} with valid email
     - Test POST /password-recovery/{email} with non-existent email
     - Test POST /reset-password with valid/expired token
     - _Requirements: 6.5-6.8_
-  - [ ] 12.3 Write integration tests for signup
+  - [x] 12.3 Write integration tests for signup
     - Test POST /signup with valid data
     - Test POST /signup with duplicate email
     - _Requirements: 6.9, 6.10_
 
-- [ ] 13. Integration tests for Users API
-  - [ ] 13.1 Write integration tests for user CRUD
+- [x] 13. Integration tests for Users API
+  - [x] 13.1 Write integration tests for user CRUD
     - Test GET /users/ (admin only)
     - Test GET /users/me
     - Test PATCH /users/me
     - Test DELETE /users/me
     - _Requirements: 7.1-7.4_
-  - [ ] 13.2 Write integration tests for admin user management
+  - [x] 13.2 Write integration tests for admin user management
     - Test POST /users/ (admin only)
     - Test GET /users/{user_id}
     - Test PATCH /users/{user_id}
@@ -219,17 +219,17 @@ This implementation plan breaks down the backend testing coverage initiative int
     - **Property 2: Non-Existent Resource Returns 404**
     - **Validates: Requirements 7.10**
 
-- [ ] 14. Checkpoint - Verify auth and users integration tests
+- [*] 14. Checkpoint - Verify auth and users integration tests
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 15. Integration tests for Person API
-  - [ ] 15.1 Write integration tests for person CRUD
+- [x] 15. Integration tests for Person API
+  - [x] 15.1 Write integration tests for person CRUD
     - Test POST /person/
     - Test GET /person/{person_id}
     - Test PATCH /person/{person_id}
     - Test DELETE /person/{person_id}
     - _Requirements: 8.1-8.4_
-  - [ ] 15.2 Write integration tests for person queries
+  - [x] 15.2 Write integration tests for person queries
     - Test GET /person/me/contributions
     - Test GET /person/{person_id}/complete-details
     - Test POST /person/search
@@ -238,32 +238,32 @@ This implementation plan breaks down the backend testing coverage initiative int
   - [ ]* 15.3 Write property test for invalid gender
     - **Property 4: Invalid Input Returns 400**
     - **Validates: Requirements 8.9**
-  - [ ]* 15.4 Write property test for unauthorized person access
+  - [x] 15.4 Write property test for unauthorized person access
     - **Property 3: Unauthorized Access Returns 403**
     - **Validates: Requirements 8.10**
-  - [ ]* 15.5 Write property test for non-existent person
+  - [x] 15.5 Write property test for non-existent person
     - **Property 2: Non-Existent Resource Returns 404**
     - **Validates: Requirements 8.11**
 
-- [ ] 16. Integration tests for Relatives API
-  - [ ] 16.1 Write integration tests for relationship CRUD
+- [x] 16. Integration tests for Relatives API
+  - [x] 16.1 Write integration tests for relationship CRUD
     - Test POST /relatives/{person_id}/relationships
     - Test GET /relatives/{person_id}/relationships
     - Test GET /relatives/{person_id}/family-tree
     - Test PATCH /relatives/{person_id}/relationships/{relationship_id}
     - Test DELETE /relatives/{person_id}/relationships/{relationship_id}
     - _Requirements: 9.1-9.5_
-  - [ ] 16.2 Write integration tests for bidirectional relationships
+  - [x] 16.2 Write integration tests for bidirectional relationships
     - Test bidirectional creation
     - Test bidirectional deletion
     - _Requirements: 9.6, 9.7_
-  - [ ]* 16.3 Write property test for duplicate relationship
+  - [x] 16.3 Write property test for duplicate relationship
     - Test duplicate relationship error handling
     - **Validates: Requirements 9.8**
-  - [ ]* 16.4 Write property test for self-referential relationship
+  - [x] 16.4 Write property test for self-referential relationship
     - **Property 4: Invalid Input Returns 400**
     - **Validates: Requirements 9.9**
-  - [ ]* 16.5 Write property test for non-existent relationship
+  - [x] 16.5 Write property test for non-existent relationship
     - **Property 2: Non-Existent Resource Returns 404**
     - **Validates: Requirements 9.10**
 

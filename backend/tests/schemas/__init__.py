@@ -1,1 +1,1 @@
-"""Schema tests."""
+"""Schema validation tests."""
