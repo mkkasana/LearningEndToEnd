@@ -286,116 +286,24 @@ export const DistrictUpdateSchema = {
     description: 'Schema for updating a district (all fields optional)'
 } as const;
 
-export const GenderCreateSchema = {
-    properties: {
-        name: {
-            type: 'string',
-            maxLength: 100,
-            title: 'Name',
-            description: 'Gender name'
-        },
-        code: {
-            type: 'string',
-            maxLength: 10,
-            title: 'Code',
-            description: 'Gender code'
-        },
-        description: {
-            anyOf: [
-                {
-                    type: 'string',
-                    maxLength: 500
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Description',
-            description: 'Optional description'
-        },
-        is_active: {
-            type: 'boolean',
-            title: 'Is Active',
-            description: 'Whether gender is active',
-            default: true
-        }
-    },
-    type: 'object',
-    required: ['name', 'code'],
-    title: 'GenderCreate',
-    description: 'Schema for creating a new gender.'
-} as const;
-
 export const GenderDetailPublicSchema = {
     properties: {
-        name: {
-            type: 'string',
-            maxLength: 100,
-            title: 'Name',
-            description: 'Gender name'
-        },
-        code: {
-            type: 'string',
-            maxLength: 10,
-            title: 'Code',
-            description: 'Gender code'
-        },
-        description: {
-            anyOf: [
-                {
-                    type: 'string',
-                    maxLength: 500
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Description',
-            description: 'Optional description'
-        },
-        is_active: {
-            type: 'boolean',
-            title: 'Is Active',
-            description: 'Whether gender is active',
-            default: true
-        },
         id: {
             type: 'string',
             format: 'uuid',
             title: 'Id'
-        }
-    },
-    type: 'object',
-    required: ['name', 'code', 'id'],
-    title: 'GenderDetailPublic',
-    description: 'Detailed gender response with all fields.'
-} as const;
-
-export const GenderUpdateSchema = {
-    properties: {
+        },
         name: {
-            anyOf: [
-                {
-                    type: 'string',
-                    maxLength: 100
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Name'
+            type: 'string',
+            maxLength: 100,
+            title: 'Name',
+            description: 'Gender name'
         },
         code: {
-            anyOf: [
-                {
-                    type: 'string',
-                    maxLength: 10
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Code'
+            type: 'string',
+            maxLength: 10,
+            title: 'Code',
+            description: 'Gender code'
         },
         description: {
             anyOf: [
@@ -407,23 +315,20 @@ export const GenderUpdateSchema = {
                     type: 'null'
                 }
             ],
-            title: 'Description'
+            title: 'Description',
+            description: 'Optional description'
         },
         is_active: {
-            anyOf: [
-                {
-                    type: 'boolean'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Is Active'
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether gender is active',
+            default: true
         }
     },
     type: 'object',
-    title: 'GenderUpdate',
-    description: 'Schema for updating a gender (all fields optional).'
+    required: ['id', 'name', 'code'],
+    title: 'GenderDetailPublic',
+    description: 'Detailed gender response with all fields.'
 } as const;
 
 export const HTTPValidationErrorSchema = {
@@ -4054,10 +3959,9 @@ export const UserCreateSchema = {
             title: 'Is Active',
             default: true
         },
-        is_superuser: {
-            type: 'boolean',
-            title: 'Is Superuser',
-            default: false
+        role: {
+            '$ref': '#/components/schemas/UserRole',
+            default: 'user'
         },
         full_name: {
             anyOf: [
@@ -4097,10 +4001,9 @@ export const UserPublicSchema = {
             title: 'Is Active',
             default: true
         },
-        is_superuser: {
-            type: 'boolean',
-            title: 'Is Superuser',
-            default: false
+        role: {
+            '$ref': '#/components/schemas/UserRole',
+            default: 'user'
         },
         full_name: {
             anyOf: [
@@ -4118,6 +4021,11 @@ export const UserPublicSchema = {
             type: 'string',
             format: 'uuid',
             title: 'Id'
+        },
+        is_superuser: {
+            type: 'boolean',
+            title: 'Is Superuser',
+            default: false
         }
     },
     type: 'object',
@@ -4179,6 +4087,28 @@ export const UserRegisterSchema = {
     description: 'Properties for user self-registration'
 } as const;
 
+export const UserRoleSchema = {
+    type: 'string',
+    enum: ['user', 'superuser', 'admin'],
+    title: 'UserRole',
+    description: `User role levels with hierarchical permissions.
+
+Hierarchy: ADMIN > SUPERUSER > USER
+Higher roles inherit all permissions from lower roles.`
+} as const;
+
+export const UserRoleUpdateSchema = {
+    properties: {
+        role: {
+            '$ref': '#/components/schemas/UserRole'
+        }
+    },
+    type: 'object',
+    required: ['role'],
+    title: 'UserRoleUpdate',
+    description: 'Schema for updating user role (admin only)'
+} as const;
+
 export const UserUpdateSchema = {
     properties: {
         email: {
@@ -4199,10 +4129,9 @@ export const UserUpdateSchema = {
             title: 'Is Active',
             default: true
         },
-        is_superuser: {
-            type: 'boolean',
-            title: 'Is Superuser',
-            default: false
+        role: {
+            '$ref': '#/components/schemas/UserRole',
+            default: 'user'
         },
         full_name: {
             anyOf: [

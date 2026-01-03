@@ -32,7 +32,9 @@ function FamilyTreeView() {
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   // State for PersonDetailsPanel - Requirements: 1.1, 2.1
-  const [detailsPanelPersonId, setDetailsPanelPersonId] = useState<string | null>(null)
+  const [detailsPanelPersonId, setDetailsPanelPersonId] = useState<
+    string | null
+  >(null)
   const [isDetailsPanelOpen, setIsDetailsPanelOpen] = useState(false)
   // State for Add Family Member flow - Requirements: 2.1, 3.1
   const [showDiscoveryDialog, setShowDiscoveryDialog] = useState(false)
@@ -153,9 +155,13 @@ function FamilyTreeView() {
     setShowAddDialog(open)
     if (!open) {
       // Invalidate family tree data to refresh after addition
-      queryClient.invalidateQueries({ queryKey: ["familyTreeData", selectedPersonId] })
+      queryClient.invalidateQueries({
+        queryKey: ["familyTreeData", selectedPersonId],
+      })
       // Also invalidate relationships query used by other components
-      queryClient.invalidateQueries({ queryKey: ["myRelationshipsWithDetails"] })
+      queryClient.invalidateQueries({
+        queryKey: ["myRelationshipsWithDetails"],
+      })
     }
   }
 
@@ -320,7 +326,9 @@ function FamilyTreeView() {
         )}
 
         {/* Connector from parents to center row */}
-        {(familyData.parents.length > 0 || isViewingOwnTree) && <RowConnector />}
+        {(familyData.parents.length > 0 || isViewingOwnTree) && (
+          <RowConnector />
+        )}
 
         {/* Center Section: Siblings, Selected Person, Spouses - All in one horizontal row */}
         {/* Requirements: 5.1, 5.2, 9.3 - Single horizontally scrollable row with color-coding */}
@@ -363,7 +371,9 @@ function FamilyTreeView() {
         })()}
 
         {/* Connector from center row to children */}
-        {(familyData.children.length > 0 || isViewingOwnTree) && <RowConnector />}
+        {(familyData.children.length > 0 || isViewingOwnTree) && (
+          <RowConnector />
+        )}
 
         {/* Children Section - Requirements: 1.3, 5.1, 5.2 */}
         {/* Add Card only visible when viewing own family tree */}

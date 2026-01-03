@@ -18,16 +18,13 @@ describe("AddFamilyMemberCard - Unit Tests", () => {
       expect(svg).toBeTruthy()
     })
 
-    it.each(variants)(
-      "should render Plus icon for %s variant",
-      (variant) => {
-        render(<AddFamilyMemberCard variant={variant} onClick={() => {}} />)
+    it.each(variants)("should render Plus icon for %s variant", (variant) => {
+      render(<AddFamilyMemberCard variant={variant} onClick={() => {}} />)
 
-        const card = screen.getByTestId("add-family-member-card")
-        const svg = card.querySelector("svg")
-        expect(svg).toBeTruthy()
-      },
-    )
+      const card = screen.getByTestId("add-family-member-card")
+      const svg = card.querySelector("svg")
+      expect(svg).toBeTruthy()
+    })
   })
 
   describe("Click Handler", () => {
@@ -93,54 +90,48 @@ describe("AddFamilyMemberCard - Unit Tests", () => {
       expect(card?.className).toContain("min-h-[150px]")
     })
 
-    it.each(variants)(
-      "should have dashed border styling for %s variant",
-      (variant) => {
-        const { container } = render(
-          <AddFamilyMemberCard variant={variant} onClick={() => {}} />,
-        )
+    it.each(
+      variants,
+    )("should have dashed border styling for %s variant", (variant) => {
+      const { container } = render(
+        <AddFamilyMemberCard variant={variant} onClick={() => {}} />,
+      )
 
-        const card = container.querySelector('[data-slot="card"]')
-        expect(card?.className).toContain("border-dashed")
-      },
-    )
+      const card = container.querySelector('[data-slot="card"]')
+      expect(card?.className).toContain("border-dashed")
+    })
 
-    it.each(variants)(
-      "should have muted background for %s variant",
-      (variant) => {
-        const { container } = render(
-          <AddFamilyMemberCard variant={variant} onClick={() => {}} />,
-        )
+    it.each(
+      variants,
+    )("should have muted background for %s variant", (variant) => {
+      const { container } = render(
+        <AddFamilyMemberCard variant={variant} onClick={() => {}} />,
+      )
 
-        const card = container.querySelector('[data-slot="card"]')
-        expect(card?.className).toContain("bg-muted/20")
-      },
-    )
+      const card = container.querySelector('[data-slot="card"]')
+      expect(card?.className).toContain("bg-muted/20")
+    })
 
-    it.each(variants)(
-      "should have cursor-pointer for %s variant",
-      (variant) => {
-        const { container } = render(
-          <AddFamilyMemberCard variant={variant} onClick={() => {}} />,
-        )
+    it.each(
+      variants,
+    )("should have cursor-pointer for %s variant", (variant) => {
+      const { container } = render(
+        <AddFamilyMemberCard variant={variant} onClick={() => {}} />,
+      )
 
-        const card = container.querySelector('[data-slot="card"]')
-        expect(card?.className).toContain("cursor-pointer")
-      },
-    )
+      const card = container.querySelector('[data-slot="card"]')
+      expect(card?.className).toContain("cursor-pointer")
+    })
 
-    it.each(variants)(
-      "should have hover effects for %s variant",
-      (variant) => {
-        const { container } = render(
-          <AddFamilyMemberCard variant={variant} onClick={() => {}} />,
-        )
+    it.each(variants)("should have hover effects for %s variant", (variant) => {
+      const { container } = render(
+        <AddFamilyMemberCard variant={variant} onClick={() => {}} />,
+      )
 
-        const card = container.querySelector('[data-slot="card"]')
-        expect(card?.className).toContain("hover:border-primary/50")
-        expect(card?.className).toContain("hover:scale-[1.02]")
-      },
-    )
+      const card = container.querySelector('[data-slot="card"]')
+      expect(card?.className).toContain("hover:border-primary/50")
+      expect(card?.className).toContain("hover:scale-[1.02]")
+    })
   })
 
   describe("Accessibility", () => {

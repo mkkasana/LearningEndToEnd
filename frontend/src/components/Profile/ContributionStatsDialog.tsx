@@ -2,10 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Calendar, Eye, Loader2, MapPin, Network } from "lucide-react"
 import { useEffect } from "react"
-import {
-  type PersonContributionPublic,
-  PersonService,
-} from "@/client"
+import { type PersonContributionPublic, PersonService } from "@/client"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,7 +23,10 @@ interface ContributionStatsDialogProps {
  * Shows "birthYear - deathYear" for deceased persons.
  * Shows "birthYear" only for living persons.
  */
-function formatDateRange(birthDate: string, deathDate: string | null | undefined): string {
+function formatDateRange(
+  birthDate: string,
+  deathDate: string | null | undefined,
+): string {
   const birthYear = new Date(birthDate).getFullYear()
   if (deathDate) {
     const deathYear = new Date(deathDate).getFullYear()

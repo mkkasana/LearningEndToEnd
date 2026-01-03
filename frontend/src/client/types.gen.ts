@@ -107,31 +107,10 @@ export type DistrictUpdate = {
 };
 
 /**
- * Schema for creating a new gender.
- */
-export type GenderCreate = {
-    /**
-     * Gender name
-     */
-    name: string;
-    /**
-     * Gender code
-     */
-    code: string;
-    /**
-     * Optional description
-     */
-    description?: (string | null);
-    /**
-     * Whether gender is active
-     */
-    is_active?: boolean;
-};
-
-/**
  * Detailed gender response with all fields.
  */
 export type GenderDetailPublic = {
+    id: string;
     /**
      * Gender name
      */
@@ -148,17 +127,6 @@ export type GenderDetailPublic = {
      * Whether gender is active
      */
     is_active?: boolean;
-    id: string;
-};
-
-/**
- * Schema for updating a gender (all fields optional).
- */
-export type GenderUpdate = {
-    name?: (string | null);
-    code?: (string | null);
-    description?: (string | null);
-    is_active?: (boolean | null);
 };
 
 export type HTTPValidationError = {
@@ -1495,7 +1463,7 @@ export type UpdatePassword = {
 export type UserCreate = {
     email: string;
     is_active?: boolean;
-    is_superuser?: boolean;
+    role?: UserRole;
     full_name?: (string | null);
     password: string;
 };
@@ -1506,9 +1474,10 @@ export type UserCreate = {
 export type UserPublic = {
     email: string;
     is_active?: boolean;
-    is_superuser?: boolean;
+    role?: UserRole;
     full_name?: (string | null);
     id: string;
+    is_superuser?: boolean;
 };
 
 /**
@@ -1531,6 +1500,21 @@ export type UserRegister = {
 };
 
 /**
+ * User role levels with hierarchical permissions.
+ *
+ * Hierarchy: ADMIN > SUPERUSER > USER
+ * Higher roles inherit all permissions from lower roles.
+ */
+export type UserRole = 'user' | 'superuser' | 'admin';
+
+/**
+ * Schema for updating user role (admin only)
+ */
+export type UserRoleUpdate = {
+    role: UserRole;
+};
+
+/**
  * List of users response
  */
 export type UsersPublic = {
@@ -1544,7 +1528,7 @@ export type UsersPublic = {
 export type UserUpdate = {
     email?: (string | null);
     is_active?: boolean;
-    is_superuser?: boolean;
+    role?: UserRole;
     full_name?: (string | null);
     password?: (string | null);
 };
@@ -2026,30 +2010,11 @@ export type PersonMetadataDeleteProfessionResponse = (unknown);
 
 export type PersonMetadataGetGendersResponse = (unknown);
 
-export type PersonMetadataCreateGenderData = {
-    requestBody: GenderCreate;
-};
-
-export type PersonMetadataCreateGenderResponse = (GenderDetailPublic);
-
 export type PersonMetadataGetGenderByIdData = {
     genderId: string;
 };
 
 export type PersonMetadataGetGenderByIdResponse = (GenderDetailPublic);
-
-export type PersonMetadataUpdateGenderData = {
-    genderId: string;
-    requestBody: GenderUpdate;
-};
-
-export type PersonMetadataUpdateGenderResponse = (GenderDetailPublic);
-
-export type PersonMetadataDeleteGenderData = {
-    genderId: string;
-};
-
-export type PersonMetadataDeleteGenderResponse = (unknown);
 
 export type PersonReligionCreateMyReligionData = {
     requestBody: PersonReligionCreate;
@@ -2280,6 +2245,13 @@ export type UsersDeleteUserData = {
 };
 
 export type UsersDeleteUserResponse = (Message);
+
+export type UsersUpdateUserRoleData = {
+    requestBody: UserRoleUpdate;
+    userId: string;
+};
+
+export type UsersUpdateUserRoleResponse = (UserPublic);
 
 export type UtilsTestEmailData = {
     emailTo: string;

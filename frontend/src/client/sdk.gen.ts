@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AddressMetadataGetCountriesResponse, AddressMetadataCreateCountryData, AddressMetadataCreateCountryResponse, AddressMetadataGetCountryByIdData, AddressMetadataGetCountryByIdResponse, AddressMetadataUpdateCountryData, AddressMetadataUpdateCountryResponse, AddressMetadataDeleteCountryData, AddressMetadataDeleteCountryResponse, AddressMetadataGetStatesByCountryData, AddressMetadataGetStatesByCountryResponse, AddressMetadataGetStateByIdData, AddressMetadataGetStateByIdResponse, AddressMetadataUpdateStateData, AddressMetadataUpdateStateResponse, AddressMetadataDeleteStateData, AddressMetadataDeleteStateResponse, AddressMetadataCreateStateData, AddressMetadataCreateStateResponse, AddressMetadataGetDistrictsByStateData, AddressMetadataGetDistrictsByStateResponse, AddressMetadataGetDistrictByIdData, AddressMetadataGetDistrictByIdResponse, AddressMetadataUpdateDistrictData, AddressMetadataUpdateDistrictResponse, AddressMetadataDeleteDistrictData, AddressMetadataDeleteDistrictResponse, AddressMetadataCreateDistrictData, AddressMetadataCreateDistrictResponse, AddressMetadataGetSubDistrictsByDistrictData, AddressMetadataGetSubDistrictsByDistrictResponse, AddressMetadataGetSubDistrictByIdData, AddressMetadataGetSubDistrictByIdResponse, AddressMetadataUpdateSubDistrictData, AddressMetadataUpdateSubDistrictResponse, AddressMetadataDeleteSubDistrictData, AddressMetadataDeleteSubDistrictResponse, AddressMetadataCreateSubDistrictData, AddressMetadataCreateSubDistrictResponse, AddressMetadataGetLocalitiesBySubDistrictData, AddressMetadataGetLocalitiesBySubDistrictResponse, AddressMetadataGetLocalityByIdData, AddressMetadataGetLocalityByIdResponse, AddressMetadataUpdateLocalityData, AddressMetadataUpdateLocalityResponse, AddressMetadataDeleteLocalityData, AddressMetadataDeleteLocalityResponse, AddressMetadataCreateLocalityData, AddressMetadataCreateLocalityResponse, IssuesCreateSupportTicketData, IssuesCreateSupportTicketResponse, IssuesGetMySupportTicketsData, IssuesGetMySupportTicketsResponse, IssuesGetSupportTicketData, IssuesGetSupportTicketResponse, IssuesUpdateSupportTicketData, IssuesUpdateSupportTicketResponse, IssuesDeleteSupportTicketData, IssuesDeleteSupportTicketResponse, IssuesGetAllSupportTicketsAdminData, IssuesGetAllSupportTicketsAdminResponse, IssuesResolveSupportTicketData, IssuesResolveSupportTicketResponse, IssuesReopenSupportTicketData, IssuesReopenSupportTicketResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PersonGetMyPersonResponse, PersonCreateMyPersonData, PersonCreateMyPersonResponse, PersonDeleteMyPersonResponse, PersonUpdateMyPersonData, PersonUpdateMyPersonResponse, PersonGetMyContributionsResponse, PersonCreateFamilyMemberData, PersonCreateFamilyMemberResponse, PersonSearchMatchingPersonsData, PersonSearchMatchingPersonsResponse, PersonDiscoverFamilyMembersResponse, PersonCreatePersonAddressData, PersonCreatePersonAddressResponse, PersonCreatePersonReligionData, PersonCreatePersonReligionResponse, PersonGetPersonByUserIdData, PersonGetPersonByUserIdResponse, PersonDeletePersonByUserIdData, PersonDeletePersonByUserIdResponse, PersonGetMyAddressesResponse, PersonCreateMyAddressData, PersonCreateMyAddressResponse, PersonGetMyAddressData, PersonGetMyAddressResponse, PersonUpdateMyAddressData, PersonUpdateMyAddressResponse, PersonDeleteMyAddressData, PersonDeleteMyAddressResponse, PersonGetMyProfessionsResponse, PersonCreateMyProfessionData, PersonCreateMyProfessionResponse, PersonGetMyProfessionData, PersonGetMyProfessionResponse, PersonUpdateMyProfessionData, PersonUpdateMyProfessionResponse, PersonDeleteMyProfessionData, PersonDeleteMyProfessionResponse, PersonGetMyRelationshipsResponse, PersonCreateMyRelationshipData, PersonCreateMyRelationshipResponse, PersonGetMyRelationshipsWithDetailsResponse, PersonGetPersonRelationshipsWithDetailsData, PersonGetPersonRelationshipsWithDetailsResponse, PersonGetPersonCompleteDetailsData, PersonGetPersonCompleteDetailsResponse, PersonGetMyRelationshipData, PersonGetMyRelationshipResponse, PersonUpdateMyRelationshipData, PersonUpdateMyRelationshipResponse, PersonDeleteMyRelationshipData, PersonDeleteMyRelationshipResponse, PersonGetMyMetadataResponse, PersonCreateMyMetadataData, PersonCreateMyMetadataResponse, PersonDeleteMyMetadataResponse, PersonUpdateMyMetadataData, PersonUpdateMyMetadataResponse, PersonMetadataGetProfessionsResponse, PersonMetadataCreateProfessionData, PersonMetadataCreateProfessionResponse, PersonMetadataGetProfessionByIdData, PersonMetadataGetProfessionByIdResponse, PersonMetadataUpdateProfessionData, PersonMetadataUpdateProfessionResponse, PersonMetadataDeleteProfessionData, PersonMetadataDeleteProfessionResponse, PersonMetadataGetGendersResponse, PersonMetadataCreateGenderData, PersonMetadataCreateGenderResponse, PersonMetadataGetGenderByIdData, PersonMetadataGetGenderByIdResponse, PersonMetadataUpdateGenderData, PersonMetadataUpdateGenderResponse, PersonMetadataDeleteGenderData, PersonMetadataDeleteGenderResponse, PersonReligionCreateMyReligionData, PersonReligionCreateMyReligionResponse, PersonReligionGetMyReligionResponse, PersonReligionUpdateMyReligionData, PersonReligionUpdateMyReligionResponse, PersonReligionDeleteMyReligionResponse, PostsGetPublishedPostsData, PostsGetPublishedPostsResponse, PostsCreatePostData, PostsCreatePostResponse, PostsGetMyPostsData, PostsGetMyPostsResponse, PostsGetPostData, PostsGetPostResponse, PostsUpdatePostData, PostsUpdatePostResponse, PostsDeletePostData, PostsDeletePostResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProfileGetProfileCompletionStatusResponse, RelativesGetParentsData, RelativesGetParentsResponse, RelativesGetChildrenData, RelativesGetChildrenResponse, RelativesGetSpousesData, RelativesGetSpousesResponse, RelativesGetSiblingsData, RelativesGetSiblingsResponse, ReligionMetadataGetReligionsResponse, ReligionMetadataCreateReligionData, ReligionMetadataCreateReligionResponse, ReligionMetadataGetReligionByIdData, ReligionMetadataGetReligionByIdResponse, ReligionMetadataUpdateReligionData, ReligionMetadataUpdateReligionResponse, ReligionMetadataDeleteReligionData, ReligionMetadataDeleteReligionResponse, ReligionMetadataGetCategoriesByReligionData, ReligionMetadataGetCategoriesByReligionResponse, ReligionMetadataGetCategoryByIdData, ReligionMetadataGetCategoryByIdResponse, ReligionMetadataUpdateCategoryData, ReligionMetadataUpdateCategoryResponse, ReligionMetadataDeleteCategoryData, ReligionMetadataDeleteCategoryResponse, ReligionMetadataCreateCategoryData, ReligionMetadataCreateCategoryResponse, ReligionMetadataGetSubCategoriesByCategoryData, ReligionMetadataGetSubCategoriesByCategoryResponse, ReligionMetadataGetSubCategoryByIdData, ReligionMetadataGetSubCategoryByIdResponse, ReligionMetadataUpdateSubCategoryData, ReligionMetadataUpdateSubCategoryResponse, ReligionMetadataDeleteSubCategoryData, ReligionMetadataDeleteSubCategoryResponse, ReligionMetadataCreateSubCategoryData, ReligionMetadataCreateSubCategoryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, UtilsDeleteCacheKeyData, UtilsDeleteCacheKeyResponse, UtilsDeleteCachePatternData, UtilsDeleteCachePatternResponse, UtilsClearAllCacheResponse } from './types.gen';
+import type { AddressMetadataGetCountriesResponse, AddressMetadataCreateCountryData, AddressMetadataCreateCountryResponse, AddressMetadataGetCountryByIdData, AddressMetadataGetCountryByIdResponse, AddressMetadataUpdateCountryData, AddressMetadataUpdateCountryResponse, AddressMetadataDeleteCountryData, AddressMetadataDeleteCountryResponse, AddressMetadataGetStatesByCountryData, AddressMetadataGetStatesByCountryResponse, AddressMetadataGetStateByIdData, AddressMetadataGetStateByIdResponse, AddressMetadataUpdateStateData, AddressMetadataUpdateStateResponse, AddressMetadataDeleteStateData, AddressMetadataDeleteStateResponse, AddressMetadataCreateStateData, AddressMetadataCreateStateResponse, AddressMetadataGetDistrictsByStateData, AddressMetadataGetDistrictsByStateResponse, AddressMetadataGetDistrictByIdData, AddressMetadataGetDistrictByIdResponse, AddressMetadataUpdateDistrictData, AddressMetadataUpdateDistrictResponse, AddressMetadataDeleteDistrictData, AddressMetadataDeleteDistrictResponse, AddressMetadataCreateDistrictData, AddressMetadataCreateDistrictResponse, AddressMetadataGetSubDistrictsByDistrictData, AddressMetadataGetSubDistrictsByDistrictResponse, AddressMetadataGetSubDistrictByIdData, AddressMetadataGetSubDistrictByIdResponse, AddressMetadataUpdateSubDistrictData, AddressMetadataUpdateSubDistrictResponse, AddressMetadataDeleteSubDistrictData, AddressMetadataDeleteSubDistrictResponse, AddressMetadataCreateSubDistrictData, AddressMetadataCreateSubDistrictResponse, AddressMetadataGetLocalitiesBySubDistrictData, AddressMetadataGetLocalitiesBySubDistrictResponse, AddressMetadataGetLocalityByIdData, AddressMetadataGetLocalityByIdResponse, AddressMetadataUpdateLocalityData, AddressMetadataUpdateLocalityResponse, AddressMetadataDeleteLocalityData, AddressMetadataDeleteLocalityResponse, AddressMetadataCreateLocalityData, AddressMetadataCreateLocalityResponse, IssuesCreateSupportTicketData, IssuesCreateSupportTicketResponse, IssuesGetMySupportTicketsData, IssuesGetMySupportTicketsResponse, IssuesGetSupportTicketData, IssuesGetSupportTicketResponse, IssuesUpdateSupportTicketData, IssuesUpdateSupportTicketResponse, IssuesDeleteSupportTicketData, IssuesDeleteSupportTicketResponse, IssuesGetAllSupportTicketsAdminData, IssuesGetAllSupportTicketsAdminResponse, IssuesResolveSupportTicketData, IssuesResolveSupportTicketResponse, IssuesReopenSupportTicketData, IssuesReopenSupportTicketResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PersonGetMyPersonResponse, PersonCreateMyPersonData, PersonCreateMyPersonResponse, PersonDeleteMyPersonResponse, PersonUpdateMyPersonData, PersonUpdateMyPersonResponse, PersonGetMyContributionsResponse, PersonCreateFamilyMemberData, PersonCreateFamilyMemberResponse, PersonSearchMatchingPersonsData, PersonSearchMatchingPersonsResponse, PersonDiscoverFamilyMembersResponse, PersonCreatePersonAddressData, PersonCreatePersonAddressResponse, PersonCreatePersonReligionData, PersonCreatePersonReligionResponse, PersonGetPersonByUserIdData, PersonGetPersonByUserIdResponse, PersonDeletePersonByUserIdData, PersonDeletePersonByUserIdResponse, PersonGetMyAddressesResponse, PersonCreateMyAddressData, PersonCreateMyAddressResponse, PersonGetMyAddressData, PersonGetMyAddressResponse, PersonUpdateMyAddressData, PersonUpdateMyAddressResponse, PersonDeleteMyAddressData, PersonDeleteMyAddressResponse, PersonGetMyProfessionsResponse, PersonCreateMyProfessionData, PersonCreateMyProfessionResponse, PersonGetMyProfessionData, PersonGetMyProfessionResponse, PersonUpdateMyProfessionData, PersonUpdateMyProfessionResponse, PersonDeleteMyProfessionData, PersonDeleteMyProfessionResponse, PersonGetMyRelationshipsResponse, PersonCreateMyRelationshipData, PersonCreateMyRelationshipResponse, PersonGetMyRelationshipsWithDetailsResponse, PersonGetPersonRelationshipsWithDetailsData, PersonGetPersonRelationshipsWithDetailsResponse, PersonGetPersonCompleteDetailsData, PersonGetPersonCompleteDetailsResponse, PersonGetMyRelationshipData, PersonGetMyRelationshipResponse, PersonUpdateMyRelationshipData, PersonUpdateMyRelationshipResponse, PersonDeleteMyRelationshipData, PersonDeleteMyRelationshipResponse, PersonGetMyMetadataResponse, PersonCreateMyMetadataData, PersonCreateMyMetadataResponse, PersonDeleteMyMetadataResponse, PersonUpdateMyMetadataData, PersonUpdateMyMetadataResponse, PersonMetadataGetProfessionsResponse, PersonMetadataCreateProfessionData, PersonMetadataCreateProfessionResponse, PersonMetadataGetProfessionByIdData, PersonMetadataGetProfessionByIdResponse, PersonMetadataUpdateProfessionData, PersonMetadataUpdateProfessionResponse, PersonMetadataDeleteProfessionData, PersonMetadataDeleteProfessionResponse, PersonMetadataGetGendersResponse, PersonMetadataGetGenderByIdData, PersonMetadataGetGenderByIdResponse, PersonReligionCreateMyReligionData, PersonReligionCreateMyReligionResponse, PersonReligionGetMyReligionResponse, PersonReligionUpdateMyReligionData, PersonReligionUpdateMyReligionResponse, PersonReligionDeleteMyReligionResponse, PostsGetPublishedPostsData, PostsGetPublishedPostsResponse, PostsCreatePostData, PostsCreatePostResponse, PostsGetMyPostsData, PostsGetMyPostsResponse, PostsGetPostData, PostsGetPostResponse, PostsUpdatePostData, PostsUpdatePostResponse, PostsDeletePostData, PostsDeletePostResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProfileGetProfileCompletionStatusResponse, RelativesGetParentsData, RelativesGetParentsResponse, RelativesGetChildrenData, RelativesGetChildrenResponse, RelativesGetSpousesData, RelativesGetSpousesResponse, RelativesGetSiblingsData, RelativesGetSiblingsResponse, ReligionMetadataGetReligionsResponse, ReligionMetadataCreateReligionData, ReligionMetadataCreateReligionResponse, ReligionMetadataGetReligionByIdData, ReligionMetadataGetReligionByIdResponse, ReligionMetadataUpdateReligionData, ReligionMetadataUpdateReligionResponse, ReligionMetadataDeleteReligionData, ReligionMetadataDeleteReligionResponse, ReligionMetadataGetCategoriesByReligionData, ReligionMetadataGetCategoriesByReligionResponse, ReligionMetadataGetCategoryByIdData, ReligionMetadataGetCategoryByIdResponse, ReligionMetadataUpdateCategoryData, ReligionMetadataUpdateCategoryResponse, ReligionMetadataDeleteCategoryData, ReligionMetadataDeleteCategoryResponse, ReligionMetadataCreateCategoryData, ReligionMetadataCreateCategoryResponse, ReligionMetadataGetSubCategoriesByCategoryData, ReligionMetadataGetSubCategoriesByCategoryResponse, ReligionMetadataGetSubCategoryByIdData, ReligionMetadataGetSubCategoryByIdResponse, ReligionMetadataUpdateSubCategoryData, ReligionMetadataUpdateSubCategoryResponse, ReligionMetadataDeleteSubCategoryData, ReligionMetadataDeleteSubCategoryResponse, ReligionMetadataCreateSubCategoryData, ReligionMetadataCreateSubCategoryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UsersUpdateUserRoleData, UsersUpdateUserRoleResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, UtilsDeleteCacheKeyData, UtilsDeleteCacheKeyResponse, UtilsDeleteCachePatternData, UtilsDeleteCachePatternResponse, UtilsClearAllCacheResponse } from './types.gen';
 
 export class AddressMetadataService {
     /**
@@ -26,7 +26,7 @@ export class AddressMetadataService {
     /**
      * Create Country
      * Create a new country.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns CountryDetailPublic Successful Response
@@ -71,7 +71,7 @@ export class AddressMetadataService {
     /**
      * Update Country
      * Update a country.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.countryId
      * @param data.requestBody
@@ -97,7 +97,7 @@ export class AddressMetadataService {
     /**
      * Delete Country
      * Delete a country.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.countryId
      * @returns unknown Successful Response
@@ -166,7 +166,7 @@ export class AddressMetadataService {
     /**
      * Update State
      * Update a state.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.stateId
      * @param data.requestBody
@@ -192,7 +192,7 @@ export class AddressMetadataService {
     /**
      * Delete State
      * Delete a state.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.stateId
      * @returns unknown Successful Response
@@ -215,7 +215,7 @@ export class AddressMetadataService {
     /**
      * Create State
      * Create a new state.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns StateDetailPublic Successful Response
@@ -283,7 +283,7 @@ export class AddressMetadataService {
     /**
      * Update District
      * Update a district.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.districtId
      * @param data.requestBody
@@ -309,7 +309,7 @@ export class AddressMetadataService {
     /**
      * Delete District
      * Delete a district.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.districtId
      * @returns unknown Successful Response
@@ -332,7 +332,7 @@ export class AddressMetadataService {
     /**
      * Create District
      * Create a new district.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns DistrictDetailPublic Successful Response
@@ -400,7 +400,7 @@ export class AddressMetadataService {
     /**
      * Update Sub District
      * Update a sub-district (tehsil/county).
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.subDistrictId
      * @param data.requestBody
@@ -426,7 +426,7 @@ export class AddressMetadataService {
     /**
      * Delete Sub District
      * Delete a sub-district (tehsil/county).
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.subDistrictId
      * @returns unknown Successful Response
@@ -449,7 +449,7 @@ export class AddressMetadataService {
     /**
      * Create Sub District
      * Create a new sub-district (tehsil/county).
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns SubDistrictDetailPublic Successful Response
@@ -517,7 +517,7 @@ export class AddressMetadataService {
     /**
      * Update Locality
      * Update a locality (village).
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.localityId
      * @param data.requestBody
@@ -543,7 +543,7 @@ export class AddressMetadataService {
     /**
      * Delete Locality
      * Delete a locality (village).
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.localityId
      * @returns unknown Successful Response
@@ -566,7 +566,7 @@ export class AddressMetadataService {
     /**
      * Create Locality
      * Create a new locality (village).
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns LocalityDetailPublic Successful Response
@@ -1792,7 +1792,7 @@ export class PersonMetadataService {
     /**
      * Create Profession
      * Create a new profession.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns ProfessionDetailPublic Successful Response
@@ -1837,7 +1837,7 @@ export class PersonMetadataService {
     /**
      * Update Profession
      * Update a profession.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.professionId
      * @param data.requestBody
@@ -1863,7 +1863,7 @@ export class PersonMetadataService {
     /**
      * Delete Profession
      * Delete a profession.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.professionId
      * @returns unknown Successful Response
@@ -1887,6 +1887,7 @@ export class PersonMetadataService {
      * Get Genders
      * Get list of genders for dropdown options.
      * Public endpoint - no authentication required.
+     * Returns hardcoded gender values (no database call).
      * @returns unknown Successful Response
      * @throws ApiError
      */
@@ -1901,31 +1902,10 @@ export class PersonMetadataService {
     }
     
     /**
-     * Create Gender
-     * Create a new gender.
-     * Requires superuser authentication.
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns GenderDetailPublic Successful Response
-     * @throws ApiError
-     */
-    public static createGender(data: PersonMetadataCreateGenderData): CancelablePromise<PersonMetadataCreateGenderResponse> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/v1/metadata/person/genders',
-            body: data.requestBody,
-            mediaType: 'application/json',
-            errors: {
-                404: 'Not found',
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
      * Get Gender By Id
      * Get a specific gender by ID.
      * Public endpoint - no authentication required.
+     * Returns hardcoded gender values (no database call).
      * @param data The data for the request.
      * @param data.genderId
      * @returns GenderDetailPublic Successful Response
@@ -1934,55 +1914,6 @@ export class PersonMetadataService {
     public static getGenderById(data: PersonMetadataGetGenderByIdData): CancelablePromise<PersonMetadataGetGenderByIdResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/v1/metadata/person/genders/{gender_id}',
-            path: {
-                gender_id: data.genderId
-            },
-            errors: {
-                404: 'Not found',
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Update Gender
-     * Update a gender.
-     * Requires superuser authentication.
-     * @param data The data for the request.
-     * @param data.genderId
-     * @param data.requestBody
-     * @returns GenderDetailPublic Successful Response
-     * @throws ApiError
-     */
-    public static updateGender(data: PersonMetadataUpdateGenderData): CancelablePromise<PersonMetadataUpdateGenderResponse> {
-        return __request(OpenAPI, {
-            method: 'PATCH',
-            url: '/api/v1/metadata/person/genders/{gender_id}',
-            path: {
-                gender_id: data.genderId
-            },
-            body: data.requestBody,
-            mediaType: 'application/json',
-            errors: {
-                404: 'Not found',
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Delete Gender
-     * Delete a gender.
-     * Requires superuser authentication.
-     * @param data The data for the request.
-     * @param data.genderId
-     * @returns unknown Successful Response
-     * @throws ApiError
-     */
-    public static deleteGender(data: PersonMetadataDeleteGenderData): CancelablePromise<PersonMetadataDeleteGenderResponse> {
-        return __request(OpenAPI, {
-            method: 'DELETE',
             url: '/api/v1/metadata/person/genders/{gender_id}',
             path: {
                 gender_id: data.genderId
@@ -2348,7 +2279,7 @@ export class ReligionMetadataService {
     /**
      * Create Religion
      * Create a new religion.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns ReligionDetailPublic Successful Response
@@ -2393,7 +2324,7 @@ export class ReligionMetadataService {
     /**
      * Update Religion
      * Update a religion.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.religionId
      * @param data.requestBody
@@ -2419,7 +2350,7 @@ export class ReligionMetadataService {
     /**
      * Delete Religion
      * Delete a religion.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.religionId
      * @returns unknown Successful Response
@@ -2488,7 +2419,7 @@ export class ReligionMetadataService {
     /**
      * Update Category
      * Update a religion category.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.categoryId
      * @param data.requestBody
@@ -2514,7 +2445,7 @@ export class ReligionMetadataService {
     /**
      * Delete Category
      * Delete a religion category.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.categoryId
      * @returns unknown Successful Response
@@ -2537,7 +2468,7 @@ export class ReligionMetadataService {
     /**
      * Create Category
      * Create a new religion category.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns ReligionCategoryDetailPublic Successful Response
@@ -2605,7 +2536,7 @@ export class ReligionMetadataService {
     /**
      * Update Sub Category
      * Update a religion sub-category.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.subCategoryId
      * @param data.requestBody
@@ -2631,7 +2562,7 @@ export class ReligionMetadataService {
     /**
      * Delete Sub Category
      * Delete a religion sub-category.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.subCategoryId
      * @returns unknown Successful Response
@@ -2654,7 +2585,7 @@ export class ReligionMetadataService {
     /**
      * Create Sub Category
      * Create a new religion sub-category.
-     * Requires superuser authentication.
+     * Requires admin authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns ReligionSubCategoryDetailPublic Successful Response
@@ -2865,6 +2796,33 @@ export class UsersService {
             path: {
                 user_id: data.userId
             },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update User Role
+     * Update a user's role. Admin only.
+     *
+     * - Admins can change other users' roles
+     * - Admins cannot change their own role (to prevent self-demotion)
+     * @param data The data for the request.
+     * @param data.userId
+     * @param data.requestBody
+     * @returns UserPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateUserRole(data: UsersUpdateUserRoleData): CancelablePromise<UsersUpdateUserRoleResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/users/{user_id}/role',
+            path: {
+                user_id: data.userId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
             errors: {
                 422: 'Validation Error'
             }
