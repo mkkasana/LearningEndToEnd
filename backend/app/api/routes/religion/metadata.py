@@ -5,7 +5,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.deps import SessionDep, get_current_active_superuser
+from app.api.deps import SessionDep, get_current_active_admin
 from app.schemas.religion import (
     ReligionCategoryCreate,
     ReligionCategoryDetailPublic,
@@ -70,13 +70,13 @@ def get_religion_by_id(session: SessionDep, religion_id: uuid.UUID) -> Any:
 @router.post(
     "/religions",
     response_model=ReligionDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def create_religion(session: SessionDep, religion_in: ReligionCreate) -> Any:
     """
     Create a new religion.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     religion_service = ReligionService(session)
 
@@ -94,7 +94,7 @@ def create_religion(session: SessionDep, religion_in: ReligionCreate) -> Any:
 @router.patch(
     "/religions/{religion_id}",
     response_model=ReligionDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def update_religion(
@@ -104,7 +104,7 @@ def update_religion(
 ) -> Any:
     """
     Update a religion.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     religion_service = ReligionService(session)
 
@@ -132,13 +132,13 @@ def update_religion(
 
 @router.delete(
     "/religions/{religion_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def delete_religion(session: SessionDep, religion_id: uuid.UUID) -> Any:
     """
     Delete a religion.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     religion_service = ReligionService(session)
 
@@ -203,13 +203,13 @@ def get_category_by_id(session: SessionDep, category_id: uuid.UUID) -> Any:
 @router.post(
     "/categories",
     response_model=ReligionCategoryDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def create_category(session: SessionDep, category_in: ReligionCategoryCreate) -> Any:
     """
     Create a new religion category.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     # Verify religion exists
     religion_service = ReligionService(session)
@@ -238,7 +238,7 @@ def create_category(session: SessionDep, category_in: ReligionCategoryCreate) ->
 @router.patch(
     "/categories/{category_id}",
     response_model=ReligionCategoryDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def update_category(
@@ -248,7 +248,7 @@ def update_category(
 ) -> Any:
     """
     Update a religion category.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     category_service = ReligionCategoryService(session)
 
@@ -276,13 +276,13 @@ def update_category(
 
 @router.delete(
     "/categories/{category_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def delete_category(session: SessionDep, category_id: uuid.UUID) -> Any:
     """
     Delete a religion category.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     category_service = ReligionCategoryService(session)
 
@@ -349,7 +349,7 @@ def get_sub_category_by_id(session: SessionDep, sub_category_id: uuid.UUID) -> A
 @router.post(
     "/sub-categories",
     response_model=ReligionSubCategoryDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def create_sub_category(
@@ -357,7 +357,7 @@ def create_sub_category(
 ) -> Any:
     """
     Create a new religion sub-category.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     # Verify category exists
     category_service = ReligionCategoryService(session)
@@ -386,7 +386,7 @@ def create_sub_category(
 @router.patch(
     "/sub-categories/{sub_category_id}",
     response_model=ReligionSubCategoryDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def update_sub_category(
@@ -396,7 +396,7 @@ def update_sub_category(
 ) -> Any:
     """
     Update a religion sub-category.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     sub_category_service = ReligionSubCategoryService(session)
 
@@ -428,13 +428,13 @@ def update_sub_category(
 
 @router.delete(
     "/sub-categories/{sub_category_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def delete_sub_category(session: SessionDep, sub_category_id: uuid.UUID) -> Any:
     """
     Delete a religion sub-category.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     sub_category_service = ReligionSubCategoryService(session)
 

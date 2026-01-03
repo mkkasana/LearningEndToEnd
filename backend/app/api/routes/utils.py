@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from pydantic.networks import EmailStr
 
-from app.api.deps import get_current_active_superuser
+from app.api.deps import get_current_active_admin
 from app.schemas.common import Message
 from app.utils import generate_test_email, send_email
 from app.utils.cache import get_cache_manager
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/utils", tags=["utils"])
 
 @router.post(
     "/test-email/",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
     status_code=201,
 )
 def test_email(email_to: EmailStr) -> Message:
@@ -34,7 +34,7 @@ async def health_check() -> bool:
 
 @router.delete(
     "/cache/{cache_key:path}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
     response_model=Message,
 )
 def delete_cache_key(cache_key: str) -> Message:
@@ -60,7 +60,7 @@ def delete_cache_key(cache_key: str) -> Message:
 
 @router.delete(
     "/cache-pattern/{pattern:path}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
     response_model=Message,
 )
 def delete_cache_pattern(pattern: str) -> Message:
@@ -88,7 +88,7 @@ def delete_cache_pattern(pattern: str) -> Message:
 
 @router.post(
     "/cache/clear",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
     response_model=Message,
 )
 def clear_all_cache() -> Message:

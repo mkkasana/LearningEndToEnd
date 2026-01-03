@@ -7,6 +7,7 @@ from sqlmodel import Session
 
 from app.core.security import get_password_hash
 from app.db_models.user import User
+from app.enums.user_role import UserRole
 
 
 class UserFactory:
@@ -29,6 +30,7 @@ class UserFactory:
         password: str = "testpassword123",
         is_active: bool = True,
         is_superuser: bool = False,
+        role: UserRole | None = None,
         full_name: str | None = None,
         commit: bool = True,
     ) -> User:
@@ -39,7 +41,8 @@ class UserFactory:
             email: User email (auto-generated if not provided)
             password: Plain text password (will be hashed)
             is_active: Whether user is active
-            is_superuser: Whether user is a superuser
+            is_superuser: Whether user is a superuser (deprecated, use role instead)
+            role: User role (USER, SUPERUSER, or ADMIN)
             full_name: User's full name
             commit: Whether to commit the transaction
 
@@ -50,11 +53,15 @@ class UserFactory:
             suffix = cls._get_unique_suffix()
             email = f"test_user_{suffix}@example.com"
 
+        # Determine role: explicit role takes precedence, then is_superuser for backward compatibility
+        if role is None:
+            role = UserRole.SUPERUSER if is_superuser else UserRole.USER
+
         user = User(
             email=email,
             hashed_password=get_password_hash(password),
             is_active=is_active,
-            is_superuser=is_superuser,
+            role=role,
             full_name=full_name,
         )
 
@@ -74,7 +81,7 @@ class UserFactory:
         password: str = "superpassword123",
         commit: bool = True,
     ) -> User:
-        """Create a superuser for testing admin functionality.
+        """Create a superuser for testing elevated functionality.
 
         Args:
             session: Database session
@@ -89,8 +96,37 @@ class UserFactory:
             session,
             email=email,
             password=password,
-            is_superuser=True,
+            role=UserRole.SUPERUSER,
             full_name="Test Superuser",
+            commit=commit,
+        )
+
+    @classmethod
+    def create_admin(
+        cls,
+        session: Session,
+        *,
+        email: str | None = None,
+        password: str = "adminpassword123",
+        commit: bool = True,
+    ) -> User:
+        """Create an admin user for testing admin functionality.
+
+        Args:
+            session: Database session
+            email: User email (auto-generated if not provided)
+            password: Plain text password
+            commit: Whether to commit the transaction
+
+        Returns:
+            Created admin entity
+        """
+        return cls.create(
+            session,
+            email=email,
+            password=password,
+            role=UserRole.ADMIN,
+            full_name="Test Admin",
             commit=commit,
         )
 
@@ -102,6 +138,7 @@ class UserFactory:
         password: str = "testpassword123",
         is_active: bool = True,
         is_superuser: bool = False,
+        role: UserRole | None = None,
         full_name: str | None = None,
     ) -> User:
         """Build a User entity without persisting to database.
@@ -112,7 +149,8 @@ class UserFactory:
             email: User email (auto-generated if not provided)
             password: Plain text password (will be hashed)
             is_active: Whether user is active
-            is_superuser: Whether user is a superuser
+            is_superuser: Whether user is a superuser (deprecated, use role instead)
+            role: User role (USER, SUPERUSER, or ADMIN)
             full_name: User's full name
 
         Returns:
@@ -122,12 +160,16 @@ class UserFactory:
             suffix = cls._get_unique_suffix()
             email = f"test_user_{suffix}@example.com"
 
+        # Determine role: explicit role takes precedence, then is_superuser for backward compatibility
+        if role is None:
+            role = UserRole.SUPERUSER if is_superuser else UserRole.USER
+
         return User(
             id=uuid.uuid4(),
             email=email,
             hashed_password=get_password_hash(password),
             is_active=is_active,
-            is_superuser=is_superuser,
+            role=role,
             full_name=full_name,
         )
 

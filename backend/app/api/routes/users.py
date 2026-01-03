@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.deps import (
     CurrentUser,
     SessionDep,
-    get_current_active_superuser,
+    get_current_active_admin,
 )
 from app.core.config import settings
 from app.core.exceptions import EmailAlreadyExistsError, PermissionDeniedError
@@ -18,6 +18,7 @@ from app.schemas.user import (
     UserCreate,
     UserPublic,
     UserRegister,
+    UserRoleUpdate,
     UsersPublic,
     UserUpdate,
     UserUpdateMe,
@@ -32,7 +33,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get(
     "/",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
     response_model=UsersPublic,
 )
 @log_route
@@ -46,7 +47,7 @@ def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
 
 
 @router.post(
-    "/", dependencies=[Depends(get_current_active_superuser)], response_model=UserPublic
+    "/", dependencies=[Depends(get_current_active_admin)], response_model=UserPublic
 )
 @log_route
 def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
@@ -130,7 +131,7 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Delete own user.
     """
-    if current_user.is_superuser:
+    if current_user.is_superuser or current_user.is_admin:
         raise PermissionDeniedError("Super users are not allowed to delete themselves")
 
     user_service = UserService(session)
@@ -193,7 +194,6 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
         password=user_in.password,
         full_name=full_name,
         is_active=True,
-        is_superuser=False,
     )
     user = user_service.create_user(user_create)
 
@@ -235,7 +235,7 @@ def read_user_by_id(
     if user == current_user:
         return user
 
-    if not current_user.is_superuser:
+    if not (current_user.is_superuser or current_user.is_admin):
         raise PermissionDeniedError()
 
     return user
@@ -243,7 +243,7 @@ def read_user_by_id(
 
 @router.patch(
     "/{user_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
     response_model=UserPublic,
 )
 def update_user(
@@ -272,7 +272,51 @@ def update_user(
     return db_user
 
 
-@router.delete("/{user_id}", dependencies=[Depends(get_current_active_superuser)])
+@router.patch(
+    "/{user_id}/role",
+    dependencies=[Depends(get_current_active_admin)],
+    response_model=UserPublic,
+)
+@log_route
+def update_user_role(
+    *,
+    session: SessionDep,
+    user_id: uuid.UUID,
+    role_in: UserRoleUpdate,
+    current_user: CurrentUser,
+) -> Any:
+    """
+    Update a user's role. Admin only.
+
+    - Admins can change other users' roles
+    - Admins cannot change their own role (to prevent self-demotion)
+    """
+    user_service = UserService(session)
+    db_user = user_service.get_user_by_id(user_id)
+
+    if not db_user:
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this id does not exist in the system",
+        )
+
+    # Prevent admin from changing their own role
+    if db_user.id == current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="Cannot change your own role",
+        )
+
+    # Update the user's role
+    db_user.role = role_in.role
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+
+    return db_user
+
+
+@router.delete("/{user_id}", dependencies=[Depends(get_current_active_admin)])
 def delete_user(
     session: SessionDep, current_user: CurrentUser, user_id: uuid.UUID
 ) -> Message:

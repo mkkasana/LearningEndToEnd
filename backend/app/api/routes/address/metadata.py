@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.deps import SessionDep, get_current_active_superuser
+from app.api.deps import SessionDep, get_current_active_admin
 from app.schemas.address import (
     CountryCreate,
     CountryDetailPublic,
@@ -76,13 +76,13 @@ def get_country_by_id(session: SessionDep, country_id: uuid.UUID) -> Any:
 @router.post(
     "/countries",
     response_model=CountryDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def create_country(session: SessionDep, country_in: CountryCreate) -> Any:
     """
     Create a new country.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     country_service = CountryService(session)
 
@@ -100,7 +100,7 @@ def create_country(session: SessionDep, country_in: CountryCreate) -> Any:
 @router.patch(
     "/countries/{country_id}",
     response_model=CountryDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def update_country(
@@ -110,7 +110,7 @@ def update_country(
 ) -> Any:
     """
     Update a country.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     country_service = CountryService(session)
 
@@ -136,13 +136,13 @@ def update_country(
 
 @router.delete(
     "/countries/{country_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def delete_country(session: SessionDep, country_id: uuid.UUID) -> Any:
     """
     Delete a country.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     country_service = CountryService(session)
 
@@ -207,13 +207,13 @@ def get_state_by_id(session: SessionDep, state_id: uuid.UUID) -> Any:
 @router.post(
     "/states",
     response_model=StateDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def create_state(session: SessionDep, state_in: StateCreate) -> Any:
     """
     Create a new state.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     # Verify country exists
     country_service = CountryService(session)
@@ -240,7 +240,7 @@ def create_state(session: SessionDep, state_in: StateCreate) -> Any:
 @router.patch(
     "/states/{state_id}",
     response_model=StateDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def update_state(
@@ -250,7 +250,7 @@ def update_state(
 ) -> Any:
     """
     Update a state.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     state_service = StateService(session)
 
@@ -278,13 +278,13 @@ def update_state(
 
 @router.delete(
     "/states/{state_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def delete_state(session: SessionDep, state_id: uuid.UUID) -> Any:
     """
     Delete a state.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     state_service = StateService(session)
 
@@ -349,13 +349,13 @@ def get_district_by_id(session: SessionDep, district_id: uuid.UUID) -> Any:
 @router.post(
     "/districts",
     response_model=DistrictDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def create_district(session: SessionDep, district_in: DistrictCreate) -> Any:
     """
     Create a new district.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     # Verify state exists
     state_service = StateService(session)
@@ -384,7 +384,7 @@ def create_district(session: SessionDep, district_in: DistrictCreate) -> Any:
 @router.patch(
     "/districts/{district_id}",
     response_model=DistrictDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def update_district(
@@ -394,7 +394,7 @@ def update_district(
 ) -> Any:
     """
     Update a district.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     district_service = DistrictService(session)
 
@@ -422,13 +422,13 @@ def update_district(
 
 @router.delete(
     "/districts/{district_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def delete_district(session: SessionDep, district_id: uuid.UUID) -> Any:
     """
     Delete a district.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     district_service = DistrictService(session)
 
@@ -493,13 +493,13 @@ def get_sub_district_by_id(session: SessionDep, sub_district_id: uuid.UUID) -> A
 @router.post(
     "/sub-districts",
     response_model=SubDistrictDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def create_sub_district(session: SessionDep, sub_district_in: SubDistrictCreate) -> Any:
     """
     Create a new sub-district (tehsil/county).
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     # Verify district exists
     district_service = DistrictService(session)
@@ -528,7 +528,7 @@ def create_sub_district(session: SessionDep, sub_district_in: SubDistrictCreate)
 @router.patch(
     "/sub-districts/{sub_district_id}",
     response_model=SubDistrictDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def update_sub_district(
@@ -538,7 +538,7 @@ def update_sub_district(
 ) -> Any:
     """
     Update a sub-district (tehsil/county).
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     sub_district_service = SubDistrictService(session)
 
@@ -570,13 +570,13 @@ def update_sub_district(
 
 @router.delete(
     "/sub-districts/{sub_district_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def delete_sub_district(session: SessionDep, sub_district_id: uuid.UUID) -> Any:
     """
     Delete a sub-district (tehsil/county).
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     sub_district_service = SubDistrictService(session)
 
@@ -643,13 +643,13 @@ def get_locality_by_id(session: SessionDep, locality_id: uuid.UUID) -> Any:
 @router.post(
     "/localities",
     response_model=LocalityDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def create_locality(session: SessionDep, locality_in: LocalityCreate) -> Any:
     """
     Create a new locality (village).
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     # Verify sub-district exists
     sub_district_service = SubDistrictService(session)
@@ -680,7 +680,7 @@ def create_locality(session: SessionDep, locality_in: LocalityCreate) -> Any:
 @router.patch(
     "/localities/{locality_id}",
     response_model=LocalityDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def update_locality(
@@ -690,7 +690,7 @@ def update_locality(
 ) -> Any:
     """
     Update a locality (village).
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     locality_service = LocalityService(session)
 
@@ -720,13 +720,13 @@ def update_locality(
 
 @router.delete(
     "/localities/{locality_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def delete_locality(session: SessionDep, locality_id: uuid.UUID) -> Any:
     """
     Delete a locality (village).
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     locality_service = LocalityService(session)
 

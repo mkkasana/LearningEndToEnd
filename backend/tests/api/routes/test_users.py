@@ -26,12 +26,13 @@ class TestGetUsersMe:
     def test_get_users_superuser_me(
         self, client: TestClient, superuser_token_headers: dict[str, str]
     ) -> None:
-        """Test superuser can get their own info."""
+        """Test admin user (first superuser) can get their own info."""
         r = client.get(f"{settings.API_V1_STR}/users/me", headers=superuser_token_headers)
         current_user = r.json()
         assert r.status_code == 200
         assert current_user["is_active"] is True
-        assert current_user["is_superuser"]
+        # First user is created as ADMIN, not SUPERUSER
+        assert current_user["role"] == "admin"
         assert current_user["email"] == settings.FIRST_SUPERUSER
 
     def test_get_users_normal_user_me(
@@ -507,7 +508,8 @@ def test_get_users_superuser_me(
     current_user = r.json()
     assert current_user
     assert current_user["is_active"] is True
-    assert current_user["is_superuser"]
+    # First user is created as ADMIN, not SUPERUSER
+    assert current_user["role"] == "admin"
     assert current_user["email"] == settings.FIRST_SUPERUSER
 
 
@@ -964,3 +966,245 @@ def test_delete_user_without_privileges(
     )
     assert r.status_code == 403
     assert r.json()["detail"] == "The user doesn't have enough privileges"
+
+
+# ============================================================================
+# Property Tests - Admin Role Management (Task 6.2)
+# ============================================================================
+
+
+@pytest.mark.unit
+class TestUpdateUserRole:
+    """Property tests for PATCH /users/{user_id}/role endpoint.
+    
+    **Feature: user-roles-permissions, Property 6: Admin Role Management**
+    **Validates: Requirements 5.1, 5.2, 5.3**
+    
+    Tests that:
+    - Admin can change other users' roles
+    - Superuser cannot change roles (403)
+    - Admin cannot change own role
+    """
+
+    def test_admin_can_change_other_user_role(
+        self, client: TestClient, db: Session
+    ) -> None:
+        """Test admin can change another user's role.
+        
+        **Validates: Requirements 5.1**
+        """
+        from app.enums.user_role import UserRole
+        
+        # Create an admin user
+        admin_email = random_email()
+        admin_password = random_lower_string()
+        admin_in = UserCreate(email=admin_email, password=admin_password)
+        admin_user = crud.create_user(session=db, user_create=admin_in)
+        admin_user.role = UserRole.ADMIN
+        db.add(admin_user)
+        db.commit()
+        db.refresh(admin_user)
+        
+        # Get admin token
+        login_data = {"username": admin_email, "password": admin_password}
+        r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+        tokens = r.json()
+        admin_headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+        
+        # Create a regular user to update
+        target_email = random_email()
+        target_password = random_lower_string()
+        target_in = UserCreate(email=target_email, password=target_password)
+        target_user = crud.create_user(session=db, user_create=target_in)
+        
+        # Admin changes target user's role to superuser
+        data = {"role": "superuser"}
+        r = client.patch(
+            f"{settings.API_V1_STR}/users/{target_user.id}/role",
+            headers=admin_headers,
+            json=data,
+        )
+        
+        assert r.status_code == 200
+        updated_user = r.json()
+        assert updated_user["role"] == "superuser"
+        
+        # Verify in database
+        db.refresh(target_user)
+        assert target_user.role == UserRole.SUPERUSER
+
+    def test_superuser_cannot_change_roles(
+        self, client: TestClient, db: Session
+    ) -> None:
+        """Test superuser cannot change user roles (403).
+        
+        **Validates: Requirements 5.2**
+        """
+        from app.enums.user_role import UserRole
+        
+        # Create a superuser
+        superuser_email = random_email()
+        superuser_password = random_lower_string()
+        superuser_in = UserCreate(email=superuser_email, password=superuser_password)
+        superuser = crud.create_user(session=db, user_create=superuser_in)
+        superuser.role = UserRole.SUPERUSER
+        db.add(superuser)
+        db.commit()
+        db.refresh(superuser)
+        
+        # Get superuser token
+        login_data = {"username": superuser_email, "password": superuser_password}
+        r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+        tokens = r.json()
+        superuser_headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+        
+        # Create a regular user to try to update
+        target_email = random_email()
+        target_password = random_lower_string()
+        target_in = UserCreate(email=target_email, password=target_password)
+        target_user = crud.create_user(session=db, user_create=target_in)
+        
+        # Superuser tries to change target user's role
+        data = {"role": "superuser"}
+        r = client.patch(
+            f"{settings.API_V1_STR}/users/{target_user.id}/role",
+            headers=superuser_headers,
+            json=data,
+        )
+        
+        assert r.status_code == 403
+        assert r.json()["detail"] == "The user doesn't have enough privileges"
+
+    def test_admin_cannot_change_own_role(
+        self, client: TestClient, db: Session
+    ) -> None:
+        """Test admin cannot change their own role.
+        
+        **Validates: Requirements 5.3**
+        """
+        from app.enums.user_role import UserRole
+        
+        # Create an admin user
+        admin_email = random_email()
+        admin_password = random_lower_string()
+        admin_in = UserCreate(email=admin_email, password=admin_password)
+        admin_user = crud.create_user(session=db, user_create=admin_in)
+        admin_user.role = UserRole.ADMIN
+        db.add(admin_user)
+        db.commit()
+        db.refresh(admin_user)
+        
+        # Get admin token
+        login_data = {"username": admin_email, "password": admin_password}
+        r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+        tokens = r.json()
+        admin_headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+        
+        # Admin tries to change their own role
+        data = {"role": "user"}
+        r = client.patch(
+            f"{settings.API_V1_STR}/users/{admin_user.id}/role",
+            headers=admin_headers,
+            json=data,
+        )
+        
+        assert r.status_code == 403
+        assert r.json()["detail"] == "Cannot change your own role"
+
+    def test_normal_user_cannot_change_roles(
+        self, client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+    ) -> None:
+        """Test normal user cannot change user roles (403).
+        
+        **Validates: Requirements 5.2**
+        """
+        # Create a target user
+        target_email = random_email()
+        target_password = random_lower_string()
+        target_in = UserCreate(email=target_email, password=target_password)
+        target_user = crud.create_user(session=db, user_create=target_in)
+        
+        # Normal user tries to change target user's role
+        data = {"role": "superuser"}
+        r = client.patch(
+            f"{settings.API_V1_STR}/users/{target_user.id}/role",
+            headers=normal_user_token_headers,
+            json=data,
+        )
+        
+        assert r.status_code == 403
+        assert r.json()["detail"] == "The user doesn't have enough privileges"
+
+    def test_update_role_user_not_found(
+        self, client: TestClient, db: Session
+    ) -> None:
+        """Test updating role for non-existent user returns 404."""
+        from app.enums.user_role import UserRole
+        
+        # Create an admin user
+        admin_email = random_email()
+        admin_password = random_lower_string()
+        admin_in = UserCreate(email=admin_email, password=admin_password)
+        admin_user = crud.create_user(session=db, user_create=admin_in)
+        admin_user.role = UserRole.ADMIN
+        db.add(admin_user)
+        db.commit()
+        db.refresh(admin_user)
+        
+        # Get admin token
+        login_data = {"username": admin_email, "password": admin_password}
+        r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+        tokens = r.json()
+        admin_headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+        
+        # Try to update non-existent user
+        data = {"role": "superuser"}
+        r = client.patch(
+            f"{settings.API_V1_STR}/users/{uuid.uuid4()}/role",
+            headers=admin_headers,
+            json=data,
+        )
+        
+        assert r.status_code == 404
+        assert r.json()["detail"] == "The user with this id does not exist in the system"
+
+    def test_update_role_invalid_role_value(
+        self, client: TestClient, db: Session
+    ) -> None:
+        """Test updating role with invalid value returns 422.
+        
+        **Validates: Requirements 5.4**
+        """
+        from app.enums.user_role import UserRole
+        
+        # Create an admin user
+        admin_email = random_email()
+        admin_password = random_lower_string()
+        admin_in = UserCreate(email=admin_email, password=admin_password)
+        admin_user = crud.create_user(session=db, user_create=admin_in)
+        admin_user.role = UserRole.ADMIN
+        db.add(admin_user)
+        db.commit()
+        db.refresh(admin_user)
+        
+        # Get admin token
+        login_data = {"username": admin_email, "password": admin_password}
+        r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+        tokens = r.json()
+        admin_headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+        
+        # Create a target user
+        target_email = random_email()
+        target_password = random_lower_string()
+        target_in = UserCreate(email=target_email, password=target_password)
+        target_user = crud.create_user(session=db, user_create=target_in)
+        
+        # Try to update with invalid role
+        data = {"role": "invalid_role"}
+        r = client.patch(
+            f"{settings.API_V1_STR}/users/{target_user.id}/role",
+            headers=admin_headers,
+            json=data,
+        )
+        
+        assert r.status_code == 422  # Validation error

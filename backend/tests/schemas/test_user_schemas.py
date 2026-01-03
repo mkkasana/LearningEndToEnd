@@ -5,6 +5,7 @@ import uuid
 import pytest
 from pydantic import ValidationError
 
+from app.enums.user_role import UserRole
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -26,7 +27,7 @@ class TestUserBase:
         user = UserBase(email="test@example.com")
         assert user.email == "test@example.com"
         assert user.is_active is True
-        assert user.is_superuser is False
+        assert user.role == UserRole.USER
         assert user.full_name is None
 
     def test_user_base_with_all_fields(self) -> None:
@@ -34,11 +35,11 @@ class TestUserBase:
         user = UserBase(
             email="test@example.com",
             is_active=False,
-            is_superuser=True,
+            role=UserRole.SUPERUSER,
             full_name="John Doe",
         )
         assert user.is_active is False
-        assert user.is_superuser is True
+        assert user.role == UserRole.SUPERUSER
         assert user.full_name == "John Doe"
 
     def test_user_base_invalid_email(self) -> None:

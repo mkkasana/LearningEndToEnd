@@ -382,7 +382,7 @@ This implementation plan breaks down the backend testing coverage initiative int
 - [*] 26. Final checkpoint - Verify complete test suite
   - Ensure all tests pass with 90%+ coverage, ask the user if questions arise.
 
-- [ ] 27. Unit tests for low coverage files (target: 80%+ overall)
+- [*] 27. Unit tests for low coverage files (target: 80%+ overall)
   - [x] 27.1 Write unit tests for address services (currently 47%)
     - Test StateService: get_all, get_by_id, get_by_country
     - Test DistrictService: get_all, get_by_id, get_by_state

@@ -16,6 +16,7 @@ import pytest
 
 from app.core.security import get_password_hash, verify_password
 from app.db_models.user import User
+from app.enums.user_role import UserRole
 from app.schemas.user import UserCreate, UserUpdate
 from app.services.user_service import UserService
 
@@ -185,7 +186,7 @@ class TestUserServiceCreate:
         user_create = UserCreate(
             email="admin@example.com",
             password="adminpass",
-            is_superuser=True,
+            role=UserRole.SUPERUSER,
         )
 
         service = UserService(mock_session)
@@ -199,6 +200,7 @@ class TestUserServiceCreate:
 
             # Assert
             assert result.is_superuser is True
+            assert result.role == UserRole.SUPERUSER
 
 
 @pytest.mark.unit
@@ -424,3 +426,81 @@ class TestUserServicePassword:
             # Assert
             assert result.hashed_password != old_hash
             assert verify_password("new_password", result.hashed_password)
+
+
+@pytest.mark.unit
+class TestUserServiceRoleManagement:
+    """Tests for user role management operations."""
+
+    def test_update_user_role_changes_role(self, mock_session: MagicMock) -> None:
+        """Test update_user_role changes the user's role."""
+        # Arrange
+        mock_user = User(
+            id=uuid.uuid4(),
+            email="test@example.com",
+            hashed_password="hashed",
+            is_active=True,
+            role=UserRole.USER,
+        )
+
+        service = UserService(mock_session)
+        
+        def return_user(user: User) -> User:
+            return user
+
+        with patch.object(service.user_repo, "update", side_effect=return_user):
+            # Act
+            result = service.update_user_role(mock_user, UserRole.SUPERUSER)
+
+            # Assert
+            assert result.role == UserRole.SUPERUSER
+            assert result.is_superuser is True
+
+    def test_update_user_role_to_admin(self, mock_session: MagicMock) -> None:
+        """Test update_user_role can promote user to admin."""
+        # Arrange
+        mock_user = User(
+            id=uuid.uuid4(),
+            email="test@example.com",
+            hashed_password="hashed",
+            is_active=True,
+            role=UserRole.USER,
+        )
+
+        service = UserService(mock_session)
+        
+        def return_user(user: User) -> User:
+            return user
+
+        with patch.object(service.user_repo, "update", side_effect=return_user):
+            # Act
+            result = service.update_user_role(mock_user, UserRole.ADMIN)
+
+            # Assert
+            assert result.role == UserRole.ADMIN
+            assert result.is_admin is True
+
+    def test_update_user_role_demote_to_user(self, mock_session: MagicMock) -> None:
+        """Test update_user_role can demote superuser to user."""
+        # Arrange
+        mock_user = User(
+            id=uuid.uuid4(),
+            email="test@example.com",
+            hashed_password="hashed",
+            is_active=True,
+            role=UserRole.SUPERUSER,
+        )
+
+        service = UserService(mock_session)
+        
+        def return_user(user: User) -> User:
+            return user
+
+        with patch.object(service.user_repo, "update", side_effect=return_user):
+            # Act
+            result = service.update_user_role(mock_user, UserRole.USER)
+
+            # Assert
+            assert result.role == UserRole.USER
+            assert result.is_superuser is False
+            assert result.is_admin is False

@@ -2,6 +2,7 @@ from sqlmodel import Session, create_engine, select
 
 from app.core.config import settings
 from app.db_models.user import User
+from app.enums.user_role import UserRole
 from app.schemas.user import UserCreate
 from app.services.user_service import UserService
 
@@ -29,7 +30,7 @@ def init_db(session: Session) -> None:
         user_in = UserCreate(
             email=settings.FIRST_SUPERUSER,
             password=settings.FIRST_SUPERUSER_PASSWORD,
-            is_superuser=True,
+            role=UserRole.ADMIN,
         )
         user_service = UserService(session)
         user = user_service.create_user(user_in)

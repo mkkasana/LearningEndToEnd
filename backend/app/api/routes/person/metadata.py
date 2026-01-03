@@ -5,7 +5,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.deps import SessionDep, get_current_active_superuser
+from app.api.deps import SessionDep, get_current_active_admin
 from app.schemas.person import (
     GenderDetailPublic,
     ProfessionCreate,
@@ -61,13 +61,13 @@ def get_profession_by_id(session: SessionDep, profession_id: uuid.UUID) -> Any:
 @router.post(
     "/professions",
     response_model=ProfessionDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def create_profession(session: SessionDep, profession_in: ProfessionCreate) -> Any:
     """
     Create a new profession.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     profession_service = ProfessionService(session)
 
@@ -85,7 +85,7 @@ def create_profession(session: SessionDep, profession_in: ProfessionCreate) -> A
 @router.patch(
     "/professions/{profession_id}",
     response_model=ProfessionDetailPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def update_profession(
@@ -95,7 +95,7 @@ def update_profession(
 ) -> Any:
     """
     Update a profession.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     profession_service = ProfessionService(session)
 
@@ -123,13 +123,13 @@ def update_profession(
 
 @router.delete(
     "/professions/{profession_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 @log_route
 def delete_profession(session: SessionDep, profession_id: uuid.UUID) -> Any:
     """
     Delete a profession.
-    Requires superuser authentication.
+    Requires admin authentication.
     """
     profession_service = ProfessionService(session)
 

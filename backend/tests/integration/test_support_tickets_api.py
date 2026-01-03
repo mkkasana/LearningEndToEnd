@@ -51,6 +51,19 @@ def create_test_superuser_with_auth(
     return headers, user.id
 
 
+def create_test_admin_with_auth(
+    client: TestClient, db: Session
+) -> tuple[dict[str, str], uuid.UUID]:
+    """Create a test admin user and return auth headers and user ID."""
+    user = UserFactory.create_admin(db, password="adminpassword123")
+    headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="adminpassword123",
+    )
+    return headers, user.id
+
+
 # ============================================================================
 # Integration Tests - Ticket CRUD (Task 21.1)
 # ============================================================================
@@ -367,7 +380,7 @@ class TestGetSupportTicketById:
         ticket_id = create_response.json()["id"]
 
         # Admin should be able to access
-        admin_headers, _ = create_test_superuser_with_auth(client, db)
+        admin_headers, _ = create_test_admin_with_auth(client, db)
         r = client.get(
             f"{settings.API_V1_STR}/support-tickets/{ticket_id}",
             headers=admin_headers,
@@ -611,7 +624,7 @@ class TestDeleteSupportTicket:
         ticket_id = create_response.json()["id"]
 
         # Admin should be able to delete
-        admin_headers, _ = create_test_superuser_with_auth(client, db)
+        admin_headers, _ = create_test_admin_with_auth(client, db)
         r = client.delete(
             f"{settings.API_V1_STR}/support-tickets/{ticket_id}",
             headers=admin_headers,
@@ -655,7 +668,7 @@ class TestGetAllSupportTicketsAdmin:
         )
 
         # Admin gets all tickets
-        admin_headers, _ = create_test_superuser_with_auth(client, db)
+        admin_headers, _ = create_test_admin_with_auth(client, db)
         r = client.get(
             f"{settings.API_V1_STR}/support-tickets/admin/all",
             headers=admin_headers,
@@ -689,7 +702,7 @@ class TestGetAllSupportTicketsAdmin:
         )
 
         # Admin filters by open status
-        admin_headers, _ = create_test_superuser_with_auth(client, db)
+        admin_headers, _ = create_test_admin_with_auth(client, db)
         r = client.get(
             f"{settings.API_V1_STR}/support-tickets/admin/all",
             headers=admin_headers,
@@ -719,7 +732,7 @@ class TestGetAllSupportTicketsAdmin:
         )
 
         # Admin filters by bug type
-        admin_headers, _ = create_test_superuser_with_auth(client, db)
+        admin_headers, _ = create_test_admin_with_auth(client, db)
         r = client.get(
             f"{settings.API_V1_STR}/support-tickets/admin/all",
             headers=admin_headers,
@@ -750,7 +763,7 @@ class TestGetAllSupportTicketsAdmin:
             )
 
         # Admin gets with pagination
-        admin_headers, _ = create_test_superuser_with_auth(client, db)
+        admin_headers, _ = create_test_admin_with_auth(client, db)
         r = client.get(
             f"{settings.API_V1_STR}/support-tickets/admin/all",
             headers=admin_headers,
@@ -805,7 +818,7 @@ class TestResolveSupportTicket:
         ticket_id = create_response.json()["id"]
 
         # Admin resolves the ticket
-        admin_headers, admin_id = create_test_superuser_with_auth(client, db)
+        admin_headers, admin_id = create_test_admin_with_auth(client, db)
         r = client.patch(
             f"{settings.API_V1_STR}/support-tickets/{ticket_id}/resolve",
             headers=admin_headers,
@@ -821,7 +834,7 @@ class TestResolveSupportTicket:
         self, client: TestClient, db: Session
     ) -> None:
         """Test resolving non-existent ticket returns 404."""
-        admin_headers, _ = create_test_superuser_with_auth(client, db)
+        admin_headers, _ = create_test_admin_with_auth(client, db)
         non_existent_id = uuid.uuid4()
 
         r = client.patch(
@@ -881,7 +894,7 @@ class TestReopenSupportTicket:
         ticket_id = create_response.json()["id"]
 
         # Admin resolves the ticket first
-        admin_headers, _ = create_test_superuser_with_auth(client, db)
+        admin_headers, _ = create_test_admin_with_auth(client, db)
         client.patch(
             f"{settings.API_V1_STR}/support-tickets/{ticket_id}/resolve",
             headers=admin_headers,
@@ -903,7 +916,7 @@ class TestReopenSupportTicket:
         self, client: TestClient, db: Session
     ) -> None:
         """Test reopening non-existent ticket returns 404."""
-        admin_headers, _ = create_test_superuser_with_auth(client, db)
+        admin_headers, _ = create_test_admin_with_auth(client, db)
         non_existent_id = uuid.uuid4()
 
         r = client.patch(

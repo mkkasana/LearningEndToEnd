@@ -6,7 +6,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.deps import CurrentUser, SessionDep, get_current_active_superuser
+from app.api.deps import CurrentUser, SessionDep, get_current_active_admin
 from app.db_models.person.person import Person
 from app.schemas.person import (
     PersonAddressCreate,
@@ -274,8 +274,8 @@ def create_person_address(
             detail="Person not found",
         )
 
-    # Check if user has permission (created the person or is superuser)
-    if person.created_by_user_id != current_user.id and not current_user.is_superuser:
+    # Check if user has permission (created the person or is admin)
+    if person.created_by_user_id != current_user.id and not current_user.is_admin:
         raise HTTPException(
             status_code=403,
             detail="Not authorized to add address to this person",
@@ -306,8 +306,8 @@ def create_person_religion(
             detail="Person not found",
         )
 
-    # Check if user has permission (created the person or is superuser)
-    if person.created_by_user_id != current_user.id and not current_user.is_superuser:
+    # Check if user has permission (created the person or is admin)
+    if person.created_by_user_id != current_user.id and not current_user.is_admin:
         raise HTTPException(
             status_code=403,
             detail="Not authorized to add religion to this person",
@@ -363,7 +363,7 @@ def delete_my_person(session: SessionDep, current_user: CurrentUser) -> Any:
 @router.get(
     "/{user_id}",
     response_model=PersonPublic,
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 def get_person_by_user_id(session: SessionDep, user_id: uuid.UUID) -> Any:
     """
@@ -383,7 +383,7 @@ def get_person_by_user_id(session: SessionDep, user_id: uuid.UUID) -> Any:
 
 @router.delete(
     "/{user_id}",
-    dependencies=[Depends(get_current_active_superuser)],
+    dependencies=[Depends(get_current_active_admin)],
 )
 def delete_person_by_user_id(session: SessionDep, user_id: uuid.UUID) -> Any:
     """

@@ -5,7 +5,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.deps import CurrentUser, SessionDep, get_current_active_superuser
+from app.api.deps import CurrentUser, SessionDep, get_current_active_admin
 from app.db_models.user import User
 from app.schemas.common import Message
 from app.schemas.support_ticket import (
@@ -23,7 +23,7 @@ from app.utils.logging_decorator import log_route
 router = APIRouter(prefix="/support-tickets", tags=["issues"])
 
 # Type alias for superuser dependency
-SuperUser = Annotated[User, Depends(get_current_active_superuser)]
+SuperUser = Annotated[User, Depends(get_current_active_admin)]
 
 
 @router.post("/", response_model=SupportTicketPublic)
@@ -77,7 +77,7 @@ def get_support_ticket(
         raise HTTPException(status_code=404, detail="Support ticket not found")
 
     if not support_ticket_service.can_user_access_support_ticket(
-        support_ticket, current_user.id, current_user.is_superuser
+        support_ticket, current_user.id, current_user.is_admin
     ):
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
@@ -125,7 +125,7 @@ def delete_support_ticket(
         raise HTTPException(status_code=404, detail="Support ticket not found")
 
     if not support_ticket_service.can_user_access_support_ticket(
-        support_ticket, current_user.id, current_user.is_superuser
+        support_ticket, current_user.id, current_user.is_admin
     ):
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
