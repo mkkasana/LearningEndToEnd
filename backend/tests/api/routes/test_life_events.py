@@ -107,6 +107,291 @@ class TestGetMyLifeEvents:
 
 
 @pytest.mark.integration
+class TestGetPersonLifeEvents:
+    """Integration tests for GET /life-events/person/{person_id} endpoint."""
+
+    def test_get_person_life_events_success(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Test getting life events for a specific person by person_id."""
+        # Get the test user by email
+        from app.crud import get_user_by_email
+        from app.db_models.person.gender import Gender
+        
+        user = get_user_by_email(session=db, email=settings.EMAIL_TEST_USER)
+        
+        if user:
+            # Check if person exists, if not create one
+            person = db.exec(
+                select(Person).where(Person.user_id == user.id)
+            ).first()
+            
+            if not person:
+                # Create a person for the test user
+                gender = db.exec(select(Gender).where(Gender.code == "MALE")).first()
+                person = Person(
+                    id=uuid.uuid4(),
+                    user_id=user.id,
+                    first_name="Test",
+                    last_name="User",
+                    gender_id=gender.id,
+                    date_of_birth="1990-01-01",
+                    created_by_user_id=user.id,
+                )
+                db.add(person)
+                db.commit()
+                db.refresh(person)
+
+            # Create multiple life events with different dates for sorting test
+            event1 = PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=person.id,
+                event_type=LifeEventType.ACHIEVEMENT,
+                title="First Achievement",
+                event_year=2020,
+                event_month=6,
+                event_date=15,
+            )
+            event2 = PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=person.id,
+                event_type=LifeEventType.CAREER,
+                title="Second Achievement",
+                event_year=2021,
+                event_month=3,
+                event_date=10,
+            )
+            event3 = PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=person.id,
+                event_type=LifeEventType.EDUCATION,
+                title="Third Achievement",
+                event_year=2021,
+                event_month=8,
+                event_date=20,
+            )
+            db.add(event1)
+            db.add(event2)
+            db.add(event3)
+            db.commit()
+
+            r = client.get(
+                f"{settings.API_V1_STR}/life-events/person/{person.id}",
+                headers=normal_user_token_headers,
+            )
+            assert r.status_code == 200
+            data = r.json()
+            assert "data" in data
+            assert "count" in data
+            assert isinstance(data["data"], list)
+            assert data["count"] >= 3
+
+    def test_get_person_life_events_not_found(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test getting life events for non-existent person returns 404."""
+        fake_person_id = uuid.uuid4()
+        r = client.get(
+            f"{settings.API_V1_STR}/life-events/person/{fake_person_id}",
+            headers=normal_user_token_headers,
+        )
+        assert r.status_code == 404
+        data = r.json()
+        assert data["detail"] == "Person not found"
+
+    def test_get_person_life_events_empty(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Test getting life events for person with no events returns empty list."""
+        # Get the test user by email
+        from app.crud import get_user_by_email
+        from app.db_models.person.gender import Gender
+        
+        user = get_user_by_email(session=db, email=settings.EMAIL_TEST_USER)
+        
+        if user:
+            # Create a new person without any life events
+            gender = db.exec(select(Gender).where(Gender.code == "FEMALE")).first()
+            person = Person(
+                id=uuid.uuid4(),
+                user_id=user.id,
+                first_name="Empty",
+                last_name="Events",
+                gender_id=gender.id,
+                date_of_birth="1995-05-15",
+                created_by_user_id=user.id,
+            )
+            db.add(person)
+            db.commit()
+            db.refresh(person)
+
+            r = client.get(
+                f"{settings.API_V1_STR}/life-events/person/{person.id}",
+                headers=normal_user_token_headers,
+            )
+            assert r.status_code == 200
+            data = r.json()
+            assert data["data"] == []
+            assert data["count"] == 0
+
+    def test_get_person_life_events_pagination(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Test getting life events with pagination parameters."""
+        # Get the test user by email
+        from app.crud import get_user_by_email
+        from app.db_models.person.gender import Gender
+        
+        user = get_user_by_email(session=db, email=settings.EMAIL_TEST_USER)
+        
+        if user:
+            person = db.exec(
+                select(Person).where(Person.user_id == user.id)
+            ).first()
+            
+            if not person:
+                gender = db.exec(select(Gender).where(Gender.code == "MALE")).first()
+                person = Person(
+                    id=uuid.uuid4(),
+                    user_id=user.id,
+                    first_name="Test",
+                    last_name="Pagination",
+                    gender_id=gender.id,
+                    date_of_birth="1990-01-01",
+                    created_by_user_id=user.id,
+                )
+                db.add(person)
+                db.commit()
+                db.refresh(person)
+
+            # Create multiple events
+            for i in range(5):
+                event = PersonLifeEvent(
+                    id=uuid.uuid4(),
+                    person_id=person.id,
+                    event_type=LifeEventType.OTHER,
+                    title=f"Event {i}",
+                    event_year=2020 + i,
+                )
+                db.add(event)
+            db.commit()
+
+            # Test with limit
+            r = client.get(
+                f"{settings.API_V1_STR}/life-events/person/{person.id}?skip=0&limit=2",
+                headers=normal_user_token_headers,
+            )
+            assert r.status_code == 200
+            data = r.json()
+            assert len(data["data"]) <= 2
+
+            # Test with skip
+            r = client.get(
+                f"{settings.API_V1_STR}/life-events/person/{person.id}?skip=2&limit=2",
+                headers=normal_user_token_headers,
+            )
+            assert r.status_code == 200
+
+    def test_get_person_life_events_sorting(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Test that life events are sorted by date descending."""
+        # Get the test user by email
+        from app.crud import get_user_by_email
+        from app.db_models.person.gender import Gender
+        
+        user = get_user_by_email(session=db, email=settings.EMAIL_TEST_USER)
+        
+        if user:
+            # Create a person
+            gender = db.exec(select(Gender).where(Gender.code == "MALE")).first()
+            person = Person(
+                id=uuid.uuid4(),
+                user_id=user.id,
+                first_name="Sort",
+                last_name="Test",
+                gender_id=gender.id,
+                date_of_birth="1990-01-01",
+                created_by_user_id=user.id,
+            )
+            db.add(person)
+            db.commit()
+            db.refresh(person)
+
+            # Create events in non-chronological order
+            event_old = PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=person.id,
+                event_type=LifeEventType.BIRTH,
+                title="Oldest Event",
+                event_year=2015,
+                event_month=1,
+                event_date=1,
+            )
+            event_new = PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=person.id,
+                event_type=LifeEventType.ACHIEVEMENT,
+                title="Newest Event",
+                event_year=2023,
+                event_month=12,
+                event_date=31,
+            )
+            event_mid = PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=person.id,
+                event_type=LifeEventType.CAREER,
+                title="Middle Event",
+                event_year=2020,
+                event_month=6,
+                event_date=15,
+            )
+            db.add(event_old)
+            db.add(event_new)
+            db.add(event_mid)
+            db.commit()
+
+            r = client.get(
+                f"{settings.API_V1_STR}/life-events/person/{person.id}",
+                headers=normal_user_token_headers,
+            )
+            assert r.status_code == 200
+            data = r.json()
+            events = data["data"]
+            
+            # Verify sorting: most recent first
+            if len(events) >= 3:
+                # Find our test events
+                titles = [e["title"] for e in events]
+                newest_idx = titles.index("Newest Event")
+                middle_idx = titles.index("Middle Event")
+                oldest_idx = titles.index("Oldest Event")
+                
+                # Newest should come before middle, middle before oldest
+                assert newest_idx < middle_idx < oldest_idx
+
+    def test_get_person_life_events_unauthorized(self, client: TestClient) -> None:
+        """Test getting life events without authentication returns 401."""
+        fake_person_id = uuid.uuid4()
+        r = client.get(f"{settings.API_V1_STR}/life-events/person/{fake_person_id}")
+        assert r.status_code == 401
+
+
+@pytest.mark.integration
 class TestCreateLifeEvent:
     """Integration tests for POST /life-events/ endpoint."""
 
