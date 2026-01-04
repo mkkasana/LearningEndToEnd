@@ -63,6 +63,45 @@ def get_my_life_events(
     return LifeEventsPublic(data=events, count=count)
 
 
+@router.get("/person/{person_id}", response_model=LifeEventsPublic)
+@log_route
+def get_person_life_events(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+    skip: int = 0,
+    limit: int = 100,
+) -> Any:
+    """
+    Get life events for a specific person by person ID.
+
+    Accessible to all authenticated users - allows viewing life events
+    for any person visible in the Family Tree.
+
+    Returns life events sorted by date (most recent first):
+    - Year descending
+    - Month descending (nulls last)
+    - Date descending (nulls last)
+    """
+    # Verify person exists
+    person_service = PersonService(session)
+    person = person_service.person_repo.get_by_id(person_id)
+
+    if not person:
+        raise HTTPException(
+            status_code=404,
+            detail="Person not found",
+        )
+
+    # Get life events for the person
+    life_event_service = LifeEventService(session)
+    events, count = life_event_service.get_life_events(
+        person_id, skip=skip, limit=limit
+    )
+
+    return LifeEventsPublic(data=events, count=count)
+
+
 @router.post("/", response_model=LifeEventPublic)
 @log_route
 def create_life_event(
