@@ -18,6 +18,7 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSupportTicketsRouteImport } from './routes/_layout/support-tickets'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
+import { Route as LayoutLifeEventsRouteImport } from './routes/_layout/life-events'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
 import { Route as LayoutFamilyTreeRouteImport } from './routes/_layout/family-tree'
 import { Route as LayoutFamilyRouteImport } from './routes/_layout/family'
@@ -67,6 +68,11 @@ const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutLifeEventsRoute = LayoutLifeEventsRouteImport.update({
+  id: '/life-events',
+  path: '/life-events',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutItemsRoute = LayoutItemsRouteImport.update({
   id: '/items',
   path: '/items',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/family': typeof LayoutFamilyRoute
   '/family-tree': typeof LayoutFamilyTreeRoute
   '/items': typeof LayoutItemsRoute
+  '/life-events': typeof LayoutLifeEventsRoute
   '/settings': typeof LayoutSettingsRoute
   '/support-tickets': typeof LayoutSupportTicketsRoute
   '/': typeof LayoutIndexRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/family': typeof LayoutFamilyRoute
   '/family-tree': typeof LayoutFamilyTreeRoute
   '/items': typeof LayoutItemsRoute
+  '/life-events': typeof LayoutLifeEventsRoute
   '/settings': typeof LayoutSettingsRoute
   '/support-tickets': typeof LayoutSupportTicketsRoute
   '/': typeof LayoutIndexRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/_layout/family': typeof LayoutFamilyRoute
   '/_layout/family-tree': typeof LayoutFamilyTreeRoute
   '/_layout/items': typeof LayoutItemsRoute
+  '/_layout/life-events': typeof LayoutLifeEventsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/support-tickets': typeof LayoutSupportTicketsRoute
   '/_layout/': typeof LayoutIndexRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/family'
     | '/family-tree'
     | '/items'
+    | '/life-events'
     | '/settings'
     | '/support-tickets'
     | '/'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/family'
     | '/family-tree'
     | '/items'
+    | '/life-events'
     | '/settings'
     | '/support-tickets'
     | '/'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/_layout/family'
     | '/_layout/family-tree'
     | '/_layout/items'
+    | '/_layout/life-events'
     | '/_layout/settings'
     | '/_layout/support-tickets'
     | '/_layout/'
@@ -252,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSettingsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/life-events': {
+      id: '/_layout/life-events'
+      path: '/life-events'
+      fullPath: '/life-events'
+      preLoaderRoute: typeof LayoutLifeEventsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/items': {
       id: '/_layout/items'
       path: '/items'
@@ -288,6 +307,7 @@ interface LayoutRouteChildren {
   LayoutFamilyRoute: typeof LayoutFamilyRoute
   LayoutFamilyTreeRoute: typeof LayoutFamilyTreeRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
+  LayoutLifeEventsRoute: typeof LayoutLifeEventsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutSupportTicketsRoute: typeof LayoutSupportTicketsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
@@ -298,6 +318,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutFamilyRoute: LayoutFamilyRoute,
   LayoutFamilyTreeRoute: LayoutFamilyTreeRoute,
   LayoutItemsRoute: LayoutItemsRoute,
+  LayoutLifeEventsRoute: LayoutLifeEventsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutSupportTicketsRoute: LayoutSupportTicketsRoute,
   LayoutIndexRoute: LayoutIndexRoute,

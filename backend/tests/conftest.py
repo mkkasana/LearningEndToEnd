@@ -14,6 +14,7 @@ from app.db_models.person.person import Person
 from app.db_models.person.person_relationship import PersonRelationship
 from app.db_models.person.person_religion import PersonReligion
 from app.db_models.person.person_address import PersonAddress
+from app.db_models.person.person_life_event import PersonLifeEvent
 from app.db_models.person.person_metadata import PersonMetadata
 from app.db_models.person.person_profession import PersonProfession
 from app.db_models.profile_view_tracking import ProfileViewTracking
@@ -48,17 +49,19 @@ def db() -> Generator[Session, None, None]:
         session.execute(delete(PersonReligion))
         # 4. Delete person address (references persons)
         session.execute(delete(PersonAddress))
-        # 5. Delete person metadata (references persons)
+        # 5. Delete person life events (references persons)
+        session.execute(delete(PersonLifeEvent))
+        # 6. Delete person metadata (references persons)
         session.execute(delete(PersonMetadata))
-        # 6. Delete person profession links (references persons)
+        # 7. Delete person profession links (references persons)
         session.execute(delete(PersonProfession))
-        # 7. Delete support tickets (references users)
+        # 8. Delete support tickets (references users)
         session.execute(delete(SupportTicket))
-        # 8. Delete persons (references users)
+        # 9. Delete persons (references users)
         session.execute(delete(Person))
-        # 9. Delete items (references users)
+        # 10. Delete items (references users)
         session.execute(delete(Item))
-        # 10. Finally delete users
+        # 11. Finally delete users
         session.execute(delete(User))
         session.commit()
 

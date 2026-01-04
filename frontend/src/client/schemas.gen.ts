@@ -476,6 +476,493 @@ export const ItemsPublicSchema = {
     description: 'List of items response'
 } as const;
 
+export const LifeEventCreateSchema = {
+    properties: {
+        event_type: {
+            '$ref': '#/components/schemas/LifeEventType',
+            description: 'Type of life event'
+        },
+        title: {
+            type: 'string',
+            maxLength: 100,
+            minLength: 1,
+            title: 'Title',
+            description: 'Event title (max 100 characters)'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Event description (max 500 characters)'
+        },
+        event_year: {
+            type: 'integer',
+            title: 'Event Year',
+            description: 'Year when the event occurred'
+        },
+        event_month: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 12,
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Event Month',
+            description: 'Month when the event occurred (1-12)'
+        },
+        event_date: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 31,
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Event Date',
+            description: 'Day when the event occurred (1-31)'
+        },
+        country_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Country Id',
+            description: 'Country reference'
+        },
+        state_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State Id',
+            description: 'State reference'
+        },
+        district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'District Id',
+            description: 'District reference'
+        },
+        sub_district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub District Id',
+            description: 'Sub-district reference'
+        },
+        locality_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Id',
+            description: 'Locality reference'
+        },
+        address_details: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 30
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Address Details',
+            description: 'Additional address details (max 30 characters)'
+        }
+    },
+    type: 'object',
+    required: ['event_type', 'title', 'event_year'],
+    title: 'LifeEventCreate',
+    description: 'Schema for creating a new life event.'
+} as const;
+
+export const LifeEventPublicSchema = {
+    properties: {
+        event_type: {
+            '$ref': '#/components/schemas/LifeEventType',
+            description: 'Type of life event'
+        },
+        title: {
+            type: 'string',
+            maxLength: 100,
+            minLength: 1,
+            title: 'Title',
+            description: 'Event title (max 100 characters)'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: 'Event description (max 500 characters)'
+        },
+        event_year: {
+            type: 'integer',
+            title: 'Event Year',
+            description: 'Year when the event occurred'
+        },
+        event_month: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 12,
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Event Month',
+            description: 'Month when the event occurred (1-12)'
+        },
+        event_date: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 31,
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Event Date',
+            description: 'Day when the event occurred (1-31)'
+        },
+        country_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Country Id',
+            description: 'Country reference'
+        },
+        state_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State Id',
+            description: 'State reference'
+        },
+        district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'District Id',
+            description: 'District reference'
+        },
+        sub_district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub District Id',
+            description: 'Sub-district reference'
+        },
+        locality_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Id',
+            description: 'Locality reference'
+        },
+        address_details: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 30
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Address Details',
+            description: 'Additional address details (max 30 characters)'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['event_type', 'title', 'event_year', 'id', 'person_id', 'created_at', 'updated_at'],
+    title: 'LifeEventPublic',
+    description: 'Life event response schema.'
+} as const;
+
+export const LifeEventTypeSchema = {
+    type: 'string',
+    enum: ['birth', 'marriage', 'death', 'purchase', 'sale', 'achievement', 'education', 'career', 'health', 'travel', 'other'],
+    title: 'LifeEventType',
+    description: 'Enum for life event types.'
+} as const;
+
+export const LifeEventUpdateSchema = {
+    properties: {
+        event_type: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/LifeEventType'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        title: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100,
+                    minLength: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        event_year: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Event Year'
+        },
+        event_month: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 12,
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Event Month'
+        },
+        event_date: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 31,
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Event Date'
+        },
+        country_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Country Id'
+        },
+        state_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State Id'
+        },
+        district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'District Id'
+        },
+        sub_district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub District Id'
+        },
+        locality_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Id'
+        },
+        address_details: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 30
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Address Details'
+        }
+    },
+    type: 'object',
+    title: 'LifeEventUpdate',
+    description: 'Schema for updating a life event (all fields optional).'
+} as const;
+
+export const LifeEventsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/LifeEventPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'LifeEventsPublic',
+    description: 'List of life events response.'
+} as const;
+
 export const LocalityCreateSchema = {
     properties: {
         name: {

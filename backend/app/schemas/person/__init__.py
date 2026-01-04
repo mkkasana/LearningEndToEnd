@@ -4,6 +4,13 @@ from app.schemas.person.gender import (
     GenderDetailPublic,
     GenderPublic,
 )
+from app.schemas.person.life_event import (
+    LifeEventCreate,
+    LifeEventPublic,
+    LifeEventsPublic,
+    LifeEventType,
+    LifeEventUpdate,
+)
 from app.schemas.person.person import PersonCreate, PersonPublic, PersonUpdate
 from app.schemas.person.person_address import (
     PersonAddressCreate,
@@ -51,6 +58,11 @@ from app.schemas.person.profession import (
 __all__ = [
     "GenderDetailPublic",
     "GenderPublic",
+    "LifeEventCreate",
+    "LifeEventPublic",
+    "LifeEventsPublic",
+    "LifeEventType",
+    "LifeEventUpdate",
     "PersonAddressCreate",
     "PersonAddressDetails",
     "PersonAddressPublic",

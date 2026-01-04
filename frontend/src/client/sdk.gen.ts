@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AddressMetadataGetCountriesResponse, AddressMetadataCreateCountryData, AddressMetadataCreateCountryResponse, AddressMetadataGetCountryByIdData, AddressMetadataGetCountryByIdResponse, AddressMetadataUpdateCountryData, AddressMetadataUpdateCountryResponse, AddressMetadataDeleteCountryData, AddressMetadataDeleteCountryResponse, AddressMetadataGetStatesByCountryData, AddressMetadataGetStatesByCountryResponse, AddressMetadataGetStateByIdData, AddressMetadataGetStateByIdResponse, AddressMetadataUpdateStateData, AddressMetadataUpdateStateResponse, AddressMetadataDeleteStateData, AddressMetadataDeleteStateResponse, AddressMetadataCreateStateData, AddressMetadataCreateStateResponse, AddressMetadataGetDistrictsByStateData, AddressMetadataGetDistrictsByStateResponse, AddressMetadataGetDistrictByIdData, AddressMetadataGetDistrictByIdResponse, AddressMetadataUpdateDistrictData, AddressMetadataUpdateDistrictResponse, AddressMetadataDeleteDistrictData, AddressMetadataDeleteDistrictResponse, AddressMetadataCreateDistrictData, AddressMetadataCreateDistrictResponse, AddressMetadataGetSubDistrictsByDistrictData, AddressMetadataGetSubDistrictsByDistrictResponse, AddressMetadataGetSubDistrictByIdData, AddressMetadataGetSubDistrictByIdResponse, AddressMetadataUpdateSubDistrictData, AddressMetadataUpdateSubDistrictResponse, AddressMetadataDeleteSubDistrictData, AddressMetadataDeleteSubDistrictResponse, AddressMetadataCreateSubDistrictData, AddressMetadataCreateSubDistrictResponse, AddressMetadataGetLocalitiesBySubDistrictData, AddressMetadataGetLocalitiesBySubDistrictResponse, AddressMetadataGetLocalityByIdData, AddressMetadataGetLocalityByIdResponse, AddressMetadataUpdateLocalityData, AddressMetadataUpdateLocalityResponse, AddressMetadataDeleteLocalityData, AddressMetadataDeleteLocalityResponse, AddressMetadataCreateLocalityData, AddressMetadataCreateLocalityResponse, IssuesCreateSupportTicketData, IssuesCreateSupportTicketResponse, IssuesGetMySupportTicketsData, IssuesGetMySupportTicketsResponse, IssuesGetSupportTicketData, IssuesGetSupportTicketResponse, IssuesUpdateSupportTicketData, IssuesUpdateSupportTicketResponse, IssuesDeleteSupportTicketData, IssuesDeleteSupportTicketResponse, IssuesGetAllSupportTicketsAdminData, IssuesGetAllSupportTicketsAdminResponse, IssuesResolveSupportTicketData, IssuesResolveSupportTicketResponse, IssuesReopenSupportTicketData, IssuesReopenSupportTicketResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PersonGetMyPersonResponse, PersonCreateMyPersonData, PersonCreateMyPersonResponse, PersonDeleteMyPersonResponse, PersonUpdateMyPersonData, PersonUpdateMyPersonResponse, PersonGetMyContributionsResponse, PersonCreateFamilyMemberData, PersonCreateFamilyMemberResponse, PersonSearchMatchingPersonsData, PersonSearchMatchingPersonsResponse, PersonDiscoverFamilyMembersResponse, PersonCreatePersonAddressData, PersonCreatePersonAddressResponse, PersonCreatePersonReligionData, PersonCreatePersonReligionResponse, PersonGetPersonByUserIdData, PersonGetPersonByUserIdResponse, PersonDeletePersonByUserIdData, PersonDeletePersonByUserIdResponse, PersonGetMyAddressesResponse, PersonCreateMyAddressData, PersonCreateMyAddressResponse, PersonGetMyAddressData, PersonGetMyAddressResponse, PersonUpdateMyAddressData, PersonUpdateMyAddressResponse, PersonDeleteMyAddressData, PersonDeleteMyAddressResponse, PersonGetMyProfessionsResponse, PersonCreateMyProfessionData, PersonCreateMyProfessionResponse, PersonGetMyProfessionData, PersonGetMyProfessionResponse, PersonUpdateMyProfessionData, PersonUpdateMyProfessionResponse, PersonDeleteMyProfessionData, PersonDeleteMyProfessionResponse, PersonGetMyRelationshipsResponse, PersonCreateMyRelationshipData, PersonCreateMyRelationshipResponse, PersonGetMyRelationshipsWithDetailsResponse, PersonGetPersonRelationshipsWithDetailsData, PersonGetPersonRelationshipsWithDetailsResponse, PersonGetPersonCompleteDetailsData, PersonGetPersonCompleteDetailsResponse, PersonGetMyRelationshipData, PersonGetMyRelationshipResponse, PersonUpdateMyRelationshipData, PersonUpdateMyRelationshipResponse, PersonDeleteMyRelationshipData, PersonDeleteMyRelationshipResponse, PersonGetMyMetadataResponse, PersonCreateMyMetadataData, PersonCreateMyMetadataResponse, PersonDeleteMyMetadataResponse, PersonUpdateMyMetadataData, PersonUpdateMyMetadataResponse, PersonMetadataGetProfessionsResponse, PersonMetadataCreateProfessionData, PersonMetadataCreateProfessionResponse, PersonMetadataGetProfessionByIdData, PersonMetadataGetProfessionByIdResponse, PersonMetadataUpdateProfessionData, PersonMetadataUpdateProfessionResponse, PersonMetadataDeleteProfessionData, PersonMetadataDeleteProfessionResponse, PersonMetadataGetGendersResponse, PersonMetadataGetGenderByIdData, PersonMetadataGetGenderByIdResponse, PersonReligionCreateMyReligionData, PersonReligionCreateMyReligionResponse, PersonReligionGetMyReligionResponse, PersonReligionUpdateMyReligionData, PersonReligionUpdateMyReligionResponse, PersonReligionDeleteMyReligionResponse, PostsGetPublishedPostsData, PostsGetPublishedPostsResponse, PostsCreatePostData, PostsCreatePostResponse, PostsGetMyPostsData, PostsGetMyPostsResponse, PostsGetPostData, PostsGetPostResponse, PostsUpdatePostData, PostsUpdatePostResponse, PostsDeletePostData, PostsDeletePostResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProfileGetProfileCompletionStatusResponse, RelativesGetParentsData, RelativesGetParentsResponse, RelativesGetChildrenData, RelativesGetChildrenResponse, RelativesGetSpousesData, RelativesGetSpousesResponse, RelativesGetSiblingsData, RelativesGetSiblingsResponse, ReligionMetadataGetReligionsResponse, ReligionMetadataCreateReligionData, ReligionMetadataCreateReligionResponse, ReligionMetadataGetReligionByIdData, ReligionMetadataGetReligionByIdResponse, ReligionMetadataUpdateReligionData, ReligionMetadataUpdateReligionResponse, ReligionMetadataDeleteReligionData, ReligionMetadataDeleteReligionResponse, ReligionMetadataGetCategoriesByReligionData, ReligionMetadataGetCategoriesByReligionResponse, ReligionMetadataGetCategoryByIdData, ReligionMetadataGetCategoryByIdResponse, ReligionMetadataUpdateCategoryData, ReligionMetadataUpdateCategoryResponse, ReligionMetadataDeleteCategoryData, ReligionMetadataDeleteCategoryResponse, ReligionMetadataCreateCategoryData, ReligionMetadataCreateCategoryResponse, ReligionMetadataGetSubCategoriesByCategoryData, ReligionMetadataGetSubCategoriesByCategoryResponse, ReligionMetadataGetSubCategoryByIdData, ReligionMetadataGetSubCategoryByIdResponse, ReligionMetadataUpdateSubCategoryData, ReligionMetadataUpdateSubCategoryResponse, ReligionMetadataDeleteSubCategoryData, ReligionMetadataDeleteSubCategoryResponse, ReligionMetadataCreateSubCategoryData, ReligionMetadataCreateSubCategoryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UsersUpdateUserRoleData, UsersUpdateUserRoleResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, UtilsDeleteCacheKeyData, UtilsDeleteCacheKeyResponse, UtilsDeleteCachePatternData, UtilsDeleteCachePatternResponse, UtilsClearAllCacheResponse } from './types.gen';
+import type { AddressMetadataGetCountriesResponse, AddressMetadataCreateCountryData, AddressMetadataCreateCountryResponse, AddressMetadataGetCountryByIdData, AddressMetadataGetCountryByIdResponse, AddressMetadataUpdateCountryData, AddressMetadataUpdateCountryResponse, AddressMetadataDeleteCountryData, AddressMetadataDeleteCountryResponse, AddressMetadataGetStatesByCountryData, AddressMetadataGetStatesByCountryResponse, AddressMetadataGetStateByIdData, AddressMetadataGetStateByIdResponse, AddressMetadataUpdateStateData, AddressMetadataUpdateStateResponse, AddressMetadataDeleteStateData, AddressMetadataDeleteStateResponse, AddressMetadataCreateStateData, AddressMetadataCreateStateResponse, AddressMetadataGetDistrictsByStateData, AddressMetadataGetDistrictsByStateResponse, AddressMetadataGetDistrictByIdData, AddressMetadataGetDistrictByIdResponse, AddressMetadataUpdateDistrictData, AddressMetadataUpdateDistrictResponse, AddressMetadataDeleteDistrictData, AddressMetadataDeleteDistrictResponse, AddressMetadataCreateDistrictData, AddressMetadataCreateDistrictResponse, AddressMetadataGetSubDistrictsByDistrictData, AddressMetadataGetSubDistrictsByDistrictResponse, AddressMetadataGetSubDistrictByIdData, AddressMetadataGetSubDistrictByIdResponse, AddressMetadataUpdateSubDistrictData, AddressMetadataUpdateSubDistrictResponse, AddressMetadataDeleteSubDistrictData, AddressMetadataDeleteSubDistrictResponse, AddressMetadataCreateSubDistrictData, AddressMetadataCreateSubDistrictResponse, AddressMetadataGetLocalitiesBySubDistrictData, AddressMetadataGetLocalitiesBySubDistrictResponse, AddressMetadataGetLocalityByIdData, AddressMetadataGetLocalityByIdResponse, AddressMetadataUpdateLocalityData, AddressMetadataUpdateLocalityResponse, AddressMetadataDeleteLocalityData, AddressMetadataDeleteLocalityResponse, AddressMetadataCreateLocalityData, AddressMetadataCreateLocalityResponse, IssuesCreateSupportTicketData, IssuesCreateSupportTicketResponse, IssuesGetMySupportTicketsData, IssuesGetMySupportTicketsResponse, IssuesGetSupportTicketData, IssuesGetSupportTicketResponse, IssuesUpdateSupportTicketData, IssuesUpdateSupportTicketResponse, IssuesDeleteSupportTicketData, IssuesDeleteSupportTicketResponse, IssuesGetAllSupportTicketsAdminData, IssuesGetAllSupportTicketsAdminResponse, IssuesResolveSupportTicketData, IssuesResolveSupportTicketResponse, IssuesReopenSupportTicketData, IssuesReopenSupportTicketResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LifeEventsGetMyLifeEventsData, LifeEventsGetMyLifeEventsResponse, LifeEventsCreateLifeEventData, LifeEventsCreateLifeEventResponse, LifeEventsGetLifeEventData, LifeEventsGetLifeEventResponse, LifeEventsUpdateLifeEventData, LifeEventsUpdateLifeEventResponse, LifeEventsDeleteLifeEventData, LifeEventsDeleteLifeEventResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PersonGetMyPersonResponse, PersonCreateMyPersonData, PersonCreateMyPersonResponse, PersonDeleteMyPersonResponse, PersonUpdateMyPersonData, PersonUpdateMyPersonResponse, PersonGetMyContributionsResponse, PersonCreateFamilyMemberData, PersonCreateFamilyMemberResponse, PersonSearchMatchingPersonsData, PersonSearchMatchingPersonsResponse, PersonDiscoverFamilyMembersResponse, PersonCreatePersonAddressData, PersonCreatePersonAddressResponse, PersonCreatePersonReligionData, PersonCreatePersonReligionResponse, PersonGetPersonByUserIdData, PersonGetPersonByUserIdResponse, PersonDeletePersonByUserIdData, PersonDeletePersonByUserIdResponse, PersonGetMyAddressesResponse, PersonCreateMyAddressData, PersonCreateMyAddressResponse, PersonGetMyAddressData, PersonGetMyAddressResponse, PersonUpdateMyAddressData, PersonUpdateMyAddressResponse, PersonDeleteMyAddressData, PersonDeleteMyAddressResponse, PersonGetMyProfessionsResponse, PersonCreateMyProfessionData, PersonCreateMyProfessionResponse, PersonGetMyProfessionData, PersonGetMyProfessionResponse, PersonUpdateMyProfessionData, PersonUpdateMyProfessionResponse, PersonDeleteMyProfessionData, PersonDeleteMyProfessionResponse, PersonGetMyRelationshipsResponse, PersonCreateMyRelationshipData, PersonCreateMyRelationshipResponse, PersonGetMyRelationshipsWithDetailsResponse, PersonGetPersonRelationshipsWithDetailsData, PersonGetPersonRelationshipsWithDetailsResponse, PersonGetPersonCompleteDetailsData, PersonGetPersonCompleteDetailsResponse, PersonGetMyRelationshipData, PersonGetMyRelationshipResponse, PersonUpdateMyRelationshipData, PersonUpdateMyRelationshipResponse, PersonDeleteMyRelationshipData, PersonDeleteMyRelationshipResponse, PersonGetMyMetadataResponse, PersonCreateMyMetadataData, PersonCreateMyMetadataResponse, PersonDeleteMyMetadataResponse, PersonUpdateMyMetadataData, PersonUpdateMyMetadataResponse, PersonMetadataGetProfessionsResponse, PersonMetadataCreateProfessionData, PersonMetadataCreateProfessionResponse, PersonMetadataGetProfessionByIdData, PersonMetadataGetProfessionByIdResponse, PersonMetadataUpdateProfessionData, PersonMetadataUpdateProfessionResponse, PersonMetadataDeleteProfessionData, PersonMetadataDeleteProfessionResponse, PersonMetadataGetGendersResponse, PersonMetadataGetGenderByIdData, PersonMetadataGetGenderByIdResponse, PersonReligionCreateMyReligionData, PersonReligionCreateMyReligionResponse, PersonReligionGetMyReligionResponse, PersonReligionUpdateMyReligionData, PersonReligionUpdateMyReligionResponse, PersonReligionDeleteMyReligionResponse, PostsGetPublishedPostsData, PostsGetPublishedPostsResponse, PostsCreatePostData, PostsCreatePostResponse, PostsGetMyPostsData, PostsGetMyPostsResponse, PostsGetPostData, PostsGetPostResponse, PostsUpdatePostData, PostsUpdatePostResponse, PostsDeletePostData, PostsDeletePostResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProfileGetProfileCompletionStatusResponse, RelativesGetParentsData, RelativesGetParentsResponse, RelativesGetChildrenData, RelativesGetChildrenResponse, RelativesGetSpousesData, RelativesGetSpousesResponse, RelativesGetSiblingsData, RelativesGetSiblingsResponse, ReligionMetadataGetReligionsResponse, ReligionMetadataCreateReligionData, ReligionMetadataCreateReligionResponse, ReligionMetadataGetReligionByIdData, ReligionMetadataGetReligionByIdResponse, ReligionMetadataUpdateReligionData, ReligionMetadataUpdateReligionResponse, ReligionMetadataDeleteReligionData, ReligionMetadataDeleteReligionResponse, ReligionMetadataGetCategoriesByReligionData, ReligionMetadataGetCategoriesByReligionResponse, ReligionMetadataGetCategoryByIdData, ReligionMetadataGetCategoryByIdResponse, ReligionMetadataUpdateCategoryData, ReligionMetadataUpdateCategoryResponse, ReligionMetadataDeleteCategoryData, ReligionMetadataDeleteCategoryResponse, ReligionMetadataCreateCategoryData, ReligionMetadataCreateCategoryResponse, ReligionMetadataGetSubCategoriesByCategoryData, ReligionMetadataGetSubCategoriesByCategoryResponse, ReligionMetadataGetSubCategoryByIdData, ReligionMetadataGetSubCategoryByIdResponse, ReligionMetadataUpdateSubCategoryData, ReligionMetadataUpdateSubCategoryResponse, ReligionMetadataDeleteSubCategoryData, ReligionMetadataDeleteSubCategoryResponse, ReligionMetadataCreateSubCategoryData, ReligionMetadataCreateSubCategoryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UsersUpdateUserRoleData, UsersUpdateUserRoleResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, UtilsDeleteCacheKeyData, UtilsDeleteCacheKeyResponse, UtilsDeleteCachePatternData, UtilsDeleteCachePatternResponse, UtilsClearAllCacheResponse } from './types.gen';
 
 export class AddressMetadataService {
     /**
@@ -871,6 +871,144 @@ export class ItemsService {
             url: '/api/v1/items/{id}',
             path: {
                 id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class LifeEventsService {
+    /**
+     * Get My Life Events
+     * Get current user's life events.
+     *
+     * Returns life events sorted by date (most recent first):
+     * - Year descending
+     * - Month descending (nulls last)
+     * - Date descending (nulls last)
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns LifeEventsPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyLifeEvents(data: LifeEventsGetMyLifeEventsData = {}): CancelablePromise<LifeEventsGetMyLifeEventsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/life-events/me',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Life Event
+     * Create a new life event for the current user.
+     *
+     * Required fields:
+     * - event_type: One of birth, marriage, death, purchase, sale, achievement,
+     * education, career, health, travel, other
+     * - title: Event title (max 100 characters)
+     * - event_year: Year when the event occurred
+     *
+     * Optional fields:
+     * - description: Event description (max 500 characters)
+     * - event_month: Month (1-12)
+     * - event_date: Day (1-31, validated against month/year)
+     * - Address fields: country_id, state_id, district_id, sub_district_id, locality_id
+     * - address_details: Additional address info (max 30 characters)
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns LifeEventPublic Successful Response
+     * @throws ApiError
+     */
+    public static createLifeEvent(data: LifeEventsCreateLifeEventData): CancelablePromise<LifeEventsCreateLifeEventResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/life-events/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Life Event
+     * Get a specific life event by ID.
+     *
+     * Users can only access their own life events.
+     * Admins and superusers can access all events.
+     * @param data The data for the request.
+     * @param data.lifeEventId
+     * @returns LifeEventPublic Successful Response
+     * @throws ApiError
+     */
+    public static getLifeEvent(data: LifeEventsGetLifeEventData): CancelablePromise<LifeEventsGetLifeEventResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/life-events/{life_event_id}',
+            path: {
+                life_event_id: data.lifeEventId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Life Event
+     * Update a life event.
+     *
+     * Users can only update their own life events.
+     * All fields are optional - only provided fields will be updated.
+     * @param data The data for the request.
+     * @param data.lifeEventId
+     * @param data.requestBody
+     * @returns LifeEventPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateLifeEvent(data: LifeEventsUpdateLifeEventData): CancelablePromise<LifeEventsUpdateLifeEventResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/life-events/{life_event_id}',
+            path: {
+                life_event_id: data.lifeEventId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Life Event
+     * Delete a life event.
+     *
+     * Users can only delete their own life events.
+     * Admins and superusers can delete any event.
+     * @param data The data for the request.
+     * @param data.lifeEventId
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteLifeEvent(data: LifeEventsDeleteLifeEventData): CancelablePromise<LifeEventsDeleteLifeEventResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/life-events/{life_event_id}',
+            path: {
+                life_event_id: data.lifeEventId
             },
             errors: {
                 422: 'Validation Error'

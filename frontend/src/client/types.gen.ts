@@ -178,6 +178,149 @@ export type ItemUpdate = {
 };
 
 /**
+ * Schema for creating a new life event.
+ */
+export type LifeEventCreate = {
+    /**
+     * Type of life event
+     */
+    event_type: LifeEventType;
+    /**
+     * Event title (max 100 characters)
+     */
+    title: string;
+    /**
+     * Event description (max 500 characters)
+     */
+    description?: (string | null);
+    /**
+     * Year when the event occurred
+     */
+    event_year: number;
+    /**
+     * Month when the event occurred (1-12)
+     */
+    event_month?: (number | null);
+    /**
+     * Day when the event occurred (1-31)
+     */
+    event_date?: (number | null);
+    /**
+     * Country reference
+     */
+    country_id?: (string | null);
+    /**
+     * State reference
+     */
+    state_id?: (string | null);
+    /**
+     * District reference
+     */
+    district_id?: (string | null);
+    /**
+     * Sub-district reference
+     */
+    sub_district_id?: (string | null);
+    /**
+     * Locality reference
+     */
+    locality_id?: (string | null);
+    /**
+     * Additional address details (max 30 characters)
+     */
+    address_details?: (string | null);
+};
+
+/**
+ * Life event response schema.
+ */
+export type LifeEventPublic = {
+    /**
+     * Type of life event
+     */
+    event_type: LifeEventType;
+    /**
+     * Event title (max 100 characters)
+     */
+    title: string;
+    /**
+     * Event description (max 500 characters)
+     */
+    description?: (string | null);
+    /**
+     * Year when the event occurred
+     */
+    event_year: number;
+    /**
+     * Month when the event occurred (1-12)
+     */
+    event_month?: (number | null);
+    /**
+     * Day when the event occurred (1-31)
+     */
+    event_date?: (number | null);
+    /**
+     * Country reference
+     */
+    country_id?: (string | null);
+    /**
+     * State reference
+     */
+    state_id?: (string | null);
+    /**
+     * District reference
+     */
+    district_id?: (string | null);
+    /**
+     * Sub-district reference
+     */
+    sub_district_id?: (string | null);
+    /**
+     * Locality reference
+     */
+    locality_id?: (string | null);
+    /**
+     * Additional address details (max 30 characters)
+     */
+    address_details?: (string | null);
+    id: string;
+    person_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * List of life events response.
+ */
+export type LifeEventsPublic = {
+    data: Array<LifeEventPublic>;
+    count: number;
+};
+
+/**
+ * Enum for life event types.
+ */
+export type LifeEventType = 'birth' | 'marriage' | 'death' | 'purchase' | 'sale' | 'achievement' | 'education' | 'career' | 'health' | 'travel' | 'other';
+
+/**
+ * Schema for updating a life event (all fields optional).
+ */
+export type LifeEventUpdate = {
+    event_type?: (LifeEventType | null);
+    title?: (string | null);
+    description?: (string | null);
+    event_year?: (number | null);
+    event_month?: (number | null);
+    event_date?: (number | null);
+    country_id?: (string | null);
+    state_id?: (string | null);
+    district_id?: (string | null);
+    sub_district_id?: (string | null);
+    locality_id?: (string | null);
+    address_details?: (string | null);
+};
+
+/**
  * Schema for creating a new locality
  */
 export type LocalityCreate = {
@@ -1783,6 +1926,38 @@ export type ItemsDeleteItemData = {
 };
 
 export type ItemsDeleteItemResponse = (Message);
+
+export type LifeEventsGetMyLifeEventsData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type LifeEventsGetMyLifeEventsResponse = (LifeEventsPublic);
+
+export type LifeEventsCreateLifeEventData = {
+    requestBody: LifeEventCreate;
+};
+
+export type LifeEventsCreateLifeEventResponse = (LifeEventPublic);
+
+export type LifeEventsGetLifeEventData = {
+    lifeEventId: string;
+};
+
+export type LifeEventsGetLifeEventResponse = (LifeEventPublic);
+
+export type LifeEventsUpdateLifeEventData = {
+    lifeEventId: string;
+    requestBody: LifeEventUpdate;
+};
+
+export type LifeEventsUpdateLifeEventResponse = (LifeEventPublic);
+
+export type LifeEventsDeleteLifeEventData = {
+    lifeEventId: string;
+};
+
+export type LifeEventsDeleteLifeEventResponse = (Message);
 
 export type LoginLoginAccessTokenData = {
     formData: Body_login_login_access_token;
