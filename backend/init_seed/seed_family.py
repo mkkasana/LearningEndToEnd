@@ -33,6 +33,7 @@ from app.db_models.person import (
     PersonRelationship,
     PersonReligion,
     PersonAddress,
+    PersonLifeEvent,
 )
 from app.db_models.person.gender import Gender
 from app.db_models.religion.religion import Religion
@@ -40,6 +41,7 @@ from app.db_models.religion.religion_category import ReligionCategory
 from app.db_models.religion.religion_sub_category import ReligionSubCategory
 from app.db_models.address import Country, State, District, SubDistrict, Locality
 from app.enums import RelationshipType
+from app.schemas.person.life_event import LifeEventType
 
 
 # Hardcoded UUIDs for consistent seeding
@@ -793,6 +795,222 @@ def seed_relationships(session: Session, persons: dict[str, Person]) -> None:
     print("✅ Relationships seeded!")
 
 
+def seed_life_events(session: Session, persons: dict[str, Person]) -> None:
+    """Seed life events for family members."""
+    # Check if already seeded
+    existing = session.exec(
+        select(PersonLifeEvent).where(
+            PersonLifeEvent.person_id == SEED_PERSON_IDS["self"]
+        )
+    ).first()
+    if existing:
+        print("✓ Life events already seeded")
+        return
+    
+    print("Creating life events...")
+    
+    # Life events for "self" person
+    self_person = persons.get("self")
+    if self_person:
+        events = [
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=self_person.id,
+                event_type=LifeEventType.BIRTH,
+                title="Birth",
+                description="Born in Sikrai village",
+                event_year=1995,
+                event_month=3,
+                event_date=15,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=self_person.id,
+                event_type=LifeEventType.EDUCATION,
+                title="Started School",
+                description="Joined primary school",
+                event_year=2001,
+                event_month=7,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=self_person.id,
+                event_type=LifeEventType.ACHIEVEMENT,
+                title="Graduated High School",
+                description="Completed 12th grade",
+                event_year=2013,
+                event_month=5,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=self_person.id,
+                event_type=LifeEventType.EDUCATION,
+                title="College Admission",
+                description="Admitted to engineering college",
+                event_year=2013,
+                event_month=8,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=self_person.id,
+                event_type=LifeEventType.ACHIEVEMENT,
+                title="Graduated College",
+                description="Completed B.Tech degree",
+                event_year=2017,
+                event_month=6,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=self_person.id,
+                event_type=LifeEventType.CAREER,
+                title="First Job",
+                description="Started working as software engineer",
+                event_year=2017,
+                event_month=8,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=self_person.id,
+                event_type=LifeEventType.MARRIAGE,
+                title="Wedding",
+                description="Married to spouse",
+                event_year=2020,
+                event_month=2,
+                event_date=14,
+            ),
+        ]
+        for event in events:
+            session.add(event)
+        print(f"  ✓ Added {len(events)} life events for {self_person.first_name}")
+    
+    # Life events for father
+    father_person = persons.get("father")
+    if father_person:
+        events = [
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=father_person.id,
+                event_type=LifeEventType.BIRTH,
+                title="Birth",
+                event_year=1970,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=father_person.id,
+                event_type=LifeEventType.MARRIAGE,
+                title="Wedding",
+                description="Married to mother",
+                event_year=1994,
+                event_month=11,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=father_person.id,
+                event_type=LifeEventType.CAREER,
+                title="Started Business",
+                description="Started own business",
+                event_year=1995,
+            ),
+        ]
+        for event in events:
+            session.add(event)
+        print(f"  ✓ Added {len(events)} life events for {father_person.first_name}")
+    
+    # Life events for mother
+    mother_person = persons.get("mother")
+    if mother_person:
+        events = [
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=mother_person.id,
+                event_type=LifeEventType.BIRTH,
+                title="Birth",
+                event_year=1975,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=mother_person.id,
+                event_type=LifeEventType.MARRIAGE,
+                title="Wedding",
+                description="Married to father",
+                event_year=1994,
+                event_month=11,
+            ),
+        ]
+        for event in events:
+            session.add(event)
+        print(f"  ✓ Added {len(events)} life events for {mother_person.first_name}")
+    
+    # Life events for spouse
+    spouse_person = persons.get("spouse")
+    if spouse_person:
+        events = [
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=spouse_person.id,
+                event_type=LifeEventType.BIRTH,
+                title="Birth",
+                event_year=1996,
+                event_month=8,
+                event_date=20,
+            ),
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=spouse_person.id,
+                event_type=LifeEventType.MARRIAGE,
+                title="Wedding",
+                description="Married to self",
+                event_year=2020,
+                event_month=2,
+                event_date=14,
+            ),
+        ]
+        for event in events:
+            session.add(event)
+        print(f"  ✓ Added {len(events)} life events for {spouse_person.first_name}")
+    
+    # Life events for son
+    son_person = persons.get("son")
+    if son_person:
+        events = [
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=son_person.id,
+                event_type=LifeEventType.BIRTH,
+                title="Birth",
+                description="Born at hospital",
+                event_year=2021,
+                event_month=5,
+                event_date=10,
+            ),
+        ]
+        for event in events:
+            session.add(event)
+        print(f"  ✓ Added {len(events)} life events for {son_person.first_name}")
+    
+    # Life events for daughter
+    daughter_person = persons.get("daughter")
+    if daughter_person:
+        events = [
+            PersonLifeEvent(
+                id=uuid.uuid4(),
+                person_id=daughter_person.id,
+                event_type=LifeEventType.BIRTH,
+                title="Birth",
+                description="Born at hospital",
+                event_year=2023,
+                event_month=9,
+                event_date=25,
+            ),
+        ]
+        for event in events:
+            session.add(event)
+        print(f"  ✓ Added {len(events)} life events for {daughter_person.first_name}")
+    
+    session.flush()
+    print("✅ Life events seeded!")
+
+
 def seed_family() -> None:
     """Seed complete family data: user, persons, demographics, and relationships."""
     print("=" * 60)
@@ -825,6 +1043,10 @@ def seed_family() -> None:
         
         # 5. Create relationships
         seed_relationships(session, persons)
+        print()
+        
+        # 6. Add life events
+        seed_life_events(session, persons)
         print()
         
         # Commit all changes

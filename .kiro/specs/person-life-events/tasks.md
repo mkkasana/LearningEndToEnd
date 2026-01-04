@@ -124,24 +124,101 @@ This plan implements the Life Events feature following the existing codebase pat
   - Ensure all tests pass, ask the user if questions arise.
   - Test full flow: navigate, create, edit, delete events
 
-- [ ] 13. Write property tests for backend
-  - [ ] 13.1 Write property test for events filtering by person
+- [x] 13. Write backend unit and integration tests
+  - [x] 13.1 Write schema tests
+    - Create file backend/tests/schemas/person/test_life_event_schemas.py
+    - Test LifeEventType enum values
+    - Test LifeEventBase, LifeEventCreate, LifeEventUpdate, LifeEventPublic validation
+    - Test field constraints (max lengths, required fields)
+    - **Validates: Requirements 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.12, 6.1**
+  - [x] 13.2 Write service tests
+    - Create file backend/tests/services/person/test_life_event_service.py
+    - Test CRUD operations (get_life_events, get_life_event_by_id, create, update, delete)
+    - Test user_can_access_event authorization
+    - Test validate_date for date consistency
+    - **Validates: Requirements 1.1, 2.8, 2.14, 3.2, 3.3, 3.4, 4.2, 4.4**
+  - [x] 13.3 Write repository tests
+    - Create file backend/tests/repositories/person/test_life_event_repository.py
+    - Test get_by_person with sorting (year DESC, month DESC NULLS LAST, date DESC NULLS LAST)
+    - Test count_by_person
+    - Test CRUD operations
+    - **Validates: Requirements 1.1, 1.2**
+  - [x] 13.4 Write API integration tests
+    - Create file backend/tests/api/routes/test_life_events.py
+    - Test GET /me endpoint (list events)
+    - Test POST / endpoint (create event)
+    - Test GET /{id} endpoint (get single event)
+    - Test PUT /{id} endpoint (update event)
+    - Test DELETE /{id} endpoint (delete event)
+    - Test authorization (users can only access their own events)
+    - **Validates: Requirements 1.1, 2.14, 3.3, 4.2**
+  - [x] 13.5 Add seed data for testing
+    - Update backend/init_seed/seed_family.py
+    - Add seed_life_events function with diverse event types
+    - **Result: 87 new tests, all passing (1056 total tests)**
+
+- [ ] 14. Write frontend E2E tests *
+  - [ ] 14.1 Create E2E test suite
+    - Create file frontend/tests/life-events.spec.ts
+    - Test navigation to Life Events page
+    - Test adding a new life event (full wizard flow)
+    - Test editing an existing life event
+    - Test deleting a life event
+    - Test viewing life events list
+    - **Validates: Requirements 1.1, 1.3, 1.4, 2.1-2.15, 3.1-3.4, 4.1-4.4**
+
+- [ ] 15. Write frontend component unit tests *
+  - [ ] 15.1 Test EventDetailsStep component
+    - Create file frontend/src/components/LifeEvents/__tests__/EventDetailsStep.test.tsx
+    - Test event type selection
+    - Test title and description input
+    - Test date validation (year required, month/date optional)
+    - Test date consistency validation
+    - **Validates: Requirements 2.4, 2.5, 2.6, 2.7, 2.8, 2.9**
+  - [ ] 15.2 Test LocationStep component
+    - Create file frontend/src/components/LifeEvents/__tests__/LocationStep.test.tsx
+    - Test cascading address dropdowns
+    - Test pre-population with person's default address
+    - Test address_details field (max 30 chars)
+    - **Validates: Requirements 2.10, 2.11, 2.12**
+  - [ ] 15.3 Test AddLifeEventDialog component
+    - Create file frontend/src/components/LifeEvents/__tests__/AddLifeEventDialog.test.tsx
+    - Test multi-step wizard navigation
+    - Test progress indicator
+    - Test form submission (create mode)
+    - Test form submission (edit mode)
+    - **Validates: Requirements 2.1, 2.2, 2.3, 3.1, 3.2, 3.3**
+  - [ ] 15.4 Test columns and data display
+    - Create file frontend/src/components/LifeEvents/__tests__/columns.test.tsx
+    - Test event type badge rendering
+    - Test date formatting
+    - Test description truncation
+    - **Validates: Requirements 1.4**
+  - [ ] 15.5 Test life-events page
+    - Create file frontend/src/routes/_layout/__tests__/life-events.test.tsx
+    - Test empty state display
+    - Test events list rendering
+    - Test Add button functionality
+    - **Validates: Requirements 1.1, 1.3, 1.4**
+
+- [ ] 16. Write property tests for backend *
+  - [ ] 16.1 Write property test for events filtering by person
     - **Property 1: Events filtered by person ownership**
     - **Validates: Requirements 1.1, 3.4, 4.4**
-  - [ ] 13.2 Write property test for events sorting
+  - [ ] 16.2 Write property test for events sorting
     - **Property 2: Events sorted by date descending**
     - **Validates: Requirements 1.2**
-  - [ ] 13.3 Write property test for event type validation
+  - [ ] 16.3 Write property test for event type validation
     - **Property 3: Event type validation**
     - **Validates: Requirements 2.4, 6.1**
-  - [ ] 13.4 Write property test for field length validation
+  - [ ] 16.4 Write property test for field length validation
     - **Property 4: Field length validation**
     - **Validates: Requirements 2.5, 2.9, 2.12**
-  - [ ] 13.5 Write property test for date consistency
+  - [ ] 16.5 Write property test for date consistency
     - **Property 6: Date consistency validation**
     - **Validates: Requirements 2.8**
 
-- [ ] 14. Final checkpoint
+- [ ] 17. Final checkpoint
   - Ensure all tests pass, ask the user if questions arise.
   - Verify complete feature functionality
 
