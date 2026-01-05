@@ -1934,6 +1934,14 @@ export type LifeEventsGetMyLifeEventsData = {
 
 export type LifeEventsGetMyLifeEventsResponse = (LifeEventsPublic);
 
+export type LifeEventsGetPersonLifeEventsData = {
+    limit?: number;
+    personId: string;
+    skip?: number;
+};
+
+export type LifeEventsGetPersonLifeEventsResponse = (LifeEventsPublic);
+
 export type LifeEventsCreateLifeEventData = {
     requestBody: LifeEventCreate;
 };
