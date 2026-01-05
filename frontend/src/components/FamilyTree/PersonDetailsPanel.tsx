@@ -10,6 +10,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { usePersonCompleteDetails } from "@/hooks/usePersonCompleteDetails"
+import { usePersonLifeEvents } from "@/hooks/usePersonLifeEvents"
+import { LifeEventsList } from "@/components/LifeEvents/LifeEventsList"
 
 export interface PersonDetailsPanelProps {
   personId: string | null
@@ -125,6 +127,14 @@ export function PersonDetailsPanel({
   onOpenChange,
 }: PersonDetailsPanelProps) {
   const { data, isLoading, error, refetch } = usePersonCompleteDetails(personId)
+  
+  // Fetch life events for the person
+  const {
+    data: lifeEventsData,
+    isLoading: isLoadingEvents,
+    error: eventsError,
+    refetch: refetchEvents,
+  } = usePersonLifeEvents(personId)
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -237,6 +247,54 @@ export function PersonDetailsPanel({
                     <p className="text-sm">{formatReligion(data.religion)}</p>
                   </div>
                 </div>
+              )}
+            </div>
+
+            {/* Life Events Section */}
+            <div className="w-full border-t pt-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 px-2">
+                <Calendar className="h-5 w-5" />
+                Life Events
+              </h3>
+
+              {/* Loading State */}
+              {isLoadingEvents && (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              )}
+
+              {/* Error State */}
+              {eventsError && !isLoadingEvents && (
+                <div className="text-center py-4 px-2">
+                  <p className="text-sm text-destructive">
+                    Failed to load life events
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => refetchEvents()}
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Retry
+                  </Button>
+                </div>
+              )}
+
+              {/* Success State */}
+              {lifeEventsData && !isLoadingEvents && !eventsError && (
+                <>
+                  {lifeEventsData.data.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4 px-2">
+                      No life events recorded
+                    </p>
+                  ) : (
+                    <div className="px-2">
+                      <LifeEventsList events={lifeEventsData.data} compact />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
