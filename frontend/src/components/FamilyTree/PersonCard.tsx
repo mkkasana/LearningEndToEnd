@@ -63,7 +63,7 @@ function getVariantStyles(variant: PersonCardVariant): string {
         baseStyles,
         "border-2 border-green-500 shadow-lg scale-105 bg-card",
         "hover:shadow-2xl hover:border-green-600 hover:bg-card",
-        "min-w-[160px] md:min-w-[180px] lg:min-w-[200px]",
+        "w-[160px] md:w-[180px] lg:w-[200px]",
         "min-h-[180px] md:min-h-[200px] lg:min-h-[220px]",
       )
     case "parent":
@@ -71,7 +71,7 @@ function getVariantStyles(variant: PersonCardVariant): string {
         baseStyles,
         "border border-border shadow-sm bg-card",
         "hover:bg-accent/50",
-        "min-w-[140px] md:min-w-[160px] lg:min-w-[180px]",
+        "w-[140px] md:w-[160px] lg:w-[180px]",
         "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]",
       )
     case "spouse":
@@ -79,7 +79,7 @@ function getVariantStyles(variant: PersonCardVariant): string {
         baseStyles,
         "border border-border shadow-sm bg-card opacity-40",
         "hover:bg-accent/50 hover:opacity-60",
-        "min-w-[140px] md:min-w-[160px] lg:min-w-[180px]",
+        "w-[140px] md:w-[160px] lg:w-[180px]",
         "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]",
       )
     case "sibling":
@@ -87,7 +87,7 @@ function getVariantStyles(variant: PersonCardVariant): string {
         baseStyles,
         "border border-border opacity-75 scale-90 shadow-sm bg-card",
         "hover:opacity-90 hover:bg-accent/30",
-        "min-w-[120px] md:min-w-[140px] lg:min-w-[160px]",
+        "w-[120px] md:w-[140px] lg:w-[160px]",
         "min-h-[140px] md:min-h-[160px] lg:min-h-[180px]",
       )
     case "child":
@@ -95,7 +95,7 @@ function getVariantStyles(variant: PersonCardVariant): string {
         baseStyles,
         "border border-border scale-95 shadow-sm bg-card",
         "hover:bg-accent/50",
-        "min-w-[130px] md:min-w-[150px] lg:min-w-[170px]",
+        "w-[130px] md:w-[150px] lg:w-[170px]",
         "min-h-[150px] md:min-h-[170px] lg:min-h-[190px]",
       )
   }
@@ -240,14 +240,15 @@ export const PersonCard = memo(function PersonCard({
         </Avatar>
       )}
 
-      <div className="flex flex-col items-center gap-1 text-center">
+      <div className="flex flex-col items-center gap-1 text-center w-full px-1">
         <div
           className={cn(
-            "font-semibold leading-tight",
+            "font-semibold leading-tight truncate w-full",
             variant === "selected"
               ? "text-lg md:text-xl"
               : "text-sm md:text-base",
           )}
+          title={displayName}
         >
           {displayName}
         </div>
