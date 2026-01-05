@@ -1,5 +1,7 @@
 // @ts-nocheck
+import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { AlertTriangle } from "lucide-react"
 import {
   type PersonMatchResult,
   type PersonSearchRequest,
@@ -9,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
+import { findExactMatches, isExactMatch } from "./exactMatchUtils"
 
 interface ConnectExistingPersonStepProps {
   searchCriteria: PersonSearchCriteria
@@ -88,6 +91,28 @@ export function ConnectExistingPersonStep({
   const matchingPersons =
     matchingPersonsRaw?.filter((person) => !person.is_current_user) || []
 
+  // Derived state for exact match detection
+  const exactMatches = useMemo(
+    () => findExactMatches(matchingPersons, searchCriteria.dateOfBirth),
+    [matchingPersons, searchCriteria.dateOfBirth]
+  )
+
+  const hasExactMatch = exactMatches.length > 0
+  const hasBlockingExactMatch = exactMatches.some((p) => !p.is_already_connected)
+  const allExactMatchesConnected =
+    hasExactMatch && exactMatches.every((p) => p.is_already_connected)
+
+  // Sort results with exact matches first, then by match_score descending
+  const sortedPersons = useMemo(() => {
+    return [...matchingPersons].sort((a, b) => {
+      const aIsExact = isExactMatch(a, searchCriteria.dateOfBirth)
+      const bIsExact = isExactMatch(b, searchCriteria.dateOfBirth)
+      if (aIsExact && !bIsExact) return -1
+      if (!aIsExact && bIsExact) return 1
+      return b.match_score - a.match_score
+    })
+  }, [matchingPersons, searchCriteria.dateOfBirth])
+
   return (
     <div className="space-y-4">
       {/* Loading state */}
@@ -162,13 +187,32 @@ export function ConnectExistingPersonStep({
               </p>
             </div>
 
+            {/* Exact match warning banner */}
+            {hasExactMatch && (
+              <div className="bg-amber-50 border border-amber-200 rounded-md p-4">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-800">
+                      Exact match found
+                    </p>
+                    <p className="text-sm text-amber-700 mt-1">
+                      {allExactMatchesConnected
+                        ? "This person is already in your family. You cannot create a duplicate."
+                        : "A person with the same name and date of birth already exists. Please connect to the existing person instead of creating a duplicate."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <p className="text-sm font-medium">
               Found {matchingPersons.length} matching person(s)
             </p>
 
             {/* Scrollable container for results */}
             <div className="max-h-96 overflow-y-auto space-y-3">
-              {matchingPersons.map((person: PersonMatchResult) => (
+              {sortedPersons.map((person: PersonMatchResult) => (
                 <div
                   key={person.person_id}
                   className="border rounded-lg p-4 space-y-2 hover:bg-muted/50 transition-colors"
@@ -182,20 +226,26 @@ export function ConnectExistingPersonStep({
                         {person.last_name}
                       </h4>
                     </div>
-                    <Badge variant="secondary" className="ml-2">
-                      {Math.round(person.match_score)}% match
-                    </Badge>
+                    {isExactMatch(person, searchCriteria.dateOfBirth) ? (
+                      <Badge variant="destructive" className="ml-2">
+                        Exact Match
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary" className="ml-2">
+                        {Math.round(person.match_score)}% match
+                      </Badge>
+                    )}
                   </div>
 
                   {/* Date of birth */}
                   <div className="text-sm text-muted-foreground">
                     <span className="font-medium">DOB:</span>{" "}
-                    {new Date(person.date_of_birth).toLocaleDateString()}
+                    {person.date_of_birth}
                     {person.date_of_death && (
                       <>
                         {" - "}
                         <span className="font-medium">DOD:</span>{" "}
-                        {new Date(person.date_of_death).toLocaleDateString()}
+                        {person.date_of_death}
                       </>
                     )}
                   </div>
@@ -258,9 +308,9 @@ export function ConnectExistingPersonStep({
         <Button
           type="button"
           onClick={onNext}
-          disabled={isLoading || isFetching}
+          disabled={isLoading || isFetching || hasBlockingExactMatch || allExactMatchesConnected}
         >
-          Next: Create New
+          {hasExactMatch ? "Cannot Create (Exact Match Found)" : "Next: Create New"}
         </Button>
       </div>
     </div>
