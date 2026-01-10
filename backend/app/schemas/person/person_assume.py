@@ -13,10 +13,10 @@ from sqlmodel import Field, SQLModel
 
 class CanAssumeResponse(SQLModel):
     """Response for can-assume permission check.
-    
+
     Returns whether the current user can assume the role of a specific person,
     along with the reason if denied and the person's name if allowed.
-    
+
     _Requirements: 2.1, 2.4_
     """
 
@@ -35,7 +35,7 @@ class CanAssumeResponse(SQLModel):
 
 class AssumedPersonContext(SQLModel):
     """Context information for an assumed person.
-    
+
     Contains the essential information about a person being assumed,
     used for frontend display and validation.
     """

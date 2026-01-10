@@ -413,11 +413,13 @@ function FamilyTreeView() {
       />
 
       {/* Discover Family Members Dialog - Requirements: 2.1, 3.1 */}
+      {/* Pass activePersonId for assumed person context - Requirements: 5.1, 5.2 (assume-person-role) */}
       <DiscoverFamilyMembersDialog
         open={showDiscoveryDialog}
         onOpenChange={setShowDiscoveryDialog}
         onSkip={handleSkipDiscovery}
         onClose={handleDiscoveryDialogClose}
+        activePersonId={activePersonId ?? undefined}
       />
 
       {/* Add Family Member Dialog - Requirements: 2.1, 3.1 */}

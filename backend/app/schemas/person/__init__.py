@@ -17,6 +17,10 @@ from app.schemas.person.person_address import (
     PersonAddressPublic,
     PersonAddressUpdate,
 )
+from app.schemas.person.person_assume import (
+    AssumedPersonContext,
+    CanAssumeResponse,
+)
 from app.schemas.person.person_complete_details import (
     PersonAddressDetails,
     PersonCompleteDetailsResponse,
@@ -46,10 +50,6 @@ from app.schemas.person.person_religion import (
     PersonReligionCreate,
     PersonReligionPublic,
     PersonReligionUpdate,
-)
-from app.schemas.person.person_assume import (
-    AssumedPersonContext,
-    CanAssumeResponse,
 )
 from app.schemas.person.person_search import PersonMatchResult, PersonSearchRequest
 from app.schemas.person.profession import (

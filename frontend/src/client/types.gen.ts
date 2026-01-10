@@ -1965,6 +1965,13 @@ export type LifeEventsGetPersonLifeEventsData = {
 
 export type LifeEventsGetPersonLifeEventsResponse = (LifeEventsPublic);
 
+export type LifeEventsCreatePersonLifeEventData = {
+    personId: string;
+    requestBody: LifeEventCreate;
+};
+
+export type LifeEventsCreatePersonLifeEventResponse = (LifeEventPublic);
+
 export type LifeEventsCreateLifeEventData = {
     requestBody: LifeEventCreate;
 };
@@ -2235,6 +2242,12 @@ export type PersonCanAssumePersonData = {
 
 export type PersonCanAssumePersonResponse = (CanAssumeResponse);
 
+export type PersonDiscoverPersonFamilyMembersData = {
+    personId: string;
+};
+
+export type PersonDiscoverPersonFamilyMembersResponse = (Array<PersonDiscoveryResult>);
+
 export type PersonGetPersonRelationshipsData = {
     personId: string;
 };
@@ -2247,6 +2260,13 @@ export type PersonCreatePersonRelationshipData = {
 };
 
 export type PersonCreatePersonRelationshipResponse = (PersonRelationshipPublic);
+
+export type PersonDeletePersonRelationshipData = {
+    personId: string;
+    relationshipId: string;
+};
+
+export type PersonDeletePersonRelationshipResponse = (unknown);
 
 export type PersonGetPersonRelationshipsWithDetailsData = {
     personId: string;

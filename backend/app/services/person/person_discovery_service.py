@@ -55,7 +55,7 @@ class PersonDiscoveryService:
 
     @cached(ttl_seconds=60, key_prefix="discovery")
     def discover_family_members(
-        self, current_user_id: uuid.UUID
+        self, current_user_id: uuid.UUID, person_id: uuid.UUID | None = None
     ) -> list[PersonDiscoveryResult]:
         """Discover potential family member connections.
 
@@ -68,7 +68,11 @@ class PersonDiscoveryService:
         Cache is invalidated when relationships are created, updated, or deleted.
 
         Args:
-            current_user_id: Current user's ID
+            current_user_id: Current user's ID (used for cache key and logging)
+            person_id: Optional person ID to discover for. When provided, discovers
+                      for this specific person instead of looking up by user_id.
+                      This enables the "assume person role" feature where elevated
+                      users can discover family members for persons they created.
 
         Returns:
             List of discovered persons with inferred relationships,
@@ -77,17 +81,31 @@ class PersonDiscoveryService:
         Raises:
             Exception: Re-raises any database or unexpected errors for API layer to handle
         """
-        logger.info(f"Starting family member discovery for user: {current_user_id}")
+        if person_id:
+            logger.info(
+                f"Starting family member discovery for person: {person_id} "
+                f"(requested by user: {current_user_id})"
+            )
+        else:
+            logger.info(f"Starting family member discovery for user: {current_user_id}")
 
         try:
-            # Get user's person record
-            person = self.person_repo.get_by_user_id(current_user_id)
-            if not person:
-                logger.warning(
-                    f"No person record found for user: {current_user_id}. "
-                    "User may not have completed profile setup."
-                )
-                return []
+            # Get person record - either by person_id or user_id
+            if person_id:
+                person = self.person_repo.get_by_id(person_id)
+                if not person:
+                    logger.warning(
+                        f"No person record found for person_id: {person_id}."
+                    )
+                    return []
+            else:
+                person = self.person_repo.get_by_user_id(current_user_id)
+                if not person:
+                    logger.warning(
+                        f"No person record found for user: {current_user_id}. "
+                        "User may not have completed profile setup."
+                    )
+                    return []
 
             logger.debug(
                 f"Found person record: {person.first_name} {person.last_name} (ID: {person.id})"

@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { Trash2, UserPlus, Users } from "lucide-react"
 import { useState } from "react"
 import { PersonService } from "@/client"
+import { ActivePersonIndicator } from "@/components/Family/ActivePersonIndicator"
 import { AddFamilyMemberDialog } from "@/components/Family/AddFamilyMemberDialog"
 import { DiscoverFamilyMembersDialog } from "@/components/Family/DiscoverFamilyMembersDialog"
 import {
@@ -59,11 +60,20 @@ function Family() {
   const isLoading = isPersonLoading || isDataLoading
   const familyMembersData = familyMembersResponse?.relationships || []
 
-  // Delete relationship mutation
-  // Note: Using /me endpoint for delete as person-specific delete is not yet implemented
+  // Delete relationship mutation using person-specific endpoint
+  // _Requirements: 5.1, 5.2 (assume-person-role)_
   const deleteMutation = useMutation({
-    mutationFn: (relationshipId: string) =>
-      PersonService.deleteMyRelationship({ relationshipId }),
+    mutationFn: (relationshipId: string) => {
+      if (activePersonId) {
+        // Use person-specific endpoint for assumed person context
+        return PersonService.deletePersonRelationship({ 
+          personId: activePersonId, 
+          relationshipId 
+        })
+      }
+      // Fallback to /me endpoint for primary person
+      return PersonService.deleteMyRelationship({ relationshipId })
+    },
     onSuccess: () => {
       showSuccessToast("Family member removed successfully")
       // Invalidate person-specific relationships query
@@ -122,6 +132,10 @@ function Family() {
           Add Family Member
         </Button>
       </div>
+
+      {/* Active Person Indicator - Shows when assuming another person's role */}
+      {/* _Requirements: 2.5, 4.1 (assume-person-role) */}
+      <ActivePersonIndicator />
 
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
@@ -204,11 +218,13 @@ function Family() {
         </div>
       )}
 
+      {/* Pass activePersonId for assumed person context - Requirements: 5.1, 5.2 (assume-person-role) */}
       <DiscoverFamilyMembersDialog
         open={showDiscoveryDialog}
         onOpenChange={setShowDiscoveryDialog}
         onSkip={handleSkipDiscovery}
         onClose={handleDiscoveryDialogClose}
+        activePersonId={activePersonId ?? undefined}
       />
 
       <AddFamilyMemberDialog

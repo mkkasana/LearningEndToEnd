@@ -21,6 +21,7 @@ interface DiscoverFamilyMembersDialogProps {
   onOpenChange: (open: boolean) => void
   onSkip: () => void
   onClose?: () => void // Called when dialog closes without connecting
+  activePersonId?: string // Optional person ID for assumed person context
 }
 
 export function DiscoverFamilyMembersDialog({
@@ -28,6 +29,7 @@ export function DiscoverFamilyMembersDialog({
   onOpenChange,
   onSkip,
   onClose,
+  activePersonId,
 }: DiscoverFamilyMembersDialogProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const queryClient = useQueryClient()
@@ -37,6 +39,7 @@ export function DiscoverFamilyMembersDialog({
   const [closedAfterConnection, setClosedAfterConnection] = useState(false)
 
   // Fetch discovered family members
+  // When activePersonId is provided, use person-specific endpoint for assumed person context
   const {
     data: discoveries,
     isLoading,
@@ -44,8 +47,11 @@ export function DiscoverFamilyMembersDialog({
     error,
     refetch,
   } = useQuery({
-    queryKey: ["discoverFamilyMembers"],
-    queryFn: () => PersonService.discoverFamilyMembers(),
+    queryKey: ["discoverFamilyMembers", activePersonId],
+    queryFn: () =>
+      activePersonId
+        ? PersonService.discoverPersonFamilyMembers({ personId: activePersonId })
+        : PersonService.discoverFamilyMembers(),
     enabled: open, // Only fetch when dialog is open
     retry: false, // Don't auto-retry on error
   })
@@ -86,15 +92,25 @@ export function DiscoverFamilyMembersDialog({
   }
 
   // Mutation for creating relationship
+  // When activePersonId is provided, use person-specific endpoint for assumed person context
   const createRelationshipMutation = useMutation({
     mutationFn: (data: { relatedPersonId: string; relationshipType: string }) =>
-      PersonService.createMyRelationship({
-        requestBody: {
-          related_person_id: data.relatedPersonId,
-          relationship_type: data.relationshipType,
-          is_active: true,
-        },
-      }),
+      activePersonId
+        ? PersonService.createPersonRelationship({
+            personId: activePersonId,
+            requestBody: {
+              related_person_id: data.relatedPersonId,
+              relationship_type: data.relationshipType,
+              is_active: true,
+            },
+          })
+        : PersonService.createMyRelationship({
+            requestBody: {
+              related_person_id: data.relatedPersonId,
+              relationship_type: data.relationshipType,
+              is_active: true,
+            },
+          }),
     onSuccess: async () => {
       showSuccessToast("Successfully connected to family member!")
       setShowConnectDialog(false)
@@ -106,6 +122,12 @@ export function DiscoverFamilyMembersDialog({
       await queryClient.invalidateQueries({
         queryKey: ["discoverFamilyMembers"],
       })
+      // Also invalidate person-specific queries if activePersonId is provided
+      if (activePersonId) {
+        await queryClient.invalidateQueries({
+          queryKey: ["personRelationshipsWithDetails", activePersonId],
+        })
+      }
 
       // Auto-close dialog if no more suggestions after this connection
       // We check if the current list has only 1 item (the one we just connected to)

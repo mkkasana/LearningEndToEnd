@@ -1,20 +1,14 @@
-import { useSuspenseQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { Calendar } from "lucide-react"
-import { Suspense } from "react"
+import { Calendar, Loader2 } from "lucide-react"
 
 import { LifeEventsService } from "@/client"
 import { DataTable } from "@/components/Common/DataTable"
+import { ActivePersonIndicator } from "@/components/Family/ActivePersonIndicator"
 import { AddLifeEventDialog } from "@/components/LifeEvents/AddLifeEventDialog"
 import { columns } from "@/components/LifeEvents/columns"
 import { Skeleton } from "@/components/ui/skeleton"
-
-function getLifeEventsQueryOptions() {
-  return {
-    queryFn: () => LifeEventsService.getMyLifeEvents({ skip: 0, limit: 100 }),
-    queryKey: ["life-events"],
-  }
-}
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 
 export const Route = createFileRoute("/_layout/life-events" as any)({
   component: LifeEventsPage,
@@ -27,10 +21,38 @@ export const Route = createFileRoute("/_layout/life-events" as any)({
   }),
 })
 
-function LifeEventsContent() {
-  const { data } = useSuspenseQuery(getLifeEventsQueryOptions())
+function LifeEventsContent({ activePersonId }: { activePersonId: string }) {
+  // Fetch life events for the active person (assumed or primary)
+  // _Requirements: 5.1, 5.2 (assume-person-role)
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["life-events", activePersonId],
+    queryFn: () => LifeEventsService.getPersonLifeEvents({ 
+      personId: activePersonId,
+      skip: 0, 
+      limit: 100 
+    }),
+    enabled: !!activePersonId,
+  })
 
-  if (data.data.length === 0) {
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center py-12">
+        <p className="text-destructive">Failed to load life events</p>
+      </div>
+    )
+  }
+
+  if (!data || data.data.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center text-center py-12">
         <div className="rounded-full bg-muted p-4 mb-4">
@@ -47,23 +69,20 @@ function LifeEventsContent() {
   return <DataTable columns={columns} data={data.data} />
 }
 
-function LifeEventsTable() {
-  return (
-    <Suspense
-      fallback={
-        <div className="space-y-4">
-          <Skeleton className="h-16 w-full" />
-          <Skeleton className="h-16 w-full" />
-          <Skeleton className="h-16 w-full" />
-        </div>
-      }
-    >
-      <LifeEventsContent />
-    </Suspense>
-  )
-}
-
 function LifeEventsPage() {
+  // Get active person from context (assumed or primary)
+  // _Requirements: 5.1, 5.2 (assume-person-role)
+  const { activePersonId, isLoading: isPersonLoading } = useActivePersonContext()
+
+  if (isPersonLoading || !activePersonId) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="mt-4 text-muted-foreground">Loading...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -73,9 +92,14 @@ function LifeEventsPage() {
             Record and manage your life milestones
           </p>
         </div>
-        <AddLifeEventDialog />
+        <AddLifeEventDialog activePersonId={activePersonId} />
       </div>
-      <LifeEventsTable />
+
+      {/* Active Person Indicator - Shows when assuming another person's role */}
+      {/* _Requirements: 2.5, 4.1 (assume-person-role) */}
+      <ActivePersonIndicator />
+
+      <LifeEventsContent activePersonId={activePersonId} />
     </div>
   )
 }

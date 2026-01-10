@@ -1238,6 +1238,66 @@ def can_assume_person(
 
 
 # ============================================================================
+# /{person_id}/discover-family-members Endpoint - Assume Person Role Feature
+# ============================================================================
+
+
+@router.get(
+    "/{person_id}/discover-family-members", response_model=list[PersonDiscoveryResult]
+)
+@log_route
+def discover_person_family_members(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+) -> Any:
+    """
+    Discover potential family member connections for a specific person.
+
+    This endpoint enables the "assume person role" feature where elevated users
+    can discover family members for persons they created, allowing them to build
+    multi-generational family trees.
+
+    Authorization:
+    - User must have permission to access the person (via validate_person_access)
+    - This includes: user's own person, persons they created, or admin access
+
+    _Requirements: 5.1, 5.2_
+    """
+    logger.info(
+        f"Discovery request for person {person_id} from user {current_user.email} "
+        f"(ID: {current_user.id})"
+    )
+
+    # Validate user has permission to access this person
+    person_service = PersonService(session)
+    person = person_service.person_repo.get_by_id(person_id)
+    validate_person_access(person, current_user)
+
+    try:
+        discovery_service = PersonDiscoveryService(session)
+        discoveries = discovery_service.discover_family_members(
+            current_user_id=current_user.id, person_id=person_id
+        )
+
+        logger.info(
+            f"Found {len(discoveries)} potential connections for person {person_id} "
+            f"(requested by user {current_user.email})"
+        )
+        return discoveries
+
+    except Exception as e:
+        logger.exception(
+            f"Error in family member discovery for person {person_id} "
+            f"(requested by user {current_user.email}): {str(e)}"
+        )
+        raise HTTPException(
+            status_code=500,
+            detail="An error occurred while discovering family members. Please try again later.",
+        )
+
+
+# ============================================================================
 # /{person_id}/relationships Endpoints
 # ============================================================================
 
@@ -1281,6 +1341,52 @@ def create_person_relationship(
     relationship_service = PersonRelationshipService(session)
     relationship = relationship_service.create_relationship(person_id, relationship_in)
     return relationship
+
+
+@router.delete("/{person_id}/relationships/{relationship_id}")
+@log_route
+def delete_person_relationship(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+    relationship_id: uuid.UUID,
+) -> Any:
+    """
+    Delete relationship for a specific person.
+
+    This endpoint enables the "assume person role" feature where elevated users
+    can delete relationships for persons they created.
+
+    **Bidirectional Deletion:**
+    This endpoint automatically deletes both directions of the relationship.
+
+    Authorization:
+    - User must have permission to access the person (via validate_person_access)
+    - This includes: user's own person, persons they created, or admin access
+
+    _Requirements: 5.1, 5.2 (assume-person-role)_
+    """
+    person_service = PersonService(session)
+    person = person_service.person_repo.get_by_id(person_id)
+    validate_person_access(person, current_user)
+
+    relationship_service = PersonRelationshipService(session)
+    relationship = relationship_service.get_relationship_by_id(relationship_id)
+
+    if not relationship or relationship.person_id != person_id:
+        raise HTTPException(
+            status_code=404,
+            detail="Relationship not found",
+        )
+
+    relationship_service.delete_relationship(relationship)
+
+    logger.info(
+        f"User {current_user.email} deleted relationship {relationship_id} "
+        f"for person {person_id}"
+    )
+
+    return {"message": "Relationship deleted successfully"}
 
 
 @router.get(

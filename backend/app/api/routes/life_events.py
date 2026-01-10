@@ -136,6 +136,51 @@ def create_life_event(
         raise HTTPException(status_code=422, detail=str(e))
 
 
+@router.post("/person/{person_id}", response_model=LifeEventPublic)
+@log_route
+def create_person_life_event(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+    life_event_in: LifeEventCreate,
+) -> Any:
+    """
+    Create a new life event for a specific person.
+
+    This endpoint allows elevated users (superuser/admin) to create life events
+    for persons they have created (created_by_user_id matches current user).
+
+    Required fields:
+    - event_type: One of birth, marriage, death, purchase, sale, achievement,
+                  education, career, health, travel, other
+    - title: Event title (max 100 characters)
+    - event_year: Year when the event occurred
+
+    Optional fields:
+    - description: Event description (max 500 characters)
+    - event_month: Month (1-12)
+    - event_date: Day (1-31, validated against month/year)
+    - Address fields: country_id, state_id, district_id, sub_district_id, locality_id
+    - address_details: Additional address info (max 30 characters)
+
+    _Requirements: 5.1, 5.2 (assume-person-role)_
+    """
+    from app.utils.person_permissions import validate_person_access
+
+    # Verify person exists and user has access
+    person_service = PersonService(session)
+    person = person_service.person_repo.get_by_id(person_id)
+    validate_person_access(person, current_user)
+
+    life_event_service = LifeEventService(session)
+
+    try:
+        life_event = life_event_service.create_life_event(person_id, life_event_in)
+        return life_event
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
 @router.get("/{life_event_id}", response_model=LifeEventPublic)
 @log_route
 def get_life_event(

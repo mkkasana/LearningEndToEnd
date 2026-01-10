@@ -27,11 +27,13 @@ const STEPS = {
 interface AddLifeEventDialogProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  activePersonId?: string // Person ID to create life event for (assumed or primary)
 }
 
 export function AddLifeEventDialog({
   open: controlledOpen,
   onOpenChange,
+  activePersonId,
 }: AddLifeEventDialogProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const queryClient = useQueryClient()
@@ -61,11 +63,24 @@ export function AddLifeEventDialog({
         locality_id: locationData?.locality_id || undefined,
         address_details: locationData?.address_details || undefined,
       }
+      // Use person-specific endpoint when activePersonId is provided
+      // _Requirements: 5.1, 5.2 (assume-person-role)
+      if (activePersonId) {
+        return LifeEventsService.createPersonLifeEvent({ 
+          personId: activePersonId, 
+          requestBody: payload 
+        })
+      }
       return LifeEventsService.createLifeEvent({ requestBody: payload })
     },
     onSuccess: () => {
       showSuccessToast("Life event created successfully!")
-      queryClient.invalidateQueries({ queryKey: ["life-events"] })
+      // Invalidate the correct query key based on activePersonId
+      if (activePersonId) {
+        queryClient.invalidateQueries({ queryKey: ["life-events", activePersonId] })
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["life-events"] })
+      }
       handleClose()
     },
     onError: (error: any) => {
