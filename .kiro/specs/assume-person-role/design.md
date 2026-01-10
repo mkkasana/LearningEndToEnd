@@ -4,12 +4,17 @@
 
 This feature enables elevated users (SuperUser/Admin) to "assume" the role of any Person record they have created, allowing them to add direct relatives on behalf of that person. This solves the limitation where users can only add their own direct relatives, enabling the construction of multi-generational family trees.
 
-**Dependency:** This feature builds on the **Person Context API Refactor** spec, which provides:
-- APIs that accept explicit `person_id` parameters
-- The `ActivePersonContext` in the frontend
-- The `validate_person_access()` permission utility
+## Completed Foundation
 
-This feature extends the `ActivePersonContext` to support assuming different persons and adds the UI controls for switching context.
+The **Person Context API Refactor** has been completed, providing:
+- ✅ APIs that accept explicit `person_id` parameters (`/api/v1/persons/{person_id}/relationships`, etc.)
+- ✅ `ActivePersonContext` in frontend (`src/contexts/ActivePersonContext.tsx`)
+- ✅ `validate_person_access()` permission utility (`backend/app/utils/person_permissions.py`)
+
+This feature extends the existing `ActivePersonContext` to:
+1. Support assuming different persons via sessionStorage
+2. Add UI controls for switching context (Assume Role button, Return to Primary)
+3. Add backend endpoint to validate assume permission
 
 ## Architecture
 

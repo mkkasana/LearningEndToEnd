@@ -68,6 +68,9 @@ const useAuth = () => {
 
   const logout = () => {
     localStorage.removeItem("access_token")
+    // Clear assumed person from sessionStorage on logout
+    // _Requirements: 3.1 (assume-person-role)
+    sessionStorage.removeItem("assumedPerson")
     navigate({ to: "/login" })
   }
 

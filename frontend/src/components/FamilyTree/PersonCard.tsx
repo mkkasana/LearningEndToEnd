@@ -1,6 +1,7 @@
 import { Eye, User } from "lucide-react"
 import { memo } from "react"
 import type { PersonDetails } from "@/client"
+import { AssumeRoleButton } from "@/components/Family/AssumeRoleButton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -288,6 +289,19 @@ export const PersonCard = memo(function PersonCard({
           <span className={cn(variant === "sibling" && "text-xs")}>View</span>
         </Button>
       )}
+
+      {/* Assume Role Button - Requirements: 6.1, 6.2 (assume-person-role) */}
+      {/* Only shows for elevated users who created this person */}
+      <AssumeRoleButton
+        personId={person.id}
+        personName={displayName}
+        createdByUserId={person.created_by_user_id}
+        size={variant === "sibling" ? "sm" : "sm"}
+        className={cn(
+          "mt-1",
+          variant === "sibling" && "text-xs px-2 py-1 h-7",
+        )}
+      />
     </Card>
   )
 })

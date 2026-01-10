@@ -4,6 +4,7 @@ import { AlertCircle, Loader2, Search } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import type { PersonDetails } from "@/client"
 import { ProfileService } from "@/client"
+import { ActivePersonIndicator } from "@/components/Family/ActivePersonIndicator"
 import { AddFamilyMemberDialog } from "@/components/Family/AddFamilyMemberDialog"
 import { DiscoverFamilyMembersDialog } from "@/components/Family/DiscoverFamilyMembersDialog"
 import { ChildrenSection } from "@/components/FamilyTree/ChildrenSection"
@@ -51,7 +52,7 @@ function FamilyTreeView() {
 
   // Get the current user's person from ActivePersonContext
   // _Requirements: 7.1_
-  const { activePerson, activePersonId, isLoading: isPersonLoading } = useActivePersonContext()
+  const { activePerson, activePersonId, isLoading: isPersonLoading, isAssuming } = useActivePersonContext()
 
   // Initialize selected person - check sessionStorage first, then fall back to active person from context
   useEffect(() => {
@@ -87,6 +88,14 @@ function FamilyTreeView() {
       )
     }
   }, [])
+
+  // Re-center on active person when it changes (e.g., when assuming/returning)
+  // _Requirements: 5.4, 6.3 (assume-person-role)
+  useEffect(() => {
+    if (activePersonId && isAssuming !== undefined) {
+      setSelectedPersonId(activePersonId)
+    }
+  }, [activePersonId, isAssuming])
 
   // Fetch family tree data for selected person
   const { familyData, isLoading, error, refetch } =
@@ -293,6 +302,10 @@ function FamilyTreeView() {
           <span className="hidden sm:inline">Search Person</span>
         </Button>
       </header>
+
+      {/* Active Person Indicator - Shows when assuming another person's role */}
+      {/* _Requirements: 2.5, 4.1 (assume-person-role) */}
+      <ActivePersonIndicator />
 
       <SearchPersonDialog
         open={isSearchDialogOpen}

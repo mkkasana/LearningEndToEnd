@@ -10,6 +10,29 @@ export type Body_login_login_access_token = {
 };
 
 /**
+ * Response for can-assume permission check.
+ *
+ * Returns whether the current user can assume the role of a specific person,
+ * along with the reason if denied and the person's name if allowed.
+ *
+ * _Requirements: 2.1, 2.4_
+ */
+export type CanAssumeResponse = {
+    /**
+     * Whether the user can assume this person's role
+     */
+    can_assume: boolean;
+    /**
+     * Reason if assumption is denied (not_elevated_user, not_creator, person_not_found)
+     */
+    reason?: (string | null);
+    /**
+     * Full name of the person if assumption is allowed
+     */
+    person_name?: (string | null);
+};
+
+/**
  * Schema for creating a new country
  */
 export type CountryCreate = {
@@ -2205,6 +2228,12 @@ export type PersonDeletePersonMetadataData = {
 };
 
 export type PersonDeletePersonMetadataResponse = (unknown);
+
+export type PersonCanAssumePersonData = {
+    personId: string;
+};
+
+export type PersonCanAssumePersonResponse = (CanAssumeResponse);
 
 export type PersonGetPersonRelationshipsData = {
     personId: string;

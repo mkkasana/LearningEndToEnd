@@ -6,14 +6,14 @@ This feature enables elevated users (SuperUser/Admin) to "assume" the role of an
 
 The assume role action is integrated directly into the family tree UI - users click an "Assume Role" button on any Person card they created to switch context. The assumed role is session-scoped - when a user logs out and back in, they return to their primary Person context.
 
-## Dependencies
+## Completed Foundation (Person Context API Refactor)
 
-This feature depends on the **Person Context API Refactor** spec (`.kiro/specs/person-context-api-refactor/`), which must be completed first. That spec:
-- Refactors APIs to accept explicit `person_id` parameters
-- Creates the `ActivePersonContext` in the frontend
-- Establishes the permission validation utility
+The **Person Context API Refactor** spec (`.kiro/specs/person-context-api-refactor/`) has been completed, providing:
+- ✅ APIs that accept explicit `person_id` parameters (relationships, addresses, professions, metadata)
+- ✅ `ActivePersonContext` in the frontend (fetches user's primary person)
+- ✅ `validate_person_access()` permission utility in backend
 
-This feature extends the `ActivePersonContext` to support assuming different persons.
+This feature extends the existing `ActivePersonContext` to support assuming different persons via sessionStorage.
 
 ## Glossary
 

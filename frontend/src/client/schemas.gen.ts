@@ -57,6 +57,49 @@ export const Body_login_login_access_tokenSchema = {
     title: 'Body_login-login_access_token'
 } as const;
 
+export const CanAssumeResponseSchema = {
+    properties: {
+        can_assume: {
+            type: 'boolean',
+            title: 'Can Assume',
+            description: "Whether the user can assume this person's role"
+        },
+        reason: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Reason',
+            description: 'Reason if assumption is denied (not_elevated_user, not_creator, person_not_found)'
+        },
+        person_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Person Name',
+            description: 'Full name of the person if assumption is allowed'
+        }
+    },
+    type: 'object',
+    required: ['can_assume'],
+    title: 'CanAssumeResponse',
+    description: `Response for can-assume permission check.
+
+Returns whether the current user can assume the role of a specific person,
+along with the reason if denied and the person's name if allowed.
+
+_Requirements: 2.1, 2.4_`
+} as const;
+
 export const CountryCreateSchema = {
     properties: {
         name: {

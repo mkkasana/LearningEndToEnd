@@ -47,6 +47,10 @@ from app.schemas.person.person_religion import (
     PersonReligionPublic,
     PersonReligionUpdate,
 )
+from app.schemas.person.person_assume import (
+    AssumedPersonContext,
+    CanAssumeResponse,
+)
 from app.schemas.person.person_search import PersonMatchResult, PersonSearchRequest
 from app.schemas.person.profession import (
     ProfessionCreate,
@@ -56,6 +60,8 @@ from app.schemas.person.profession import (
 )
 
 __all__ = [
+    "AssumedPersonContext",
+    "CanAssumeResponse",
     "GenderDetailPublic",
     "GenderPublic",
     "LifeEventCreate",

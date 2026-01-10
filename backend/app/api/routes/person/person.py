@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.deps import CurrentUser, SessionDep, get_current_active_admin
 from app.db_models.person.person import Person
 from app.schemas.person import (
+    CanAssumeResponse,
     PersonAddressCreate,
     PersonAddressPublic,
     PersonAddressUpdate,
@@ -1158,6 +1159,82 @@ def delete_person_metadata(
 
     metadata_service.delete_metadata(metadata)
     return {"message": "Person metadata deleted successfully"}
+
+
+# ============================================================================
+# /{person_id}/can-assume Endpoint - Assume Person Role Feature
+# ============================================================================
+
+
+@router.get("/{person_id}/can-assume", response_model=CanAssumeResponse)
+@log_route
+def can_assume_person(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+) -> Any:
+    """
+    Check if current user can assume the role of a specific person.
+
+    Requirements for assuming a person's role:
+    - User must have SUPERUSER or ADMIN role (elevated user)
+    - Person must have been created by this user (created_by_user_id matches)
+
+    Returns:
+        CanAssumeResponse with can_assume boolean and reason if denied.
+
+    _Requirements: 1.1, 1.2, 2.1, 2.4_
+    """
+    from app.enums.user_role import UserRole
+
+    person_service = PersonService(session)
+    person = person_service.person_repo.get_by_id(person_id)
+
+    # Check if person exists
+    if not person:
+        return CanAssumeResponse(
+            can_assume=False,
+            reason="person_not_found",
+            person_name=None,
+        )
+
+    # Check if user is elevated (SUPERUSER or ADMIN)
+    # Requirements: 1.1, 1.2
+    if not current_user.role.has_permission(UserRole.SUPERUSER):
+        logger.info(
+            f"User {current_user.email} (role={current_user.role.value}) "
+            f"denied assume for person {person_id}: not elevated user"
+        )
+        return CanAssumeResponse(
+            can_assume=False,
+            reason="not_elevated_user",
+            person_name=None,
+        )
+
+    # Check if user created this person
+    # Requirements: 2.1, 2.4
+    if person.created_by_user_id != current_user.id:
+        logger.info(
+            f"User {current_user.email} denied assume for person {person_id}: "
+            f"not creator (created_by={person.created_by_user_id})"
+        )
+        return CanAssumeResponse(
+            can_assume=False,
+            reason="not_creator",
+            person_name=None,
+        )
+
+    # User can assume this person's role
+    person_name = f"{person.first_name} {person.last_name}"
+    logger.info(
+        f"User {current_user.email} can assume person {person_id} ({person_name})"
+    )
+
+    return CanAssumeResponse(
+        can_assume=True,
+        reason=None,
+        person_name=person_name,
+    )
 
 
 # ============================================================================
