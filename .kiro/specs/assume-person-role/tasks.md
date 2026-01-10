@@ -240,6 +240,33 @@ This implementation adds the "Assume Person Role" feature for elevated users (Su
   - Verify cache invalidation refreshes the UI correctly
   - Ask the user if questions arise
 
+## Backend Tests (Post-Implementation)
+
+- [x] 28. Backend: Unit tests for validate_person_access utility
+  - [x] 28.1 Create `tests/utils/test_person_permissions.py`
+    - Test person not found raises 404
+    - Test user can access own person (user_id matches)
+    - Test user can access person they created (created_by_user_id matches)
+    - Test allow_created_by=False denies creator access
+    - Test admin can access any person
+    - Test superuser cannot access unrelated person (only ADMIN has override)
+    - Test user cannot access unrelated person (403)
+    - Test edge cases (orphan persons, null values)
+    - _Validates: Requirements 6.1-6.5_
+
+- [x] 29. Backend: Integration tests for assume-person-role endpoints
+  - [x] 29.1 Create `tests/integration/test_assume_person_role_api.py`
+    - Test can-assume endpoint for superuser/admin/regular user
+    - Test can-assume for person created by other user
+    - Test can-assume for non-existent person
+    - Test person-specific discover family members endpoint
+    - Test person-specific create relationship endpoint
+    - Test person-specific delete relationship endpoint
+    - Test admin override access
+    - Test authentication requirements (401)
+    - Test authorization requirements (403)
+    - _Validates: Requirements 1.1, 1.2, 2.1, 2.4, 5.1, 5.2_
+
 ## Notes
 
 - Tasks marked with `*` are optional property-based tests
