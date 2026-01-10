@@ -24,8 +24,9 @@ The `amazon-builder-steering` rules do not apply to this project. This is a pers
 * To build docker for frontend : `docker compose build --no-cache frontend`
 * To build docker for backend : `docker compose build --no-cache backend`
 * To start all component : `docker compose up -d`
-* Commands to fresh restart components: "docker compose down && docker rmi frontend:lasted backend:lasted && docker compose build --no-cache && docker compose up -d"
+* Commands to fresh restart components: "docker compose down && docker rmi frontend:latest backend:latest && docker compose build --no-cache && docker compose up -d"
 
 * Command to regenerate the open api client: `npm run generate-client`
+* To build the backend including test cases, Run command "hatch run build-all" in side the backend folder.
 ## Note
 * When new changes are made, Always make sure to rebuild image to sync changes in docker comtainer.

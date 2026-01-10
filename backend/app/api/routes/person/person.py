@@ -910,9 +910,7 @@ def create_person_address(
     return address
 
 
-@router.patch(
-    "/{person_id}/addresses/{address_id}", response_model=PersonAddressPublic
-)
+@router.patch("/{person_id}/addresses/{address_id}", response_model=PersonAddressPublic)
 def update_person_address(
     session: SessionDep,
     current_user: CurrentUser,

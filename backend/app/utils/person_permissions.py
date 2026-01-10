@@ -4,8 +4,6 @@ This module provides reusable permission checking functions for person-related
 API endpoints. It implements the permission model defined in Requirements 6.1-6.5.
 """
 
-from uuid import UUID
-
 from fastapi import HTTPException, status
 
 from app.db_models.person.person import Person

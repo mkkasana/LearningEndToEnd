@@ -67,7 +67,7 @@ def get_my_life_events(
 @log_route
 def get_person_life_events(
     session: SessionDep,
-    current_user: CurrentUser,
+    current_user: CurrentUser,  # noqa: ARG001 - Required for authentication
     person_id: uuid.UUID,
     skip: int = 0,
     limit: int = 100,
