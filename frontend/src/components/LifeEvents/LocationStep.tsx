@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 
 const formSchema = z.object({
   country_id: z.string().optional(),
@@ -50,6 +51,7 @@ export function LocationStep({
   onBack,
   initialData,
 }: LocationStepProps) {
+  const { activePersonId } = useActivePersonContext()
   const [selectedCountry, setSelectedCountry] = useState<string>("")
   const [selectedState, setSelectedState] = useState<string>("")
   const [selectedDistrict, setSelectedDistrict] = useState<string>("")
@@ -80,10 +82,12 @@ export function LocationStep({
     }
   }, [initialData])
 
-  // Fetch current user's address to prefill
+  // Fetch current user's address to prefill using person-specific endpoint
+  // _Requirements: 7.2_
   const { data: myAddresses } = useQuery({
-    queryKey: ["myAddresses"],
-    queryFn: () => PersonService.getMyAddresses(),
+    queryKey: ["personAddresses", activePersonId],
+    queryFn: () => PersonService.getPersonAddresses({ personId: activePersonId! }),
+    enabled: !!activePersonId,
   })
 
   // Prefill with user's current address only if no initialData

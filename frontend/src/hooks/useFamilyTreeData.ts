@@ -40,32 +40,43 @@ export interface FamilyTreeData extends CategorizedRelationships {
 
 /**
  * Custom hook for fetching and processing family tree data
- * @param personId - The ID of the person to fetch relationships for (null for current user)
+ * @param personId - The ID of the person to fetch relationships for (required)
  * @returns Family tree data with loading and error states
  *
  * Performance optimizations:
  * - Data is cached for 5 minutes (staleTime) to avoid redundant API calls
  * - Cache is kept in memory for 10 minutes (gcTime) for quick navigation
  * - Previously viewed persons are served from cache instantly
+ * 
+ * _Requirements: 7.1_
  */
 export function useFamilyTreeData(personId: string | null) {
   const query = useQuery({
+    // Use a distinct query key to avoid conflicts with other components
+    // that use the same API but don't process the data the same way
     queryKey: ["familyTreeData", personId],
     queryFn: async () => {
+      // This should not be called when personId is null due to enabled: false
+      // but we add a safety check just in case
+      if (!personId) {
+        return null
+      }
+
       try {
-        // Fetch relationship data - now returns selected person + relationships
-        const response = personId
-          ? await PersonService.getPersonRelationshipsWithDetails({ personId })
-          : await PersonService.getMyRelationshipsWithDetails()
+        // Always use person-specific endpoint with explicit personId
+        // _Requirements: 7.1_
+        const response = await PersonService.getPersonRelationshipsWithDetails({ 
+          personId 
+        })
 
         // Categorize relationships
-        const categorized = categorizeRelationships(response.relationships)
+        const categorized = categorizeRelationships(response.relationships || [])
 
         // Calculate siblings - handle failures gracefully
         let siblings: PersonDetails[] = []
         try {
           siblings = await calculateSiblings(
-            personId || "me",
+            personId,
             categorized.parentIds,
           )
         } catch (error) {
@@ -86,14 +97,14 @@ export function useFamilyTreeData(personId: string | null) {
         throw new Error("Failed to load family tree data")
       }
     },
-    enabled: personId !== null,
+    enabled: !!personId, // Only run query when personId is truthy
     staleTime: 5 * 60 * 1000, // 5 minutes - data is considered fresh for this duration
     gcTime: 10 * 60 * 1000, // 10 minutes - cache is kept in memory for this duration
   })
 
   return {
-    familyData: query.data,
-    isLoading: query.isLoading,
+    familyData: query.data ?? undefined,
+    isLoading: query.isLoading || query.isFetching || query.isPending,
     error: query.error,
     refetch: query.refetch,
   }

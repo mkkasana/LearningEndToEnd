@@ -9,12 +9,14 @@ import {
   ReligionMetadataService,
 } from "@/client"
 import { Separator } from "@/components/ui/separator"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 
 const UserInformation = () => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const { user: currentUser } = useAuth()
+  const { activePersonId } = useActivePersonContext()
 
   // Fetch person details
   const { data: personData } = useQuery({
@@ -29,10 +31,12 @@ const UserInformation = () => {
     enabled: !!personData,
   })
 
-  // Fetch addresses
+  // Fetch addresses using person-specific endpoint
+  // _Requirements: 7.2_
   const { data: addresses } = useQuery({
-    queryKey: ["addresses", "me"],
-    queryFn: () => PersonService.getMyAddresses(),
+    queryKey: ["personAddresses", activePersonId],
+    queryFn: () => PersonService.getPersonAddresses({ personId: activePersonId! }),
+    enabled: !!activePersonId,
   })
 
   // Fetch religion

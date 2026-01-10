@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { AlertCircle, Loader2, Search } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import type { PersonDetails } from "@/client"
-import { PersonService, ProfileService } from "@/client"
+import { ProfileService } from "@/client"
 import { AddFamilyMemberDialog } from "@/components/Family/AddFamilyMemberDialog"
 import { DiscoverFamilyMembersDialog } from "@/components/Family/DiscoverFamilyMembersDialog"
 import { ChildrenSection } from "@/components/FamilyTree/ChildrenSection"
@@ -14,6 +14,7 @@ import { RowConnector } from "@/components/FamilyTree/RowConnector"
 import { SearchPersonDialog } from "@/components/FamilyTree/SearchPersonDialog"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 import { useFamilyTreeData } from "@/hooks/useFamilyTreeData"
 
 export const Route = createFileRoute("/_layout/family-tree")({
@@ -48,16 +49,13 @@ function FamilyTreeView() {
     queryFn: () => ProfileService.getProfileCompletionStatus(),
   })
 
-  // Get the current user's person ID
-  const { data: myPerson } = useQuery({
-    queryKey: ["myPerson"],
-    queryFn: () => PersonService.getMyPerson(),
-    enabled: profileStatus?.has_person === true,
-  })
+  // Get the current user's person from ActivePersonContext
+  // _Requirements: 7.1_
+  const { activePerson, activePersonId, isLoading: isPersonLoading } = useActivePersonContext()
 
-  // Initialize selected person - check sessionStorage first, then fall back to current user
+  // Initialize selected person - check sessionStorage first, then fall back to active person from context
   useEffect(() => {
-    if (!selectedPersonId) {
+    if (!selectedPersonId && activePersonId) {
       // Check if there's a person ID passed via sessionStorage (from Explore button)
       const explorePersonId = sessionStorage.getItem(
         "familyTreeExplorePersonId",
@@ -66,11 +64,11 @@ function FamilyTreeView() {
         setSelectedPersonId(explorePersonId)
         // Clear it so subsequent visits start with current user
         sessionStorage.removeItem("familyTreeExplorePersonId")
-      } else if (myPerson) {
-        setSelectedPersonId(myPerson.id)
+      } else {
+        setSelectedPersonId(activePersonId)
       }
     }
-  }, [myPerson, selectedPersonId])
+  }, [activePersonId, selectedPersonId])
 
   // Listen for custom event to explore a specific person (from Contribution Stats dialog)
   useEffect(() => {
@@ -160,7 +158,7 @@ function FamilyTreeView() {
       })
       // Also invalidate relationships query used by other components
       queryClient.invalidateQueries({
-        queryKey: ["myRelationshipsWithDetails"],
+        queryKey: ["personRelationshipsWithDetails"],
       })
     }
   }
@@ -201,8 +199,8 @@ function FamilyTreeView() {
     )
   }
 
-  // Loading state
-  if (isLoading) {
+  // Loading state - include person context loading
+  if (isLoading || isPersonLoading || !activePersonId) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -232,13 +230,13 @@ function FamilyTreeView() {
                 Retry
               </Button>
               {selectedPersonId &&
-                myPerson &&
-                selectedPersonId !== myPerson.id && (
+                activePerson &&
+                selectedPersonId !== activePerson.id && (
                   <Button
                     className="w-full"
                     variant="secondary"
                     onClick={() => {
-                      setSelectedPersonId(myPerson.id)
+                      setSelectedPersonId(activePerson.id)
                     }}
                   >
                     Return to My Profile
@@ -251,8 +249,8 @@ function FamilyTreeView() {
     )
   }
 
-  // No data yet (waiting for initial load)
-  if (!familyData || !selectedPersonId) {
+  // No data yet (waiting for initial load) or data structure is invalid
+  if (!familyData || !selectedPersonId || !familyData.parents || !familyData.siblings || !familyData.spouses || !familyData.children) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -262,10 +260,16 @@ function FamilyTreeView() {
   }
 
   // Get the selected person from the API response (not from cache)
-  const selectedPerson = familyData?.selectedPerson || null
+  const selectedPerson = familyData.selectedPerson || null
+
+  // Safely access arrays with fallbacks
+  const parents = familyData.parents || []
+  const siblings = familyData.siblings || []
+  const spouses = familyData.spouses || []
+  const children = familyData.children || []
 
   // Check if user is viewing their own family tree (Add Cards only visible for own tree)
-  const isViewingOwnTree = myPerson && selectedPersonId === myPerson.id
+  const isViewingOwnTree = !!(activePerson && selectedPersonId === activePerson.id)
 
   // Main content - Family Tree View
   return (
@@ -315,9 +319,9 @@ function FamilyTreeView() {
         )}
         {/* Parents Section - Requirements: 1.1, 5.1, 5.2 */}
         {/* Add Card only visible when viewing own family tree */}
-        {(familyData.parents.length > 0 || isViewingOwnTree) && (
+        {(parents.length > 0 || isViewingOwnTree) && (
           <ParentsSection
-            parents={familyData.parents}
+            parents={parents}
             onPersonClick={handlePersonClick}
             onViewClick={handleViewClick}
             showAddCard={isViewingOwnTree}
@@ -326,7 +330,7 @@ function FamilyTreeView() {
         )}
 
         {/* Connector from parents to center row */}
-        {(familyData.parents.length > 0 || isViewingOwnTree) && (
+        {(parents.length > 0 || isViewingOwnTree) && (
           <RowConnector />
         )}
 
@@ -338,7 +342,7 @@ function FamilyTreeView() {
           const colorCoding = new Map<string, "sibling" | "spouse">()
 
           // Add siblings on the left
-          familyData.siblings.forEach((sibling) => {
+          siblings.forEach((sibling) => {
             centerRowPeople.push(sibling)
             colorCoding.set(sibling.id, "sibling")
           })
@@ -349,7 +353,7 @@ function FamilyTreeView() {
           }
 
           // Add spouses on the right
-          familyData.spouses.forEach((spouse) => {
+          spouses.forEach((spouse) => {
             centerRowPeople.push(spouse)
             colorCoding.set(spouse.id, "spouse")
           })
@@ -371,15 +375,15 @@ function FamilyTreeView() {
         })()}
 
         {/* Connector from center row to children */}
-        {(familyData.children.length > 0 || isViewingOwnTree) && (
+        {(children.length > 0 || isViewingOwnTree) && (
           <RowConnector />
         )}
 
         {/* Children Section - Requirements: 1.3, 5.1, 5.2 */}
         {/* Add Card only visible when viewing own family tree */}
-        {(familyData.children.length > 0 || isViewingOwnTree) && (
+        {(children.length > 0 || isViewingOwnTree) && (
           <ChildrenSection
-            children={familyData.children}
+            children={children}
             onPersonClick={handlePersonClick}
             onViewClick={handleViewClick}
             showAddCard={isViewingOwnTree}

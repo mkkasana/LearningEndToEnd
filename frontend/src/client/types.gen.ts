@@ -2009,50 +2009,6 @@ export type PersonUpdateMyPersonData = {
 
 export type PersonUpdateMyPersonResponse = (PersonPublic);
 
-export type PersonGetMyContributionsResponse = (Array<PersonContributionPublic>);
-
-export type PersonCreateFamilyMemberData = {
-    requestBody: PersonCreate;
-};
-
-export type PersonCreateFamilyMemberResponse = (PersonPublic);
-
-export type PersonSearchMatchingPersonsData = {
-    requestBody: PersonSearchRequest;
-};
-
-export type PersonSearchMatchingPersonsResponse = (Array<PersonMatchResult>);
-
-export type PersonDiscoverFamilyMembersResponse = (Array<PersonDiscoveryResult>);
-
-export type PersonCreatePersonAddressData = {
-    personId: string;
-    requestBody: PersonAddressCreate;
-};
-
-export type PersonCreatePersonAddressResponse = (PersonAddressPublic);
-
-export type PersonCreatePersonReligionData = {
-    personId: string;
-    requestBody: {
-        [key: string]: unknown;
-    };
-};
-
-export type PersonCreatePersonReligionResponse = (PersonPublic);
-
-export type PersonGetPersonByUserIdData = {
-    userId: string;
-};
-
-export type PersonGetPersonByUserIdResponse = (PersonPublic);
-
-export type PersonDeletePersonByUserIdData = {
-    userId: string;
-};
-
-export type PersonDeletePersonByUserIdResponse = (unknown);
-
 export type PersonGetMyAddressesResponse = (Array<PersonAddressPublic>);
 
 export type PersonCreateMyAddressData = {
@@ -2117,18 +2073,6 @@ export type PersonCreateMyRelationshipResponse = (PersonRelationshipPublic);
 
 export type PersonGetMyRelationshipsWithDetailsResponse = (PersonRelationshipsWithDetailsResponse);
 
-export type PersonGetPersonRelationshipsWithDetailsData = {
-    personId: string;
-};
-
-export type PersonGetPersonRelationshipsWithDetailsResponse = (PersonRelationshipsWithDetailsResponse);
-
-export type PersonGetPersonCompleteDetailsData = {
-    personId: string;
-};
-
-export type PersonGetPersonCompleteDetailsResponse = (PersonCompleteDetailsResponse);
-
 export type PersonGetMyRelationshipData = {
     relationshipId: string;
 };
@@ -2163,6 +2107,150 @@ export type PersonUpdateMyMetadataData = {
 };
 
 export type PersonUpdateMyMetadataResponse = (PersonMetadataPublic);
+
+export type PersonGetMyContributionsResponse = (Array<PersonContributionPublic>);
+
+export type PersonCreateFamilyMemberData = {
+    requestBody: PersonCreate;
+};
+
+export type PersonCreateFamilyMemberResponse = (PersonPublic);
+
+export type PersonSearchMatchingPersonsData = {
+    requestBody: PersonSearchRequest;
+};
+
+export type PersonSearchMatchingPersonsResponse = (Array<PersonMatchResult>);
+
+export type PersonDiscoverFamilyMembersResponse = (Array<PersonDiscoveryResult>);
+
+export type PersonGetPersonAddressesData = {
+    personId: string;
+};
+
+export type PersonGetPersonAddressesResponse = (Array<PersonAddressPublic>);
+
+export type PersonCreatePersonAddressData = {
+    personId: string;
+    requestBody: PersonAddressCreate;
+};
+
+export type PersonCreatePersonAddressResponse = (PersonAddressPublic);
+
+export type PersonUpdatePersonAddressData = {
+    addressId: string;
+    personId: string;
+    requestBody: PersonAddressUpdate;
+};
+
+export type PersonUpdatePersonAddressResponse = (PersonAddressPublic);
+
+export type PersonDeletePersonAddressData = {
+    addressId: string;
+    personId: string;
+};
+
+export type PersonDeletePersonAddressResponse = (unknown);
+
+export type PersonGetPersonProfessionsData = {
+    personId: string;
+};
+
+export type PersonGetPersonProfessionsResponse = (Array<PersonProfessionPublic>);
+
+export type PersonCreatePersonProfessionData = {
+    personId: string;
+    requestBody: PersonProfessionCreate;
+};
+
+export type PersonCreatePersonProfessionResponse = (PersonProfessionPublic);
+
+export type PersonUpdatePersonProfessionData = {
+    personId: string;
+    professionId: string;
+    requestBody: PersonProfessionUpdate;
+};
+
+export type PersonUpdatePersonProfessionResponse = (PersonProfessionPublic);
+
+export type PersonDeletePersonProfessionData = {
+    personId: string;
+    professionId: string;
+};
+
+export type PersonDeletePersonProfessionResponse = (unknown);
+
+export type PersonGetPersonMetadataData = {
+    personId: string;
+};
+
+export type PersonGetPersonMetadataResponse = (PersonMetadataPublic);
+
+export type PersonCreatePersonMetadataData = {
+    personId: string;
+    requestBody: PersonMetadataCreate;
+};
+
+export type PersonCreatePersonMetadataResponse = (PersonMetadataPublic);
+
+export type PersonUpdatePersonMetadataData = {
+    personId: string;
+    requestBody: PersonMetadataUpdate;
+};
+
+export type PersonUpdatePersonMetadataResponse = (PersonMetadataPublic);
+
+export type PersonDeletePersonMetadataData = {
+    personId: string;
+};
+
+export type PersonDeletePersonMetadataResponse = (unknown);
+
+export type PersonGetPersonRelationshipsData = {
+    personId: string;
+};
+
+export type PersonGetPersonRelationshipsResponse = (Array<PersonRelationshipPublic>);
+
+export type PersonCreatePersonRelationshipData = {
+    personId: string;
+    requestBody: PersonRelationshipCreate;
+};
+
+export type PersonCreatePersonRelationshipResponse = (PersonRelationshipPublic);
+
+export type PersonGetPersonRelationshipsWithDetailsData = {
+    personId: string;
+};
+
+export type PersonGetPersonRelationshipsWithDetailsResponse = (PersonRelationshipsWithDetailsResponse);
+
+export type PersonGetPersonCompleteDetailsData = {
+    personId: string;
+};
+
+export type PersonGetPersonCompleteDetailsResponse = (PersonCompleteDetailsResponse);
+
+export type PersonCreatePersonReligionData = {
+    personId: string;
+    requestBody: {
+        [key: string]: unknown;
+    };
+};
+
+export type PersonCreatePersonReligionResponse = (PersonPublic);
+
+export type PersonGetPersonByUserIdData = {
+    userId: string;
+};
+
+export type PersonGetPersonByUserIdResponse = (PersonPublic);
+
+export type PersonDeletePersonByUserIdData = {
+    userId: string;
+};
+
+export type PersonDeletePersonByUserIdResponse = (unknown);
 
 export type PersonMetadataGetProfessionsResponse = (unknown);
 

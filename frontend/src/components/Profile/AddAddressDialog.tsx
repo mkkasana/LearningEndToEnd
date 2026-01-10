@@ -36,6 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 import useCustomToast from "@/hooks/useCustomToast"
 
 const formSchema = z.object({
@@ -64,6 +65,7 @@ export function AddAddressDialog({
 }: AddAddressDialogProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const queryClient = useQueryClient()
+  const { activePersonId } = useActivePersonContext()
 
   const [selectedCountry, setSelectedCountry] = useState<string>("")
   const [selectedState, setSelectedState] = useState<string>("")
@@ -121,12 +123,18 @@ export function AddAddressDialog({
     enabled: !!selectedSubDistrict,
   })
 
+  // Create address using person-specific endpoint
+  // _Requirements: 7.2_
   const addAddressMutation = useMutation({
     mutationFn: (data: PersonAddressCreate) =>
-      PersonService.createMyAddress({ requestBody: data }),
+      PersonService.createPersonAddress({ 
+        personId: activePersonId!, 
+        requestBody: data 
+      }),
     onSuccess: () => {
       showSuccessToast("Address added successfully!")
       queryClient.invalidateQueries({ queryKey: ["profileCompletion"] })
+      queryClient.invalidateQueries({ queryKey: ["personAddresses", activePersonId] })
       onOpenChange(false)
       form.reset()
       if (onSuccess) onSuccess()

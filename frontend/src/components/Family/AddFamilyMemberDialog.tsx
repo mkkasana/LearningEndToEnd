@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 import useCustomToast from "@/hooks/useCustomToast"
 import { AddressStep } from "./AddressStep"
 import { BasicInfoStep } from "./BasicInfoStep"
@@ -37,6 +38,7 @@ export function AddFamilyMemberDialog({
 }: AddFamilyMemberDialogProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const queryClient = useQueryClient()
+  const { activePersonId } = useActivePersonContext()
   const [currentStep, setCurrentStep] = useState(STEPS.BASIC_INFO)
   const [familyMemberData, setFamilyMemberData] = useState<any>(null)
   const [addressData, setAddressData] = useState<any>(null)
@@ -48,9 +50,12 @@ export function AddFamilyMemberDialog({
     useState<any>(null)
 
   // Mutation for creating relationship with existing person
+  // Uses person-specific endpoint with activePersonId from context
+  // _Requirements: 7.1_
   const createRelationshipMutation = useMutation({
     mutationFn: (data: { relatedPersonId: string; relationshipType: string }) =>
-      PersonService.createMyRelationship({
+      PersonService.createPersonRelationship({
+        personId: activePersonId!,
         requestBody: {
           related_person_id: data.relatedPersonId,
           relationship_type: data.relationshipType,
@@ -61,6 +66,10 @@ export function AddFamilyMemberDialog({
       showSuccessToast("Successfully connected to existing person!")
       queryClient.invalidateQueries({
         queryKey: ["myRelationshipsWithDetails"],
+      })
+      // Also invalidate person-specific relationships query
+      queryClient.invalidateQueries({
+        queryKey: ["personRelationshipsWithDetails", activePersonId],
       })
       setShowConnectDialog(false)
       handleClose()

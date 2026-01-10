@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 import useCustomToast from "@/hooks/useCustomToast"
 
 export const Route = createFileRoute("/_layout/family" as any)({
@@ -40,23 +41,34 @@ function Family() {
   const [selectedRelationship, setSelectedRelationship] = useState<any>(null)
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
+  
+  // Get active person from context
+  // _Requirements: 7.1_
+  const { activePersonId, isLoading: isPersonLoading } = useActivePersonContext()
 
-  // Fetch family members with full details
-  const { data: familyMembersResponse, isLoading } = useQuery({
-    queryKey: ["myRelationshipsWithDetails"],
-    queryFn: () => PersonService.getMyRelationshipsWithDetails(),
+  // Fetch family members with full details using person-specific endpoint
+  // _Requirements: 7.1_
+  const { data: familyMembersResponse, isLoading: isDataLoading } = useQuery({
+    queryKey: ["personRelationshipsWithDetails", activePersonId],
+    queryFn: () => PersonService.getPersonRelationshipsWithDetails({ 
+      personId: activePersonId! 
+    }),
+    enabled: !!activePersonId,
   })
 
+  const isLoading = isPersonLoading || isDataLoading
   const familyMembersData = familyMembersResponse?.relationships || []
 
   // Delete relationship mutation
+  // Note: Using /me endpoint for delete as person-specific delete is not yet implemented
   const deleteMutation = useMutation({
     mutationFn: (relationshipId: string) =>
       PersonService.deleteMyRelationship({ relationshipId }),
     onSuccess: () => {
       showSuccessToast("Family member removed successfully")
+      // Invalidate person-specific relationships query
       queryClient.invalidateQueries({
-        queryKey: ["myRelationshipsWithDetails"],
+        queryKey: ["personRelationshipsWithDetails", activePersonId],
       })
       setDeleteDialogOpen(false)
       setSelectedRelationship(null)

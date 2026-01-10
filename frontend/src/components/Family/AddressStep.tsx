@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 
@@ -53,6 +54,7 @@ export function AddressStep({
 }: AddressStepProps) {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const { user } = useAuth()
+  const { activePersonId } = useActivePersonContext()
 
   const [selectedCountry, setSelectedCountry] = useState<string>("")
   const [selectedState, setSelectedState] = useState<string>("")
@@ -86,10 +88,12 @@ export function AddressStep({
     }
   }, [initialData])
 
-  // Fetch current user's address to prefill
+  // Fetch current user's address to prefill using person-specific endpoint
+  // _Requirements: 7.2_
   const { data: myAddresses } = useQuery({
-    queryKey: ["myAddresses"],
-    queryFn: () => PersonService.getMyAddresses(),
+    queryKey: ["personAddresses", activePersonId],
+    queryFn: () => PersonService.getPersonAddresses({ personId: activePersonId! }),
+    enabled: !!activePersonId,
   })
 
   // Prefill with user's current address only if no initialData

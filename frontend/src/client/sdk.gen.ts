@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AddressMetadataGetCountriesResponse, AddressMetadataCreateCountryData, AddressMetadataCreateCountryResponse, AddressMetadataGetCountryByIdData, AddressMetadataGetCountryByIdResponse, AddressMetadataUpdateCountryData, AddressMetadataUpdateCountryResponse, AddressMetadataDeleteCountryData, AddressMetadataDeleteCountryResponse, AddressMetadataGetStatesByCountryData, AddressMetadataGetStatesByCountryResponse, AddressMetadataGetStateByIdData, AddressMetadataGetStateByIdResponse, AddressMetadataUpdateStateData, AddressMetadataUpdateStateResponse, AddressMetadataDeleteStateData, AddressMetadataDeleteStateResponse, AddressMetadataCreateStateData, AddressMetadataCreateStateResponse, AddressMetadataGetDistrictsByStateData, AddressMetadataGetDistrictsByStateResponse, AddressMetadataGetDistrictByIdData, AddressMetadataGetDistrictByIdResponse, AddressMetadataUpdateDistrictData, AddressMetadataUpdateDistrictResponse, AddressMetadataDeleteDistrictData, AddressMetadataDeleteDistrictResponse, AddressMetadataCreateDistrictData, AddressMetadataCreateDistrictResponse, AddressMetadataGetSubDistrictsByDistrictData, AddressMetadataGetSubDistrictsByDistrictResponse, AddressMetadataGetSubDistrictByIdData, AddressMetadataGetSubDistrictByIdResponse, AddressMetadataUpdateSubDistrictData, AddressMetadataUpdateSubDistrictResponse, AddressMetadataDeleteSubDistrictData, AddressMetadataDeleteSubDistrictResponse, AddressMetadataCreateSubDistrictData, AddressMetadataCreateSubDistrictResponse, AddressMetadataGetLocalitiesBySubDistrictData, AddressMetadataGetLocalitiesBySubDistrictResponse, AddressMetadataGetLocalityByIdData, AddressMetadataGetLocalityByIdResponse, AddressMetadataUpdateLocalityData, AddressMetadataUpdateLocalityResponse, AddressMetadataDeleteLocalityData, AddressMetadataDeleteLocalityResponse, AddressMetadataCreateLocalityData, AddressMetadataCreateLocalityResponse, IssuesCreateSupportTicketData, IssuesCreateSupportTicketResponse, IssuesGetMySupportTicketsData, IssuesGetMySupportTicketsResponse, IssuesGetSupportTicketData, IssuesGetSupportTicketResponse, IssuesUpdateSupportTicketData, IssuesUpdateSupportTicketResponse, IssuesDeleteSupportTicketData, IssuesDeleteSupportTicketResponse, IssuesGetAllSupportTicketsAdminData, IssuesGetAllSupportTicketsAdminResponse, IssuesResolveSupportTicketData, IssuesResolveSupportTicketResponse, IssuesReopenSupportTicketData, IssuesReopenSupportTicketResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LifeEventsGetMyLifeEventsData, LifeEventsGetMyLifeEventsResponse, LifeEventsGetPersonLifeEventsData, LifeEventsGetPersonLifeEventsResponse, LifeEventsCreateLifeEventData, LifeEventsCreateLifeEventResponse, LifeEventsGetLifeEventData, LifeEventsGetLifeEventResponse, LifeEventsUpdateLifeEventData, LifeEventsUpdateLifeEventResponse, LifeEventsDeleteLifeEventData, LifeEventsDeleteLifeEventResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PersonGetMyPersonResponse, PersonCreateMyPersonData, PersonCreateMyPersonResponse, PersonDeleteMyPersonResponse, PersonUpdateMyPersonData, PersonUpdateMyPersonResponse, PersonGetMyContributionsResponse, PersonCreateFamilyMemberData, PersonCreateFamilyMemberResponse, PersonSearchMatchingPersonsData, PersonSearchMatchingPersonsResponse, PersonDiscoverFamilyMembersResponse, PersonCreatePersonAddressData, PersonCreatePersonAddressResponse, PersonCreatePersonReligionData, PersonCreatePersonReligionResponse, PersonGetPersonByUserIdData, PersonGetPersonByUserIdResponse, PersonDeletePersonByUserIdData, PersonDeletePersonByUserIdResponse, PersonGetMyAddressesResponse, PersonCreateMyAddressData, PersonCreateMyAddressResponse, PersonGetMyAddressData, PersonGetMyAddressResponse, PersonUpdateMyAddressData, PersonUpdateMyAddressResponse, PersonDeleteMyAddressData, PersonDeleteMyAddressResponse, PersonGetMyProfessionsResponse, PersonCreateMyProfessionData, PersonCreateMyProfessionResponse, PersonGetMyProfessionData, PersonGetMyProfessionResponse, PersonUpdateMyProfessionData, PersonUpdateMyProfessionResponse, PersonDeleteMyProfessionData, PersonDeleteMyProfessionResponse, PersonGetMyRelationshipsResponse, PersonCreateMyRelationshipData, PersonCreateMyRelationshipResponse, PersonGetMyRelationshipsWithDetailsResponse, PersonGetPersonRelationshipsWithDetailsData, PersonGetPersonRelationshipsWithDetailsResponse, PersonGetPersonCompleteDetailsData, PersonGetPersonCompleteDetailsResponse, PersonGetMyRelationshipData, PersonGetMyRelationshipResponse, PersonUpdateMyRelationshipData, PersonUpdateMyRelationshipResponse, PersonDeleteMyRelationshipData, PersonDeleteMyRelationshipResponse, PersonGetMyMetadataResponse, PersonCreateMyMetadataData, PersonCreateMyMetadataResponse, PersonDeleteMyMetadataResponse, PersonUpdateMyMetadataData, PersonUpdateMyMetadataResponse, PersonMetadataGetProfessionsResponse, PersonMetadataCreateProfessionData, PersonMetadataCreateProfessionResponse, PersonMetadataGetProfessionByIdData, PersonMetadataGetProfessionByIdResponse, PersonMetadataUpdateProfessionData, PersonMetadataUpdateProfessionResponse, PersonMetadataDeleteProfessionData, PersonMetadataDeleteProfessionResponse, PersonMetadataGetGendersResponse, PersonMetadataGetGenderByIdData, PersonMetadataGetGenderByIdResponse, PersonReligionCreateMyReligionData, PersonReligionCreateMyReligionResponse, PersonReligionGetMyReligionResponse, PersonReligionUpdateMyReligionData, PersonReligionUpdateMyReligionResponse, PersonReligionDeleteMyReligionResponse, PostsGetPublishedPostsData, PostsGetPublishedPostsResponse, PostsCreatePostData, PostsCreatePostResponse, PostsGetMyPostsData, PostsGetMyPostsResponse, PostsGetPostData, PostsGetPostResponse, PostsUpdatePostData, PostsUpdatePostResponse, PostsDeletePostData, PostsDeletePostResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProfileGetProfileCompletionStatusResponse, RelativesGetParentsData, RelativesGetParentsResponse, RelativesGetChildrenData, RelativesGetChildrenResponse, RelativesGetSpousesData, RelativesGetSpousesResponse, RelativesGetSiblingsData, RelativesGetSiblingsResponse, ReligionMetadataGetReligionsResponse, ReligionMetadataCreateReligionData, ReligionMetadataCreateReligionResponse, ReligionMetadataGetReligionByIdData, ReligionMetadataGetReligionByIdResponse, ReligionMetadataUpdateReligionData, ReligionMetadataUpdateReligionResponse, ReligionMetadataDeleteReligionData, ReligionMetadataDeleteReligionResponse, ReligionMetadataGetCategoriesByReligionData, ReligionMetadataGetCategoriesByReligionResponse, ReligionMetadataGetCategoryByIdData, ReligionMetadataGetCategoryByIdResponse, ReligionMetadataUpdateCategoryData, ReligionMetadataUpdateCategoryResponse, ReligionMetadataDeleteCategoryData, ReligionMetadataDeleteCategoryResponse, ReligionMetadataCreateCategoryData, ReligionMetadataCreateCategoryResponse, ReligionMetadataGetSubCategoriesByCategoryData, ReligionMetadataGetSubCategoriesByCategoryResponse, ReligionMetadataGetSubCategoryByIdData, ReligionMetadataGetSubCategoryByIdResponse, ReligionMetadataUpdateSubCategoryData, ReligionMetadataUpdateSubCategoryResponse, ReligionMetadataDeleteSubCategoryData, ReligionMetadataDeleteSubCategoryResponse, ReligionMetadataCreateSubCategoryData, ReligionMetadataCreateSubCategoryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UsersUpdateUserRoleData, UsersUpdateUserRoleResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, UtilsDeleteCacheKeyData, UtilsDeleteCacheKeyResponse, UtilsDeleteCachePatternData, UtilsDeleteCachePatternResponse, UtilsClearAllCacheResponse } from './types.gen';
+import type { AddressMetadataGetCountriesResponse, AddressMetadataCreateCountryData, AddressMetadataCreateCountryResponse, AddressMetadataGetCountryByIdData, AddressMetadataGetCountryByIdResponse, AddressMetadataUpdateCountryData, AddressMetadataUpdateCountryResponse, AddressMetadataDeleteCountryData, AddressMetadataDeleteCountryResponse, AddressMetadataGetStatesByCountryData, AddressMetadataGetStatesByCountryResponse, AddressMetadataGetStateByIdData, AddressMetadataGetStateByIdResponse, AddressMetadataUpdateStateData, AddressMetadataUpdateStateResponse, AddressMetadataDeleteStateData, AddressMetadataDeleteStateResponse, AddressMetadataCreateStateData, AddressMetadataCreateStateResponse, AddressMetadataGetDistrictsByStateData, AddressMetadataGetDistrictsByStateResponse, AddressMetadataGetDistrictByIdData, AddressMetadataGetDistrictByIdResponse, AddressMetadataUpdateDistrictData, AddressMetadataUpdateDistrictResponse, AddressMetadataDeleteDistrictData, AddressMetadataDeleteDistrictResponse, AddressMetadataCreateDistrictData, AddressMetadataCreateDistrictResponse, AddressMetadataGetSubDistrictsByDistrictData, AddressMetadataGetSubDistrictsByDistrictResponse, AddressMetadataGetSubDistrictByIdData, AddressMetadataGetSubDistrictByIdResponse, AddressMetadataUpdateSubDistrictData, AddressMetadataUpdateSubDistrictResponse, AddressMetadataDeleteSubDistrictData, AddressMetadataDeleteSubDistrictResponse, AddressMetadataCreateSubDistrictData, AddressMetadataCreateSubDistrictResponse, AddressMetadataGetLocalitiesBySubDistrictData, AddressMetadataGetLocalitiesBySubDistrictResponse, AddressMetadataGetLocalityByIdData, AddressMetadataGetLocalityByIdResponse, AddressMetadataUpdateLocalityData, AddressMetadataUpdateLocalityResponse, AddressMetadataDeleteLocalityData, AddressMetadataDeleteLocalityResponse, AddressMetadataCreateLocalityData, AddressMetadataCreateLocalityResponse, IssuesCreateSupportTicketData, IssuesCreateSupportTicketResponse, IssuesGetMySupportTicketsData, IssuesGetMySupportTicketsResponse, IssuesGetSupportTicketData, IssuesGetSupportTicketResponse, IssuesUpdateSupportTicketData, IssuesUpdateSupportTicketResponse, IssuesDeleteSupportTicketData, IssuesDeleteSupportTicketResponse, IssuesGetAllSupportTicketsAdminData, IssuesGetAllSupportTicketsAdminResponse, IssuesResolveSupportTicketData, IssuesResolveSupportTicketResponse, IssuesReopenSupportTicketData, IssuesReopenSupportTicketResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LifeEventsGetMyLifeEventsData, LifeEventsGetMyLifeEventsResponse, LifeEventsGetPersonLifeEventsData, LifeEventsGetPersonLifeEventsResponse, LifeEventsCreateLifeEventData, LifeEventsCreateLifeEventResponse, LifeEventsGetLifeEventData, LifeEventsGetLifeEventResponse, LifeEventsUpdateLifeEventData, LifeEventsUpdateLifeEventResponse, LifeEventsDeleteLifeEventData, LifeEventsDeleteLifeEventResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PersonGetMyPersonResponse, PersonCreateMyPersonData, PersonCreateMyPersonResponse, PersonDeleteMyPersonResponse, PersonUpdateMyPersonData, PersonUpdateMyPersonResponse, PersonGetMyAddressesResponse, PersonCreateMyAddressData, PersonCreateMyAddressResponse, PersonGetMyAddressData, PersonGetMyAddressResponse, PersonUpdateMyAddressData, PersonUpdateMyAddressResponse, PersonDeleteMyAddressData, PersonDeleteMyAddressResponse, PersonGetMyProfessionsResponse, PersonCreateMyProfessionData, PersonCreateMyProfessionResponse, PersonGetMyProfessionData, PersonGetMyProfessionResponse, PersonUpdateMyProfessionData, PersonUpdateMyProfessionResponse, PersonDeleteMyProfessionData, PersonDeleteMyProfessionResponse, PersonGetMyRelationshipsResponse, PersonCreateMyRelationshipData, PersonCreateMyRelationshipResponse, PersonGetMyRelationshipsWithDetailsResponse, PersonGetMyRelationshipData, PersonGetMyRelationshipResponse, PersonUpdateMyRelationshipData, PersonUpdateMyRelationshipResponse, PersonDeleteMyRelationshipData, PersonDeleteMyRelationshipResponse, PersonGetMyMetadataResponse, PersonCreateMyMetadataData, PersonCreateMyMetadataResponse, PersonDeleteMyMetadataResponse, PersonUpdateMyMetadataData, PersonUpdateMyMetadataResponse, PersonGetMyContributionsResponse, PersonCreateFamilyMemberData, PersonCreateFamilyMemberResponse, PersonSearchMatchingPersonsData, PersonSearchMatchingPersonsResponse, PersonDiscoverFamilyMembersResponse, PersonGetPersonAddressesData, PersonGetPersonAddressesResponse, PersonCreatePersonAddressData, PersonCreatePersonAddressResponse, PersonUpdatePersonAddressData, PersonUpdatePersonAddressResponse, PersonDeletePersonAddressData, PersonDeletePersonAddressResponse, PersonGetPersonProfessionsData, PersonGetPersonProfessionsResponse, PersonCreatePersonProfessionData, PersonCreatePersonProfessionResponse, PersonUpdatePersonProfessionData, PersonUpdatePersonProfessionResponse, PersonDeletePersonProfessionData, PersonDeletePersonProfessionResponse, PersonGetPersonMetadataData, PersonGetPersonMetadataResponse, PersonCreatePersonMetadataData, PersonCreatePersonMetadataResponse, PersonUpdatePersonMetadataData, PersonUpdatePersonMetadataResponse, PersonDeletePersonMetadataData, PersonDeletePersonMetadataResponse, PersonGetPersonRelationshipsData, PersonGetPersonRelationshipsResponse, PersonCreatePersonRelationshipData, PersonCreatePersonRelationshipResponse, PersonGetPersonRelationshipsWithDetailsData, PersonGetPersonRelationshipsWithDetailsResponse, PersonGetPersonCompleteDetailsData, PersonGetPersonCompleteDetailsResponse, PersonCreatePersonReligionData, PersonCreatePersonReligionResponse, PersonGetPersonByUserIdData, PersonGetPersonByUserIdResponse, PersonDeletePersonByUserIdData, PersonDeletePersonByUserIdResponse, PersonMetadataGetProfessionsResponse, PersonMetadataCreateProfessionData, PersonMetadataCreateProfessionResponse, PersonMetadataGetProfessionByIdData, PersonMetadataGetProfessionByIdResponse, PersonMetadataUpdateProfessionData, PersonMetadataUpdateProfessionResponse, PersonMetadataDeleteProfessionData, PersonMetadataDeleteProfessionResponse, PersonMetadataGetGendersResponse, PersonMetadataGetGenderByIdData, PersonMetadataGetGenderByIdResponse, PersonReligionCreateMyReligionData, PersonReligionCreateMyReligionResponse, PersonReligionGetMyReligionResponse, PersonReligionUpdateMyReligionData, PersonReligionUpdateMyReligionResponse, PersonReligionDeleteMyReligionResponse, PostsGetPublishedPostsData, PostsGetPublishedPostsResponse, PostsCreatePostData, PostsCreatePostResponse, PostsGetMyPostsData, PostsGetMyPostsResponse, PostsGetPostData, PostsGetPostResponse, PostsUpdatePostData, PostsUpdatePostResponse, PostsDeletePostData, PostsDeletePostResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProfileGetProfileCompletionStatusResponse, RelativesGetParentsData, RelativesGetParentsResponse, RelativesGetChildrenData, RelativesGetChildrenResponse, RelativesGetSpousesData, RelativesGetSpousesResponse, RelativesGetSiblingsData, RelativesGetSiblingsResponse, ReligionMetadataGetReligionsResponse, ReligionMetadataCreateReligionData, ReligionMetadataCreateReligionResponse, ReligionMetadataGetReligionByIdData, ReligionMetadataGetReligionByIdResponse, ReligionMetadataUpdateReligionData, ReligionMetadataUpdateReligionResponse, ReligionMetadataDeleteReligionData, ReligionMetadataDeleteReligionResponse, ReligionMetadataGetCategoriesByReligionData, ReligionMetadataGetCategoriesByReligionResponse, ReligionMetadataGetCategoryByIdData, ReligionMetadataGetCategoryByIdResponse, ReligionMetadataUpdateCategoryData, ReligionMetadataUpdateCategoryResponse, ReligionMetadataDeleteCategoryData, ReligionMetadataDeleteCategoryResponse, ReligionMetadataCreateCategoryData, ReligionMetadataCreateCategoryResponse, ReligionMetadataGetSubCategoriesByCategoryData, ReligionMetadataGetSubCategoriesByCategoryResponse, ReligionMetadataGetSubCategoryByIdData, ReligionMetadataGetSubCategoryByIdResponse, ReligionMetadataUpdateSubCategoryData, ReligionMetadataUpdateSubCategoryResponse, ReligionMetadataDeleteSubCategoryData, ReligionMetadataDeleteSubCategoryResponse, ReligionMetadataCreateSubCategoryData, ReligionMetadataCreateSubCategoryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UsersUpdateUserRoleData, UsersUpdateUserRoleResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, UtilsDeleteCacheKeyData, UtilsDeleteCacheKeyResponse, UtilsDeleteCachePatternData, UtilsDeleteCachePatternResponse, UtilsClearAllCacheResponse } from './types.gen';
 
 export class AddressMetadataService {
     /**
@@ -1217,194 +1217,6 @@ export class PersonService {
     }
     
     /**
-     * Get My Contributions
-     * Get all persons created by the current user with view statistics.
-     *
-     * Returns list of contributed persons with:
-     * - Person details (name, dates, status)
-     * - Formatted address
-     * - Total view count
-     *
-     * Results are sorted by view count descending (most viewed first).
-     * @returns PersonContributionPublic Successful Response
-     * @throws ApiError
-     */
-    public static getMyContributions(): CancelablePromise<PersonGetMyContributionsResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/v1/person/my-contributions'
-        });
-    }
-    
-    /**
-     * Create Family Member
-     * Create a family member (person without user account).
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns PersonPublic Successful Response
-     * @throws ApiError
-     */
-    public static createFamilyMember(data: PersonCreateFamilyMemberData): CancelablePromise<PersonCreateFamilyMemberResponse> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/v1/person/family-member',
-            body: data.requestBody,
-            mediaType: 'application/json',
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Search Matching Persons
-     * Search for existing persons matching the provided criteria.
-     *
-     * Returns list of potential matches with scores, sorted by match score descending.
-     * Used to prevent duplicate person records when adding family members.
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns PersonMatchResult Successful Response
-     * @throws ApiError
-     */
-    public static searchMatchingPersons(data: PersonSearchMatchingPersonsData): CancelablePromise<PersonSearchMatchingPersonsResponse> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/v1/person/search-matches',
-            body: data.requestBody,
-            mediaType: 'application/json',
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Discover Family Members
-     * Discover potential family member connections for the current user.
-     *
-     * This endpoint analyzes existing relationships to find persons who are:
-     * - Connected to the user's family members
-     * - Not yet directly connected to the user
-     *
-     * Discovery patterns:
-     * 1. Spouse's children → Suggested as user's Son/Daughter
-     * 2. Parent's spouse → Suggested as user's Father/Mother
-     * 3. Child's parent → Suggested as user's Spouse
-     *
-     * Returns:
-     * List of discovered persons with inferred relationship types,
-     * sorted by relationship proximity and type priority.
-     * Limited to top 20 results.
-     *
-     * Error Handling:
-     * - Returns empty list if user has no person record
-     * - Returns 500 if database errors occur
-     * - Gracefully handles missing person details
-     * - Continues discovery even if individual patterns fail
-     * @returns PersonDiscoveryResult Successful Response
-     * @throws ApiError
-     */
-    public static discoverFamilyMembers(): CancelablePromise<PersonDiscoverFamilyMembersResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/v1/person/discover-family-members'
-        });
-    }
-    
-    /**
-     * Create Person Address
-     * Create address for a specific person.
-     * User must be the creator of the person or a superuser.
-     * @param data The data for the request.
-     * @param data.personId
-     * @param data.requestBody
-     * @returns PersonAddressPublic Successful Response
-     * @throws ApiError
-     */
-    public static createPersonAddress(data: PersonCreatePersonAddressData): CancelablePromise<PersonCreatePersonAddressResponse> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/v1/person/{person_id}/addresses',
-            path: {
-                person_id: data.personId
-            },
-            body: data.requestBody,
-            mediaType: 'application/json',
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Create Person Religion
-     * Create religion for a specific person.
-     * User must be the creator of the person or a superuser.
-     * @param data The data for the request.
-     * @param data.personId
-     * @param data.requestBody
-     * @returns PersonPublic Successful Response
-     * @throws ApiError
-     */
-    public static createPersonReligion(data: PersonCreatePersonReligionData): CancelablePromise<PersonCreatePersonReligionResponse> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/v1/person/{person_id}/religion',
-            path: {
-                person_id: data.personId
-            },
-            body: data.requestBody,
-            mediaType: 'application/json',
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Get Person By User Id
-     * Get person by user ID (admin only).
-     * @param data The data for the request.
-     * @param data.userId
-     * @returns PersonPublic Successful Response
-     * @throws ApiError
-     */
-    public static getPersonByUserId(data: PersonGetPersonByUserIdData): CancelablePromise<PersonGetPersonByUserIdResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/v1/person/{user_id}',
-            path: {
-                user_id: data.userId
-            },
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Delete Person By User Id
-     * Delete person by user ID (admin only).
-     * @param data The data for the request.
-     * @param data.userId
-     * @returns unknown Successful Response
-     * @throws ApiError
-     */
-    public static deletePersonByUserId(data: PersonDeletePersonByUserIdData): CancelablePromise<PersonDeletePersonByUserIdResponse> {
-        return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/api/v1/person/{user_id}',
-            path: {
-                user_id: data.userId
-            },
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
      * Get My Addresses
      * Get all addresses for current user's person profile.
      * @returns PersonAddressPublic Successful Response
@@ -1623,39 +1435,6 @@ export class PersonService {
      * This endpoint automatically creates both directions of the relationship:
      * - Primary relationship: Person A → Person B (as specified)
      * - Inverse relationship: Person B → Person A (automatically determined)
-     *
-     * **Inverse Relationship Logic:**
-     * The system determines the correct inverse relationship type based on:
-     * - The primary relationship type
-     * - Both persons' genders (when applicable)
-     *
-     * **Examples:**
-     *
-     * 1. Parent-Child Relationships (gender-dependent):
-     * - Create: A → B as "Father" (B is A's father)
-     * - System creates: B → A as "Son" (if A is male) or "Daughter" (if A is female)
-     *
-     * - Create: A → B as "Mother" (B is A's mother)
-     * - System creates: B → A as "Son" (if A is male) or "Daughter" (if A is female)
-     *
-     * - Create: A → B as "Son" (B is A's son)
-     * - System creates: B → A as "Father" (if A is male) or "Mother" (if A is female)
-     *
-     * - Create: A → B as "Daughter" (B is A's daughter)
-     * - System creates: B → A as "Father" (if A is male) or "Mother" (if A is female)
-     *
-     * 2. Spouse Relationships (gender-independent):
-     * - Create: A → B as "Husband" (B is A's husband)
-     * - System creates: B → A as "Wife" (A is B's wife)
-     *
-     * - Create: A → B as "Wife" (B is A's wife)
-     * - System creates: B → A as "Husband" (A is B's husband)
-     *
-     * - Create: A → B as "Spouse" (B is A's spouse)
-     * - System creates: B → A as "Spouse" (A is B's spouse)
-     *
-     * **Result:**
-     * Both persons will see each other in their family trees with the correct relationship type.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns PersonRelationshipPublic Successful Response
@@ -1688,60 +1467,6 @@ export class PersonService {
     }
     
     /**
-     * Get Person Relationships With Details
-     * Get all relationships for a specific person with full person details.
-     * Returns the selected person and list of objects with relationship and related person information.
-     * Used to help users identify the correct person when multiple people have similar names.
-     *
-     * This endpoint also records a profile view event for analytics.
-     * @param data The data for the request.
-     * @param data.personId
-     * @returns PersonRelationshipsWithDetailsResponse Successful Response
-     * @throws ApiError
-     */
-    public static getPersonRelationshipsWithDetails(data: PersonGetPersonRelationshipsWithDetailsData): CancelablePromise<PersonGetPersonRelationshipsWithDetailsResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/v1/person/{person_id}/relationships/with-details',
-            path: {
-                person_id: data.personId
-            },
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Get Person Complete Details
-     * Get complete details for a specific person with resolved names.
-     *
-     * Returns comprehensive person information including:
-     * - Core person data (name, dates)
-     * - Gender name (resolved from gender_id)
-     * - Current address with location names (country, state, district, sub-district, locality)
-     * - Religion details with names (religion, category, sub-category)
-     *
-     * This endpoint is used by the Person Details Panel in the Family Tree view.
-     * @param data The data for the request.
-     * @param data.personId
-     * @returns PersonCompleteDetailsResponse Successful Response
-     * @throws ApiError
-     */
-    public static getPersonCompleteDetails(data: PersonGetPersonCompleteDetailsData): CancelablePromise<PersonGetPersonCompleteDetailsResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/v1/person/{person_id}/complete-details',
-            path: {
-                person_id: data.personId
-            },
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
      * Get My Relationship
      * Get specific relationship by ID for current user.
      * @param data The data for the request.
@@ -1767,37 +1492,7 @@ export class PersonService {
      * Update relationship for current user.
      *
      * **Bidirectional Updates:**
-     * This endpoint automatically updates both directions of the relationship:
-     * - Updates the primary relationship (the one you're modifying)
-     * - Finds and updates the inverse relationship automatically
-     *
-     * **Synchronized Fields:**
-     * The following fields are synchronized across both directions:
-     * - `is_active`: When you activate/deactivate a relationship, both directions are updated
-     * - `start_date`: Changes to start date are reflected in both directions
-     * - `end_date`: Changes to end date are reflected in both directions
-     * - `updated_at`: Timestamp is updated for both relationships
-     *
-     * **Non-Synchronized Fields:**
-     * - `relationship_type`: Each direction maintains its own correct type (e.g., Father/Son)
-     *
-     * **Examples:**
-     *
-     * 1. Deactivating a relationship:
-     * - Update: A → B relationship, set `is_active=False`
-     * - System updates: B → A relationship, also sets `is_active=False`
-     * - Result: Neither person sees the relationship in their family tree
-     *
-     * 2. Updating dates:
-     * - Update: A → B relationship, set `start_date="2020-01-01"`
-     * - System updates: B → A relationship, also sets `start_date="2020-01-01"`
-     * - Result: Both directions show the same date range
-     *
-     * **Graceful Handling:**
-     * If the inverse relationship is not found (e.g., legacy data), the system:
-     * - Logs a warning
-     * - Continues with updating the primary relationship
-     * - Does not fail the request
+     * This endpoint automatically updates both directions of the relationship.
      * @param data The data for the request.
      * @param data.relationshipId
      * @param data.requestBody
@@ -1824,41 +1519,7 @@ export class PersonService {
      * Delete relationship for current user.
      *
      * **Bidirectional Deletion:**
-     * This endpoint automatically deletes both directions of the relationship:
-     * - Deletes the primary relationship (the one you're removing)
-     * - Finds and deletes the inverse relationship automatically
-     *
-     * **Transaction Safety:**
-     * Both deletions are performed within a database transaction:
-     * - If both deletions succeed, changes are committed
-     * - If either deletion fails, all changes are rolled back
-     * - Ensures data consistency (no orphaned relationships)
-     *
-     * **Soft Delete Support:**
-     * If using soft delete (setting `is_active=False` instead of removing records):
-     * - Both directions are soft-deleted together
-     * - Maintains referential integrity
-     *
-     * **Examples:**
-     *
-     * 1. Hard delete:
-     * - Delete: A → B relationship (Father)
-     * - System deletes: B → A relationship (Son/Daughter)
-     * - Result: Both records are removed from the database
-     *
-     * 2. Soft delete:
-     * - Delete: A → B relationship (sets `is_active=False`)
-     * - System updates: B → A relationship (also sets `is_active=False`)
-     * - Result: Both relationships are hidden but data is preserved
-     *
-     * **Graceful Handling:**
-     * If the inverse relationship is not found (e.g., legacy data), the system:
-     * - Logs a warning
-     * - Continues with deleting the primary relationship
-     * - Does not fail the request
-     *
-     * **Result:**
-     * Neither person will see the relationship in their family tree after deletion.
+     * This endpoint automatically deletes both directions of the relationship.
      * @param data The data for the request.
      * @param data.relationshipId
      * @returns unknown Successful Response
@@ -1937,6 +1598,520 @@ export class PersonService {
             url: '/api/v1/person/me/metadata',
             body: data.requestBody,
             mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Contributions
+     * Get all persons created by the current user with view statistics.
+     * @returns PersonContributionPublic Successful Response
+     * @throws ApiError
+     */
+    public static getMyContributions(): CancelablePromise<PersonGetMyContributionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/my-contributions'
+        });
+    }
+    
+    /**
+     * Create Family Member
+     * Create a family member (person without user account).
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PersonPublic Successful Response
+     * @throws ApiError
+     */
+    public static createFamilyMember(data: PersonCreateFamilyMemberData): CancelablePromise<PersonCreateFamilyMemberResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/family-member',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Search Matching Persons
+     * Search for existing persons matching the provided criteria.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PersonMatchResult Successful Response
+     * @throws ApiError
+     */
+    public static searchMatchingPersons(data: PersonSearchMatchingPersonsData): CancelablePromise<PersonSearchMatchingPersonsResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/search-matches',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Discover Family Members
+     * Discover potential family member connections for the current user.
+     * @returns PersonDiscoveryResult Successful Response
+     * @throws ApiError
+     */
+    public static discoverFamilyMembers(): CancelablePromise<PersonDiscoverFamilyMembersResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/discover-family-members'
+        });
+    }
+    
+    /**
+     * Get Person Addresses
+     * Get all addresses for a specific person.
+     * _Requirements: 3.1, 3.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @returns PersonAddressPublic Successful Response
+     * @throws ApiError
+     */
+    public static getPersonAddresses(data: PersonGetPersonAddressesData): CancelablePromise<PersonGetPersonAddressesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/{person_id}/addresses',
+            path: {
+                person_id: data.personId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Person Address
+     * Create address for a specific person.
+     * _Requirements: 3.2, 3.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.requestBody
+     * @returns PersonAddressPublic Successful Response
+     * @throws ApiError
+     */
+    public static createPersonAddress(data: PersonCreatePersonAddressData): CancelablePromise<PersonCreatePersonAddressResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/{person_id}/addresses',
+            path: {
+                person_id: data.personId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Person Address
+     * Update address for a specific person.
+     * _Requirements: 3.3, 3.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.addressId
+     * @param data.requestBody
+     * @returns PersonAddressPublic Successful Response
+     * @throws ApiError
+     */
+    public static updatePersonAddress(data: PersonUpdatePersonAddressData): CancelablePromise<PersonUpdatePersonAddressResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/person/{person_id}/addresses/{address_id}',
+            path: {
+                person_id: data.personId,
+                address_id: data.addressId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Person Address
+     * Delete address for a specific person.
+     * _Requirements: 3.4, 3.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.addressId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deletePersonAddress(data: PersonDeletePersonAddressData): CancelablePromise<PersonDeletePersonAddressResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/{person_id}/addresses/{address_id}',
+            path: {
+                person_id: data.personId,
+                address_id: data.addressId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Person Professions
+     * Get all professions for a specific person.
+     * _Requirements: 4.1, 4.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @returns PersonProfessionPublic Successful Response
+     * @throws ApiError
+     */
+    public static getPersonProfessions(data: PersonGetPersonProfessionsData): CancelablePromise<PersonGetPersonProfessionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/{person_id}/professions',
+            path: {
+                person_id: data.personId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Person Profession
+     * Create profession for a specific person.
+     * _Requirements: 4.2, 4.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.requestBody
+     * @returns PersonProfessionPublic Successful Response
+     * @throws ApiError
+     */
+    public static createPersonProfession(data: PersonCreatePersonProfessionData): CancelablePromise<PersonCreatePersonProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/{person_id}/professions',
+            path: {
+                person_id: data.personId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Person Profession
+     * Update profession for a specific person.
+     * _Requirements: 4.3, 4.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.professionId
+     * @param data.requestBody
+     * @returns PersonProfessionPublic Successful Response
+     * @throws ApiError
+     */
+    public static updatePersonProfession(data: PersonUpdatePersonProfessionData): CancelablePromise<PersonUpdatePersonProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/person/{person_id}/professions/{profession_id}',
+            path: {
+                person_id: data.personId,
+                profession_id: data.professionId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Person Profession
+     * Delete profession for a specific person.
+     * _Requirements: 4.4, 4.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.professionId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deletePersonProfession(data: PersonDeletePersonProfessionData): CancelablePromise<PersonDeletePersonProfessionResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/{person_id}/professions/{profession_id}',
+            path: {
+                person_id: data.personId,
+                profession_id: data.professionId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Person Metadata
+     * Get metadata for a specific person.
+     * _Requirements: 5.1, 5.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @returns PersonMetadataPublic Successful Response
+     * @throws ApiError
+     */
+    public static getPersonMetadata(data: PersonGetPersonMetadataData): CancelablePromise<PersonGetPersonMetadataResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/{person_id}/metadata',
+            path: {
+                person_id: data.personId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Person Metadata
+     * Create metadata for a specific person.
+     * _Requirements: 5.2, 5.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.requestBody
+     * @returns PersonMetadataPublic Successful Response
+     * @throws ApiError
+     */
+    public static createPersonMetadata(data: PersonCreatePersonMetadataData): CancelablePromise<PersonCreatePersonMetadataResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/{person_id}/metadata',
+            path: {
+                person_id: data.personId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Person Metadata
+     * Update metadata for a specific person.
+     * _Requirements: 5.3, 5.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.requestBody
+     * @returns PersonMetadataPublic Successful Response
+     * @throws ApiError
+     */
+    public static updatePersonMetadata(data: PersonUpdatePersonMetadataData): CancelablePromise<PersonUpdatePersonMetadataResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/person/{person_id}/metadata',
+            path: {
+                person_id: data.personId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Person Metadata
+     * Delete metadata for a specific person.
+     * _Requirements: 5.4, 5.5_
+     * @param data The data for the request.
+     * @param data.personId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deletePersonMetadata(data: PersonDeletePersonMetadataData): CancelablePromise<PersonDeletePersonMetadataResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/{person_id}/metadata',
+            path: {
+                person_id: data.personId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Person Relationships
+     * Get all relationships for a specific person.
+     * _Requirements: 2.2, 2.4_
+     * @param data The data for the request.
+     * @param data.personId
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static getPersonRelationships(data: PersonGetPersonRelationshipsData): CancelablePromise<PersonGetPersonRelationshipsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/{person_id}/relationships',
+            path: {
+                person_id: data.personId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Person Relationship
+     * Create relationship for a specific person.
+     * _Requirements: 2.1, 2.4, 2.5, 2.6_
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.requestBody
+     * @returns PersonRelationshipPublic Successful Response
+     * @throws ApiError
+     */
+    public static createPersonRelationship(data: PersonCreatePersonRelationshipData): CancelablePromise<PersonCreatePersonRelationshipResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/{person_id}/relationships',
+            path: {
+                person_id: data.personId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Person Relationships With Details
+     * Get all relationships for a specific person with full person details.
+     * This endpoint is open to all authenticated users for viewing family tree data.
+     * _Requirements: 2.3_
+     * @param data The data for the request.
+     * @param data.personId
+     * @returns PersonRelationshipsWithDetailsResponse Successful Response
+     * @throws ApiError
+     */
+    public static getPersonRelationshipsWithDetails(data: PersonGetPersonRelationshipsWithDetailsData): CancelablePromise<PersonGetPersonRelationshipsWithDetailsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/{person_id}/relationships/with-details',
+            path: {
+                person_id: data.personId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Person Complete Details
+     * Get complete details for a specific person with resolved names.
+     * @param data The data for the request.
+     * @param data.personId
+     * @returns PersonCompleteDetailsResponse Successful Response
+     * @throws ApiError
+     */
+    public static getPersonCompleteDetails(data: PersonGetPersonCompleteDetailsData): CancelablePromise<PersonGetPersonCompleteDetailsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/{person_id}/complete-details',
+            path: {
+                person_id: data.personId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Person Religion
+     * Create religion for a specific person.
+     * User must be the creator of the person or a superuser.
+     * @param data The data for the request.
+     * @param data.personId
+     * @param data.requestBody
+     * @returns PersonPublic Successful Response
+     * @throws ApiError
+     */
+    public static createPersonReligion(data: PersonCreatePersonReligionData): CancelablePromise<PersonCreatePersonReligionResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/person/{person_id}/religion',
+            path: {
+                person_id: data.personId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Person By User Id
+     * Get person by user ID (admin only).
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns PersonPublic Successful Response
+     * @throws ApiError
+     */
+    public static getPersonByUserId(data: PersonGetPersonByUserIdData): CancelablePromise<PersonGetPersonByUserIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/person/{user_id}',
+            path: {
+                user_id: data.userId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Person By User Id
+     * Delete person by user ID (admin only).
+     * @param data The data for the request.
+     * @param data.userId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deletePersonByUserId(data: PersonDeletePersonByUserIdData): CancelablePromise<PersonDeletePersonByUserIdResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/person/{user_id}',
+            path: {
+                user_id: data.userId
+            },
             errors: {
                 422: 'Validation Error'
             }

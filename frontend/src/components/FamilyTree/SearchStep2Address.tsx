@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 
 const formSchema = z.object({
   countryId: z.string().min(1, "Country is required"),
@@ -53,6 +54,7 @@ export function SearchStep2Address({
   onComplete,
   onBack,
 }: SearchStep2AddressProps) {
+  const { activePersonId } = useActivePersonContext()
   const [selectedCountry, setSelectedCountry] = useState<string>(
     initialData.countryId || "",
   )
@@ -71,11 +73,12 @@ export function SearchStep2Address({
     defaultValues: initialData,
   })
 
-  // Fetch user's address for default values
+  // Fetch user's address for default values using person-specific endpoint
+  // _Requirements: 7.2_
   const { data: myAddresses } = useQuery({
-    queryKey: ["myAddresses"],
-    queryFn: () => PersonService.getMyAddresses(),
-    enabled: !!myPerson && !initialData.countryId,
+    queryKey: ["personAddresses", activePersonId],
+    queryFn: () => PersonService.getPersonAddresses({ personId: activePersonId! }),
+    enabled: !!activePersonId && !!myPerson && !initialData.countryId,
   })
 
   // Get current address (is_current = true)
