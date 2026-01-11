@@ -295,6 +295,118 @@ class TestGetInverseType:
         assert result is None
 
 
+class TestGetInverseTypeEdgeCases:
+    """Additional edge case tests for get_inverse_type."""
+
+    @pytest.fixture
+    def gender_mapping(self) -> dict[uuid.UUID, str]:
+        """Create a mock gender mapping for tests."""
+        male_id = uuid.uuid4()
+        female_id = uuid.uuid4()
+        return {
+            male_id: "male",
+            female_id: "female",
+        }
+
+    @pytest.fixture
+    def male_gender_id(self, gender_mapping: dict[uuid.UUID, str]) -> uuid.UUID:
+        """Get the male gender ID from the mapping."""
+        return next(k for k, v in gender_mapping.items() if v == "male")
+
+    @pytest.fixture
+    def female_gender_id(self, gender_mapping: dict[uuid.UUID, str]) -> uuid.UUID:
+        """Get the female gender ID from the mapping."""
+        return next(k for k, v in gender_mapping.items() if v == "female")
+
+    def test_mother_with_unknown_gender_returns_none(
+        self,
+        male_gender_id: uuid.UUID,
+        gender_mapping: dict[uuid.UUID, str],
+    ):
+        """Test Mother relationship with unknown person gender returns None."""
+        unknown_gender_id = uuid.uuid4()
+        result = RelationshipTypeHelper.get_inverse_type(
+            relationship_type=RelationshipType.MOTHER,
+            person_gender_id=unknown_gender_id,
+            related_person_gender_id=male_gender_id,
+            gender_mapping=gender_mapping,
+        )
+        assert result is None
+
+    def test_son_with_unknown_gender_returns_none(
+        self,
+        male_gender_id: uuid.UUID,
+        gender_mapping: dict[uuid.UUID, str],
+    ):
+        """Test Son relationship with unknown person gender returns None."""
+        unknown_gender_id = uuid.uuid4()
+        result = RelationshipTypeHelper.get_inverse_type(
+            relationship_type=RelationshipType.SON,
+            person_gender_id=unknown_gender_id,
+            related_person_gender_id=male_gender_id,
+            gender_mapping=gender_mapping,
+        )
+        assert result is None
+
+    def test_daughter_with_unknown_gender_returns_none(
+        self,
+        male_gender_id: uuid.UUID,
+        gender_mapping: dict[uuid.UUID, str],
+    ):
+        """Test Daughter relationship with unknown person gender returns None."""
+        unknown_gender_id = uuid.uuid4()
+        result = RelationshipTypeHelper.get_inverse_type(
+            relationship_type=RelationshipType.DAUGHTER,
+            person_gender_id=unknown_gender_id,
+            related_person_gender_id=male_gender_id,
+            gender_mapping=gender_mapping,
+        )
+        assert result is None
+
+    def test_case_insensitive_gender_matching(
+        self,
+        gender_mapping: dict[uuid.UUID, str],
+    ):
+        """Test that gender matching is case-insensitive."""
+        # Create mapping with uppercase gender
+        male_id = uuid.uuid4()
+        female_id = uuid.uuid4()
+        uppercase_mapping = {
+            male_id: "MALE",
+            female_id: "FEMALE",
+        }
+        
+        result = RelationshipTypeHelper.get_inverse_type(
+            relationship_type=RelationshipType.FATHER,
+            person_gender_id=male_id,
+            related_person_gender_id=female_id,
+            gender_mapping=uppercase_mapping,
+        )
+        assert result == RelationshipType.SON
+
+
+class TestGetGenderMapping:
+    """Test suite for RelationshipTypeHelper.get_gender_mapping() method."""
+
+    def test_get_gender_mapping_returns_dict(self):
+        """Test that get_gender_mapping returns a dictionary."""
+        result = RelationshipTypeHelper.get_gender_mapping()
+        assert isinstance(result, dict)
+
+    def test_get_gender_mapping_contains_male_and_female(self):
+        """Test that get_gender_mapping contains male and female genders."""
+        result = RelationshipTypeHelper.get_gender_mapping()
+        values = [v.lower() for v in result.values()]
+        assert "male" in values
+        assert "female" in values
+
+    def test_get_gender_mapping_with_session_parameter(self):
+        """Test that get_gender_mapping accepts session parameter for compatibility."""
+        # Session parameter is kept for API compatibility but not used
+        result = RelationshipTypeHelper.get_gender_mapping(session=None)
+        assert isinstance(result, dict)
+
+
 class TestRequiresGenderContext:
     """Test suite for RelationshipTypeHelper.requires_gender_context() method."""
 

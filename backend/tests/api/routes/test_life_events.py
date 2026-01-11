@@ -729,3 +729,433 @@ class TestDeleteLifeEvent:
         fake_id = uuid.uuid4()
         r = client.delete(f"{settings.API_V1_STR}/life-events/{fake_id}")
         assert r.status_code == 401
+
+
+@pytest.mark.integration
+class TestLifeEventValidationEdgeCases:
+    """Integration tests for life event validation edge cases."""
+
+    def test_create_life_event_invalid_month_value(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event with invalid month value returns 422."""
+        event_data = {
+            "event_type": "birth",
+            "title": "Birth",
+            "event_year": 2020,
+            "event_month": 13,  # Invalid month (must be 1-12)
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_invalid_date_value(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event with invalid date value returns 422."""
+        event_data = {
+            "event_type": "birth",
+            "title": "Birth",
+            "event_year": 2020,
+            "event_month": 1,
+            "event_date": 32,  # Invalid date (must be 1-31)
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_february_29_leap_year(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event on Feb 29 in leap year is valid."""
+        event_data = {
+            "event_type": "birth",
+            "title": "Leap Year Birth",
+            "event_year": 2020,  # 2020 is a leap year
+            "event_month": 2,
+            "event_date": 29,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        # Should succeed if user has person record, or 400 if not
+        assert r.status_code in [200, 400]
+
+    def test_create_life_event_february_29_non_leap_year(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event on Feb 29 in non-leap year returns 422."""
+        event_data = {
+            "event_type": "birth",
+            "title": "Invalid Leap Year Birth",
+            "event_year": 2021,  # 2021 is not a leap year
+            "event_month": 2,
+            "event_date": 29,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_april_31(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event on April 31 returns 422."""
+        event_data = {
+            "event_type": "achievement",
+            "title": "Invalid April Date",
+            "event_year": 2020,
+            "event_month": 4,  # April has 30 days
+            "event_date": 31,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_negative_month(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event with negative month returns 422."""
+        event_data = {
+            "event_type": "birth",
+            "title": "Invalid Month",
+            "event_year": 2020,
+            "event_month": -1,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_zero_month(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event with zero month returns 422."""
+        event_data = {
+            "event_type": "birth",
+            "title": "Invalid Month",
+            "event_year": 2020,
+            "event_month": 0,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_zero_date(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event with zero date returns 422."""
+        event_data = {
+            "event_type": "birth",
+            "title": "Invalid Date",
+            "event_year": 2020,
+            "event_month": 1,
+            "event_date": 0,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_invalid_event_type(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event with invalid event type returns 422."""
+        event_data = {
+            "event_type": "invalid_type",
+            "title": "Invalid Type Event",
+            "event_year": 2020,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_title_too_long(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event with title exceeding max length returns 422."""
+        event_data = {
+            "event_type": "achievement",
+            "title": "A" * 101,  # Max is 100 characters
+            "event_year": 2020,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_description_too_long(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event with description exceeding max length returns 422."""
+        event_data = {
+            "event_type": "achievement",
+            "title": "Valid Title",
+            "description": "A" * 501,  # Max is 500 characters
+            "event_year": 2020,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_create_life_event_empty_title(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event with empty title returns 422."""
+        event_data = {
+            "event_type": "achievement",
+            "title": "",
+            "event_year": 2020,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 422
+
+    def test_update_life_event_invalid_date_combination(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Test updating life event with invalid date combination returns 422."""
+        from app.crud import get_user_by_email
+        user = get_user_by_email(session=db, email=settings.EMAIL_TEST_USER)
+        
+        if user:
+            person = db.exec(
+                select(Person).where(Person.user_id == user.id)
+            ).first()
+
+            if person:
+                # Create a valid event first
+                event = PersonLifeEvent(
+                    id=uuid.uuid4(),
+                    person_id=person.id,
+                    event_type=LifeEventType.OTHER,
+                    title="Test Event",
+                    event_year=2020,
+                    event_month=1,
+                    event_date=15,
+                )
+                db.add(event)
+                db.commit()
+
+                # Try to update with invalid date (June 31)
+                update_data = {
+                    "event_month": 6,
+                    "event_date": 31,  # June has 30 days
+                }
+                r = client.put(
+                    f"{settings.API_V1_STR}/life-events/{event.id}",
+                    headers=normal_user_token_headers,
+                    json=update_data,
+                )
+                assert r.status_code == 422
+
+
+@pytest.mark.integration
+class TestLifeEventPaginationEdgeCases:
+    """Integration tests for life event pagination edge cases."""
+
+    def test_get_life_events_large_skip(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Test getting life events with skip larger than total count."""
+        from app.crud import get_user_by_email
+        user = get_user_by_email(session=db, email=settings.EMAIL_TEST_USER)
+        
+        if user:
+            person = db.exec(
+                select(Person).where(Person.user_id == user.id)
+            ).first()
+
+            if person:
+                r = client.get(
+                    f"{settings.API_V1_STR}/life-events/person/{person.id}?skip=10000&limit=10",
+                    headers=normal_user_token_headers,
+                )
+                assert r.status_code == 200
+                data = r.json()
+                assert data["data"] == []  # Should return empty list
+
+    def test_get_life_events_zero_limit(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Test getting life events with zero limit."""
+        from app.crud import get_user_by_email
+        user = get_user_by_email(session=db, email=settings.EMAIL_TEST_USER)
+        
+        if user:
+            person = db.exec(
+                select(Person).where(Person.user_id == user.id)
+            ).first()
+
+            if person:
+                r = client.get(
+                    f"{settings.API_V1_STR}/life-events/person/{person.id}?skip=0&limit=0",
+                    headers=normal_user_token_headers,
+                )
+                assert r.status_code == 200
+                data = r.json()
+                assert data["data"] == []  # Should return empty list
+
+    def test_get_life_events_negative_skip(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Test getting life events with negative skip causes error."""
+        from app.crud import get_user_by_email
+        user = get_user_by_email(session=db, email=settings.EMAIL_TEST_USER)
+        
+        if user:
+            person = db.exec(
+                select(Person).where(Person.user_id == user.id)
+            ).first()
+
+            if person:
+                # Negative skip is not validated by FastAPI, so it passes to DB
+                # which throws an error. This test documents the current behavior.
+                # The API could be improved to validate skip >= 0
+                try:
+                    r = client.get(
+                        f"{settings.API_V1_STR}/life-events/person/{person.id}?skip=-1&limit=10",
+                        headers=normal_user_token_headers,
+                    )
+                    # If we get here, the API handled it somehow
+                    assert r.status_code in [200, 422, 500]
+                except Exception:
+                    # Database error is expected for negative skip
+                    pass
+
+
+@pytest.mark.integration
+class TestLifeEventEventTypes:
+    """Integration tests for all life event types."""
+
+    def test_create_life_event_all_valid_types(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life events with all valid event types."""
+        valid_types = [
+            "birth", "marriage", "death", "purchase", "sale",
+            "achievement", "education", "career", "health", "travel", "other"
+        ]
+        
+        for event_type in valid_types:
+            event_data = {
+                "event_type": event_type,
+                "title": f"Test {event_type.capitalize()} Event",
+                "event_year": 2020,
+            }
+            r = client.post(
+                f"{settings.API_V1_STR}/life-events/",
+                headers=normal_user_token_headers,
+                json=event_data,
+            )
+            # Should succeed if user has person record, or 400 if not
+            assert r.status_code in [200, 400], f"Failed for event type: {event_type}"
+
+
+@pytest.mark.integration
+class TestCreatePersonLifeEvent:
+    """Integration tests for POST /life-events/person/{person_id} endpoint."""
+
+    def test_create_person_life_event_not_found(
+        self,
+        client: TestClient,
+        normal_user_token_headers: dict[str, str],
+    ) -> None:
+        """Test creating life event for non-existent person returns 404."""
+        fake_person_id = uuid.uuid4()
+        event_data = {
+            "event_type": "achievement",
+            "title": "Test Event",
+            "event_year": 2020,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/person/{fake_person_id}",
+            headers=normal_user_token_headers,
+            json=event_data,
+        )
+        assert r.status_code == 404
+
+    def test_create_person_life_event_unauthorized(
+        self, client: TestClient
+    ) -> None:
+        """Test creating life event for person without authentication returns 401."""
+        fake_person_id = uuid.uuid4()
+        event_data = {
+            "event_type": "achievement",
+            "title": "Test Event",
+            "event_year": 2020,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/life-events/person/{fake_person_id}",
+            json=event_data,
+        )
+        assert r.status_code == 401

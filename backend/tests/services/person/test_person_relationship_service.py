@@ -106,6 +106,311 @@ class TestPersonRelationshipServiceQueries:
 
 
 @pytest.mark.unit
+class TestPersonRelationshipServiceCreate:
+    """Unit tests for relationship creation operations."""
+
+    def test_create_relationship_without_gender_creates_primary_only(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test that missing gender creates only primary relationship."""
+        # Arrange
+        person_id = uuid.uuid4()
+        related_person_id = uuid.uuid4()
+        
+        mock_person = MagicMock()
+        mock_person.gender_id = None  # No gender
+        mock_person.user_id = None
+        
+        mock_related_person = MagicMock()
+        mock_related_person.gender_id = uuid.uuid4()  # Has gender
+        mock_related_person.user_id = None
+        
+        mock_primary = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=person_id,
+            related_person_id=related_person_id,
+            relationship_type=RelationshipType.FATHER,
+        )
+        
+        service = PersonRelationshipService(mock_session)
+        
+        with patch.object(service.person_repo, "get_by_id") as mock_get:
+            mock_get.side_effect = [mock_person, mock_related_person]
+            with patch.object(service.relationship_repo, "create", return_value=mock_primary):
+                # Act
+                relationship_create = PersonRelationshipCreate(
+                    related_person_id=related_person_id,
+                    relationship_type=RelationshipType.FATHER,
+                    is_active=True,
+                )
+                result = service.create_relationship(person_id, relationship_create)
+                
+                # Assert - should return primary, no inverse created
+                assert result.id == mock_primary.id
+                assert result.relationship_type == RelationshipType.FATHER
+
+    def test_create_relationship_person_not_found_raises_error(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test that non-existent person raises ValueError."""
+        # Arrange
+        person_id = uuid.uuid4()
+        related_person_id = uuid.uuid4()
+        
+        service = PersonRelationshipService(mock_session)
+        
+        with patch.object(service.person_repo, "get_by_id", return_value=None):
+            # Act & Assert
+            relationship_create = PersonRelationshipCreate(
+                related_person_id=related_person_id,
+                relationship_type=RelationshipType.FATHER,
+                is_active=True,
+            )
+            with pytest.raises(ValueError, match="Person not found"):
+                service.create_relationship(person_id, relationship_create)
+
+    def test_create_relationship_related_person_not_found_raises_error(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test that non-existent related person raises ValueError."""
+        # Arrange
+        person_id = uuid.uuid4()
+        related_person_id = uuid.uuid4()
+        
+        mock_person = MagicMock()
+        mock_person.gender_id = uuid.uuid4()
+        
+        service = PersonRelationshipService(mock_session)
+        
+        with patch.object(service.person_repo, "get_by_id") as mock_get:
+            mock_get.side_effect = [mock_person, None]  # Person found, related not found
+            
+            # Act & Assert
+            relationship_create = PersonRelationshipCreate(
+                related_person_id=related_person_id,
+                relationship_type=RelationshipType.FATHER,
+                is_active=True,
+            )
+            with pytest.raises(ValueError, match="Related person not found"):
+                service.create_relationship(person_id, relationship_create)
+
+
+@pytest.mark.unit
+class TestPersonRelationshipServiceUpdate:
+    """Unit tests for relationship update operations."""
+
+    def test_update_relationship_inverse_not_found_continues(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test that update continues when inverse relationship not found."""
+        # Arrange
+        relationship = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=uuid.uuid4(),
+            related_person_id=uuid.uuid4(),
+            relationship_type=RelationshipType.FATHER,
+            is_active=True,
+        )
+        
+        service = PersonRelationshipService(mock_session)
+        
+        with patch.object(service.relationship_repo, "update", return_value=relationship):
+            with patch.object(
+                service.relationship_repo, "find_inverse_including_inactive", return_value=None
+            ):
+                with patch.object(service.person_repo, "get_by_id", return_value=None):
+                    # Act
+                    update_data = PersonRelationshipUpdate(is_active=False)
+                    result = service.update_relationship(relationship, update_data)
+                    
+                    # Assert - should succeed even without inverse
+                    assert result.id == relationship.id
+
+    def test_update_relationship_syncs_inverse_fields(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test that update syncs is_active, start_date, end_date to inverse."""
+        # Arrange
+        person_id = uuid.uuid4()
+        related_person_id = uuid.uuid4()
+        
+        relationship = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=person_id,
+            related_person_id=related_person_id,
+            relationship_type=RelationshipType.FATHER,
+            is_active=True,
+        )
+        
+        inverse_relationship = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=related_person_id,
+            related_person_id=person_id,
+            relationship_type=RelationshipType.SON,
+            is_active=True,
+        )
+        
+        service = PersonRelationshipService(mock_session)
+        
+        with patch.object(service.relationship_repo, "update", return_value=relationship):
+            with patch.object(
+                service.relationship_repo, "find_inverse_including_inactive", 
+                return_value=inverse_relationship
+            ):
+                with patch.object(service.person_repo, "get_by_id", return_value=None):
+                    # Act
+                    update_data = PersonRelationshipUpdate(
+                        is_active=False,
+                        start_date=date(2020, 1, 1),
+                        end_date=date(2023, 12, 31),
+                    )
+                    service.update_relationship(relationship, update_data)
+                    
+                    # Assert - inverse should have synced fields
+                    assert inverse_relationship.is_active == False
+                    assert inverse_relationship.start_date == date(2020, 1, 1)
+                    assert inverse_relationship.end_date == date(2023, 12, 31)
+
+
+@pytest.mark.unit
+class TestPersonRelationshipServiceDelete:
+    """Unit tests for relationship deletion operations."""
+
+    def test_delete_relationship_soft_delete_sets_inactive(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test soft delete sets is_active=False."""
+        # Arrange
+        relationship = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=uuid.uuid4(),
+            related_person_id=uuid.uuid4(),
+            relationship_type=RelationshipType.FATHER,
+            is_active=True,
+        )
+        
+        service = PersonRelationshipService(mock_session)
+        
+        with patch.object(service.relationship_repo, "update_without_commit"):
+            with patch.object(
+                service.relationship_repo, "find_inverse_including_inactive", return_value=None
+            ):
+                with patch.object(service.person_repo, "get_by_id", return_value=None):
+                    # Act
+                    service.delete_relationship(relationship, soft_delete=True)
+                    
+                    # Assert
+                    assert relationship.is_active == False
+
+    def test_delete_relationship_soft_delete_updates_inverse(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test soft delete also sets inverse is_active=False."""
+        # Arrange
+        person_id = uuid.uuid4()
+        related_person_id = uuid.uuid4()
+        
+        relationship = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=person_id,
+            related_person_id=related_person_id,
+            relationship_type=RelationshipType.FATHER,
+            is_active=True,
+        )
+        
+        inverse_relationship = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=related_person_id,
+            related_person_id=person_id,
+            relationship_type=RelationshipType.SON,
+            is_active=True,
+        )
+        
+        service = PersonRelationshipService(mock_session)
+        
+        with patch.object(service.relationship_repo, "update_without_commit"):
+            with patch.object(
+                service.relationship_repo, "find_inverse_including_inactive",
+                return_value=inverse_relationship
+            ):
+                with patch.object(service.person_repo, "get_by_id", return_value=None):
+                    # Act
+                    service.delete_relationship(relationship, soft_delete=True)
+                    
+                    # Assert
+                    assert relationship.is_active == False
+                    assert inverse_relationship.is_active == False
+
+    def test_delete_relationship_hard_delete_calls_delete(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test hard delete calls delete_without_commit."""
+        # Arrange
+        relationship = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=uuid.uuid4(),
+            related_person_id=uuid.uuid4(),
+            relationship_type=RelationshipType.FATHER,
+            is_active=True,
+        )
+        
+        service = PersonRelationshipService(mock_session)
+        
+        with patch.object(
+            service.relationship_repo, "delete_without_commit"
+        ) as mock_delete:
+            with patch.object(
+                service.relationship_repo, "find_inverse_including_inactive", return_value=None
+            ):
+                with patch.object(service.person_repo, "get_by_id", return_value=None):
+                    # Act
+                    service.delete_relationship(relationship, soft_delete=False)
+                    
+                    # Assert
+                    mock_delete.assert_called_once_with(relationship)
+
+    def test_delete_relationship_hard_delete_deletes_inverse(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test hard delete also deletes inverse relationship."""
+        # Arrange
+        person_id = uuid.uuid4()
+        related_person_id = uuid.uuid4()
+        
+        relationship = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=person_id,
+            related_person_id=related_person_id,
+            relationship_type=RelationshipType.FATHER,
+            is_active=True,
+        )
+        
+        inverse_relationship = PersonRelationship(
+            id=uuid.uuid4(),
+            person_id=related_person_id,
+            related_person_id=person_id,
+            relationship_type=RelationshipType.SON,
+            is_active=True,
+        )
+        
+        service = PersonRelationshipService(mock_session)
+        
+        with patch.object(
+            service.relationship_repo, "delete_without_commit"
+        ) as mock_delete:
+            with patch.object(
+                service.relationship_repo, "find_inverse_including_inactive",
+                return_value=inverse_relationship
+            ):
+                with patch.object(service.person_repo, "get_by_id", return_value=None):
+                    # Act
+                    service.delete_relationship(relationship, soft_delete=False)
+                    
+                    # Assert - both should be deleted
+                    assert mock_delete.call_count == 2
+
+
+@pytest.mark.unit
 class TestPersonRelationshipServiceFamilyQueries:
     """Unit tests for family-specific query operations."""
 

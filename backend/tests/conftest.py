@@ -19,6 +19,7 @@ from app.db_models.person.person_metadata import PersonMetadata
 from app.db_models.person.person_profession import PersonProfession
 from app.db_models.profile_view_tracking import ProfileViewTracking
 from app.db_models.support_ticket import SupportTicket
+from app.db_models.post import Post
 from tests.test_db import test_engine
 from tests.utils.user import authentication_token_from_email
 from tests.utils.utils import get_superuser_token_headers
@@ -57,11 +58,13 @@ def db() -> Generator[Session, None, None]:
         session.execute(delete(PersonProfession))
         # 8. Delete support tickets (references users)
         session.execute(delete(SupportTicket))
-        # 9. Delete persons (references users)
+        # 9. Delete posts (references users)
+        session.execute(delete(Post))
+        # 10. Delete persons (references users)
         session.execute(delete(Person))
-        # 10. Delete items (references users)
+        # 11. Delete items (references users)
         session.execute(delete(Item))
-        # 11. Finally delete users
+        # 12. Finally delete users
         session.execute(delete(User))
         session.commit()
 

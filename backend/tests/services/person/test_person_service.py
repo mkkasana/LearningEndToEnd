@@ -553,3 +553,504 @@ class TestFormatAddresses:
         result = service._format_addresses([address1, address2, address3])
         # Should skip address2 since it has no address_line
         assert result == "123 Main Street, 789 Pine Road"
+
+
+@pytest.mark.unit
+class TestGetPersonCompleteDetails:
+    """Tests for get_person_complete_details method."""
+
+    def test_get_person_complete_details_person_not_found(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test get_person_complete_details returns None when person not found."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+
+        with patch.object(service.person_repo, "get_by_id", return_value=None):
+            result = service.get_person_complete_details(person_id)
+
+        assert result is None
+
+    def test_get_person_complete_details_with_all_data(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test get_person_complete_details with person having all data."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+        gender_id = GENDER_DATA[GenderEnum.MALE].id
+
+        mock_person = Person(
+            id=person_id,
+            user_id=uuid.uuid4(),
+            created_by_user_id=uuid.uuid4(),
+            first_name="John",
+            middle_name="Michael",
+            last_name="Doe",
+            gender_id=gender_id,
+            date_of_birth=date(1990, 1, 1),
+            date_of_death=None,
+        )
+
+        # Mock address details
+        from app.schemas.person.person_complete_details import (
+            PersonAddressDetails,
+            PersonReligionDetails,
+        )
+
+        mock_address = PersonAddressDetails(
+            locality_name="Downtown",
+            sub_district_name="Central",
+            district_name="Metro",
+            state_name="California",
+            country_name="USA",
+            address_line="123 Main St",
+        )
+
+        mock_religion = PersonReligionDetails(
+            religion_name="Christianity",
+            category_name="Protestant",
+            sub_category_name="Baptist",
+        )
+
+        with patch.object(service.person_repo, "get_by_id", return_value=mock_person):
+            with patch.object(
+                service, "_resolve_address_details", return_value=mock_address
+            ):
+                with patch.object(
+                    service, "_resolve_religion_details", return_value=mock_religion
+                ):
+                    result = service.get_person_complete_details(person_id)
+
+        assert result is not None
+        assert result.id == person_id
+        assert result.first_name == "John"
+        assert result.middle_name == "Michael"
+        assert result.last_name == "Doe"
+        assert result.gender_name == "Male"
+        assert result.address is not None
+        assert result.address.country_name == "USA"
+        assert result.religion is not None
+        assert result.religion.religion_name == "Christianity"
+
+    def test_get_person_complete_details_without_address_and_religion(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test get_person_complete_details when person has no address or religion."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+        gender_id = GENDER_DATA[GenderEnum.FEMALE].id
+
+        mock_person = Person(
+            id=person_id,
+            user_id=uuid.uuid4(),
+            created_by_user_id=uuid.uuid4(),
+            first_name="Jane",
+            middle_name=None,
+            last_name="Smith",
+            gender_id=gender_id,
+            date_of_birth=date(1985, 5, 15),
+            date_of_death=None,
+        )
+
+        with patch.object(service.person_repo, "get_by_id", return_value=mock_person):
+            with patch.object(service, "_resolve_address_details", return_value=None):
+                with patch.object(
+                    service, "_resolve_religion_details", return_value=None
+                ):
+                    result = service.get_person_complete_details(person_id)
+
+        assert result is not None
+        assert result.first_name == "Jane"
+        assert result.gender_name == "Female"
+        assert result.address is None
+        assert result.religion is None
+
+    def test_get_person_complete_details_with_unknown_gender(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test get_person_complete_details with unknown gender ID."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+        unknown_gender_id = uuid.uuid4()  # Not in GENDER_DATA
+
+        mock_person = Person(
+            id=person_id,
+            user_id=uuid.uuid4(),
+            created_by_user_id=uuid.uuid4(),
+            first_name="Alex",
+            middle_name=None,
+            last_name="Johnson",
+            gender_id=unknown_gender_id,
+            date_of_birth=date(2000, 3, 20),
+            date_of_death=None,
+        )
+
+        with patch.object(service.person_repo, "get_by_id", return_value=mock_person):
+            with patch.object(service, "_resolve_address_details", return_value=None):
+                with patch.object(
+                    service, "_resolve_religion_details", return_value=None
+                ):
+                    result = service.get_person_complete_details(person_id)
+
+        assert result is not None
+        assert result.gender_name == "Unknown"
+
+    def test_get_person_complete_details_with_no_gender(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test get_person_complete_details when person has no gender_id."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+
+        mock_person = Person(
+            id=person_id,
+            user_id=uuid.uuid4(),
+            created_by_user_id=uuid.uuid4(),
+            first_name="Pat",
+            middle_name=None,
+            last_name="Williams",
+            gender_id=None,
+            date_of_birth=date(1995, 7, 10),
+            date_of_death=None,
+        )
+
+        with patch.object(service.person_repo, "get_by_id", return_value=mock_person):
+            with patch.object(service, "_resolve_address_details", return_value=None):
+                with patch.object(
+                    service, "_resolve_religion_details", return_value=None
+                ):
+                    result = service.get_person_complete_details(person_id)
+
+        assert result is not None
+        assert result.gender_name == "Unknown"
+
+
+@pytest.mark.unit
+class TestResolveAddressDetails:
+    """Tests for _resolve_address_details method."""
+
+    def test_resolve_address_details_no_current_address(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test _resolve_address_details returns None when no current address."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+
+        with patch(
+            "app.services.person.person_service.PersonAddressRepository"
+        ) as mock_repo_class:
+            mock_repo = MagicMock()
+            mock_repo.get_current_address.return_value = None
+            mock_repo_class.return_value = mock_repo
+
+            result = service._resolve_address_details(person_id)
+
+        assert result is None
+
+    def test_resolve_address_details_with_full_address(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test _resolve_address_details with all location fields populated."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+
+        country_id = uuid.uuid4()
+        state_id = uuid.uuid4()
+        district_id = uuid.uuid4()
+        sub_district_id = uuid.uuid4()
+        locality_id = uuid.uuid4()
+
+        mock_address = PersonAddress(
+            id=uuid.uuid4(),
+            person_id=person_id,
+            country_id=country_id,
+            state_id=state_id,
+            district_id=district_id,
+            sub_district_id=sub_district_id,
+            locality_id=locality_id,
+            address_line="123 Main St",
+            start_date=date(2020, 1, 1),
+            is_current=True,
+        )
+
+        # Mock country
+        mock_country = MagicMock()
+        mock_country.name = "USA"
+
+        # Mock state
+        mock_state = MagicMock()
+        mock_state.name = "California"
+
+        # Mock district
+        mock_district = MagicMock()
+        mock_district.name = "Los Angeles"
+
+        # Mock sub-district
+        mock_sub_district = MagicMock()
+        mock_sub_district.name = "Downtown"
+
+        # Mock locality
+        mock_locality = MagicMock()
+        mock_locality.name = "Central"
+
+        with patch(
+            "app.services.person.person_service.PersonAddressRepository"
+        ) as mock_addr_repo_class, patch(
+            "app.services.person.person_service.CountryRepository"
+        ) as mock_country_repo_class, patch(
+            "app.services.person.person_service.StateRepository"
+        ) as mock_state_repo_class, patch(
+            "app.services.person.person_service.DistrictRepository"
+        ) as mock_district_repo_class, patch(
+            "app.services.person.person_service.SubDistrictRepository"
+        ) as mock_sub_district_repo_class, patch(
+            "app.services.person.person_service.LocalityRepository"
+        ) as mock_locality_repo_class:
+            # Setup address repo
+            mock_addr_repo = MagicMock()
+            mock_addr_repo.get_current_address.return_value = mock_address
+            mock_addr_repo_class.return_value = mock_addr_repo
+
+            # Setup country repo
+            mock_country_repo = MagicMock()
+            mock_country_repo.get_by_id.return_value = mock_country
+            mock_country_repo_class.return_value = mock_country_repo
+
+            # Setup state repo
+            mock_state_repo = MagicMock()
+            mock_state_repo.get_by_id.return_value = mock_state
+            mock_state_repo_class.return_value = mock_state_repo
+
+            # Setup district repo
+            mock_district_repo = MagicMock()
+            mock_district_repo.get_by_id.return_value = mock_district
+            mock_district_repo_class.return_value = mock_district_repo
+
+            # Setup sub-district repo
+            mock_sub_district_repo = MagicMock()
+            mock_sub_district_repo.get_by_id.return_value = mock_sub_district
+            mock_sub_district_repo_class.return_value = mock_sub_district_repo
+
+            # Setup locality repo
+            mock_locality_repo = MagicMock()
+            mock_locality_repo.get_by_id.return_value = mock_locality
+            mock_locality_repo_class.return_value = mock_locality_repo
+
+            result = service._resolve_address_details(person_id)
+
+        assert result is not None
+        assert result.country_name == "USA"
+        assert result.state_name == "California"
+        assert result.district_name == "Los Angeles"
+        assert result.sub_district_name == "Downtown"
+        assert result.locality_name == "Central"
+        assert result.address_line == "123 Main St"
+
+    def test_resolve_address_details_with_only_required_fields(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test _resolve_address_details with only country (required field)."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+        country_id = uuid.uuid4()
+
+        mock_address = PersonAddress(
+            id=uuid.uuid4(),
+            person_id=person_id,
+            country_id=country_id,
+            state_id=None,
+            district_id=None,
+            sub_district_id=None,
+            locality_id=None,
+            address_line=None,
+            start_date=date(2020, 1, 1),
+            is_current=True,
+        )
+
+        mock_country = MagicMock()
+        mock_country.name = "India"
+
+        with patch(
+            "app.services.person.person_service.PersonAddressRepository"
+        ) as mock_addr_repo_class, patch(
+            "app.services.person.person_service.CountryRepository"
+        ) as mock_country_repo_class, patch(
+            "app.services.person.person_service.StateRepository"
+        ), patch(
+            "app.services.person.person_service.DistrictRepository"
+        ), patch(
+            "app.services.person.person_service.SubDistrictRepository"
+        ), patch(
+            "app.services.person.person_service.LocalityRepository"
+        ):
+            mock_addr_repo = MagicMock()
+            mock_addr_repo.get_current_address.return_value = mock_address
+            mock_addr_repo_class.return_value = mock_addr_repo
+
+            mock_country_repo = MagicMock()
+            mock_country_repo.get_by_id.return_value = mock_country
+            mock_country_repo_class.return_value = mock_country_repo
+
+            result = service._resolve_address_details(person_id)
+
+        assert result is not None
+        assert result.country_name == "India"
+        assert result.state_name is None
+        assert result.district_name is None
+        assert result.sub_district_name is None
+        assert result.locality_name is None
+
+
+@pytest.mark.unit
+class TestResolveReligionDetails:
+    """Tests for _resolve_religion_details method."""
+
+    def test_resolve_religion_details_no_religion(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test _resolve_religion_details returns None when no religion."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+
+        with patch(
+            "app.services.person.person_service.PersonReligionRepository"
+        ) as mock_repo_class:
+            mock_repo = MagicMock()
+            mock_repo.get_by_person_id.return_value = None
+            mock_repo_class.return_value = mock_repo
+
+            result = service._resolve_religion_details(person_id)
+
+        assert result is None
+
+    def test_resolve_religion_details_with_full_religion(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test _resolve_religion_details with all religion fields populated."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+
+        religion_id = uuid.uuid4()
+        category_id = uuid.uuid4()
+        sub_category_id = uuid.uuid4()
+
+        mock_person_religion = MagicMock()
+        mock_person_religion.religion_id = religion_id
+        mock_person_religion.religion_category_id = category_id
+        mock_person_religion.religion_sub_category_id = sub_category_id
+
+        mock_religion = MagicMock()
+        mock_religion.name = "Christianity"
+
+        mock_category = MagicMock()
+        mock_category.name = "Protestant"
+
+        mock_sub_category = MagicMock()
+        mock_sub_category.name = "Baptist"
+
+        with patch(
+            "app.services.person.person_service.PersonReligionRepository"
+        ) as mock_person_religion_repo_class, patch(
+            "app.services.person.person_service.ReligionRepository"
+        ) as mock_religion_repo_class, patch(
+            "app.services.person.person_service.ReligionCategoryRepository"
+        ) as mock_category_repo_class, patch(
+            "app.services.person.person_service.ReligionSubCategoryRepository"
+        ) as mock_sub_category_repo_class:
+            mock_person_religion_repo = MagicMock()
+            mock_person_religion_repo.get_by_person_id.return_value = mock_person_religion
+            mock_person_religion_repo_class.return_value = mock_person_religion_repo
+
+            mock_religion_repo = MagicMock()
+            mock_religion_repo.get_by_id.return_value = mock_religion
+            mock_religion_repo_class.return_value = mock_religion_repo
+
+            mock_category_repo = MagicMock()
+            mock_category_repo.get_by_id.return_value = mock_category
+            mock_category_repo_class.return_value = mock_category_repo
+
+            mock_sub_category_repo = MagicMock()
+            mock_sub_category_repo.get_by_id.return_value = mock_sub_category
+            mock_sub_category_repo_class.return_value = mock_sub_category_repo
+
+            result = service._resolve_religion_details(person_id)
+
+        assert result is not None
+        assert result.religion_name == "Christianity"
+        assert result.category_name == "Protestant"
+        assert result.sub_category_name == "Baptist"
+
+    def test_resolve_religion_details_with_only_religion(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test _resolve_religion_details with only religion (no category/sub-category)."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+        religion_id = uuid.uuid4()
+
+        mock_person_religion = MagicMock()
+        mock_person_religion.religion_id = religion_id
+        mock_person_religion.religion_category_id = None
+        mock_person_religion.religion_sub_category_id = None
+
+        mock_religion = MagicMock()
+        mock_religion.name = "Hinduism"
+
+        with patch(
+            "app.services.person.person_service.PersonReligionRepository"
+        ) as mock_person_religion_repo_class, patch(
+            "app.services.person.person_service.ReligionRepository"
+        ) as mock_religion_repo_class, patch(
+            "app.services.person.person_service.ReligionCategoryRepository"
+        ), patch(
+            "app.services.person.person_service.ReligionSubCategoryRepository"
+        ):
+            mock_person_religion_repo = MagicMock()
+            mock_person_religion_repo.get_by_person_id.return_value = mock_person_religion
+            mock_person_religion_repo_class.return_value = mock_person_religion_repo
+
+            mock_religion_repo = MagicMock()
+            mock_religion_repo.get_by_id.return_value = mock_religion
+            mock_religion_repo_class.return_value = mock_religion_repo
+
+            result = service._resolve_religion_details(person_id)
+
+        assert result is not None
+        assert result.religion_name == "Hinduism"
+        assert result.category_name is None
+        assert result.sub_category_name is None
+
+    def test_resolve_religion_details_with_unknown_religion(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test _resolve_religion_details when religion lookup returns None."""
+        service = PersonService(mock_session)
+        person_id = uuid.uuid4()
+        religion_id = uuid.uuid4()
+
+        mock_person_religion = MagicMock()
+        mock_person_religion.religion_id = religion_id
+        mock_person_religion.religion_category_id = None
+        mock_person_religion.religion_sub_category_id = None
+
+        with patch(
+            "app.services.person.person_service.PersonReligionRepository"
+        ) as mock_person_religion_repo_class, patch(
+            "app.services.person.person_service.ReligionRepository"
+        ) as mock_religion_repo_class, patch(
+            "app.services.person.person_service.ReligionCategoryRepository"
+        ), patch(
+            "app.services.person.person_service.ReligionSubCategoryRepository"
+        ):
+            mock_person_religion_repo = MagicMock()
+            mock_person_religion_repo.get_by_person_id.return_value = mock_person_religion
+            mock_person_religion_repo_class.return_value = mock_person_religion_repo
+
+            mock_religion_repo = MagicMock()
+            mock_religion_repo.get_by_id.return_value = None  # Religion not found
+            mock_religion_repo_class.return_value = mock_religion_repo
+
+            result = service._resolve_religion_details(person_id)
+
+        assert result is not None
+        assert result.religion_name == "Unknown"
