@@ -2856,6 +2856,161 @@ export const PersonReligionUpdateSchema = {
     description: 'Schema for updating person religion (all fields optional).'
 } as const;
 
+export const PersonSearchFilterRequestSchema = {
+    properties: {
+        first_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'First Name',
+            description: 'First name to search (optional)'
+        },
+        last_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 100
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Last Name',
+            description: 'Last name to search (optional)'
+        },
+        country_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Country Id',
+            description: 'Country reference (required)'
+        },
+        state_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'State Id',
+            description: 'State reference (required)'
+        },
+        district_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'District Id',
+            description: 'District reference (required)'
+        },
+        sub_district_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Sub District Id',
+            description: 'Sub-district reference (required)'
+        },
+        locality_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Id',
+            description: 'Locality reference (optional)'
+        },
+        religion_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Religion Id',
+            description: 'Religion reference (required)'
+        },
+        religion_category_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Religion Category Id',
+            description: 'Religion category reference (required)'
+        },
+        religion_sub_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Sub Category Id',
+            description: 'Religion sub-category reference (optional)'
+        },
+        gender_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Gender Id',
+            description: 'Gender ID (optional)'
+        },
+        birth_year_from: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 2100,
+                    minimum: 1900
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Birth Year From',
+            description: 'Birth year range start (optional)'
+        },
+        birth_year_to: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 2100,
+                    minimum: 1000
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Birth Year To',
+            description: 'Birth year range end (optional)'
+        },
+        skip: {
+            type: 'integer',
+            minimum: 0,
+            title: 'Skip',
+            description: 'Number of records to skip',
+            default: 0
+        },
+        limit: {
+            type: 'integer',
+            maximum: 100,
+            minimum: 1,
+            title: 'Limit',
+            description: 'Maximum number of records to return',
+            default: 20
+        }
+    },
+    type: 'object',
+    required: ['country_id', 'state_id', 'district_id', 'sub_district_id', 'religion_id', 'religion_category_id'],
+    title: 'PersonSearchFilterRequest',
+    description: `Request schema for global person search with filters and pagination.
+
+Used by the Search page to browse and filter persons in the system.`
+} as const;
+
 export const PersonSearchRequestSchema = {
     properties: {
         first_name: {
@@ -3014,6 +3169,97 @@ export const PersonSearchRequestSchema = {
     required: ['first_name', 'last_name', 'country_id', 'state_id', 'district_id', 'religion_id'],
     title: 'PersonSearchRequest',
     description: 'Request schema for person matching search.'
+} as const;
+
+export const PersonSearchResponseSchema = {
+    properties: {
+        results: {
+            items: {
+                '$ref': '#/components/schemas/PersonSearchResult'
+            },
+            type: 'array',
+            title: 'Results',
+            description: 'List of matching persons'
+        },
+        total: {
+            type: 'integer',
+            title: 'Total',
+            description: 'Total count of matching persons'
+        },
+        skip: {
+            type: 'integer',
+            title: 'Skip',
+            description: 'Number of records skipped'
+        },
+        limit: {
+            type: 'integer',
+            title: 'Limit',
+            description: 'Maximum records per page'
+        }
+    },
+    type: 'object',
+    required: ['results', 'total', 'skip', 'limit'],
+    title: 'PersonSearchResponse',
+    description: `Response schema for global person search.
+
+Contains paginated results with total count for pagination UI.`
+} as const;
+
+export const PersonSearchResultSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'Person ID'
+        },
+        first_name: {
+            type: 'string',
+            title: 'First Name',
+            description: 'First name'
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name',
+            description: 'Middle name'
+        },
+        last_name: {
+            type: 'string',
+            title: 'Last Name',
+            description: 'Last name'
+        },
+        date_of_birth: {
+            type: 'string',
+            format: 'date',
+            title: 'Date Of Birth',
+            description: 'Date of birth'
+        },
+        name_match_score: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name Match Score',
+            description: 'Name similarity score (only present when name filter used)'
+        }
+    },
+    type: 'object',
+    required: ['person_id', 'first_name', 'last_name', 'date_of_birth'],
+    title: 'PersonSearchResult',
+    description: `Individual person result in global search.
+
+Contains person details for display in search results.`
 } as const;
 
 export const PersonUpdateSchema = {

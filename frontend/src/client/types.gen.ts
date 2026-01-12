@@ -1037,6 +1037,74 @@ export type PersonReligionUpdate = {
 };
 
 /**
+ * Request schema for global person search with filters and pagination.
+ *
+ * Used by the Search page to browse and filter persons in the system.
+ */
+export type PersonSearchFilterRequest = {
+    /**
+     * First name to search (optional)
+     */
+    first_name?: (string | null);
+    /**
+     * Last name to search (optional)
+     */
+    last_name?: (string | null);
+    /**
+     * Country reference (required)
+     */
+    country_id: string;
+    /**
+     * State reference (required)
+     */
+    state_id: string;
+    /**
+     * District reference (required)
+     */
+    district_id: string;
+    /**
+     * Sub-district reference (required)
+     */
+    sub_district_id: string;
+    /**
+     * Locality reference (optional)
+     */
+    locality_id?: (string | null);
+    /**
+     * Religion reference (required)
+     */
+    religion_id: string;
+    /**
+     * Religion category reference (required)
+     */
+    religion_category_id: string;
+    /**
+     * Religion sub-category reference (optional)
+     */
+    religion_sub_category_id?: (string | null);
+    /**
+     * Gender ID (optional)
+     */
+    gender_id?: (string | null);
+    /**
+     * Birth year range start (optional)
+     */
+    birth_year_from?: (number | null);
+    /**
+     * Birth year range end (optional)
+     */
+    birth_year_to?: (number | null);
+    /**
+     * Number of records to skip
+     */
+    skip?: number;
+    /**
+     * Maximum number of records to return
+     */
+    limit?: number;
+};
+
+/**
  * Request schema for person matching search.
  */
 export type PersonSearchRequest = {
@@ -1100,6 +1168,62 @@ export type PersonSearchRequest = {
      * Comma-separated religion display string (optional)
      */
     religion_display?: (string | null);
+};
+
+/**
+ * Response schema for global person search.
+ *
+ * Contains paginated results with total count for pagination UI.
+ */
+export type PersonSearchResponse = {
+    /**
+     * List of matching persons
+     */
+    results: Array<PersonSearchResult>;
+    /**
+     * Total count of matching persons
+     */
+    total: number;
+    /**
+     * Number of records skipped
+     */
+    skip: number;
+    /**
+     * Maximum records per page
+     */
+    limit: number;
+};
+
+/**
+ * Individual person result in global search.
+ *
+ * Contains person details for display in search results.
+ */
+export type PersonSearchResult = {
+    /**
+     * Person ID
+     */
+    person_id: string;
+    /**
+     * First name
+     */
+    first_name: string;
+    /**
+     * Middle name
+     */
+    middle_name?: (string | null);
+    /**
+     * Last name
+     */
+    last_name: string;
+    /**
+     * Date of birth
+     */
+    date_of_birth: string;
+    /**
+     * Name similarity score (only present when name filter used)
+     */
+    name_match_score?: (number | null);
 };
 
 /**
@@ -2351,6 +2475,12 @@ export type PersonReligionUpdateMyReligionData = {
 export type PersonReligionUpdateMyReligionResponse = (PersonReligionPublic);
 
 export type PersonReligionDeleteMyReligionResponse = (void);
+
+export type PersonSearchSearchPersonsData = {
+    requestBody: PersonSearchFilterRequest;
+};
+
+export type PersonSearchSearchPersonsResponse = (PersonSearchResponse);
 
 export type PostsGetPublishedPostsData = {
     limit?: number;

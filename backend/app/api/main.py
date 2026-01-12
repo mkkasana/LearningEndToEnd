@@ -16,6 +16,7 @@ from app.api.routes.address import metadata as address_metadata
 from app.api.routes.person import metadata as person_metadata
 from app.api.routes.person import person as person_routes
 from app.api.routes.person import relatives as relatives_routes
+from app.api.routes.person import search_person as search_person_routes
 from app.api.routes.religion import metadata as religion_metadata
 from app.core.config import settings
 
@@ -38,6 +39,9 @@ api_router.include_router(person_metadata.router, prefix="/metadata")
 
 # Person routes
 api_router.include_router(person_routes.router, prefix="/person", tags=["person"])
+api_router.include_router(
+    search_person_routes.router, prefix="/person", tags=["person-search"]
+)
 api_router.include_router(
     relatives_routes.router, prefix="/relatives", tags=["relatives"]
 )

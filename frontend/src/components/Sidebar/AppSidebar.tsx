@@ -4,6 +4,7 @@ import {
   Calendar,
   Home,
   Network,
+  Search,
   Users,
   UsersRound,
 } from "lucide-react"
@@ -26,6 +27,7 @@ const baseItems: Item[] = [
   { icon: UsersRound, title: "Update Family", path: "/family" },
   { icon: Network, title: "Family View", path: "/family-tree" },
   { icon: Calendar, title: "Life Events", path: "/life-events" },
+  { icon: Search, title: "Search", path: "/search" },
   { icon: Bug, title: "Report Ticket", path: "/support-tickets" },
 ]
 

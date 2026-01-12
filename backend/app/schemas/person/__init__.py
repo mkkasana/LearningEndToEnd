@@ -51,7 +51,13 @@ from app.schemas.person.person_religion import (
     PersonReligionPublic,
     PersonReligionUpdate,
 )
-from app.schemas.person.person_search import PersonMatchResult, PersonSearchRequest
+from app.schemas.person.person_search import (
+    PersonMatchResult,
+    PersonSearchFilterRequest,
+    PersonSearchRequest,
+    PersonSearchResponse,
+    PersonSearchResult,
+)
 from app.schemas.person.profession import (
     ProfessionCreate,
     ProfessionDetailPublic,
@@ -95,7 +101,10 @@ __all__ = [
     "PersonReligionDetails",
     "PersonReligionPublic",
     "PersonReligionUpdate",
+    "PersonSearchFilterRequest",
     "PersonSearchRequest",
+    "PersonSearchResponse",
+    "PersonSearchResult",
     "PersonUpdate",
     "ProfessionCreate",
     "ProfessionDetailPublic",
