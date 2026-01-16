@@ -31,4 +31,8 @@ The `amazon-builder-steering` rules do not apply to this project. This is a pers
 ## Note
 * When new changes are made, Always make sure to rebuild image to sync changes in docker comtainer.
 * For testing you can username: testfamily@family.com and password: qweqweqwe
-* If new endpoint is introduced or edited any, To make those available to user you need to rebuild backend image and restart the server other wise those wont be synced automatically.
+* If new endpoint is introduced or edited any, To make those available to user you need to rebuild backend image and restart the server other wise those wont be synced automatically. 
+
+## Coding best practises
+* For any new code written in backend should have Unit tests
+* Have proper logging so user can just debug things easily from logs it self.
