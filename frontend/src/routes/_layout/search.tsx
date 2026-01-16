@@ -159,10 +159,21 @@ function SearchPage() {
     enabled: !!searchRequest,
   })
 
-  // Handle explore button click - navigate to family tree
-  // _Requirements: 9.2_
+  /**
+   * Handle explore button click - navigate to family tree with selected person
+   * Uses sessionStorage + custom event pattern (same as ContributionStatsDialog)
+   * _Requirements: 9.2_
+   */
   const handleExplore = (personId: string) => {
-    navigate({ to: "/family-tree", search: { personId } })
+    // Store in sessionStorage as fallback for fresh page loads
+    sessionStorage.setItem("familyTreeExplorePersonId", personId)
+    navigate({ to: "/family-tree" })
+    // Dispatch custom event after a small delay to ensure navigation completes
+    setTimeout(() => {
+      window.dispatchEvent(
+        new CustomEvent("familyTreeExplorePerson", { detail: { personId } }),
+      )
+    }, 100)
   }
 
   // Handle filter apply
