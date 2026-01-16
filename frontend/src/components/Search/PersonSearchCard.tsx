@@ -1,4 +1,4 @@
-import { Compass, User } from "lucide-react"
+import { Compass, Eye, User } from "lucide-react"
 import { memo } from "react"
 import type { PersonSearchResult } from "@/client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 export interface PersonSearchCardProps {
   person: PersonSearchResult
   onExplore: (personId: string) => void
+  onView?: (personId: string) => void
 }
 
 /**
@@ -40,7 +41,7 @@ export function extractBirthYear(dateOfBirth: string): number {
 
 /**
  * PersonSearchCard component displays a person's summary in search results
- * Requirements: 9.2 - Display full name, birth year, and Explore button
+ * Requirements: 9.2 - Display full name, birth year, View and Explore buttons
  * 
  * Accessibility: Supports keyboard navigation and ARIA labels
  * Performance: Memoized to prevent unnecessary re-renders
@@ -48,6 +49,7 @@ export function extractBirthYear(dateOfBirth: string): number {
 export const PersonSearchCard = memo(function PersonSearchCard({
   person,
   onExplore,
+  onView,
 }: PersonSearchCardProps) {
   const fullName = formatFullName(
     person.first_name,
@@ -59,6 +61,13 @@ export const PersonSearchCard = memo(function PersonSearchCard({
   const handleExploreClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     onExplore(person.person_id)
+  }
+
+  const handleViewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    if (onView) {
+      onView(person.person_id)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -108,17 +117,30 @@ export const PersonSearchCard = memo(function PersonSearchCard({
         </div>
       </div>
 
-      <Button
-        variant="outline"
-        size="sm"
-        className="mt-auto"
-        onClick={handleExploreClick}
-        onKeyDown={handleKeyDown}
-        aria-label={`Explore family tree for ${fullName}`}
-      >
-        <Compass className="h-4 w-4" />
-        <span>Explore</span>
-      </Button>
+      <div className="flex gap-2 mt-auto">
+        {onView && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleViewClick}
+            onKeyDown={handleKeyDown}
+            aria-label={`View details for ${fullName}`}
+          >
+            <Eye className="h-4 w-4" />
+            <span>View</span>
+          </Button>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleExploreClick}
+          onKeyDown={handleKeyDown}
+          aria-label={`Explore family tree for ${fullName}`}
+        >
+          <Compass className="h-4 w-4" />
+          <span>Explore</span>
+        </Button>
+      </div>
     </Card>
   )
 })

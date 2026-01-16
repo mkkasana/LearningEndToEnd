@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import type { PersonSearchFilterRequest } from "@/client"
 import { PersonReligionService, PersonService } from "@/client"
 import { ActivePersonIndicator } from "@/components/Family/ActivePersonIndicator"
+import { PersonDetailsPanel } from "@/components/FamilyTree/PersonDetailsPanel"
 import { PersonSearchCard } from "@/components/Search/PersonSearchCard"
 import {
   SearchFilterPanel,
@@ -93,6 +94,10 @@ function SearchPage() {
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(0)
 
+  // Person details panel state
+  const [detailsPanelPersonId, setDetailsPanelPersonId] = useState<string | null>(null)
+  const [isDetailsPanelOpen, setIsDetailsPanelOpen] = useState(false)
+
   // Default filters state (populated from user's address/religion)
   const [defaultFilters, setDefaultFilters] = useState<SearchFilters | null>(null)
   const [filters, setFilters] = useState<SearchFilters | null>(null)
@@ -174,6 +179,14 @@ function SearchPage() {
         new CustomEvent("familyTreeExplorePerson", { detail: { personId } }),
       )
     }, 100)
+  }
+
+  /**
+   * Handle view button click - open details panel for the person
+   */
+  const handleView = (personId: string) => {
+    setDetailsPanelPersonId(personId)
+    setIsDetailsPanelOpen(true)
   }
 
   // Handle filter apply
@@ -335,6 +348,7 @@ function SearchPage() {
               key={person.person_id}
               person={person}
               onExplore={handleExplore}
+              onView={handleView}
             />
           ))}
         </div>
@@ -378,6 +392,13 @@ function SearchPage() {
           defaultFilters={defaultFilters}
         />
       )}
+
+      {/* Person Details Panel */}
+      <PersonDetailsPanel
+        personId={detailsPanelPersonId}
+        open={isDetailsPanelOpen}
+        onOpenChange={setIsDetailsPanelOpen}
+      />
     </div>
   )
 }
