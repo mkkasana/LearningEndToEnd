@@ -23,9 +23,9 @@ This implementation plan covers the backend API for finding lineage paths betwee
   - [x] 2.1 Create lineage path schemas
     - Create `app/schemas/lineage_path/lineage_path_schemas.py`
     - Implement `ConnectionInfo` model (person_id, relationship)
-    - Implement `PersonNode` model (person_id, first_name, last_name, birth_year, death_year, address, religion, connections_up, connections_down, connections_spouse)
-    - Implement `LineagePathResponse` model (connection_found, message, common_ancestor_id, graph, path_a_to_common, path_b_to_common)
-    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 2.11_
+    - Implement `PersonNode` model (person_id, first_name, last_name, birth_year, death_year, address, religion, from_person, to_person)
+    - Implement `LineagePathResponse` model (connection_found, message, common_ancestor_id, graph)
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10_
 
 - [x] 3. Implement service layer
   - [x] 3.1 Create LineagePathService class
@@ -36,37 +36,39 @@ This implementation plan covers the backend API for finding lineage paths betwee
   - [x] 3.2 Implement relationship fetching method
     - Implement `_get_relationships(person_id)` method
     - Query `person_relationship` table for active relationships only
-    - Return list of (related_person_id, relationship_type) tuples
+    - Return list of related_person_id UUIDs
     - _Requirements: 1.3, 1.4_
 
   - [x] 3.3 Implement BFS algorithm
     - Implement `_bfs_find_common_ancestor(person_a_id, person_b_id)` method
     - Use bidirectional BFS from both persons
-    - Track visited nodes to handle circular relationships
+    - Track visited nodes with parent mapping for path reconstruction
     - Respect max_depth limit
-    - Return common_ancestor_id, path_a, path_b
+    - Return tuple of (common_person_id, visited_map_a, visited_map_b)
     - _Requirements: 1.1, 1.2, 1.5, 3.5_
 
   - [x] 3.4 Implement person data enrichment
     - Implement `_enrich_person_data(person_id)` method
     - Fetch person basic info from `person` table
-    - Fetch current address from `person_address` and join with address hierarchy tables
-    - Fetch religion from `person_religion` and join with religion hierarchy tables
+    - Fetch current address via `_get_address_string()` method
+    - Fetch religion via `_get_religion_string()` method
     - Format address and religion as comma-separated strings (empty if not available)
     - _Requirements: 2.2, 2.3, 2.4, 3.4_
 
-  - [x] 3.5 Implement graph building method
-    - Implement `_build_path_graph(person_ids, relationships)` method
-    - Create PersonNode for each person in the path
-    - Populate connections_up, connections_down, connections_spouse arrays
+  - [x] 3.5 Implement bidirectional linked list building
+    - Implement `_build_final_ordered_list(common_person_id, visited_map_a, visited_map_b)` method
+    - Build ordered path from person A to person B through common point
+    - Implement `_build_bidirectional_linked_list(ordered_person_ids)` method
+    - Create PersonNode for each person with from_person and to_person connections
+    - Implement `_get_relationship_type(from_person_id, to_person_id)` method
     - _Requirements: 2.1, 2.5, 2.6, 2.7_
 
   - [x] 3.6 Implement main find_path method
     - Implement `find_path(person_a_id, person_b_id)` method
     - Handle same person edge case (return single node)
     - Validate both persons exist (raise 404 if not)
-    - Call BFS algorithm
-    - Build and return LineagePathResponse
+    - Call BFS algorithm, build ordered list, build linked list graph
+    - Return LineagePathResponse
     - _Requirements: 1.1, 3.1, 3.2, 3.3_
 
   - [x] 3.7 Write unit tests for relationship fetching
@@ -90,11 +92,11 @@ This implementation plan covers the backend API for finding lineage paths betwee
     - Test enrichment with missing religion data (empty string)
     - _Requirements: 2.2, 2.3, 2.4, 3.4_
 
-  - [x] 3.10 Write unit tests for graph building
-    - Test graph contains all path nodes
-    - Test connections_up populated correctly
-    - Test connections_down populated correctly
-    - Test connections_spouse populated correctly
+  - [x] 3.10 Write unit tests for bidirectional linked list building
+    - Test _build_final_ordered_list combines paths correctly
+    - Test _build_bidirectional_linked_list sets from_person/to_person correctly
+    - Test _get_relationship_type returns correct labels
+    - Test single person returns node without connections
     - _Requirements: 2.1, 2.5, 2.6, 2.7_
 
   - [x] 3.11 Write unit tests for main find_path method
@@ -137,6 +139,7 @@ This implementation plan covers the backend API for finding lineage paths betwee
 
 - All tasks including tests are required for comprehensive coverage
 - Each task references specific requirements for traceability
-- The implementation uses Python with FastAPI, SQLModel, and PostgreSQL
-- Unit tests are organized per component for better maintainability
+- The implementation uses Python with FastAPI, Pydantic (for API schemas), and PostgreSQL
+- Unit tests are organized per component for better maintainability (35 unit tests, 10 integration tests)
+- The graph structure uses a bidirectional linked list with from_person/to_person connections
 - Property-based tests can be added as a future enhancement using hypothesis library

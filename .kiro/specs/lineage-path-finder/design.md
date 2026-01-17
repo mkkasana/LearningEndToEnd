@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Lineage Path Finder feature provides an API to discover how two persons in a family tree are connected. It uses a Bidirectional Breadth-First Search (BFS) algorithm to find the shortest path through family relationships, returning a directed graph structure suitable for UI rendering.
+The Lineage Path Finder feature provides an API to discover how two persons in a family tree are connected. It uses a Bidirectional Breadth-First Search (BFS) algorithm to find the shortest path through family relationships, returning a bidirectional linked list structure suitable for UI rendering. The graph contains PersonNodes ordered from person A to person B, with each node having `from_person` and `to_person` connections to form the linked list.
 
 ## Architecture
 
@@ -67,7 +67,7 @@ class LineagePathService:
         self.session = session
         self.max_depth = settings.LINEAGE_PATH_MAX_DEPTH
     
-    async def find_path(
+    def find_path(
         self, 
         person_a_id: UUID, 
         person_b_id: UUID
@@ -78,28 +78,59 @@ class LineagePathService:
         self,
         person_a_id: UUID,
         person_b_id: UUID
-    ) -> tuple[UUID | None, dict, dict]:
-        """BFS to find common ancestor and paths."""
+    ) -> tuple[UUID | None, dict[UUID, UUID | None], dict[UUID, UUID | None]]:
+        """BFS to find common point and visited maps for path reconstruction."""
+    
+    def _build_final_ordered_list(
+        self,
+        common_person_id: UUID,
+        visited_map_a_to_common: dict[UUID, UUID | None],
+        visited_map_b_to_common: dict[UUID, UUID | None]
+    ) -> list[UUID]:
+        """Build ordered path from person A to person B through common point."""
+    
+    def _build_bidirectional_linked_list(
+        self,
+        ordered_person_ids: list[UUID]
+    ) -> dict[UUID, PersonNode]:
+        """Build bidirectional linked list of PersonNodes from ordered IDs."""
+    
+    def _get_relationship_type(
+        self,
+        from_person_id: UUID,
+        to_person_id: UUID
+    ) -> str:
+        """Get relationship type label between two persons."""
     
     def _get_relationships(
         self, 
         person_id: UUID
-    ) -> list[tuple[UUID, RelationshipType]]:
+    ) -> list[UUID]:
         """Get all active relationships for a person."""
     
-    def _build_path_graph(
+    def _get_person(
         self,
-        person_ids: set[UUID],
-        path_a: list[UUID],
-        path_b: list[UUID]
-    ) -> dict[str, PersonNode]:
-        """Build the graph with enriched person data."""
+        person_id: UUID
+    ) -> Person | None:
+        """Get a person by ID."""
     
     def _enrich_person_data(
         self, 
         person_id: UUID
     ) -> PersonNode:
         """Fetch and format person details including address and religion."""
+    
+    def _get_address_string(
+        self,
+        person_id: UUID
+    ) -> str:
+        """Get comma-separated address string for a person."""
+    
+    def _get_religion_string(
+        self,
+        person_id: UUID
+    ) -> str:
+        """Get comma-separated religion string for a person."""
 ```
 
 ### 3. Schema Definitions (lineage_path_schemas.py)
@@ -111,31 +142,32 @@ class LineagePathRequest(BaseModel):
     person_b_id: UUID
 
 class ConnectionInfo(BaseModel):
-    """Represents a connection to another person."""
+    """Represents a connection to another person.
+    
+    Note: The full PersonNode details can be looked up from the graph
+    using the person_id.
+    """
     person_id: UUID
     relationship: str  # e.g., "Father", "Mother", "Son"
 
 class PersonNode(BaseModel):
-    """A node in the lineage path graph."""
+    """A node in the lineage path graph (bidirectional linked list)."""
     person_id: UUID
     first_name: str
     last_name: str
-    birth_year: int
+    birth_year: int | None
     death_year: int | None
     address: str  # Comma-separated: "Village, District, State, Country"
     religion: str  # Comma-separated: "Religion, Category, SubCategory"
-    connections_up: list[ConnectionInfo]    # Parents
-    connections_down: list[ConnectionInfo]  # Children
-    connections_spouse: list[ConnectionInfo]  # Spouses
+    from_person: ConnectionInfo | None  # Previous person in path
+    to_person: ConnectionInfo | None    # Next person in path
 
 class LineagePathResponse(BaseModel):
     """Response for lineage path query."""
     connection_found: bool
     message: str
     common_ancestor_id: UUID | None
-    graph: dict[str, PersonNode]  # person_id -> PersonNode
-    path_a_to_common: list[UUID]
-    path_b_to_common: list[UUID]
+    graph: dict[UUID, PersonNode]  # person_id -> PersonNode (ordered linked list)
 ```
 
 ## Data Models
@@ -212,7 +244,7 @@ Only active relationships (`is_active=true`) are considered.
 ```json
 {
     "connection_found": true,
-    "message": "Connection found via common ancestor",
+    "message": "Connection found",
     "common_ancestor_id": "uuid-grandparent",
     "graph": {
         "uuid-person-a": {
@@ -223,11 +255,8 @@ Only active relationships (`is_active=true`) are considered.
             "death_year": null,
             "address": "Village1, District1, State1, India",
             "religion": "Hindu, Brahmin, Sharma",
-            "connections_up": [
-                {"person_id": "uuid-parent-a", "relationship": "Father"}
-            ],
-            "connections_down": [],
-            "connections_spouse": []
+            "from_person": null,
+            "to_person": {"person_id": "uuid-parent-a", "relationship": "Father"}
         },
         "uuid-parent-a": {
             "person_id": "uuid-parent-a",
@@ -237,13 +266,8 @@ Only active relationships (`is_active=true`) are considered.
             "death_year": null,
             "address": "Village1, District1, State1, India",
             "religion": "Hindu, Brahmin, Sharma",
-            "connections_up": [
-                {"person_id": "uuid-grandparent", "relationship": "Father"}
-            ],
-            "connections_down": [
-                {"person_id": "uuid-person-a", "relationship": "Son"}
-            ],
-            "connections_spouse": []
+            "from_person": {"person_id": "uuid-person-a", "relationship": "Son"},
+            "to_person": {"person_id": "uuid-grandparent", "relationship": "Father"}
         },
         "uuid-grandparent": {
             "person_id": "uuid-grandparent",
@@ -253,16 +277,32 @@ Only active relationships (`is_active=true`) are considered.
             "death_year": 2020,
             "address": "Village1, District1, State1, India",
             "religion": "Hindu, Brahmin, Sharma",
-            "connections_up": [],
-            "connections_down": [
-                {"person_id": "uuid-parent-a", "relationship": "Son"},
-                {"person_id": "uuid-parent-b", "relationship": "Son"}
-            ],
-            "connections_spouse": []
+            "from_person": {"person_id": "uuid-parent-a", "relationship": "Son"},
+            "to_person": {"person_id": "uuid-parent-b", "relationship": "Son"}
+        },
+        "uuid-parent-b": {
+            "person_id": "uuid-parent-b",
+            "first_name": "James",
+            "last_name": "Doe",
+            "birth_year": 1968,
+            "death_year": null,
+            "address": "Village1, District1, State1, India",
+            "religion": "Hindu, Brahmin, Sharma",
+            "from_person": {"person_id": "uuid-grandparent", "relationship": "Father"},
+            "to_person": {"person_id": "uuid-person-b", "relationship": "Son"}
+        },
+        "uuid-person-b": {
+            "person_id": "uuid-person-b",
+            "first_name": "Mike",
+            "last_name": "Doe",
+            "birth_year": 1995,
+            "death_year": null,
+            "address": "Village1, District1, State1, India",
+            "religion": "Hindu, Brahmin, Sharma",
+            "from_person": {"person_id": "uuid-parent-b", "relationship": "Father"},
+            "to_person": null
         }
-    },
-    "path_a_to_common": ["uuid-person-a", "uuid-parent-a", "uuid-grandparent"],
-    "path_b_to_common": ["uuid-person-b", "uuid-parent-b", "uuid-grandparent"]
+    }
 }
 ```
 
@@ -274,11 +314,29 @@ Only active relationships (`is_active=true`) are considered.
     "message": "No relation found up to 10th connection",
     "common_ancestor_id": null,
     "graph": {
-        "uuid-person-a": { ... },
-        "uuid-person-b": { ... }
-    },
-    "path_a_to_common": [],
-    "path_b_to_common": []
+        "uuid-person-a": {
+            "person_id": "uuid-person-a",
+            "first_name": "John",
+            "last_name": "Doe",
+            "birth_year": 1990,
+            "death_year": null,
+            "address": "",
+            "religion": "",
+            "from_person": null,
+            "to_person": null
+        },
+        "uuid-person-b": {
+            "person_id": "uuid-person-b",
+            "first_name": "Jane",
+            "last_name": "Smith",
+            "birth_year": 1992,
+            "death_year": null,
+            "address": "",
+            "religion": "",
+            "from_person": null,
+            "to_person": null
+        }
+    }
 }
 ```
 
@@ -290,10 +348,18 @@ Only active relationships (`is_active=true`) are considered.
     "message": "Same person provided for both inputs",
     "common_ancestor_id": "uuid-person-a",
     "graph": {
-        "uuid-person-a": { ... }
-    },
-    "path_a_to_common": ["uuid-person-a"],
-    "path_b_to_common": ["uuid-person-a"]
+        "uuid-person-a": {
+            "person_id": "uuid-person-a",
+            "first_name": "John",
+            "last_name": "Doe",
+            "birth_year": 1990,
+            "death_year": null,
+            "address": "Village1, District1, State1, India",
+            "religion": "Hindu, Brahmin, Sharma",
+            "from_person": null,
+            "to_person": null
+        }
+    }
 }
 ```
 
@@ -312,20 +378,24 @@ Only active relationships (`is_active=true`) are considered.
 *A property is a characteristic or behavior that should hold true across all valid executions of a system-essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
 
 ### Property 1: Valid Response Structure
-*For any* valid pair of person IDs, the response SHALL contain all required fields: connection_found (boolean), message (non-empty string), common_ancestor_id (UUID or null), graph (dictionary), path_a_to_common (array), path_b_to_common (array).
-**Validates: Requirements 2.8, 2.9, 2.10, 2.11**
+*For any* valid pair of person IDs, the response SHALL contain all required fields: connection_found (boolean), message (non-empty string), common_ancestor_id (UUID or null), graph (dictionary).
+**Validates: Requirements 2.8, 2.9, 2.10**
 
 ### Property 2: Valid Person Node Structure
-*For any* Person_Node in the graph, it SHALL contain: person_id, first_name, last_name, birth_year, death_year (or null), address (string, can be empty), religion (string, can be empty), connections_up (array), connections_down (array), connections_spouse (array).
+*For any* Person_Node in the graph, it SHALL contain: person_id, first_name, last_name, birth_year (or null), death_year (or null), address (string, can be empty), religion (string, can be empty), from_person (ConnectionInfo or null), to_person (ConnectionInfo or null).
 **Validates: Requirements 2.2, 2.3, 2.4, 2.5, 2.6, 2.7**
 
 ### Property 3: Connection Found Implies Common Ancestor
 *For any* response where connection_found is true, the common_ancestor_id SHALL be a valid UUID that exists in the graph.
 **Validates: Requirements 1.2**
 
-### Property 4: Path Consistency
-*For any* response where connection_found is true, all person IDs in path_a_to_common and path_b_to_common SHALL exist as keys in the graph dictionary.
-**Validates: Requirements 2.1, 2.8, 2.9**
+### Property 4: Bidirectional Linked List Consistency
+*For any* response where connection_found is true, the graph SHALL form a valid bidirectional linked list where:
+- The first node (person A) has from_person = null
+- The last node (person B) has to_person = null
+- Each intermediate node's to_person.person_id matches the next node's person_id
+- Each intermediate node's from_person.person_id matches the previous node's person_id
+**Validates: Requirements 2.1, 2.5, 2.6**
 
 ### Property 5: Missing Enrichment Data Returns Empty String
 *For any* person without address or religion data, the corresponding fields SHALL be empty strings (not null).
@@ -338,6 +408,8 @@ Only active relationships (`is_active=true`) are considered.
 - Test person data enrichment with missing data
 - Test relationship type filtering (active only)
 - Test edge cases: same person, invalid IDs
+- Test bidirectional linked list building
+- Test ordered path construction from visited maps
 
 ### Integration Tests
 - Test full API endpoint with database
@@ -351,37 +423,31 @@ Only active relationships (`is_active=true`) are considered.
 - Tag format: **Feature: lineage-path-finder, Property {number}: {property_text}**
 
 Property 1: Valid Response Structure
-*For any* valid request with two person IDs, the response SHALL contain: connection_found (boolean), message (non-empty string), common_ancestor_id (UUID or null), graph (dictionary), path_a_to_common (list), and path_b_to_common (list).
-**Validates: Requirements 2.8, 2.9, 2.10, 2.11**
+*For any* valid request with two person IDs, the response SHALL contain: connection_found (boolean), message (non-empty string), common_ancestor_id (UUID or null), and graph (dictionary).
+**Validates: Requirements 2.8, 2.9, 2.10**
 
 Property 2: Person Node Completeness
-*For any* PersonNode in the response graph, it SHALL contain: person_id, first_name, last_name, birth_year, death_year (or null), address (string, possibly empty), religion (string, possibly empty), connections_up (list), connections_down (list), and connections_spouse (list).
+*For any* PersonNode in the response graph, it SHALL contain: person_id, first_name, last_name, birth_year (or null), death_year (or null), address (string, possibly empty), religion (string, possibly empty), from_person (ConnectionInfo or null), and to_person (ConnectionInfo or null).
 **Validates: Requirements 2.2, 2.3, 2.4, 2.5, 2.6, 2.7**
 
 Property 3: Connection Found Implies Common Ancestor
-*For any* response where connection_found is true, the common_ancestor_id SHALL be a valid UUID present in the graph, and both path_a_to_common and path_b_to_common SHALL be non-empty lists ending with the common_ancestor_id.
+*For any* response where connection_found is true, the common_ancestor_id SHALL be a valid UUID present in the graph.
 **Validates: Requirements 1.2, 2.1**
 
-Property 4: Graph Contains Path Nodes
-*For any* response with a connection found, all person IDs in path_a_to_common and path_b_to_common SHALL exist as keys in the graph dictionary.
-**Validates: Requirements 2.1, 2.8, 2.9**
+Property 4: Bidirectional Linked List Validity
+*For any* response with a connection found, the graph SHALL form a valid bidirectional linked list from person A to person B with consistent from_person/to_person references.
+**Validates: Requirements 2.1, 2.5, 2.6**
 
 Property 5: Same Person Returns Single Node
-*For any* request where person_a_id equals person_b_id, the response graph SHALL contain exactly one PersonNode, and connection_found SHALL be true.
+*For any* request where person_a_id equals person_b_id, the response graph SHALL contain exactly one PersonNode with from_person=null and to_person=null, and connection_found SHALL be true.
 **Validates: Requirement 3.1**
-
-## Testing Strategy
 
 ### Unit Tests
 - Test BFS algorithm with known graph structures
 - Test edge cases: same person, invalid IDs, no connection
 - Test person data enrichment with missing address/religion
-
-### Property-Based Tests
-- Use Hypothesis library for Python
-- Generate random valid person ID pairs
-- Verify response structure properties
-- Minimum 100 iterations per property test
+- Test bidirectional linked list construction
+- Test relationship type lookup
 
 ### Integration Tests
 - Test full API endpoint with database

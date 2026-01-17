@@ -7,11 +7,12 @@ The Lineage Path Finder feature enables users to discover how two persons in the
 ## Glossary
 
 - **Lineage_Path_Service**: The backend service responsible for finding and computing relationship paths between two persons
-- **Path_Graph**: A directed graph structure containing person nodes and their relationship connections
-- **Person_Node**: A node in the path graph containing person details and connection information
-- **Common_Ancestor**: The person(s) from whom both queried persons descend
+- **Path_Graph**: A bidirectional linked list structure containing person nodes ordered from person A to person B
+- **Person_Node**: A node in the path graph containing person details and from_person/to_person connections
+- **Common_Ancestor**: The person where both BFS traversals meet (not necessarily an ancestor, could be any connecting person)
 - **BFS_Algorithm**: Bidirectional Breadth-First Search algorithm used to find the shortest path
 - **Relationship_Type**: The type of family relationship (Father, Mother, Son, Daughter, Wife, Husband, Spouse)
+- **ConnectionInfo**: A lightweight reference containing person_id and relationship label
 
 ## Requirements
 
@@ -33,17 +34,16 @@ The Lineage Path Finder feature enables users to discover how two persons in the
 
 #### Acceptance Criteria
 
-1. THE Path_Graph SHALL contain a dictionary of Person_Nodes keyed by person_id
+1. THE Path_Graph SHALL contain a dictionary of Person_Nodes keyed by person_id, forming a bidirectional linked list from person A to person B
 2. WHEN returning a Person_Node, THE Lineage_Path_Service SHALL include: person_id, first_name, last_name, birth_year, death_year (if applicable)
 3. WHEN returning a Person_Node, THE Lineage_Path_Service SHALL include address as comma-separated string (empty if not available)
 4. WHEN returning a Person_Node, THE Lineage_Path_Service SHALL include religion as comma-separated string (empty if not available)
-5. WHEN returning a Person_Node, THE Lineage_Path_Service SHALL include connections_up array with person_id and relationship_type for each parent connection
-6. WHEN returning a Person_Node, THE Lineage_Path_Service SHALL include connections_down array with person_id and relationship_type for each child connection
-7. WHEN returning a Person_Node, THE Lineage_Path_Service SHALL include connections_spouse array with person_id and relationship_type for each spouse connection
-8. THE Path_Graph response SHALL include path_a_to_common array showing person IDs from person A to common ancestor
-9. THE Path_Graph response SHALL include path_b_to_common array showing person IDs from person B to common ancestor
-10. THE Path_Graph response SHALL include connection_found boolean indicating if a connection was discovered
-11. THE Path_Graph response SHALL include a message describing the result
+5. WHEN returning a Person_Node, THE Lineage_Path_Service SHALL include from_person (ConnectionInfo or null) indicating the previous person in the path
+6. WHEN returning a Person_Node, THE Lineage_Path_Service SHALL include to_person (ConnectionInfo or null) indicating the next person in the path
+7. THE ConnectionInfo SHALL contain person_id and relationship (e.g., "Father", "Mother", "Son", "Daughter")
+8. THE Path_Graph response SHALL include connection_found boolean indicating if a connection was discovered
+9. THE Path_Graph response SHALL include a message describing the result
+10. THE Path_Graph response SHALL include common_ancestor_id (UUID or null) indicating the meeting point of both paths
 
 ### Requirement 3: Edge Case Handling
 
