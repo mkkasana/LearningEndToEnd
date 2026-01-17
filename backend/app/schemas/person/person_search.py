@@ -61,7 +61,9 @@ class PersonSearchFilterRequest(SQLModel):
         default=20, ge=1, le=100, description="Maximum number of records to return"
     )
 
-    @field_validator("gender_id", "locality_id", "religion_sub_category_id", mode="before")
+    @field_validator(
+        "gender_id", "locality_id", "religion_sub_category_id", mode="before"
+    )
     @classmethod
     def empty_string_to_none(cls, v: Any) -> Any:
         """Convert empty string to None for optional UUID fields."""
@@ -114,7 +116,8 @@ class PersonSearchResult(SQLModel):
     last_name: str = Field(description="Last name")
     date_of_birth: date = Field(description="Date of birth")
     name_match_score: float | None = Field(
-        default=None, description="Name similarity score (only present when name filter used)"
+        default=None,
+        description="Name similarity score (only present when name filter used)",
     )
 
 
@@ -124,9 +127,7 @@ class PersonSearchResponse(SQLModel):
     Contains paginated results with total count for pagination UI.
     """
 
-    results: list[PersonSearchResult] = Field(
-        description="List of matching persons"
-    )
+    results: list[PersonSearchResult] = Field(description="List of matching persons")
     total: int = Field(description="Total count of matching persons")
     skip: int = Field(description="Number of records skipped")
     limit: int = Field(description="Maximum records per page")

@@ -13,6 +13,7 @@ from app.api.routes import (
     utils,
 )
 from app.api.routes.address import metadata as address_metadata
+from app.api.routes.lineage_path import router as lineage_path_router
 from app.api.routes.person import metadata as person_metadata
 from app.api.routes.person import person as person_routes
 from app.api.routes.person import relatives as relatives_routes
@@ -47,6 +48,11 @@ api_router.include_router(
 )
 api_router.include_router(
     person_religion.router, prefix="/person-religion", tags=["person-religion"]
+)
+
+# Lineage path routes
+api_router.include_router(
+    lineage_path_router, prefix="/lineage-path", tags=["lineage-path"]
 )
 
 

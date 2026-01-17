@@ -247,13 +247,13 @@ class PersonSearchService:
         # Step 5: Apply birth year range filter
         if request.birth_year_from is not None:
             query = query.where(
-                extract("year", Person.date_of_birth) >= request.birth_year_from
+                extract("year", col(Person.date_of_birth)) >= request.birth_year_from
             )
             logger.debug(f"Applying birth_year_from filter: {request.birth_year_from}")
 
         if request.birth_year_to is not None:
             query = query.where(
-                extract("year", Person.date_of_birth) <= request.birth_year_to
+                extract("year", col(Person.date_of_birth)) <= request.birth_year_to
             )
             logger.debug(f"Applying birth_year_to filter: {request.birth_year_to}")
 
@@ -262,7 +262,9 @@ class PersonSearchService:
         logger.info(f"After demographic filters: {len(persons)} persons remain")
 
         # Step 6: Apply name fuzzy matching if name filters provided
-        has_name_filter = request.first_name is not None or request.last_name is not None
+        has_name_filter = (
+            request.first_name is not None or request.last_name is not None
+        )
 
         if has_name_filter:
             # Apply name matching with threshold
@@ -310,14 +312,16 @@ class PersonSearchService:
             ]
         else:
             # No name filter - return all matching persons sorted by last name
-            persons_list = list(persons)
+            persons_list: list[Person] = list(persons)
             persons_list.sort(key=lambda p: (p.last_name.lower(), p.first_name.lower()))
 
             # Get total count before pagination
             total = len(persons_list)
 
             # Apply pagination
-            paginated = persons_list[request.skip : request.skip + request.limit]
+            paginated_persons = persons_list[
+                request.skip : request.skip + request.limit
+            ]
 
             # Build results without name_match_score
             results = [
@@ -329,7 +333,7 @@ class PersonSearchService:
                     date_of_birth=person.date_of_birth,
                     name_match_score=None,
                 )
-                for person in paginated
+                for person in paginated_persons
             ]
 
         logger.info(
