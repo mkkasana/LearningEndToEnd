@@ -4,7 +4,6 @@ import { AlertCircle, GitBranch, Loader2, Search } from "lucide-react"
 import { useState, useCallback, useMemo } from "react"
 import { LineagePathService, type LineagePathResponse } from "@/client"
 import {
-  PersonSelector,
   PathSummary,
   RishteGraph,
   transformApiResponse,
@@ -12,6 +11,9 @@ import {
   generatePathSummary,
   getPersonCount,
 } from "@/components/Rishte"
+import { RishtePersonButton } from "@/components/Rishte/RishtePersonButton"
+import { RishtePersonSearchDialog } from "@/components/Rishte/RishtePersonSearchDialog"
+import type { SelectedPerson } from "@/components/Rishte/types"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -31,18 +33,20 @@ export const Route = createFileRoute("/_layout/rishte" as any)({
  * RishtePage - Main page for visualizing relationship paths between two persons
  * 
  * Requirements:
- * - 3.1: Display two PersonSelector components labeled "Person A" and "Person B"
- * - 3.5: Display "Find Relationship" button enabled only when both persons are selected
- * - 3.6: Call /lineage-path/find API when button is clicked
- * - 4.1: Display loading indicator while API is loading
- * - 4.2: Display error message if API returns an error
- * - 4.3: Display "No connection found" message if no connection exists
- * - 4.4: Render Lineage_Graph when connection is found
+ * - 2.1: Display two Person_Buttons labeled "Select Person A" and "Select Person B"
+ * - 7.1: Find button disabled when Person A not selected
+ * - 7.2: Find button disabled when Person B not selected
+ * - 7.3: Find button enabled when both selected
+ * - 7.4: Call lineage-path API with selected person IDs
  */
 function RishtePage() {
-  // Person selection state (simplified to just store person IDs)
-  const [personAId, setPersonAId] = useState<string | null>(null)
-  const [personBId, setPersonBId] = useState<string | null>(null)
+  // Person selection state (using SelectedPerson objects)
+  const [selectedPersonA, setSelectedPersonA] = useState<SelectedPerson | null>(null)
+  const [selectedPersonB, setSelectedPersonB] = useState<SelectedPerson | null>(null)
+
+  // Wizard dialog state
+  const [wizardOpen, setWizardOpen] = useState(false)
+  const [wizardTarget, setWizardTarget] = useState<"A" | "B">("A")
 
   // API response state
   const [apiResponse, setApiResponse] = useState<LineagePathResponse | null>(null)
@@ -50,13 +54,13 @@ function RishtePage() {
   // Find relationship mutation
   const findRelationshipMutation = useMutation({
     mutationFn: async () => {
-      if (!personAId || !personBId) {
-        throw new Error("Both person IDs must be entered")
+      if (!selectedPersonA || !selectedPersonB) {
+        throw new Error("Both persons must be selected")
       }
       const response = await LineagePathService.findLineagePath({
         requestBody: {
-          person_a_id: personAId,
-          person_b_id: personBId,
+          person_a_id: selectedPersonA.personId,
+          person_b_id: selectedPersonB.personId,
         },
       })
       return response
@@ -71,26 +75,52 @@ function RishtePage() {
 
   // Handle find relationship button click
   const handleFindRelationship = useCallback(() => {
-    if (personAId && personBId) {
+    if (selectedPersonA && selectedPersonB) {
       findRelationshipMutation.mutate()
     }
-  }, [personAId, personBId, findRelationshipMutation])
+  }, [selectedPersonA, selectedPersonB, findRelationshipMutation])
 
-  // Handle person A change - reset results when selection changes
-  const handlePersonAChange = useCallback((personId: string | null) => {
-    setPersonAId(personId)
+  // Handle opening wizard for Person A
+  const handleSelectPersonA = useCallback(() => {
+    setWizardTarget("A")
+    setWizardOpen(true)
+  }, [])
+
+  // Handle opening wizard for Person B
+  const handleSelectPersonB = useCallback(() => {
+    setWizardTarget("B")
+    setWizardOpen(true)
+  }, [])
+
+  // Handle clearing Person A selection
+  const handleClearPersonA = useCallback(() => {
+    setSelectedPersonA(null)
     setApiResponse(null)
   }, [])
 
-  // Handle person B change - reset results when selection changes
-  const handlePersonBChange = useCallback((personId: string | null) => {
-    setPersonBId(personId)
+  // Handle clearing Person B selection
+  const handleClearPersonB = useCallback(() => {
+    setSelectedPersonB(null)
     setApiResponse(null)
   }, [])
+
+  // Handle person selection from wizard
+  const handlePersonSelect = useCallback((person: SelectedPerson) => {
+    if (wizardTarget === "A") {
+      setSelectedPersonA(person)
+    } else {
+      setSelectedPersonB(person)
+    }
+    setApiResponse(null)
+  }, [wizardTarget])
 
   // Check if Find button should be enabled
-  // Requirements: 3.5 - Button enabled only when both persons are selected
-  const isFindButtonEnabled = personAId !== null && personBId !== null
+  // Requirements: 7.1, 7.2, 7.3 - Button enabled only when both persons are selected
+  const isFindButtonEnabled = selectedPersonA !== null && selectedPersonB !== null
+
+  // Get person IDs for graph transformation
+  const personAId = selectedPersonA?.personId ?? null
+  const personBId = selectedPersonB?.personId ?? null
 
   // Transform API response to React Flow elements
   const transformedPath = useMemo(() => {
@@ -120,7 +150,6 @@ function RishtePage() {
   return (
     <div className="flex flex-col gap-4 sm:gap-6 h-full">
       {/* Header */}
-      {/* Requirements: 10.1 - Responsive design for desktop and tablet */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
         <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
           <GitBranch className="h-5 w-5 text-primary" />
@@ -134,21 +163,21 @@ function RishtePage() {
       </div>
 
       {/* Person Selection */}
-      {/* Requirements: 10.2 - Stack PersonSelectors vertically on smaller screens */}
+      {/* Requirements: 2.1, 10.2 - Stack Person buttons vertically on smaller screens */}
       <Card className="p-3 sm:p-4">
         <div className="flex flex-col gap-3 sm:gap-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-            <PersonSelector
-              label="Person A"
-              value={personAId}
-              onChange={handlePersonAChange}
-              placeholder="Enter Person A's ID (UUID)..."
+            <RishtePersonButton
+              label="A"
+              selectedPerson={selectedPersonA}
+              onSelect={handleSelectPersonA}
+              onClear={handleClearPersonA}
             />
-            <PersonSelector
-              label="Person B"
-              value={personBId}
-              onChange={handlePersonBChange}
-              placeholder="Enter Person B's ID (UUID)..."
+            <RishtePersonButton
+              label="B"
+              selectedPerson={selectedPersonB}
+              onSelect={handleSelectPersonB}
+              onClear={handleClearPersonB}
             />
           </div>
           
@@ -174,8 +203,15 @@ function RishtePage() {
         </div>
       </Card>
 
+      {/* Person Search Wizard Dialog */}
+      <RishtePersonSearchDialog
+        open={wizardOpen}
+        onOpenChange={setWizardOpen}
+        personLabel={wizardTarget}
+        onPersonSelect={handlePersonSelect}
+      />
+
       {/* Loading State */}
-      {/* Requirements: 4.1 - Display loading indicator */}
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -186,7 +222,6 @@ function RishtePage() {
       )}
 
       {/* Error State */}
-      {/* Requirements: 4.2 - Display error message */}
       {error && !isLoading && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -198,7 +233,6 @@ function RishtePage() {
       )}
 
       {/* No Connection State */}
-      {/* Requirements: 4.3 - Display "No connection found" message */}
       {showNoConnection && !isLoading && (
         <Alert>
           <AlertCircle className="h-4 w-4" />
@@ -210,7 +244,6 @@ function RishtePage() {
       )}
 
       {/* Path Summary */}
-      {/* Requirements: 11.1, 11.2 - Display path summary */}
       {pathSummaryData && showGraph && !isLoading && (
         <PathSummary
           personCount={pathSummaryData.personCount}
@@ -219,8 +252,6 @@ function RishtePage() {
       )}
 
       {/* Graph */}
-      {/* Requirements: 4.4 - Render Lineage_Graph when connection found */}
-      {/* Requirements: 10.3 - Graph fills available viewport space */}
       {showGraph && !isLoading && (
         <div className="flex-1 min-h-[400px] border rounded-lg overflow-hidden">
           <RishteGraph

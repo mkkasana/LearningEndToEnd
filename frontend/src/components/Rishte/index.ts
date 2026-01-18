@@ -15,7 +15,21 @@ export type {
   ConnectionInfo,
   ApiPersonNode,
   LineagePathResponse,
+  // Person Search Wizard Types
+  SelectedPerson,
+  BasicInfoFormData,
+  AddressFormData,
+  ReligionFormData,
+  PersonSearchCriteria,
+  RishtePersonSearchDialogProps,
+  RishtePersonButtonProps,
+  RishteBasicInfoStepProps,
+  RishteAddressStepProps,
+  RishteReligionStepProps,
+  RishteResultsStepProps,
 } from "./types"
+
+export { WizardStep } from "./types"
 
 // Components
 export { PersonNode, formatBirthDeathYears } from "./PersonNode"
@@ -25,6 +39,14 @@ export { PathSummary } from "./PathSummary"
 export type { PathSummaryProps } from "./PathSummary"
 export { GraphControls } from "./GraphControls"
 export { RishteGraph } from "./RishteGraph"
+
+// Person Search Wizard Components
+export { RishtePersonButton } from "./RishtePersonButton"
+export { RishteBasicInfoStep } from "./RishteBasicInfoStep"
+export { RishteAddressStep } from "./RishteAddressStep"
+export { RishteReligionStep } from "./RishteReligionStep"
+export { RishteResultsStep } from "./RishteResultsStep"
+export { RishtePersonSearchDialog } from "./RishtePersonSearchDialog"
 
 // Utilities
 export {
@@ -50,3 +72,15 @@ export {
   VERTICAL_GAP,
   SPOUSE_GAP,
 } from "./utils/layoutCalculator"
+
+export {
+  buildSearchRequest,
+  extractBirthYear,
+  formatPersonName,
+  toSelectedPerson,
+  calculateTotalPages,
+  isValidBasicInfo,
+  isValidAddress,
+  isValidReligion,
+  formatSelectedPersonDisplay,
+} from "./utils/searchUtils"

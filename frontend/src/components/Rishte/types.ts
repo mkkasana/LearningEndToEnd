@@ -6,6 +6,127 @@ import type { Node, Edge } from "@xyflow/react"
  */
 export type SelectedPersonId = string | null
 
+// ============================================
+// Person Search Wizard Types
+// ============================================
+
+/**
+ * Selected person data for display in the wizard
+ */
+export interface SelectedPerson {
+  personId: string
+  firstName: string
+  lastName: string
+  birthYear: number | null
+}
+
+/**
+ * Basic info step form data (Step 1)
+ */
+export interface BasicInfoFormData {
+  firstName: string        // Required
+  lastName: string         // Required
+  genderId?: string        // Optional
+  birthYearFrom?: number   // Optional
+  birthYearTo?: number     // Optional
+}
+
+/**
+ * Address step form data (Step 2)
+ */
+export interface AddressFormData {
+  countryId: string        // Required
+  stateId: string          // Required
+  districtId: string       // Required
+  subDistrictId?: string   // Optional
+  localityId?: string      // Optional
+}
+
+/**
+ * Religion step form data (Step 3)
+ */
+export interface ReligionFormData {
+  religionId: string           // Required
+  religionCategoryId: string   // Required
+  religionSubCategoryId?: string // Optional
+}
+
+/**
+ * Combined search criteria from all wizard steps
+ */
+export interface PersonSearchCriteria {
+  basicInfo: BasicInfoFormData
+  address: AddressFormData
+  religion: ReligionFormData
+}
+
+/**
+ * Wizard step enum for tracking current step
+ */
+export enum WizardStep {
+  BASIC_INFO = 0,
+  ADDRESS = 1,
+  RELIGION = 2,
+  RESULTS = 3,
+}
+
+/**
+ * Props for RishtePersonSearchDialog component
+ */
+export interface RishtePersonSearchDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  personLabel: "A" | "B"
+  onPersonSelect: (person: SelectedPerson) => void
+}
+
+/**
+ * Props for RishtePersonButton component
+ */
+export interface RishtePersonButtonProps {
+  label: "A" | "B"
+  selectedPerson: SelectedPerson | null
+  onSelect: () => void
+  onClear: () => void
+}
+
+/**
+ * Props for RishteBasicInfoStep component
+ */
+export interface RishteBasicInfoStepProps {
+  initialData?: BasicInfoFormData
+  onNext: (data: BasicInfoFormData) => void
+}
+
+/**
+ * Props for RishteAddressStep component
+ */
+export interface RishteAddressStepProps {
+  initialData?: AddressFormData
+  defaultAddress?: AddressFormData
+  onNext: (data: AddressFormData) => void
+  onBack: () => void
+}
+
+/**
+ * Props for RishteReligionStep component
+ */
+export interface RishteReligionStepProps {
+  initialData?: ReligionFormData
+  defaultReligion?: ReligionFormData
+  onSearch: (data: ReligionFormData) => void
+  onBack: () => void
+}
+
+/**
+ * Props for RishteResultsStep component
+ */
+export interface RishteResultsStepProps {
+  searchCriteria: PersonSearchCriteria
+  onSelect: (person: SelectedPerson) => void
+  onBack: () => void
+}
+
 /**
  * Data for a person node in the React Flow graph
  */
