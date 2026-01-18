@@ -102,15 +102,15 @@ function RishtePage() {
 
   // Generate path summary
   const pathSummaryData = useMemo(() => {
-    if (!apiResponse?.connection_found || !apiResponse.graph) {
+    if (!apiResponse?.connection_found || !apiResponse.graph || !personAId) {
       return null
     }
-    const path = buildPathArray(apiResponse.graph)
+    const path = buildPathArray(apiResponse.graph, personAId)
     return {
       personCount: getPersonCount(path),
       pathSummary: generatePathSummary(path),
     }
-  }, [apiResponse])
+  }, [apiResponse, personAId])
 
   const isLoading = findRelationshipMutation.isPending
   const error = findRelationshipMutation.error

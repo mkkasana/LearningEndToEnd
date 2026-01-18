@@ -39,13 +39,13 @@ export function isSpouseRelationship(rel: string): boolean {
 
 /**
  * Build ordered path array from linked list graph structure
- * Extracts the path from start (from_person is null/undefined) to end (to_person is null/undefined)
+ * Starts from personAId and follows to_person pointers to build the path
  */
 export function buildPathArray(
-  graph: Record<string, ApiPersonNode>
+  graph: Record<string, ApiPersonNode>,
+  personAId: string
 ): ApiPersonNode[] {
-  // Find start node (from_person is null or undefined)
-  const startNode = Object.values(graph).find((n) => n.from_person === null || n.from_person === undefined)
+  const startNode = graph[personAId]
 
   if (!startNode) {
     return []
@@ -70,14 +70,17 @@ export function buildPathArray(
 
 
 /**
- * Assign generation levels to each person in the path
+ * Assign generation levels and X-axis positions to each person in the path
  * Generation 0 is the oldest, increases downward
+ * xOffset is calculated to keep related nodes close and avoid overlaps
  */
 export function assignGenerations(
   path: ApiPersonNode[]
 ): Map<string, GenerationInfo> {
   const generations = new Map<string, GenerationInfo>()
+  const generationToXAxis = new Map<number, number>() // Track max X per generation
   let currentGen = 0
+  let currentXAxis = 0
 
   for (let i = 0; i < path.length; i++) {
     const node = path[i]
@@ -96,17 +99,37 @@ export function assignGenerations(
       // Spouse relationships stay at same generation
     }
 
+    // Calculate X-axis position
+    if (relationship) {
+      if (isChildRelationship(relationship) || isParentRelationship(relationship)) {
+        // Check if this generation already has nodes at or beyond currentXAxis
+        const genXAxis = generationToXAxis.get(currentGen) ?? -1
+        if (genXAxis >= currentXAxis) {
+          // Shift right to avoid overlap with existing nodes in this generation
+          currentXAxis = genXAxis + 1
+        }
+        // Update the generation's max X position
+        generationToXAxis.set(currentGen, currentXAxis)
+      } else if (isSpouseRelationship(relationship)) {
+        // Spouse always shifts right (side-by-side positioning)
+        currentXAxis++
+      } else {
+        // Unknown relationship, shift right to be safe
+        currentXAxis++
+      }
+    } else {
+      // First node (no relationship), set generation's X position
+      generationToXAxis.set(currentGen, currentXAxis)
+    }
+
+    const isSpouse = isSpouseRelationship(relationship || "")
+    
     generations.set(node.person_id, {
       personId: node.person_id,
       generation: currentGen,
-      xOffset: 0, // Calculated later in layout
-      isSpouse:
-        relationship === "Spouse" ||
-        relationship === "Husband" ||
-        relationship === "Wife",
-      spouseOfId: isSpouseRelationship(relationship || "")
-        ? prevNode?.person_id
-        : undefined,
+      xOffset: currentXAxis,
+      isSpouse,
+      spouseOfId: isSpouse ? prevNode?.person_id : undefined,
     })
   }
 
@@ -120,7 +143,6 @@ export function assignGenerations(
 
   return generations
 }
-
 
 
 /**
@@ -190,8 +212,8 @@ export function transformApiResponse(
     return { nodes: [], edges: [] }
   }
 
-  // Step 1: Build ordered path array from linked list
-  const path = buildPathArray(graph)
+  // Step 1: Build ordered path array from linked list, starting from Person A
+  const path = buildPathArray(graph, personAId)
 
   if (path.length === 0) {
     return { nodes: [], edges: [] }
