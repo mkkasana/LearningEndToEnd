@@ -74,21 +74,45 @@ export const PersonNode = memo(function PersonNode({ data }: PersonNodeProps) {
       <Handle
         type="target"
         position={Position.Top}
+        id="top"
+        className="!bg-muted-foreground !w-2 !h-2"
+      />
+      <Handle
+        type="source"
+        position={Position.Top}
+        id="top"
+        className="!bg-muted-foreground !w-2 !h-2"
+      />
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="bottom"
         className="!bg-muted-foreground !w-2 !h-2"
       />
       <Handle
         type="source"
         position={Position.Bottom}
+        id="bottom"
         className="!bg-muted-foreground !w-2 !h-2"
       />
-      {/* Left handle for spouse connections */}
       <Handle
         type="target"
         position={Position.Left}
         id="left"
         className="!bg-muted-foreground !w-2 !h-2"
       />
-      {/* Right handle for spouse connections */}
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="left"
+        className="!bg-muted-foreground !w-2 !h-2"
+      />
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="right"
+        className="!bg-muted-foreground !w-2 !h-2"
+      />
       <Handle
         type="source"
         position={Position.Right}

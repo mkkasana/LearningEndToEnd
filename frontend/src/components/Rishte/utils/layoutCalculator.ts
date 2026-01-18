@@ -54,3 +54,68 @@ export function isParentOf(parentY: number, childY: number): boolean {
 export function getSpouseXOffset(): number {
   return NODE_WIDTH + SPOUSE_GAP
 }
+
+/**
+ * Edge handle positions
+ */
+export type HandlePosition = "top" | "bottom" | "left" | "right"
+
+export interface EdgeHandles {
+  sourceHandle: HandlePosition
+  targetHandle: HandlePosition
+}
+
+/**
+ * Determine the appropriate source and target handles based on node positions
+ * This ensures edges connect from the most logical side of each node
+ */
+export function getEdgeHandles(
+  sourcePos: { x: number; y: number },
+  targetPos: { x: number; y: number }
+): EdgeHandles {
+  const { x: sx, y: sy } = sourcePos
+  const { x: tx, y: ty } = targetPos
+
+  // Same column
+  if (sx === tx) {
+    if (sy < ty) {
+      // Target is directly below source
+      return { sourceHandle: "bottom", targetHandle: "top" }
+    } else {
+      // Target is directly above source
+      return { sourceHandle: "top", targetHandle: "bottom" }
+    }
+  }
+
+  // Same row
+  if (sy === ty) {
+    if (sx < tx) {
+      // Target is to the right of source
+      return { sourceHandle: "right", targetHandle: "left" }
+    } else {
+      // Target is to the left of source
+      return { sourceHandle: "left", targetHandle: "right" }
+    }
+  }
+
+  // Diagonal positions
+  if (sx < tx) {
+    // Target is to the right
+    if (sy < ty) {
+      // Target is south-east (below and right)
+      return { sourceHandle: "bottom", targetHandle: "top" }
+    } else {
+      // Target is north-east (above and right)
+      return { sourceHandle: "top", targetHandle: "left" }
+    }
+  } else {
+    // Target is to the left
+    if (sy < ty) {
+      // Target is south-west (below and left)
+      return { sourceHandle: "bottom", targetHandle: "top" }
+    } else {
+      // Target is north-west (above and left)
+      return { sourceHandle: "top", targetHandle: "right" }
+    }
+  }
+}

@@ -4,7 +4,7 @@ import type {
   RishteEdge,
   TransformedPath,
 } from "../types"
-import { calculatePositions } from "./layoutCalculator"
+import { calculatePositions, getEdgeHandles } from "./layoutCalculator"
 import type { LineagePathResponse, PersonNode as ApiPersonNode } from "@/client"
 
 // Re-export layout constants for convenience
@@ -113,9 +113,12 @@ export function assignGenerations(
       } else if (isSpouseRelationship(relationship)) {
         // Spouse always shifts right (side-by-side positioning)
         currentXAxis++
+        // Also update generation tracking to prevent overlaps with later nodes
+        generationToXAxis.set(currentGen, currentXAxis)
       } else {
         // Unknown relationship, shift right to be safe
         currentXAxis++
+        generationToXAxis.set(currentGen, currentXAxis)
       }
     } else {
       // First node (no relationship), set generation's X position
@@ -173,19 +176,30 @@ function createNodes(
 /**
  * Create React Flow edges from path data
  */
-function createEdges(path: ApiPersonNode[]): RishteEdge[] {
+function createEdges(
+  path: ApiPersonNode[],
+  positions: Map<string, { x: number; y: number }>
+): RishteEdge[] {
   const edges: RishteEdge[] = []
 
   for (let i = 0; i < path.length - 1; i++) {
     const source = path[i]
     const target = path[i + 1]
-    const relationship = target.from_person?.relationship || ""
+    // Use source.to_person.relationship as it describes "what target is to source"
+    const relationship = source.to_person?.relationship || ""
     const isSpouse = isSpouseRelationship(relationship)
+
+    // Get appropriate handles based on node positions
+    const sourcePos = positions.get(source.person_id) || { x: 0, y: 0 }
+    const targetPos = positions.get(target.person_id) || { x: 0, y: 0 }
+    const { sourceHandle, targetHandle } = getEdgeHandles(sourcePos, targetPos)
 
     edges.push({
       id: `${source.person_id}-${target.person_id}`,
       source: source.person_id,
       target: target.person_id,
+      sourceHandle,
+      targetHandle,
       type: "relationshipEdge",
       data: {
         relationship,
@@ -227,7 +241,7 @@ export function transformApiResponse(
 
   // Step 4: Create React Flow elements
   const nodes = createNodes(path, positions, personAId, personBId)
-  const edges = createEdges(path)
+  const edges = createEdges(path, positions)
 
   return { nodes, edges }
 }
