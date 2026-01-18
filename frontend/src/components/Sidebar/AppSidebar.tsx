@@ -2,6 +2,7 @@ import {
   Briefcase,
   Bug,
   Calendar,
+  GitBranch,
   Home,
   Network,
   Search,
@@ -28,6 +29,7 @@ const baseItems: Item[] = [
   { icon: Network, title: "Family View", path: "/family-tree" },
   { icon: Calendar, title: "Life Events", path: "/life-events" },
   { icon: Search, title: "Search", path: "/search" },
+  { icon: GitBranch, title: "Rishte", path: "/rishte" },
   { icon: Bug, title: "Report Ticket", path: "/support-tickets" },
 ]
 

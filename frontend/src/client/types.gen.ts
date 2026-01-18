@@ -33,6 +33,23 @@ export type CanAssumeResponse = {
 };
 
 /**
+ * Represents a connection to another person.
+ *
+ * Note: The full PersonNode details can be looked up from the graph
+ * using the person_id.
+ */
+export type ConnectionInfo = {
+    /**
+     * Connected person ID
+     */
+    person_id: string;
+    /**
+     * Relationship type (e.g., Father, Mother, Son, Daughter, Wife, Husband)
+     */
+    relationship: string;
+};
+
+/**
  * Schema for creating a new country
  */
 export type CountryCreate = {
@@ -341,6 +358,44 @@ export type LifeEventUpdate = {
     sub_district_id?: (string | null);
     locality_id?: (string | null);
     address_details?: (string | null);
+};
+
+/**
+ * Request body for lineage path query.
+ */
+export type LineagePathRequest = {
+    /**
+     * First person ID
+     */
+    person_a_id: string;
+    /**
+     * Second person ID
+     */
+    person_b_id: string;
+};
+
+/**
+ * Response for lineage path query.
+ */
+export type LineagePathResponse = {
+    /**
+     * Whether a connection was found
+     */
+    connection_found: boolean;
+    /**
+     * Result description message
+     */
+    message: string;
+    /**
+     * Common ancestor person ID (if found)
+     */
+    common_ancestor_id?: (string | null);
+    /**
+     * Graph of person nodes keyed by person_id
+     */
+    graph?: {
+        [key: string]: PersonNode;
+    };
 };
 
 /**
@@ -795,6 +850,48 @@ export type PersonMetadataPublic = {
 export type PersonMetadataUpdate = {
     profile_image_url?: (string | null);
     bio?: (string | null);
+};
+
+/**
+ * A node in the lineage path graph.
+ */
+export type PersonNode = {
+    /**
+     * Person ID
+     */
+    person_id: string;
+    /**
+     * First name
+     */
+    first_name: string;
+    /**
+     * Last name
+     */
+    last_name: string;
+    /**
+     * Birth year
+     */
+    birth_year?: (number | null);
+    /**
+     * Death year (if applicable)
+     */
+    death_year?: (number | null);
+    /**
+     * Comma-separated address: Village, District, State, Country
+     */
+    address?: string;
+    /**
+     * Comma-separated religion: Religion, Category, SubCategory
+     */
+    religion?: string;
+    /**
+     * Person from whom I was reached.
+     */
+    from_person?: (ConnectionInfo | null);
+    /**
+     * Person reached via me.
+     */
+    to_person?: (ConnectionInfo | null);
 };
 
 /**
@@ -2120,6 +2217,12 @@ export type LifeEventsDeleteLifeEventData = {
 };
 
 export type LifeEventsDeleteLifeEventResponse = (Message);
+
+export type LineagePathFindLineagePathData = {
+    requestBody: LineagePathRequest;
+};
+
+export type LineagePathFindLineagePathResponse = (LineagePathResponse);
 
 export type LoginLoginAccessTokenData = {
     formData: Body_login_login_access_token;

@@ -100,6 +100,29 @@ along with the reason if denied and the person's name if allowed.
 _Requirements: 2.1, 2.4_`
 } as const;
 
+export const ConnectionInfoSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'Connected person ID'
+        },
+        relationship: {
+            type: 'string',
+            title: 'Relationship',
+            description: 'Relationship type (e.g., Father, Mother, Son, Daughter, Wife, Husband)'
+        }
+    },
+    type: 'object',
+    required: ['person_id', 'relationship'],
+    title: 'ConnectionInfo',
+    description: `Represents a connection to another person.
+
+Note: The full PersonNode details can be looked up from the graph
+using the person_id.`
+} as const;
+
 export const CountryCreateSchema = {
     properties: {
         name: {
@@ -1004,6 +1027,70 @@ export const LifeEventsPublicSchema = {
     required: ['data', 'count'],
     title: 'LifeEventsPublic',
     description: 'List of life events response.'
+} as const;
+
+export const LineagePathRequestSchema = {
+    properties: {
+        person_a_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person A Id',
+            description: 'First person ID'
+        },
+        person_b_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person B Id',
+            description: 'Second person ID'
+        }
+    },
+    type: 'object',
+    required: ['person_a_id', 'person_b_id'],
+    title: 'LineagePathRequest',
+    description: 'Request body for lineage path query.'
+} as const;
+
+export const LineagePathResponseSchema = {
+    properties: {
+        connection_found: {
+            type: 'boolean',
+            title: 'Connection Found',
+            description: 'Whether a connection was found'
+        },
+        message: {
+            type: 'string',
+            title: 'Message',
+            description: 'Result description message'
+        },
+        common_ancestor_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Common Ancestor Id',
+            description: 'Common ancestor person ID (if found)'
+        },
+        graph: {
+            additionalProperties: {
+                '$ref': '#/components/schemas/PersonNode'
+            },
+            propertyNames: {
+                format: 'uuid'
+            },
+            type: 'object',
+            title: 'Graph',
+            description: 'Graph of person nodes keyed by person_id'
+        }
+    },
+    type: 'object',
+    required: ['connection_found', 'message'],
+    title: 'LineagePathResponse',
+    description: 'Response for lineage path query.'
 } as const;
 
 export const LocalityCreateSchema = {
@@ -2198,6 +2285,89 @@ export const PersonMetadataUpdateSchema = {
     description: 'Schema for updating person metadata (all fields optional).'
 } as const;
 
+export const PersonNodeSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'Person ID'
+        },
+        first_name: {
+            type: 'string',
+            title: 'First Name',
+            description: 'First name'
+        },
+        last_name: {
+            type: 'string',
+            title: 'Last Name',
+            description: 'Last name'
+        },
+        birth_year: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Birth Year',
+            description: 'Birth year'
+        },
+        death_year: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Death Year',
+            description: 'Death year (if applicable)'
+        },
+        address: {
+            type: 'string',
+            title: 'Address',
+            description: 'Comma-separated address: Village, District, State, Country',
+            default: ''
+        },
+        religion: {
+            type: 'string',
+            title: 'Religion',
+            description: 'Comma-separated religion: Religion, Category, SubCategory',
+            default: ''
+        },
+        from_person: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/ConnectionInfo'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            description: 'Person from whom I was reached.'
+        },
+        to_person: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/ConnectionInfo'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            description: 'Person reached via me.'
+        }
+    },
+    type: 'object',
+    required: ['person_id', 'first_name', 'last_name'],
+    title: 'PersonNode',
+    description: 'A node in the lineage path graph.'
+} as const;
+
 export const PersonProfessionCreateSchema = {
     properties: {
         profession_id: {
@@ -2978,7 +3148,7 @@ export const PersonSearchFilterRequestSchema = {
                 {
                     type: 'integer',
                     maximum: 2100,
-                    minimum: 1000
+                    minimum: 1900
                 },
                 {
                     type: 'null'
