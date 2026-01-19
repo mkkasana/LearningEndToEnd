@@ -71,6 +71,7 @@ Core methods:
 - `_is_married(person_id)` - Check spouse/children relationships
 - `_get_person_religion_ids(person_id)` - Get religion/category/sub-category IDs
 - `_build_exploration_tree(visited_map, matches, seeker_id)` - Build response graph
+- `_prune_graph(graph, matches, seeker_id)` - Remove nodes not on path to any match
 - `_enrich_node_data(person_id)` - Fetch person details for node
 
 ### 3. Filter Logic
@@ -138,6 +139,9 @@ class PartnerMatchRequest(BaseModel):
     
     # Search depth
     max_depth: int = 5
+    
+    # Graph pruning (default: True)
+    prune_graph: bool = True
 ```
 
 ### Response Schema
@@ -274,6 +278,75 @@ def _bfs_explore(
 | max_depth exceeds limit | 400 | "max_depth cannot exceed {MAX_ALLOWED}" |
 | birth_year_min > birth_year_max | 400 | "birth_year_min cannot be greater than birth_year_max" |
 
+## Graph Pruning Algorithm
+
+When `prune_graph=True` (default), the service removes nodes that don't contribute to any path from seeker to a match. This reduces response payload size and simplifies frontend visualization.
+
+### Algorithm
+
+```python
+def _prune_graph(
+    self,
+    graph: dict[UUID, MatchGraphNode],
+    matches: list[UUID],
+    seeker_id: UUID,
+) -> dict[UUID, MatchGraphNode]:
+    """
+    Prune the exploration graph to only include nodes on paths to matches.
+    
+    Algorithm:
+    1. Start with empty set of nodes_to_keep
+    2. For each match, trace back to seeker via from_person links
+    3. Add all nodes on each path to nodes_to_keep
+    4. Filter graph to only include nodes_to_keep
+    5. Update to_persons lists to only reference kept nodes
+    """
+    if not matches:
+        # No matches - return only seeker node
+        seeker_node = graph[seeker_id]
+        seeker_node.to_persons = []
+        return {seeker_id: seeker_node}
+    
+    # Collect all nodes on paths from matches back to seeker
+    nodes_to_keep: set[UUID] = {seeker_id}
+    
+    for match_id in matches:
+        current_id = match_id
+        while current_id is not None:
+            nodes_to_keep.add(current_id)
+            node = graph[current_id]
+            current_id = node.from_person.person_id if node.from_person else None
+    
+    # Build pruned graph
+    pruned_graph: dict[UUID, MatchGraphNode] = {}
+    for person_id in nodes_to_keep:
+        node = graph[person_id]
+        # Filter to_persons to only include kept nodes
+        node.to_persons = [
+            conn for conn in node.to_persons 
+            if conn.person_id in nodes_to_keep
+        ]
+        pruned_graph[person_id] = node
+    
+    return pruned_graph
+```
+
+### Example
+
+Given this exploration tree:
+```
+Seeker → Father → Uncle → Match1
+              ↘ Aunt (no match descendants)
+       → Mother → Cousin (no match)
+```
+
+With `prune_graph=True`, the response only includes:
+```
+Seeker → Father → Uncle → Match1
+```
+
+The Aunt, Mother, and Cousin nodes are removed because they don't lead to any matches.
+
 ## Testing Strategy
 
 ### Unit Tests
@@ -366,3 +439,13 @@ def _bfs_explore(
 *For any* request with a non-existent seeker_person_id, the service SHALL return HTTP 404 with message "Seeker person not found".
 
 **Validates: Requirements 1.1, 1.2**
+
+### Property 12: Graph Pruning Correctness
+
+*For any* partner match response where prune_graph=True:
+- All nodes in exploration_graph SHALL be on at least one path from seeker to a match
+- The seeker node SHALL always be present
+- If no matches exist, exploration_graph SHALL contain only the seeker node
+- For any match, tracing from_person links back to seeker SHALL only traverse nodes in the graph
+
+**Validates: Requirements 12.1, 12.3, 12.4, 12.5**

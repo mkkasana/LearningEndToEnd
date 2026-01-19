@@ -45,6 +45,12 @@ class PartnerMatchRequest(BaseModel):
         default=5, description="Maximum BFS traversal depth (relationship hops)"
     )
 
+    # Graph pruning
+    prune_graph: bool = Field(
+        default=True,
+        description="If True, only include nodes on paths to matches. If False, return full exploration graph.",
+    )
+
     @model_validator(mode="after")
     def validate_birth_year_range(self) -> PartnerMatchRequest:
         """Validate that birth_year_min is not greater than birth_year_max."""

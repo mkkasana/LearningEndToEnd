@@ -107,6 +107,36 @@ Implementation of the Partner Match Finder backend API using Python/FastAPI. The
   - Ensure all unit tests pass
   - Ask the user if questions arise
 
+- [x] 8. Implement Graph Pruning Optimization
+  - [x] 8.1 Add `prune_graph` parameter to `PartnerMatchRequest` schema
+    - Default value: `True`
+    - _Requirements: 12.1, 12.2_
+
+  - [x] 8.2 Implement `_prune_graph()` method in `PartnerMatchService`
+    - Trace back from each match to seeker via `from_person` links
+    - Collect all nodes on paths to matches
+    - Filter graph to only include collected nodes
+    - Update `to_persons` lists to only reference kept nodes
+    - Handle edge case: no matches (return only seeker node)
+    - _Requirements: 12.1, 12.3, 12.4, 12.5_
+
+  - [x] 8.3 Update `find_matches()` to use pruning
+    - Call `_prune_graph()` when `request.prune_graph` is True
+    - Pass through unpruned graph when `prune_graph` is False
+    - _Requirements: 12.1, 12.2_
+
+  - [x] 8.4 Write unit tests for graph pruning
+    - Test pruned graph only contains path nodes
+    - Test seeker always included
+    - Test no matches returns only seeker
+    - Test `prune_graph=False` returns full graph
+    - _Requirements: 12.1, 12.2, 12.4, 12.5, 12.6_
+
+- [x] 9. Final checkpoint - Verify pruning tests pass
+  - Run `hatch run build-all` to verify
+  - Ensure all unit tests pass
+  - Regenerate OpenAPI client if schema changed
+
 ## Notes
 
 - Tasks marked with `*` are optional and can be skipped for faster MVP

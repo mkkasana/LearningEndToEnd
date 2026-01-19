@@ -135,6 +135,19 @@ The system performs a BFS traversal from the seeker through family relationships
 2. THE route file SHALL not modify or depend on existing lineage path route files
 3. THE Partner_Match_Service SHALL have its own service class, schemas, and repository components
 
+### Requirement 12: Graph Pruning Optimization
+
+**User Story:** As a user, I want the exploration graph to only include nodes that lead to matches, so that the response is smaller and easier to visualize.
+
+#### Acceptance Criteria
+
+1. WHEN prune_graph is true (default), THE Partner_Match_Service SHALL only include nodes that are on a path from the seeker to at least one match
+2. WHEN prune_graph is false, THE Partner_Match_Service SHALL return the complete exploration graph (all visited nodes)
+3. THE pruned graph SHALL preserve the tree structure with correct from_person and to_persons connections
+4. THE seeker node SHALL always be included in the pruned graph
+5. IF no matches are found, THE pruned graph SHALL only contain the seeker node
+6. THE pruning SHALL NOT affect the matches list or total_matches count
+
 ## Future Plans
 
 The following enhancements are planned for future iterations:

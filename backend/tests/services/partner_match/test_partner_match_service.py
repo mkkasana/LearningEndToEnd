@@ -119,16 +119,31 @@ class TestSeekerValidation:
 
         Requirements: 1.1
         """
+        from app.schemas.partner_match import MatchGraphNode
+
         seeker_id = uuid.uuid4()
         mock_seeker = create_mock_person(seeker_id, "Seeker", "Person")
         request = create_basic_request(seeker_id)
+
+        # Create a mock graph with seeker node
+        mock_graph = {
+            seeker_id: MatchGraphNode(
+                person_id=seeker_id,
+                first_name="Seeker",
+                last_name="Person",
+                is_match=False,
+                depth=0,
+                from_person=None,
+                to_persons=[],
+            )
+        }
 
         service = PartnerMatchService(mock_session)
 
         with patch.object(service, "_get_person", return_value=mock_seeker), patch.object(
             service, "_bfs_explore", return_value=({seeker_id: None}, {seeker_id: 0}, [])
         ), patch.object(
-            service, "_build_exploration_tree", return_value={}
+            service, "_build_exploration_tree", return_value=mock_graph
         ):
             result = service.find_matches(request)
 
@@ -858,3 +873,505 @@ class TestBFSExploration:
         assert depth_map[seeker_id] == 0
         assert depth_map[level1_id] == 1
         assert depth_map[level2_id] == 2
+
+
+# =============================================================================
+# Tests for Graph Pruning (Requirements: 12.1, 12.2, 12.4, 12.5, 12.6)
+# =============================================================================
+
+
+@pytest.mark.unit
+class TestGraphPruning:
+    """Tests for _prune_graph method."""
+
+    def test_prune_graph_no_matches_returns_only_seeker(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test pruning with no matches returns only seeker node.
+
+        Requirements: 12.5
+        """
+        from app.schemas.partner_match import MatchGraphNode
+
+        seeker_id = uuid.uuid4()
+        other_id = uuid.uuid4()
+
+        # Create a graph with seeker and another node
+        graph = {
+            seeker_id: MatchGraphNode(
+                person_id=seeker_id,
+                first_name="Seeker",
+                last_name="Person",
+                is_match=False,
+                depth=0,
+                from_person=None,
+                to_persons=[],
+            ),
+            other_id: MatchGraphNode(
+                person_id=other_id,
+                first_name="Other",
+                last_name="Person",
+                is_match=False,
+                depth=1,
+                from_person=None,
+                to_persons=[],
+            ),
+        }
+
+        service = PartnerMatchService(mock_session)
+        result = service._prune_graph(graph, [], seeker_id)
+
+        assert len(result) == 1
+        assert seeker_id in result
+        assert other_id not in result
+
+    def test_prune_graph_keeps_path_to_match(self, mock_session: MagicMock) -> None:
+        """Test pruning keeps all nodes on path from seeker to match.
+
+        Requirements: 12.1, 12.3
+        """
+        from app.schemas.partner_match import MatchConnectionInfo, MatchGraphNode
+
+        seeker_id = uuid.uuid4()
+        intermediate_id = uuid.uuid4()
+        match_id = uuid.uuid4()
+
+        # Create a graph: seeker -> intermediate -> match
+        graph = {
+            seeker_id: MatchGraphNode(
+                person_id=seeker_id,
+                first_name="Seeker",
+                last_name="Person",
+                is_match=False,
+                depth=0,
+                from_person=None,
+                to_persons=[
+                    MatchConnectionInfo(person_id=intermediate_id, relationship="Son")
+                ],
+            ),
+            intermediate_id: MatchGraphNode(
+                person_id=intermediate_id,
+                first_name="Intermediate",
+                last_name="Person",
+                is_match=False,
+                depth=1,
+                from_person=MatchConnectionInfo(
+                    person_id=seeker_id, relationship="Father"
+                ),
+                to_persons=[
+                    MatchConnectionInfo(person_id=match_id, relationship="Daughter")
+                ],
+            ),
+            match_id: MatchGraphNode(
+                person_id=match_id,
+                first_name="Match",
+                last_name="Person",
+                is_match=True,
+                depth=2,
+                from_person=MatchConnectionInfo(
+                    person_id=intermediate_id, relationship="Father"
+                ),
+                to_persons=[],
+            ),
+        }
+
+        service = PartnerMatchService(mock_session)
+        result = service._prune_graph(graph, [match_id], seeker_id)
+
+        assert len(result) == 3
+        assert seeker_id in result
+        assert intermediate_id in result
+        assert match_id in result
+
+    def test_prune_graph_removes_dead_end_branches(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test pruning removes branches that don't lead to matches.
+
+        Requirements: 12.1
+        """
+        from app.schemas.partner_match import MatchConnectionInfo, MatchGraphNode
+
+        seeker_id = uuid.uuid4()
+        path_to_match_id = uuid.uuid4()
+        match_id = uuid.uuid4()
+        dead_end_id = uuid.uuid4()
+
+        # Create a graph:
+        # seeker -> path_to_match -> match
+        #        -> dead_end (no match)
+        graph = {
+            seeker_id: MatchGraphNode(
+                person_id=seeker_id,
+                first_name="Seeker",
+                last_name="Person",
+                is_match=False,
+                depth=0,
+                from_person=None,
+                to_persons=[
+                    MatchConnectionInfo(
+                        person_id=path_to_match_id, relationship="Father"
+                    ),
+                    MatchConnectionInfo(person_id=dead_end_id, relationship="Mother"),
+                ],
+            ),
+            path_to_match_id: MatchGraphNode(
+                person_id=path_to_match_id,
+                first_name="PathToMatch",
+                last_name="Person",
+                is_match=False,
+                depth=1,
+                from_person=MatchConnectionInfo(
+                    person_id=seeker_id, relationship="Son"
+                ),
+                to_persons=[
+                    MatchConnectionInfo(person_id=match_id, relationship="Daughter")
+                ],
+            ),
+            match_id: MatchGraphNode(
+                person_id=match_id,
+                first_name="Match",
+                last_name="Person",
+                is_match=True,
+                depth=2,
+                from_person=MatchConnectionInfo(
+                    person_id=path_to_match_id, relationship="Father"
+                ),
+                to_persons=[],
+            ),
+            dead_end_id: MatchGraphNode(
+                person_id=dead_end_id,
+                first_name="DeadEnd",
+                last_name="Person",
+                is_match=False,
+                depth=1,
+                from_person=MatchConnectionInfo(
+                    person_id=seeker_id, relationship="Son"
+                ),
+                to_persons=[],
+            ),
+        }
+
+        service = PartnerMatchService(mock_session)
+        result = service._prune_graph(graph, [match_id], seeker_id)
+
+        # Should keep seeker, path_to_match, match
+        # Should remove dead_end
+        assert len(result) == 3
+        assert seeker_id in result
+        assert path_to_match_id in result
+        assert match_id in result
+        assert dead_end_id not in result
+
+        # Verify seeker's to_persons is filtered
+        assert len(result[seeker_id].to_persons) == 1
+        assert result[seeker_id].to_persons[0].person_id == path_to_match_id
+
+    def test_prune_graph_seeker_always_included(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test seeker node is always included even with no matches.
+
+        Requirements: 12.4
+        """
+        from app.schemas.partner_match import MatchGraphNode
+
+        seeker_id = uuid.uuid4()
+
+        graph = {
+            seeker_id: MatchGraphNode(
+                person_id=seeker_id,
+                first_name="Seeker",
+                last_name="Person",
+                is_match=False,
+                depth=0,
+                from_person=None,
+                to_persons=[],
+            ),
+        }
+
+        service = PartnerMatchService(mock_session)
+        result = service._prune_graph(graph, [], seeker_id)
+
+        assert seeker_id in result
+        assert len(result) == 1
+
+    def test_prune_graph_preserves_tree_structure(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test pruning preserves correct from_person and to_persons connections.
+
+        Requirements: 12.3
+        """
+        from app.schemas.partner_match import MatchConnectionInfo, MatchGraphNode
+
+        seeker_id = uuid.uuid4()
+        parent_id = uuid.uuid4()
+        match_id = uuid.uuid4()
+
+        graph = {
+            seeker_id: MatchGraphNode(
+                person_id=seeker_id,
+                first_name="Seeker",
+                last_name="Person",
+                is_match=False,
+                depth=0,
+                from_person=None,
+                to_persons=[
+                    MatchConnectionInfo(person_id=parent_id, relationship="Father")
+                ],
+            ),
+            parent_id: MatchGraphNode(
+                person_id=parent_id,
+                first_name="Parent",
+                last_name="Person",
+                is_match=False,
+                depth=1,
+                from_person=MatchConnectionInfo(
+                    person_id=seeker_id, relationship="Son"
+                ),
+                to_persons=[
+                    MatchConnectionInfo(person_id=match_id, relationship="Daughter")
+                ],
+            ),
+            match_id: MatchGraphNode(
+                person_id=match_id,
+                first_name="Match",
+                last_name="Person",
+                is_match=True,
+                depth=2,
+                from_person=MatchConnectionInfo(
+                    person_id=parent_id, relationship="Father"
+                ),
+                to_persons=[],
+            ),
+        }
+
+        service = PartnerMatchService(mock_session)
+        result = service._prune_graph(graph, [match_id], seeker_id)
+
+        # Verify tree structure is preserved
+        assert result[seeker_id].from_person is None
+        assert result[parent_id].from_person.person_id == seeker_id
+        assert result[match_id].from_person.person_id == parent_id
+
+        # Verify to_persons connections
+        assert len(result[seeker_id].to_persons) == 1
+        assert result[seeker_id].to_persons[0].person_id == parent_id
+        assert len(result[parent_id].to_persons) == 1
+        assert result[parent_id].to_persons[0].person_id == match_id
+
+
+@pytest.mark.unit
+class TestPruneGraphIntegration:
+    """Integration tests for prune_graph parameter in find_matches."""
+
+    def test_prune_graph_true_returns_pruned_graph(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test prune_graph=True returns pruned graph.
+
+        Requirements: 12.1
+        """
+        from app.schemas.partner_match import MatchConnectionInfo, MatchGraphNode
+
+        seeker_id = uuid.uuid4()
+        match_id = uuid.uuid4()
+        dead_end_id = uuid.uuid4()
+
+        mock_seeker = create_mock_person(seeker_id, "Seeker", "Person")
+
+        # Create full graph with dead end
+        full_graph = {
+            seeker_id: MatchGraphNode(
+                person_id=seeker_id,
+                first_name="Seeker",
+                last_name="Person",
+                is_match=False,
+                depth=0,
+                from_person=None,
+                to_persons=[
+                    MatchConnectionInfo(person_id=match_id, relationship="Daughter"),
+                    MatchConnectionInfo(person_id=dead_end_id, relationship="Son"),
+                ],
+            ),
+            match_id: MatchGraphNode(
+                person_id=match_id,
+                first_name="Match",
+                last_name="Person",
+                is_match=True,
+                depth=1,
+                from_person=MatchConnectionInfo(
+                    person_id=seeker_id, relationship="Father"
+                ),
+                to_persons=[],
+            ),
+            dead_end_id: MatchGraphNode(
+                person_id=dead_end_id,
+                first_name="DeadEnd",
+                last_name="Person",
+                is_match=False,
+                depth=1,
+                from_person=MatchConnectionInfo(
+                    person_id=seeker_id, relationship="Father"
+                ),
+                to_persons=[],
+            ),
+        }
+
+        request = PartnerMatchRequest(
+            seeker_person_id=seeker_id,
+            target_gender_code="FEMALE",
+            prune_graph=True,
+        )
+
+        service = PartnerMatchService(mock_session)
+
+        with patch.object(service, "_get_person", return_value=mock_seeker), patch.object(
+            service,
+            "_bfs_explore",
+            return_value=({seeker_id: None, match_id: seeker_id}, {seeker_id: 0, match_id: 1}, [match_id]),
+        ), patch.object(
+            service, "_build_exploration_tree", return_value=full_graph
+        ):
+            result = service.find_matches(request)
+
+        # Dead end should be removed
+        assert dead_end_id not in result.exploration_graph
+        assert seeker_id in result.exploration_graph
+        assert match_id in result.exploration_graph
+
+    def test_prune_graph_false_returns_full_graph(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test prune_graph=False returns full exploration graph.
+
+        Requirements: 12.2
+        """
+        from app.schemas.partner_match import MatchConnectionInfo, MatchGraphNode
+
+        seeker_id = uuid.uuid4()
+        match_id = uuid.uuid4()
+        dead_end_id = uuid.uuid4()
+
+        mock_seeker = create_mock_person(seeker_id, "Seeker", "Person")
+
+        # Create full graph with dead end
+        full_graph = {
+            seeker_id: MatchGraphNode(
+                person_id=seeker_id,
+                first_name="Seeker",
+                last_name="Person",
+                is_match=False,
+                depth=0,
+                from_person=None,
+                to_persons=[
+                    MatchConnectionInfo(person_id=match_id, relationship="Daughter"),
+                    MatchConnectionInfo(person_id=dead_end_id, relationship="Son"),
+                ],
+            ),
+            match_id: MatchGraphNode(
+                person_id=match_id,
+                first_name="Match",
+                last_name="Person",
+                is_match=True,
+                depth=1,
+                from_person=MatchConnectionInfo(
+                    person_id=seeker_id, relationship="Father"
+                ),
+                to_persons=[],
+            ),
+            dead_end_id: MatchGraphNode(
+                person_id=dead_end_id,
+                first_name="DeadEnd",
+                last_name="Person",
+                is_match=False,
+                depth=1,
+                from_person=MatchConnectionInfo(
+                    person_id=seeker_id, relationship="Father"
+                ),
+                to_persons=[],
+            ),
+        }
+
+        request = PartnerMatchRequest(
+            seeker_person_id=seeker_id,
+            target_gender_code="FEMALE",
+            prune_graph=False,
+        )
+
+        service = PartnerMatchService(mock_session)
+
+        with patch.object(service, "_get_person", return_value=mock_seeker), patch.object(
+            service,
+            "_bfs_explore",
+            return_value=({seeker_id: None, match_id: seeker_id, dead_end_id: seeker_id}, {seeker_id: 0, match_id: 1, dead_end_id: 1}, [match_id]),
+        ), patch.object(
+            service, "_build_exploration_tree", return_value=full_graph
+        ):
+            result = service.find_matches(request)
+
+        # All nodes should be present
+        assert seeker_id in result.exploration_graph
+        assert match_id in result.exploration_graph
+        assert dead_end_id in result.exploration_graph
+
+    def test_pruning_does_not_affect_matches_list(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test pruning does not affect matches list or total_matches.
+
+        Requirements: 12.6
+        """
+        from app.schemas.partner_match import MatchConnectionInfo, MatchGraphNode
+
+        seeker_id = uuid.uuid4()
+        match_id = uuid.uuid4()
+
+        mock_seeker = create_mock_person(seeker_id, "Seeker", "Person")
+
+        full_graph = {
+            seeker_id: MatchGraphNode(
+                person_id=seeker_id,
+                first_name="Seeker",
+                last_name="Person",
+                is_match=False,
+                depth=0,
+                from_person=None,
+                to_persons=[
+                    MatchConnectionInfo(person_id=match_id, relationship="Daughter")
+                ],
+            ),
+            match_id: MatchGraphNode(
+                person_id=match_id,
+                first_name="Match",
+                last_name="Person",
+                is_match=True,
+                depth=1,
+                from_person=MatchConnectionInfo(
+                    person_id=seeker_id, relationship="Father"
+                ),
+                to_persons=[],
+            ),
+        }
+
+        request = PartnerMatchRequest(
+            seeker_person_id=seeker_id,
+            target_gender_code="FEMALE",
+            prune_graph=True,
+        )
+
+        service = PartnerMatchService(mock_session)
+
+        with patch.object(service, "_get_person", return_value=mock_seeker), patch.object(
+            service,
+            "_bfs_explore",
+            return_value=({seeker_id: None, match_id: seeker_id}, {seeker_id: 0, match_id: 1}, [match_id]),
+        ), patch.object(
+            service, "_build_exploration_tree", return_value=full_graph
+        ):
+            result = service.find_matches(request)
+
+        # Matches list and count should be unaffected
+        assert result.total_matches == 1
+        assert match_id in result.matches

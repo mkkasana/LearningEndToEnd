@@ -130,6 +130,14 @@ class PartnerMatchService:
             seeker_id=request.seeker_person_id,
         )
 
+        # Apply graph pruning if requested (default: True)
+        if request.prune_graph:
+            exploration_graph = self._prune_graph(
+                graph=exploration_graph,
+                matches=matches,
+                seeker_id=request.seeker_person_id,
+            )
+
         return PartnerMatchResponse(
             seeker_id=request.seeker_person_id,
             total_matches=len(matches),
@@ -399,6 +407,103 @@ class PartnerMatchService:
                 )
 
         return graph
+
+    def _prune_graph(
+        self,
+        graph: dict[uuid.UUID, MatchGraphNode],
+        matches: list[uuid.UUID],
+        seeker_id: uuid.UUID,
+    ) -> dict[uuid.UUID, MatchGraphNode]:
+        """Prune the exploration graph to only include nodes on paths to matches.
+
+        Algorithm:
+        1. Start with empty set of nodes_to_keep
+        2. For each match, trace back to seeker via from_person links
+        3. Add all nodes on each path to nodes_to_keep
+        4. Filter graph to only include nodes_to_keep
+        5. Update to_persons lists to only reference kept nodes
+
+        Args:
+            graph: Full exploration graph from BFS
+            matches: List of eligible match person_ids
+            seeker_id: The seeker's person ID
+
+        Returns:
+            Pruned graph containing only nodes on paths from seeker to matches
+        """
+        logger.debug(
+            f"Pruning graph: {len(graph)} nodes, {len(matches)} matches, seeker={seeker_id}"
+        )
+
+        # Handle edge case: no matches - return only seeker node
+        if not matches:
+            logger.debug("No matches found, returning only seeker node")
+            seeker_node = graph[seeker_id]
+            # Clear to_persons since no children lead to matches
+            pruned_seeker = MatchGraphNode(
+                person_id=seeker_node.person_id,
+                first_name=seeker_node.first_name,
+                last_name=seeker_node.last_name,
+                birth_year=seeker_node.birth_year,
+                death_year=seeker_node.death_year,
+                address=seeker_node.address,
+                religion=seeker_node.religion,
+                is_match=seeker_node.is_match,
+                depth=seeker_node.depth,
+                from_person=seeker_node.from_person,
+                to_persons=[],
+            )
+            return {seeker_id: pruned_seeker}
+
+        # Collect all nodes on paths from matches back to seeker
+        nodes_to_keep: set[uuid.UUID] = {seeker_id}
+
+        for match_id in matches:
+            current_id: uuid.UUID | None = match_id
+            while current_id is not None:
+                nodes_to_keep.add(current_id)
+                node = graph.get(current_id)
+                if node and node.from_person:
+                    current_id = node.from_person.person_id
+                else:
+                    current_id = None
+
+        logger.debug(
+            f"Nodes to keep after tracing paths: {len(nodes_to_keep)} of {len(graph)}"
+        )
+
+        # Build pruned graph with filtered to_persons
+        pruned_graph: dict[uuid.UUID, MatchGraphNode] = {}
+        for person_id in nodes_to_keep:
+            original_node = graph[person_id]
+            # Filter to_persons to only include kept nodes
+            filtered_to_persons = [
+                conn
+                for conn in original_node.to_persons
+                if conn.person_id in nodes_to_keep
+            ]
+            # Create new node with filtered connections
+            pruned_node = MatchGraphNode(
+                person_id=original_node.person_id,
+                first_name=original_node.first_name,
+                last_name=original_node.last_name,
+                birth_year=original_node.birth_year,
+                death_year=original_node.death_year,
+                address=original_node.address,
+                religion=original_node.religion,
+                is_match=original_node.is_match,
+                depth=original_node.depth,
+                from_person=original_node.from_person,
+                to_persons=filtered_to_persons,
+            )
+            pruned_graph[person_id] = pruned_node
+
+        logger.info(
+            f"Graph pruned: {len(graph)} -> {len(pruned_graph)} nodes "
+            f"({len(graph) - len(pruned_graph)} removed)"
+        )
+
+        return pruned_graph
 
     # ==================== Helper Methods ====================
 
