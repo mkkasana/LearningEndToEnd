@@ -14,6 +14,7 @@ from app.api.routes import (
 )
 from app.api.routes.address import metadata as address_metadata
 from app.api.routes.lineage_path import router as lineage_path_router
+from app.api.routes.partner_match import router as partner_match_router
 from app.api.routes.person import metadata as person_metadata
 from app.api.routes.person import person as person_routes
 from app.api.routes.person import relatives as relatives_routes
@@ -53,6 +54,11 @@ api_router.include_router(
 # Lineage path routes
 api_router.include_router(
     lineage_path_router, prefix="/lineage-path", tags=["lineage-path"]
+)
+
+# Partner match routes
+api_router.include_router(
+    partner_match_router, prefix="/partner-match", tags=["partner-match"]
 )
 
 

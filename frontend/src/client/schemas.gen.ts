@@ -1220,6 +1220,120 @@ export const LocalityUpdateSchema = {
     description: 'Schema for updating a locality (all fields optional)'
 } as const;
 
+export const MatchConnectionInfoSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'Connected person ID'
+        },
+        relationship: {
+            type: 'string',
+            title: 'Relationship',
+            description: 'Relationship type (e.g., Father, Mother, Son, Daughter, Wife, Husband)'
+        }
+    },
+    type: 'object',
+    required: ['person_id', 'relationship'],
+    title: 'MatchConnectionInfo',
+    description: `Represents a connection/edge between two persons in the exploration graph.
+
+Note: The full MatchGraphNode details can be looked up from the graph
+using the person_id.`
+} as const;
+
+export const MatchGraphNodeSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'Person ID'
+        },
+        first_name: {
+            type: 'string',
+            title: 'First Name',
+            description: 'First name'
+        },
+        last_name: {
+            type: 'string',
+            title: 'Last Name',
+            description: 'Last name'
+        },
+        birth_year: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Birth Year',
+            description: 'Birth year'
+        },
+        death_year: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Death Year',
+            description: 'Death year (if applicable)'
+        },
+        address: {
+            type: 'string',
+            title: 'Address',
+            description: 'Comma-separated address: Village, District, State, Country',
+            default: ''
+        },
+        religion: {
+            type: 'string',
+            title: 'Religion',
+            description: 'Comma-separated religion: Religion, Category, SubCategory',
+            default: ''
+        },
+        is_match: {
+            type: 'boolean',
+            title: 'Is Match',
+            description: 'True if this person is an eligible match',
+            default: false
+        },
+        depth: {
+            type: 'integer',
+            title: 'Depth',
+            description: 'Number of relationship hops from seeker'
+        },
+        from_person: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/MatchConnectionInfo'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            description: 'Parent node in BFS tree (person from whom this node was reached)'
+        },
+        to_persons: {
+            items: {
+                '$ref': '#/components/schemas/MatchConnectionInfo'
+            },
+            type: 'array',
+            title: 'To Persons',
+            description: 'Child nodes explored from this node'
+        }
+    },
+    type: 'object',
+    required: ['person_id', 'first_name', 'last_name', 'depth'],
+    title: 'MatchGraphNode',
+    description: 'A node in the partner match exploration graph.'
+} as const;
+
 export const MessageSchema = {
     properties: {
         message: {
@@ -1250,6 +1364,153 @@ export const NewPasswordSchema = {
     required: ['token', 'new_password'],
     title: 'NewPassword',
     description: 'Password reset request'
+} as const;
+
+export const PartnerMatchRequestSchema = {
+    properties: {
+        seeker_person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Seeker Person Id',
+            description: 'The person looking for matches'
+        },
+        target_gender_code: {
+            type: 'string',
+            title: 'Target Gender Code',
+            description: "Gender code to search for ('M' or 'F')"
+        },
+        birth_year_min: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Birth Year Min',
+            description: 'Minimum birth year (inclusive)'
+        },
+        birth_year_max: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Birth Year Max',
+            description: 'Maximum birth year (inclusive)'
+        },
+        include_religion_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string',
+                        format: 'uuid'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Include Religion Ids',
+            description: 'Include only candidates with these religion IDs'
+        },
+        include_category_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string',
+                        format: 'uuid'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Include Category Ids',
+            description: 'Include only candidates with these category IDs'
+        },
+        include_sub_category_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string',
+                        format: 'uuid'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Include Sub Category Ids',
+            description: 'Include only candidates with these sub-category IDs'
+        },
+        exclude_sub_category_ids: {
+            items: {
+                type: 'string',
+                format: 'uuid'
+            },
+            type: 'array',
+            title: 'Exclude Sub Category Ids',
+            description: 'Exclude candidates with these sub-category IDs (gotras)'
+        },
+        max_depth: {
+            type: 'integer',
+            title: 'Max Depth',
+            description: 'Maximum BFS traversal depth (relationship hops)',
+            default: 5
+        }
+    },
+    type: 'object',
+    required: ['seeker_person_id', 'target_gender_code'],
+    title: 'PartnerMatchRequest',
+    description: 'Request body for partner match search.'
+} as const;
+
+export const PartnerMatchResponseSchema = {
+    properties: {
+        seeker_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Seeker Id',
+            description: 'The seeker person ID from the request'
+        },
+        total_matches: {
+            type: 'integer',
+            title: 'Total Matches',
+            description: 'Total number of eligible matches found'
+        },
+        matches: {
+            items: {
+                type: 'string',
+                format: 'uuid'
+            },
+            type: 'array',
+            title: 'Matches',
+            description: 'Person IDs of eligible match candidates'
+        },
+        exploration_graph: {
+            additionalProperties: {
+                '$ref': '#/components/schemas/MatchGraphNode'
+            },
+            propertyNames: {
+                format: 'uuid'
+            },
+            type: 'object',
+            title: 'Exploration Graph',
+            description: 'Graph of all visited persons keyed by person_id for O(1) lookup'
+        }
+    },
+    type: 'object',
+    required: ['seeker_id', 'total_matches'],
+    title: 'PartnerMatchResponse',
+    description: 'Response for partner match search.'
 } as const;
 
 export const PersonAddressCreateSchema = {

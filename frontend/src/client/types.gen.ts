@@ -450,6 +450,73 @@ export type LocalityUpdate = {
 };
 
 /**
+ * Represents a connection/edge between two persons in the exploration graph.
+ *
+ * Note: The full MatchGraphNode details can be looked up from the graph
+ * using the person_id.
+ */
+export type MatchConnectionInfo = {
+    /**
+     * Connected person ID
+     */
+    person_id: string;
+    /**
+     * Relationship type (e.g., Father, Mother, Son, Daughter, Wife, Husband)
+     */
+    relationship: string;
+};
+
+/**
+ * A node in the partner match exploration graph.
+ */
+export type MatchGraphNode = {
+    /**
+     * Person ID
+     */
+    person_id: string;
+    /**
+     * First name
+     */
+    first_name: string;
+    /**
+     * Last name
+     */
+    last_name: string;
+    /**
+     * Birth year
+     */
+    birth_year?: (number | null);
+    /**
+     * Death year (if applicable)
+     */
+    death_year?: (number | null);
+    /**
+     * Comma-separated address: Village, District, State, Country
+     */
+    address?: string;
+    /**
+     * Comma-separated religion: Religion, Category, SubCategory
+     */
+    religion?: string;
+    /**
+     * True if this person is an eligible match
+     */
+    is_match?: boolean;
+    /**
+     * Number of relationship hops from seeker
+     */
+    depth: number;
+    /**
+     * Parent node in BFS tree (person from whom this node was reached)
+     */
+    from_person?: (MatchConnectionInfo | null);
+    /**
+     * Child nodes explored from this node
+     */
+    to_persons?: Array<MatchConnectionInfo>;
+};
+
+/**
  * Generic message response
  */
 export type Message = {
@@ -462,6 +529,72 @@ export type Message = {
 export type NewPassword = {
     token: string;
     new_password: string;
+};
+
+/**
+ * Request body for partner match search.
+ */
+export type PartnerMatchRequest = {
+    /**
+     * The person looking for matches
+     */
+    seeker_person_id: string;
+    /**
+     * Gender code to search for ('M' or 'F')
+     */
+    target_gender_code: string;
+    /**
+     * Minimum birth year (inclusive)
+     */
+    birth_year_min?: (number | null);
+    /**
+     * Maximum birth year (inclusive)
+     */
+    birth_year_max?: (number | null);
+    /**
+     * Include only candidates with these religion IDs
+     */
+    include_religion_ids?: (Array<(string)> | null);
+    /**
+     * Include only candidates with these category IDs
+     */
+    include_category_ids?: (Array<(string)> | null);
+    /**
+     * Include only candidates with these sub-category IDs
+     */
+    include_sub_category_ids?: (Array<(string)> | null);
+    /**
+     * Exclude candidates with these sub-category IDs (gotras)
+     */
+    exclude_sub_category_ids?: Array<(string)>;
+    /**
+     * Maximum BFS traversal depth (relationship hops)
+     */
+    max_depth?: number;
+};
+
+/**
+ * Response for partner match search.
+ */
+export type PartnerMatchResponse = {
+    /**
+     * The seeker person ID from the request
+     */
+    seeker_id: string;
+    /**
+     * Total number of eligible matches found
+     */
+    total_matches: number;
+    /**
+     * Person IDs of eligible match candidates
+     */
+    matches?: Array<(string)>;
+    /**
+     * Graph of all visited persons keyed by person_id for O(1) lookup
+     */
+    exploration_graph?: {
+        [key: string]: MatchGraphNode;
+    };
 };
 
 /**
@@ -2249,6 +2382,12 @@ export type LoginRecoverPasswordHtmlContentData = {
 };
 
 export type LoginRecoverPasswordHtmlContentResponse = (string);
+
+export type PartnerMatchFindPartnerMatchesData = {
+    requestBody: PartnerMatchRequest;
+};
+
+export type PartnerMatchFindPartnerMatchesResponse = (PartnerMatchResponse);
 
 export type PersonGetMyPersonResponse = (PersonPublic);
 
