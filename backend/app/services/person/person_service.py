@@ -41,6 +41,19 @@ class PersonService:
     def __init__(self, session: Session):
         self.person_repo = PersonRepository(session)
 
+    def get_person_by_id(self, person_id: uuid.UUID) -> Person | None:
+        """Get person by person ID."""
+        logger.debug(f"Fetching person by ID: {person_id}")
+        person = self.person_repo.get_by_id(person_id)
+        if person:
+            logger.debug(
+                f"Person found: {person.first_name} {person.last_name} "
+                f"(Person ID: {person.id})"
+            )
+        else:
+            logger.debug(f"No person found for ID: {person_id}")
+        return person
+
     def get_person_by_user_id(self, user_id: uuid.UUID) -> Person | None:
         """Get person by user ID."""
         logger.debug(f"Fetching person for user ID: {user_id}")

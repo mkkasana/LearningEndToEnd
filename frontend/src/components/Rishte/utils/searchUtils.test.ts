@@ -90,7 +90,7 @@ describe("searchUtils - toSelectedPerson", () => {
       first_name: "Jane",
       middle_name: "Marie",
       last_name: "Smith",
-      date_of_birth: null,
+      date_of_birth: "",
       name_match_score: 75,
     }
 

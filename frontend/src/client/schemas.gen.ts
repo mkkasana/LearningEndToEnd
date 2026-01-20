@@ -1465,6 +1465,12 @@ export const PartnerMatchRequestSchema = {
             title: 'Max Depth',
             description: 'Maximum BFS traversal depth (relationship hops)',
             default: 5
+        },
+        prune_graph: {
+            type: 'boolean',
+            title: 'Prune Graph',
+            description: 'If True, only include nodes on paths to matches. If False, return full exploration graph.',
+            default: true
         }
     },
     type: 'object',

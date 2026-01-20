@@ -571,6 +571,10 @@ export type PartnerMatchRequest = {
      * Maximum BFS traversal depth (relationship hops)
      */
     max_depth?: number;
+    /**
+     * If True, only include nodes on paths to matches. If False, return full exploration graph.
+     */
+    prune_graph?: boolean;
 };
 
 /**
@@ -2794,6 +2798,30 @@ export type RelativesGetSiblingsData = {
 };
 
 export type RelativesGetSiblingsResponse = (Array<PersonRelationshipPublic>);
+
+export type RelativesGetParentsByPersonIdData = {
+    personId: string;
+};
+
+export type RelativesGetParentsByPersonIdResponse = (Array<PersonRelationshipPublic>);
+
+export type RelativesGetChildrenByPersonIdData = {
+    personId: string;
+};
+
+export type RelativesGetChildrenByPersonIdResponse = (Array<PersonRelationshipPublic>);
+
+export type RelativesGetSpousesByPersonIdData = {
+    personId: string;
+};
+
+export type RelativesGetSpousesByPersonIdResponse = (Array<PersonRelationshipPublic>);
+
+export type RelativesGetSiblingsByPersonIdData = {
+    personId: string;
+};
+
+export type RelativesGetSiblingsByPersonIdResponse = (Array<PersonRelationshipPublic>);
 
 export type ReligionMetadataGetReligionsResponse = (unknown);
 

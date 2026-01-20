@@ -3,6 +3,7 @@ import {
   Bug,
   Calendar,
   GitBranch,
+  Heart,
   Home,
   Network,
   Search,
@@ -30,6 +31,7 @@ const baseItems: Item[] = [
   { icon: Calendar, title: "Life Events", path: "/life-events" },
   { icon: Search, title: "Search", path: "/search" },
   { icon: GitBranch, title: "Rishte", path: "/rishte" },
+  { icon: Heart, title: "Find Partner", path: "/find-partner" },
   { icon: Bug, title: "Report Ticket", path: "/support-tickets" },
 ]
 
