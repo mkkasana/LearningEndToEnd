@@ -96,3 +96,108 @@ export interface PartnerResultsDisplayProps {
   error: Error | null
   totalMatches: number | null
 }
+
+// ============================================
+// Match Visualization Types
+// Requirements: 1.1, 6.1-6.5, 7.1-7.5
+// ============================================
+
+import type { Node, Edge } from "@xyflow/react"
+
+/**
+ * Match item for dropdown display
+ * Used in MatchSelector to list all matches
+ */
+export interface MatchItem {
+  personId: string
+  firstName: string
+  lastName: string
+  birthYear: number | null
+  depth: number
+}
+
+/**
+ * Data for Match Person Node
+ * Contains all information needed to render a person in the match graph
+ * Extends Record<string, unknown> for React Flow compatibility
+ */
+export interface MatchPersonNodeData extends Record<string, unknown> {
+  personId: string
+  firstName: string
+  lastName: string
+  birthYear: number | null
+  deathYear: number | null
+  isSeeker: boolean              // Green border + "Seeker" label
+  isMatch: boolean               // Blue border + "Match" label
+}
+
+/**
+ * Data for Match Relationship Edge
+ * Contains relationship type and styling information
+ * Extends Record<string, unknown> for React Flow compatibility
+ */
+export interface MatchRelationshipEdgeData extends Record<string, unknown> {
+  relationship: string           // "Son", "Father", "Spouse", etc.
+  isSpouseEdge: boolean         // Horizontal styling
+}
+
+/**
+ * React Flow node for match graph
+ * Custom node type for displaying persons in the path
+ */
+export type MatchNode = Node<MatchPersonNodeData, 'matchPersonNode'>
+
+/**
+ * React Flow edge for match graph
+ * Custom edge type for displaying relationships between persons
+ */
+export type MatchEdge = Edge<MatchRelationshipEdgeData>
+
+/**
+ * Transformed path result
+ * Contains React Flow nodes and edges for rendering
+ */
+export interface TransformedMatchPath {
+  nodes: MatchNode[]
+  edges: MatchEdge[]
+}
+
+/**
+ * Generation info for layout calculation
+ * Used to position nodes based on family generation
+ */
+export interface MatchGenerationInfo {
+  personId: string
+  generation: number
+  xOffset: number
+  isSpouse: boolean
+  spouseOfId?: string
+}
+
+/**
+ * Props for MatchSelector component
+ * Dropdown to select which match's path to display
+ */
+export interface MatchSelectorProps {
+  matches: MatchItem[]
+  selectedMatchId: string | null
+  onSelectMatch: (matchId: string) => void
+  totalMatches: number
+}
+
+/**
+ * Props for MatchPathSummary component
+ * Displays the path as "Name1 → Name2 → Name3..."
+ */
+export interface MatchPathSummaryProps {
+  pathNames: string[]
+}
+
+/**
+ * Props for MatchGraph component
+ * React Flow container for rendering the match visualization
+ */
+export interface MatchGraphProps {
+  nodes: MatchNode[]
+  edges: MatchEdge[]
+}
