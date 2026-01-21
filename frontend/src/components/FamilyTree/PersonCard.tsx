@@ -297,10 +297,7 @@ export const PersonCard = memo(function PersonCard({
         personName={displayName}
         createdByUserId={person.created_by_user_id}
         size={variant === "sibling" ? "sm" : "sm"}
-        className={cn(
-          "mt-1",
-          variant === "sibling" && "text-xs px-2 py-1 h-7",
-        )}
+        className={cn("mt-1", variant === "sibling" && "text-xs px-2 py-1 h-7")}
       />
     </Card>
   )

@@ -13,7 +13,7 @@ export const SPOUSE_GAP = 50
  * - X coordinate is determined by xOffset (column)
  */
 export function calculatePositions(
-  generations: Map<string, GenerationInfo>
+  generations: Map<string, GenerationInfo>,
 ): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>()
 
@@ -71,7 +71,7 @@ export interface EdgeHandles {
  */
 export function getEdgeHandles(
   sourcePos: { x: number; y: number },
-  targetPos: { x: number; y: number }
+  targetPos: { x: number; y: number },
 ): EdgeHandles {
   const { x: sx, y: sy } = sourcePos
   const { x: tx, y: ty } = targetPos
@@ -81,10 +81,9 @@ export function getEdgeHandles(
     if (sy < ty) {
       // Target is directly below source
       return { sourceHandle: "bottom", targetHandle: "top" }
-    } else {
-      // Target is directly above source
-      return { sourceHandle: "top", targetHandle: "bottom" }
     }
+    // Target is directly above source
+    return { sourceHandle: "top", targetHandle: "bottom" }
   }
 
   // Same row
@@ -92,10 +91,9 @@ export function getEdgeHandles(
     if (sx < tx) {
       // Target is to the right of source
       return { sourceHandle: "right", targetHandle: "left" }
-    } else {
-      // Target is to the left of source
-      return { sourceHandle: "left", targetHandle: "right" }
     }
+    // Target is to the left of source
+    return { sourceHandle: "left", targetHandle: "right" }
   }
 
   // Diagonal positions
@@ -104,18 +102,15 @@ export function getEdgeHandles(
     if (sy < ty) {
       // Target is south-east (below and right)
       return { sourceHandle: "bottom", targetHandle: "top" }
-    } else {
-      // Target is north-east (above and right)
-      return { sourceHandle: "top", targetHandle: "left" }
     }
-  } else {
-    // Target is to the left
-    if (sy < ty) {
-      // Target is south-west (below and left)
-      return { sourceHandle: "bottom", targetHandle: "top" }
-    } else {
-      // Target is north-west (above and left)
-      return { sourceHandle: "top", targetHandle: "right" }
-    }
+    // Target is north-east (above and right)
+    return { sourceHandle: "top", targetHandle: "left" }
   }
+  // Target is to the left
+  if (sy < ty) {
+    // Target is south-west (below and left)
+    return { sourceHandle: "bottom", targetHandle: "top" }
+  }
+  // Target is north-west (above and left)
+  return { sourceHandle: "top", targetHandle: "right" }
 }

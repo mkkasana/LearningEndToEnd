@@ -1,4 +1,4 @@
-import type { Node, Edge } from "@xyflow/react"
+import type { Edge, Node } from "@xyflow/react"
 
 /**
  * Selected person ID (simplified for direct ID input)
@@ -24,30 +24,30 @@ export interface SelectedPerson {
  * Basic info step form data (Step 1)
  */
 export interface BasicInfoFormData {
-  firstName: string        // Required
-  lastName: string         // Required
-  genderId?: string        // Optional
-  birthYearFrom?: number   // Optional
-  birthYearTo?: number     // Optional
+  firstName: string // Required
+  lastName: string // Required
+  genderId?: string // Optional
+  birthYearFrom?: number // Optional
+  birthYearTo?: number // Optional
 }
 
 /**
  * Address step form data (Step 2)
  */
 export interface AddressFormData {
-  countryId: string        // Required
-  stateId: string          // Required
-  districtId: string       // Required
-  subDistrictId?: string   // Optional
-  localityId?: string      // Optional
+  countryId: string // Required
+  stateId: string // Required
+  districtId: string // Required
+  subDistrictId?: string // Optional
+  localityId?: string // Optional
 }
 
 /**
  * Religion step form data (Step 3)
  */
 export interface ReligionFormData {
-  religionId: string           // Required
-  religionCategoryId: string   // Required
+  religionId: string // Required
+  religionCategoryId: string // Required
   religionSubCategoryId?: string // Optional
 }
 

@@ -12,22 +12,22 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import type { RishteResultsStepProps } from "./types"
 import {
   buildSearchRequest,
+  calculateTotalPages,
   extractBirthYear,
   formatPersonName,
   toSelectedPerson,
-  calculateTotalPages,
 } from "./utils/searchUtils"
 
 /**
  * RishteResultsStep component - Step 4 of the Person Search Wizard
- * 
+ *
  * Displays search results and allows person selection:
  * - Calls person search API with collected criteria
  * - Shows loading indicator during search
  * - Displays person cards in scrollable grid
  * - Handles empty results with message
  * - Supports pagination for > 20 results
- * 
+ *
  * Requirements:
  * - 6.1: Call person search API with all collected criteria
  * - 6.2: Display loading indicator during search
@@ -51,7 +51,7 @@ export function RishteResultsStep({
   const searchRequest = buildSearchRequest(
     searchCriteria,
     currentPage * pageSize,
-    pageSize
+    pageSize,
   )
 
   // Execute search query
@@ -99,7 +99,9 @@ export function RishteResultsStep({
     return (
       <div className="flex flex-col items-center justify-center py-12 gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">Searching for persons...</p>
+        <p className="text-sm text-muted-foreground">
+          Searching for persons...
+        </p>
       </div>
     )
   }

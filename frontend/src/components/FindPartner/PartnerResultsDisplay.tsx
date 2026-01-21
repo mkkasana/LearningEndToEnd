@@ -11,21 +11,21 @@
  * - Empty results message
  */
 
-import { useEffect, useMemo, useState } from "react"
 import { AlertCircle, Loader2, Search, Users } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import type { PartnerMatchResponse } from "@/client"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { PartnerMatchResponse } from "@/client"
-import type { PartnerResultsDisplayProps } from "./types"
-import { MatchSelector } from "./MatchSelector"
-import { MatchPathSummary } from "./MatchPathSummary"
 import { MatchGraph } from "./MatchGraph"
+import { MatchPathSummary } from "./MatchPathSummary"
+import { MatchSelector } from "./MatchSelector"
+import type { PartnerResultsDisplayProps } from "./types"
+import { transformMatchPath } from "./utils/matchGraphTransformer"
 import {
   buildMatchItems,
   extractPathToMatch,
   generateMatchPathSummary,
 } from "./utils/matchPathExtractor"
-import { transformMatchPath } from "./utils/matchGraphTransformer"
 
 /**
  * PartnerResultsDisplay - Displays partner match search results
@@ -64,7 +64,10 @@ export function PartnerResultsDisplay({
     if (!matchResponse?.exploration_graph || !matchResponse?.matches) {
       return []
     }
-    return buildMatchItems(matchResponse.exploration_graph, matchResponse.matches)
+    return buildMatchItems(
+      matchResponse.exploration_graph,
+      matchResponse.matches,
+    )
   }, [matchResponse?.exploration_graph, matchResponse?.matches])
 
   // Auto-select first match when results load
@@ -82,7 +85,9 @@ export function PartnerResultsDisplay({
     } else {
       setSelectedMatchId(null)
     }
-  }, [matchResponse?.seeker_id]) // Reset when seeker changes (new search)
+    // Only reset when matchResponse changes (new search), not on every matchItems change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchResponse?.seeker_id])
 
   // Extract path for selected match
   const path = useMemo(() => {
@@ -96,9 +101,13 @@ export function PartnerResultsDisplay({
     return extractPathToMatch(
       matchResponse.exploration_graph,
       matchResponse.seeker_id,
-      selectedMatchId
+      selectedMatchId,
     )
-  }, [matchResponse?.exploration_graph, matchResponse?.seeker_id, selectedMatchId])
+  }, [
+    matchResponse?.exploration_graph,
+    matchResponse?.seeker_id,
+    selectedMatchId,
+  ])
 
   // Generate path summary (array of names)
   const pathNames = useMemo(() => {

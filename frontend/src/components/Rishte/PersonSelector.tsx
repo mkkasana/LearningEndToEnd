@@ -1,5 +1,5 @@
 import { X } from "lucide-react"
-import { useState, useCallback } from "react"
+import { useCallback, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,7 +17,7 @@ export interface PersonSelectorProps {
 /**
  * PersonSelector component for entering a person ID directly
  * Simplified version that accepts UUID input for testing purposes
- * 
+ *
  * Requirements:
  * - 3.1: Display Person_Selector components labeled "Person A" and "Person B"
  * - 3.4: Display the entered person ID when entered
@@ -30,20 +30,24 @@ export function PersonSelector({
 }: PersonSelectorProps) {
   const [inputValue, setInputValue] = useState(value || "")
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value.trim()
-    setInputValue(e.target.value)
-    
-    // Basic UUID validation (loose check)
-    // UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    
-    if (newValue && uuidRegex.test(newValue)) {
-      onChange(newValue)
-    } else if (!newValue) {
-      onChange(null)
-    }
-  }, [onChange])
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value.trim()
+      setInputValue(e.target.value)
+
+      // Basic UUID validation (loose check)
+      // UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+      if (newValue && uuidRegex.test(newValue)) {
+        onChange(newValue)
+      } else if (!newValue) {
+        onChange(null)
+      }
+    },
+    [onChange],
+  )
 
   const handleClear = useCallback(() => {
     setInputValue("")
@@ -55,7 +59,7 @@ export function PersonSelector({
   return (
     <div className="flex flex-col gap-2">
       <Label className="text-sm font-medium">{label}</Label>
-      
+
       <div className="relative">
         <Input
           type="text"
@@ -76,17 +80,15 @@ export function PersonSelector({
           </Button>
         )}
       </div>
-      
+
       {inputValue && !isValidUuid && (
         <p className="text-xs text-muted-foreground">
           Enter a valid UUID format (e.g., 123e4567-e89b-12d3-a456-426614174000)
         </p>
       )}
-      
+
       {isValidUuid && (
-        <p className="text-xs text-green-600">
-          ✓ Valid person ID
-        </p>
+        <p className="text-xs text-green-600">✓ Valid person ID</p>
       )}
     </div>
   )

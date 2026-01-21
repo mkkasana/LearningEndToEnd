@@ -1,7 +1,7 @@
 /**
  * MatchGraph Component
  * React Flow container for rendering the match path visualization
- * 
+ *
  * Requirements:
  * - 8.1: Support zooming in and out
  * - 8.2: Support panning/dragging to navigate the graph
@@ -11,21 +11,21 @@
  */
 
 import {
-  ReactFlow,
   Background,
   BackgroundVariant,
-  useNodesState,
-  useEdgesState,
-  useReactFlow,
-  ReactFlowProvider,
   MarkerType,
+  ReactFlow,
+  ReactFlowProvider,
+  useEdgesState,
+  useNodesState,
+  useReactFlow,
 } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 import { memo, useEffect } from "react"
 import { MatchGraphControls } from "./MatchGraphControls"
 import { MatchPersonNode } from "./MatchPersonNode"
 import { MatchRelationshipEdge } from "./MatchRelationshipEdge"
-import type { MatchNode, MatchEdge, MatchGraphProps } from "./types"
+import type { MatchEdge, MatchGraphProps, MatchNode } from "./types"
 
 // Custom node types for React Flow
 const nodeTypes = {
@@ -81,7 +81,7 @@ const MatchGraphInner = memo(function MatchGraphInner({
   }, [nodes.length, fitView])
 
   return (
-    <div className="relative" style={{ width: '100%', height: '500px' }}>
+    <div className="relative" style={{ width: "100%", height: "500px" }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -98,7 +98,7 @@ const MatchGraphInner = memo(function MatchGraphInner({
         minZoom={0.1}
         maxZoom={2}
         className="bg-background"
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: "100%", height: "100%" }}
       >
         <Background
           variant={BackgroundVariant.Dots}
@@ -107,7 +107,7 @@ const MatchGraphInner = memo(function MatchGraphInner({
           className="!bg-muted/30"
         />
       </ReactFlow>
-      
+
       {/* Graph controls positioned at bottom-right */}
       <div className="absolute bottom-4 right-4 z-10">
         <MatchGraphControls />
@@ -118,7 +118,7 @@ const MatchGraphInner = memo(function MatchGraphInner({
 
 /**
  * MatchGraph component - Main React Flow container for match path visualization
- * 
+ *
  * Requirements:
  * - 5.1: Render persons of the same generation on the same horizontal level
  * - 5.2: Position spouse/husband/wife pairs side-by-side on the same level

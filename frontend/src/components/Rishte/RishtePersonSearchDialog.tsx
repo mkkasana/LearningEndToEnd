@@ -15,13 +15,13 @@ import { RishteBasicInfoStep } from "./RishteBasicInfoStep"
 import { RishteReligionStep } from "./RishteReligionStep"
 import { RishteResultsStep } from "./RishteResultsStep"
 import {
-  WizardStep,
   type AddressFormData,
   type BasicInfoFormData,
   type PersonSearchCriteria,
   type ReligionFormData,
   type RishtePersonSearchDialogProps,
   type SelectedPerson,
+  WizardStep,
 } from "./types"
 
 /**
@@ -63,13 +63,13 @@ function WizardProgress({ currentStep }: { currentStep: WizardStep }) {
 
 /**
  * RishtePersonSearchDialog component - Main wizard dialog
- * 
+ *
  * Manages the 4-step wizard flow for searching and selecting a person:
  * - Step 1: Basic Info (name, gender, birth year)
  * - Step 2: Address (cascading dropdowns with defaults from active person)
  * - Step 3: Religion (cascading dropdowns with defaults from active person)
  * - Step 4: Results (search results with selection)
- * 
+ *
  * Requirements:
  * - 8.1: Display as modal dialog
  * - 8.2: Display progress indicator (Step X of 4)
@@ -90,10 +90,16 @@ export function RishtePersonSearchDialog({
   const { activePersonId } = useActivePersonContext()
 
   // Wizard state
-  const [currentStep, setCurrentStep] = useState<WizardStep>(WizardStep.BASIC_INFO)
-  const [basicInfoData, setBasicInfoData] = useState<BasicInfoFormData | null>(null)
+  const [currentStep, setCurrentStep] = useState<WizardStep>(
+    WizardStep.BASIC_INFO,
+  )
+  const [basicInfoData, setBasicInfoData] = useState<BasicInfoFormData | null>(
+    null,
+  )
   const [addressData, setAddressData] = useState<AddressFormData | null>(null)
-  const [religionData, setReligionData] = useState<ReligionFormData | null>(null)
+  const [religionData, setReligionData] = useState<ReligionFormData | null>(
+    null,
+  )
 
   // Reset wizard when dialog opens
   useEffect(() => {
@@ -108,7 +114,8 @@ export function RishtePersonSearchDialog({
   // Fetch active person's addresses for defaults
   const { data: myAddresses } = useQuery({
     queryKey: ["personAddresses", activePersonId],
-    queryFn: () => PersonService.getPersonAddresses({ personId: activePersonId! }),
+    queryFn: () =>
+      PersonService.getPersonAddresses({ personId: activePersonId! }),
     enabled: !!activePersonId && open,
   })
 

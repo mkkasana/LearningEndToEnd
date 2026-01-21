@@ -1,7 +1,7 @@
 /**
  * Property-Based Tests for Match Graph Transformer
  * Feature: partner-match-visualizer
- * 
+ *
  * Property 4: Generation Layout Correctness
  * Validates: Requirements 5.1, 5.2, 5.3
  */
@@ -11,11 +11,11 @@ import { describe, expect, it } from "vitest"
 import {
   assignGenerations,
   calculatePositions,
-  transformMatchPath,
+  getEdgeHandles,
   isChildRelationship,
   isParentRelationship,
   isSpouseRelationship,
-  getEdgeHandles,
+  transformMatchPath,
 } from "./matchGraphTransformer"
 import type { MatchGraphNode } from "./matchPathExtractor"
 
@@ -33,63 +33,61 @@ const relationshipTypeArbitrary = fc.constantFrom(
   "Daughter",
   "Spouse",
   "Husband",
-  "Wife"
+  "Wife",
 )
 
 /**
  * Generate a valid linear path with proper from_person relationships
  */
-const validPathArbitrary = fc
-  .integer({ min: 2, max: 6 })
-  .chain((pathLength) =>
-    fc
-      .array(fc.uuid(), { minLength: pathLength, maxLength: pathLength })
-      .chain((personIds) =>
-        fc
-          .array(relationshipTypeArbitrary, {
-            minLength: pathLength - 1,
-            maxLength: pathLength - 1,
-          })
-          .chain((relationships) =>
-            fc
-              .array(fc.string({ minLength: 1, maxLength: 15 }), {
-                minLength: pathLength,
-                maxLength: pathLength,
-              })
-              .map((firstNames) => {
-                const path: MatchGraphNode[] = []
-                const seekerId = personIds[0]
-                const matchId = personIds[pathLength - 1]
+const validPathArbitrary = fc.integer({ min: 2, max: 6 }).chain((pathLength) =>
+  fc
+    .array(fc.uuid(), { minLength: pathLength, maxLength: pathLength })
+    .chain((personIds) =>
+      fc
+        .array(relationshipTypeArbitrary, {
+          minLength: pathLength - 1,
+          maxLength: pathLength - 1,
+        })
+        .chain((relationships) =>
+          fc
+            .array(fc.string({ minLength: 1, maxLength: 15 }), {
+              minLength: pathLength,
+              maxLength: pathLength,
+            })
+            .map((firstNames) => {
+              const path: MatchGraphNode[] = []
+              const seekerId = personIds[0]
+              const matchId = personIds[pathLength - 1]
 
-                for (let i = 0; i < pathLength; i++) {
-                  const fromPerson =
-                    i === 0
-                      ? null
-                      : {
-                          person_id: personIds[i - 1],
-                          relationship: relationships[i - 1],
-                        }
+              for (let i = 0; i < pathLength; i++) {
+                const fromPerson =
+                  i === 0
+                    ? null
+                    : {
+                        person_id: personIds[i - 1],
+                        relationship: relationships[i - 1],
+                      }
 
-                  path.push({
-                    person_id: personIds[i],
-                    first_name: firstNames[i],
-                    last_name: `Last${i}`,
-                    birth_year: 1990 + i,
-                    death_year: null,
-                    address: "",
-                    religion: "",
-                    is_match: personIds[i] === matchId,
-                    depth: i,
-                    from_person: fromPerson,
-                    to_persons: [],
-                  })
-                }
+                path.push({
+                  person_id: personIds[i],
+                  first_name: firstNames[i],
+                  last_name: `Last${i}`,
+                  birth_year: 1990 + i,
+                  death_year: null,
+                  address: "",
+                  religion: "",
+                  is_match: personIds[i] === matchId,
+                  depth: i,
+                  from_person: fromPerson,
+                  to_persons: [],
+                })
+              }
 
-                return { path, seekerId, matchId, relationships }
-              })
-          )
-      )
-  )
+              return { path, seekerId, matchId, relationships }
+            }),
+        ),
+    ),
+)
 
 /**
  * Generate a path with only parent-child relationships (no spouses)
@@ -139,9 +137,9 @@ const parentChildPathArbitrary = fc
                 }
 
                 return { path, relationships }
-              })
-          )
-      )
+              }),
+          ),
+      ),
   )
 
 // ============================================
@@ -186,7 +184,7 @@ describe("matchGraphTransformer - Property-Based Tests", () => {
             }
           })
         }),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -216,7 +214,7 @@ describe("matchGraphTransformer - Property-Based Tests", () => {
             }
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -274,9 +272,9 @@ describe("matchGraphTransformer - Property-Based Tests", () => {
               // Different X (side by side)
               expect(spousePos.x).not.toBe(personPos.x)
             }
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -311,7 +309,7 @@ describe("matchGraphTransformer - Property-Based Tests", () => {
             expect(edge.type).toBe("matchRelationshipEdge")
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -322,7 +320,10 @@ describe("matchGraphTransformer - Property-Based Tests", () => {
           const positions = calculatePositions(generations)
 
           // Group positions by Y coordinate (generation)
-          const yToPositions = new Map<number, { x: number; personId: string }[]>()
+          const yToPositions = new Map<
+            number,
+            { x: number; personId: string }[]
+          >()
           positions.forEach((pos, personId) => {
             const existing = yToPositions.get(pos.y) || []
             existing.push({ x: pos.x, personId })
@@ -336,7 +337,7 @@ describe("matchGraphTransformer - Property-Based Tests", () => {
             expect(uniqueXValues.size).toBe(xValues.length)
           })
         }),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
   })
@@ -564,7 +565,9 @@ describe("matchGraphTransformer - Unit Tests", () => {
       expect(positions.get("child1")?.y).toBe(positions.get("child2")?.y)
 
       // Children should be below parents
-      expect(positions.get("child1")!.y).toBeGreaterThan(positions.get("parent")!.y)
+      expect(positions.get("child1")!.y).toBeGreaterThan(
+        positions.get("parent")!.y,
+      )
     })
   })
 })

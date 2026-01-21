@@ -18,10 +18,13 @@ class PersonAddressDetails(SQLModel):
 
 
 class PersonReligionDetails(SQLModel):
-    """Religion details with resolved names."""
+    """Religion details with resolved names and IDs."""
 
+    religion_id: uuid.UUID | None = None
     religion_name: str
+    category_id: uuid.UUID | None = None
     category_name: str | None = None
+    sub_category_id: uuid.UUID | None = None
     sub_category_name: str | None = None
 
 

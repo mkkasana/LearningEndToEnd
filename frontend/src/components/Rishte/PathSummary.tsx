@@ -9,7 +9,7 @@ interface PathSummaryProps {
 
 /**
  * PathSummary component displays a summary of the relationship path
- * 
+ *
  * Requirements:
  * - 11.1: Display the total number of persons in the path
  * - 11.2: Display a text summary of the path (e.g., "name1 → name2 → name3...")

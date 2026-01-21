@@ -71,12 +71,22 @@ export function SearchFilterPanel({
   const [birthYearError, setBirthYearError] = useState<string | null>(null)
 
   // Cascading dropdown state
-  const [selectedCountry, setSelectedCountry] = useState<string>(filters.countryId)
+  const [selectedCountry, setSelectedCountry] = useState<string>(
+    filters.countryId,
+  )
   const [selectedState, setSelectedState] = useState<string>(filters.stateId)
-  const [selectedDistrict, setSelectedDistrict] = useState<string>(filters.districtId)
-  const [selectedSubDistrict, setSelectedSubDistrict] = useState<string>(filters.subDistrictId)
-  const [selectedReligion, setSelectedReligion] = useState<string>(filters.religionId)
-  const [selectedCategory, setSelectedCategory] = useState<string>(filters.religionCategoryId)
+  const [selectedDistrict, setSelectedDistrict] = useState<string>(
+    filters.districtId,
+  )
+  const [selectedSubDistrict, setSelectedSubDistrict] = useState<string>(
+    filters.subDistrictId,
+  )
+  const [selectedReligion, setSelectedReligion] = useState<string>(
+    filters.religionId,
+  )
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    filters.religionCategoryId,
+  )
 
   // Sync local state when filters prop changes
   useEffect(() => {
@@ -97,25 +107,33 @@ export function SearchFilterPanel({
 
   const { data: states } = useQuery({
     queryKey: ["states", selectedCountry],
-    queryFn: () => AddressMetadataService.getStatesByCountry({ countryId: selectedCountry }),
+    queryFn: () =>
+      AddressMetadataService.getStatesByCountry({ countryId: selectedCountry }),
     enabled: !!selectedCountry,
   })
 
   const { data: districts } = useQuery({
     queryKey: ["districts", selectedState],
-    queryFn: () => AddressMetadataService.getDistrictsByState({ stateId: selectedState }),
+    queryFn: () =>
+      AddressMetadataService.getDistrictsByState({ stateId: selectedState }),
     enabled: !!selectedState,
   })
 
   const { data: subDistricts } = useQuery({
     queryKey: ["subDistricts", selectedDistrict],
-    queryFn: () => AddressMetadataService.getSubDistrictsByDistrict({ districtId: selectedDistrict }),
+    queryFn: () =>
+      AddressMetadataService.getSubDistrictsByDistrict({
+        districtId: selectedDistrict,
+      }),
     enabled: !!selectedDistrict,
   })
 
   const { data: localities } = useQuery({
     queryKey: ["localities", selectedSubDistrict],
-    queryFn: () => AddressMetadataService.getLocalitiesBySubDistrict({ subDistrictId: selectedSubDistrict }),
+    queryFn: () =>
+      AddressMetadataService.getLocalitiesBySubDistrict({
+        subDistrictId: selectedSubDistrict,
+      }),
     enabled: !!selectedSubDistrict,
   })
 
@@ -127,13 +145,19 @@ export function SearchFilterPanel({
 
   const { data: categories } = useQuery({
     queryKey: ["religionCategories", selectedReligion],
-    queryFn: () => ReligionMetadataService.getCategoriesByReligion({ religionId: selectedReligion }),
+    queryFn: () =>
+      ReligionMetadataService.getCategoriesByReligion({
+        religionId: selectedReligion,
+      }),
     enabled: !!selectedReligion,
   })
 
   const { data: subCategories } = useQuery({
     queryKey: ["religionSubCategories", selectedCategory],
-    queryFn: () => ReligionMetadataService.getSubCategoriesByCategory({ categoryId: selectedCategory }),
+    queryFn: () =>
+      ReligionMetadataService.getSubCategoriesByCategory({
+        categoryId: selectedCategory,
+      }),
     enabled: !!selectedCategory,
   })
 
@@ -142,7 +166,6 @@ export function SearchFilterPanel({
     queryKey: ["genders"],
     queryFn: () => PersonMetadataService.getGenders(),
   })
-
 
   // Address cascading handlers
   const handleCountryChange = (value: string) => {
@@ -217,7 +240,9 @@ export function SearchFilterPanel({
   // Validate birth year range
   const validateBirthYearRange = (from?: number, to?: number): boolean => {
     if (from !== undefined && to !== undefined && from > to) {
-      setBirthYearError("Birth Year From must be less than or equal to Birth Year To")
+      setBirthYearError(
+        "Birth Year From must be less than or equal to Birth Year To",
+      )
       return false
     }
     setBirthYearError(null)
@@ -226,7 +251,12 @@ export function SearchFilterPanel({
 
   // Handle apply filters
   const handleApply = () => {
-    if (!validateBirthYearRange(localFilters.birthYearFrom, localFilters.birthYearTo)) {
+    if (
+      !validateBirthYearRange(
+        localFilters.birthYearFrom,
+        localFilters.birthYearTo,
+      )
+    ) {
       return
     }
     onApply(localFilters)
@@ -306,13 +336,19 @@ export function SearchFilterPanel({
                 {/* Country */}
                 <div className="space-y-2">
                   <Label>Country *</Label>
-                  <Select value={selectedCountry} onValueChange={handleCountryChange}>
+                  <Select
+                    value={selectedCountry}
+                    onValueChange={handleCountryChange}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                     <SelectContent>
                       {countries?.map((country: any) => (
-                        <SelectItem key={country.countryId} value={country.countryId}>
+                        <SelectItem
+                          key={country.countryId}
+                          value={country.countryId}
+                        >
                           {country.countryName}
                         </SelectItem>
                       ))}
@@ -324,7 +360,10 @@ export function SearchFilterPanel({
                 {selectedCountry && (
                   <div className="space-y-2">
                     <Label>State *</Label>
-                    <Select value={selectedState} onValueChange={handleStateChange}>
+                    <Select
+                      value={selectedState}
+                      onValueChange={handleStateChange}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select state" />
                       </SelectTrigger>
@@ -343,13 +382,19 @@ export function SearchFilterPanel({
                 {selectedState && (
                   <div className="space-y-2">
                     <Label>District *</Label>
-                    <Select value={selectedDistrict} onValueChange={handleDistrictChange}>
+                    <Select
+                      value={selectedDistrict}
+                      onValueChange={handleDistrictChange}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select district" />
                       </SelectTrigger>
                       <SelectContent>
                         {districts?.map((district: any) => (
-                          <SelectItem key={district.districtId} value={district.districtId}>
+                          <SelectItem
+                            key={district.districtId}
+                            value={district.districtId}
+                          >
                             {district.districtName}
                           </SelectItem>
                         ))}
@@ -362,13 +407,19 @@ export function SearchFilterPanel({
                 {selectedDistrict && (
                   <div className="space-y-2">
                     <Label>Sub-District *</Label>
-                    <Select value={selectedSubDistrict} onValueChange={handleSubDistrictChange}>
+                    <Select
+                      value={selectedSubDistrict}
+                      onValueChange={handleSubDistrictChange}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select sub-district" />
                       </SelectTrigger>
                       <SelectContent>
                         {subDistricts?.map((subDistrict: any) => (
-                          <SelectItem key={subDistrict.tehsilId} value={subDistrict.tehsilId}>
+                          <SelectItem
+                            key={subDistrict.tehsilId}
+                            value={subDistrict.tehsilId}
+                          >
                             {subDistrict.tehsilName}
                           </SelectItem>
                         ))}
@@ -395,7 +446,10 @@ export function SearchFilterPanel({
                       </SelectTrigger>
                       <SelectContent>
                         {localities?.map((locality: any) => (
-                          <SelectItem key={locality.localityId} value={locality.localityId}>
+                          <SelectItem
+                            key={locality.localityId}
+                            value={locality.localityId}
+                          >
                             {locality.localityName}
                           </SelectItem>
                         ))}
@@ -417,13 +471,19 @@ export function SearchFilterPanel({
                 {/* Religion */}
                 <div className="space-y-2">
                   <Label>Religion *</Label>
-                  <Select value={selectedReligion} onValueChange={handleReligionChange}>
+                  <Select
+                    value={selectedReligion}
+                    onValueChange={handleReligionChange}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select religion" />
                     </SelectTrigger>
                     <SelectContent>
                       {religions?.map((religion: any) => (
-                        <SelectItem key={religion.religionId} value={religion.religionId}>
+                        <SelectItem
+                          key={religion.religionId}
+                          value={religion.religionId}
+                        >
                           {religion.religionName}
                         </SelectItem>
                       ))}
@@ -435,13 +495,19 @@ export function SearchFilterPanel({
                 {selectedReligion && categories && categories.length > 0 && (
                   <div className="space-y-2">
                     <Label>Category *</Label>
-                    <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                    <Select
+                      value={selectedCategory}
+                      onValueChange={handleCategoryChange}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
                         {categories?.map((category: any) => (
-                          <SelectItem key={category.categoryId} value={category.categoryId}>
+                          <SelectItem
+                            key={category.categoryId}
+                            value={category.categoryId}
+                          >
                             {category.categoryName}
                           </SelectItem>
                         ))}
@@ -451,31 +517,36 @@ export function SearchFilterPanel({
                 )}
 
                 {/* Sub-Category */}
-                {selectedCategory && subCategories && subCategories.length > 0 && (
-                  <div className="space-y-2">
-                    <Label>Sub-Category</Label>
-                    <Select
-                      value={localFilters.religionSubCategoryId || ""}
-                      onValueChange={(value) =>
-                        setLocalFilters((prev) => ({
-                          ...prev,
-                          religionSubCategoryId: value || undefined,
-                        }))
-                      }
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select sub-category (optional)" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {subCategories?.map((subCategory: any) => (
-                          <SelectItem key={subCategory.subCategoryId} value={subCategory.subCategoryId}>
-                            {subCategory.subCategoryName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+                {selectedCategory &&
+                  subCategories &&
+                  subCategories.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Sub-Category</Label>
+                      <Select
+                        value={localFilters.religionSubCategoryId || ""}
+                        onValueChange={(value) =>
+                          setLocalFilters((prev) => ({
+                            ...prev,
+                            religionSubCategoryId: value || undefined,
+                          }))
+                        }
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select sub-category (optional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {subCategories?.map((subCategory: any) => (
+                            <SelectItem
+                              key={subCategory.subCategoryId}
+                              value={subCategory.subCategoryId}
+                            >
+                              {subCategory.subCategoryName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
               </div>
             </div>
 
@@ -504,7 +575,10 @@ export function SearchFilterPanel({
                     </SelectTrigger>
                     <SelectContent>
                       {genders?.map((gender: any) => (
-                        <SelectItem key={gender.genderId} value={gender.genderId}>
+                        <SelectItem
+                          key={gender.genderId}
+                          value={gender.genderId}
+                        >
                           {gender.genderName}
                         </SelectItem>
                       ))}
@@ -524,7 +598,9 @@ export function SearchFilterPanel({
                       max={2100}
                       value={localFilters.birthYearFrom || ""}
                       onChange={(e) => {
-                        const value = e.target.value ? parseInt(e.target.value, 10) : undefined
+                        const value = e.target.value
+                          ? parseInt(e.target.value, 10)
+                          : undefined
                         setLocalFilters((prev) => ({
                           ...prev,
                           birthYearFrom: value,
@@ -543,12 +619,17 @@ export function SearchFilterPanel({
                       max={2100}
                       value={localFilters.birthYearTo || ""}
                       onChange={(e) => {
-                        const value = e.target.value ? parseInt(e.target.value, 10) : undefined
+                        const value = e.target.value
+                          ? parseInt(e.target.value, 10)
+                          : undefined
                         setLocalFilters((prev) => ({
                           ...prev,
                           birthYearTo: value,
                         }))
-                        validateBirthYearRange(localFilters.birthYearFrom, value)
+                        validateBirthYearRange(
+                          localFilters.birthYearFrom,
+                          value,
+                        )
                       }}
                     />
                   </div>
@@ -563,18 +644,21 @@ export function SearchFilterPanel({
 
         <SheetFooter className="px-6 py-4 border-t">
           <div className="flex w-full gap-3">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={handleReset}
-            >
+            <Button variant="outline" className="flex-1" onClick={handleReset}>
               <RotateCcw className="h-4 w-4 mr-2" />
               Reset
             </Button>
             <Button
               className="flex-1"
               onClick={handleApply}
-              disabled={!selectedCountry || !selectedState || !selectedDistrict || !selectedSubDistrict || !selectedReligion || !selectedCategory}
+              disabled={
+                !selectedCountry ||
+                !selectedState ||
+                !selectedDistrict ||
+                !selectedSubDistrict ||
+                !selectedReligion ||
+                !selectedCategory
+              }
             >
               <Search className="h-4 w-4 mr-2" />
               Apply Filters

@@ -22,7 +22,7 @@ import type {
  */
 export function calculateOppositeGender(
   genderId: string | null,
-  genders: GenderMetadata[]
+  genders: GenderMetadata[],
 ): string {
   if (!genderId || !genders.length) {
     return ""
@@ -71,7 +71,7 @@ export function calculateBirthYearRange(birthYear: number | null): {
  */
 export function validateBirthYearRange(
   fromYear: number | undefined,
-  toYear: number | undefined
+  toYear: number | undefined,
 ): string | null {
   if (fromYear !== undefined && toYear !== undefined && fromYear > toYear) {
     return "From year must be less than or equal to To year"
@@ -91,10 +91,10 @@ export function validateBirthYearRange(
 export function buildDefaultFilters(
   activePersonDefaults: ActivePersonDefaults,
   lineageSubCategories: LineageSubCategories,
-  genders: GenderMetadata[]
+  genders: GenderMetadata[],
 ): PartnerFilters {
   const { fromYear, toYear } = calculateBirthYearRange(
-    activePersonDefaults.birthYear
+    activePersonDefaults.birthYear,
   )
 
   // Build include religions default (active person's religion)
@@ -126,7 +126,7 @@ export function buildDefaultFilters(
   if (lineageSubCategories.motherSubCategory) {
     // Avoid duplicates
     const isDuplicate = excludeSubCategories.some(
-      (sc) => sc.id === lineageSubCategories.motherSubCategory!.id
+      (sc) => sc.id === lineageSubCategories.motherSubCategory!.id,
     )
     if (!isDuplicate) {
       excludeSubCategories.push(lineageSubCategories.motherSubCategory)
@@ -136,7 +136,7 @@ export function buildDefaultFilters(
   if (lineageSubCategories.grandmotherSubCategory) {
     // Avoid duplicates
     const isDuplicate = excludeSubCategories.some(
-      (sc) => sc.id === lineageSubCategories.grandmotherSubCategory!.id
+      (sc) => sc.id === lineageSubCategories.grandmotherSubCategory!.id,
     )
     if (!isDuplicate) {
       excludeSubCategories.push(lineageSubCategories.grandmotherSubCategory)

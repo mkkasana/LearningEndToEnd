@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { RishteAddressStepProps, AddressFormData } from "./types"
+import type { AddressFormData, RishteAddressStepProps } from "./types"
 
 /**
  * Zod schema for address form validation
@@ -43,14 +43,14 @@ type FormData = z.infer<typeof addressSchema>
 
 /**
  * RishteAddressStep component - Step 2 of the Person Search Wizard
- * 
+ *
  * Collects address filters with cascading dropdowns:
  * - Country (required)
  * - State (required)
  * - District (required)
  * - Sub-District (optional)
  * - Locality (optional)
- * 
+ *
  * Requirements:
  * - 4.1: Display cascading dropdowns for address hierarchy
  * - 4.2: Pre-populate with active person's address as defaults
@@ -68,16 +68,16 @@ export function RishteAddressStep({
 }: RishteAddressStepProps) {
   // Track selected values for cascading queries
   const [selectedCountry, setSelectedCountry] = useState<string>(
-    initialData?.countryId || defaultAddress?.countryId || ""
+    initialData?.countryId || defaultAddress?.countryId || "",
   )
   const [selectedState, setSelectedState] = useState<string>(
-    initialData?.stateId || defaultAddress?.stateId || ""
+    initialData?.stateId || defaultAddress?.stateId || "",
   )
   const [selectedDistrict, setSelectedDistrict] = useState<string>(
-    initialData?.districtId || defaultAddress?.districtId || ""
+    initialData?.districtId || defaultAddress?.districtId || "",
   )
   const [selectedSubDistrict, setSelectedSubDistrict] = useState<string>(
-    initialData?.subDistrictId || defaultAddress?.subDistrictId || ""
+    initialData?.subDistrictId || defaultAddress?.subDistrictId || "",
   )
 
   const form = useForm<FormData>({
@@ -86,7 +86,8 @@ export function RishteAddressStep({
       countryId: initialData?.countryId || defaultAddress?.countryId || "",
       stateId: initialData?.stateId || defaultAddress?.stateId || "",
       districtId: initialData?.districtId || defaultAddress?.districtId || "",
-      subDistrictId: initialData?.subDistrictId || defaultAddress?.subDistrictId || "",
+      subDistrictId:
+        initialData?.subDistrictId || defaultAddress?.subDistrictId || "",
       localityId: initialData?.localityId || defaultAddress?.localityId || "",
     },
   })
@@ -289,7 +290,10 @@ export function RishteAddressStep({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>District *</FormLabel>
-                <Select onValueChange={handleDistrictChange} value={field.value}>
+                <Select
+                  onValueChange={handleDistrictChange}
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select district" />

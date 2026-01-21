@@ -10,15 +10,13 @@ import { useMutation } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { Filter, Heart, Loader2 } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
-import {
-  PartnerMatchService,
-  type PartnerMatchResponse,
-} from "@/client"
+import { type PartnerMatchResponse, PartnerMatchService } from "@/client"
+import { ActivePersonIndicator } from "@/components/Family/ActivePersonIndicator"
 import {
   PartnerFilterPanel,
+  type PartnerFilters,
   PartnerResultsDisplay,
   usePartnerDefaults,
-  type PartnerFilters,
 } from "@/components/FindPartner"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -46,19 +44,28 @@ export const Route = createFileRoute("/_layout/find-partner" as any)({
  */
 function FindPartnerPage() {
   // Active person context for seeker ID
-  const { activePersonId, activePerson, isLoading: isContextLoading } = useActivePersonContext()
+  const {
+    activePersonId,
+    activePerson,
+    isLoading: isContextLoading,
+  } = useActivePersonContext()
 
   // Filter panel state
   const [filterPanelOpen, setFilterPanelOpen] = useState(false)
 
   // Get default filters from active person
-  const { defaultFilters, isLoading: isDefaultsLoading, genders } = usePartnerDefaults()
+  const {
+    defaultFilters,
+    isLoading: isDefaultsLoading,
+    genders,
+  } = usePartnerDefaults()
 
   // Current filter state
   const [filters, setFilters] = useState<PartnerFilters | null>(null)
 
   // Search results state
-  const [searchResults, setSearchResults] = useState<PartnerMatchResponse | null>(null)
+  const [searchResults, setSearchResults] =
+    useState<PartnerMatchResponse | null>(null)
 
   // Initialize filters when defaults are loaded
   useEffect(() => {
@@ -75,7 +82,9 @@ function FindPartnerPage() {
       }
 
       // Find gender code from gender ID
-      const gender = genders?.find((g) => g.genderId === currentFilters.genderId)
+      const gender = genders?.find(
+        (g) => g.genderId === currentFilters.genderId,
+      )
       const targetGenderCode = gender?.genderCode || "FEMALE"
 
       // Filter out any empty IDs and only include arrays with valid UUIDs
@@ -98,10 +107,18 @@ function FindPartnerPage() {
           target_gender_code: targetGenderCode,
           birth_year_min: currentFilters.birthYearFrom,
           birth_year_max: currentFilters.birthYearTo,
-          include_religion_ids: includeReligionIds.length > 0 ? includeReligionIds : undefined,
-          include_category_ids: includeCategoryIds.length > 0 ? includeCategoryIds : undefined,
-          include_sub_category_ids: includeSubCategoryIds.length > 0 ? includeSubCategoryIds : undefined,
-          exclude_sub_category_ids: excludeSubCategoryIds.length > 0 ? excludeSubCategoryIds : undefined,
+          include_religion_ids:
+            includeReligionIds.length > 0 ? includeReligionIds : undefined,
+          include_category_ids:
+            includeCategoryIds.length > 0 ? includeCategoryIds : undefined,
+          include_sub_category_ids:
+            includeSubCategoryIds.length > 0
+              ? includeSubCategoryIds
+              : undefined,
+          exclude_sub_category_ids:
+            excludeSubCategoryIds.length > 0
+              ? excludeSubCategoryIds
+              : undefined,
           max_depth: currentFilters.searchDepth,
         },
       })
@@ -121,7 +138,7 @@ function FindPartnerPage() {
       setFilters(newFilters)
       findMatchesMutation.mutate(newFilters)
     },
-    [findMatchesMutation]
+    [findMatchesMutation],
   )
 
   // Handle filter reset
@@ -165,6 +182,9 @@ function FindPartnerPage() {
 
   return (
     <div className="flex flex-col gap-4 sm:gap-6 h-full">
+      {/* Active Person Indicator - Shows when assuming another person's role */}
+      <ActivePersonIndicator />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
         <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">

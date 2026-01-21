@@ -1,5 +1,11 @@
 import type { PersonSearchFilterRequest, PersonSearchResult } from "@/client"
-import type { BasicInfoFormData, AddressFormData, ReligionFormData, PersonSearchCriteria, SelectedPerson } from "../types"
+import type {
+  AddressFormData,
+  BasicInfoFormData,
+  PersonSearchCriteria,
+  ReligionFormData,
+  SelectedPerson,
+} from "../types"
 
 /**
  * Build search request from wizard criteria
@@ -8,7 +14,7 @@ import type { BasicInfoFormData, AddressFormData, ReligionFormData, PersonSearch
 export function buildSearchRequest(
   criteria: PersonSearchCriteria,
   skip: number = 0,
-  limit: number = 20
+  limit: number = 20,
 ): PersonSearchFilterRequest {
   return {
     first_name: criteria.basicInfo.firstName || undefined,
@@ -23,7 +29,8 @@ export function buildSearchRequest(
     locality_id: criteria.address.localityId || undefined,
     religion_id: criteria.religion.religionId,
     religion_category_id: criteria.religion.religionCategoryId,
-    religion_sub_category_id: criteria.religion.religionSubCategoryId || undefined,
+    religion_sub_category_id:
+      criteria.religion.religionSubCategoryId || undefined,
     skip,
     limit,
   }
@@ -33,17 +40,21 @@ export function buildSearchRequest(
  * Extract birth year from date string
  * Returns null for invalid or empty dates
  */
-export function extractBirthYear(dateOfBirth: string | null | undefined): number | null {
+export function extractBirthYear(
+  dateOfBirth: string | null | undefined,
+): number | null {
   if (!dateOfBirth) return null
   const year = new Date(dateOfBirth).getFullYear()
-  return isNaN(year) ? null : year
+  return Number.isNaN(year) ? null : year
 }
 
 /**
  * Format person name for display
  * Combines first, middle (if present), and last name
  */
-export function formatPersonName(person: Pick<PersonSearchResult, 'first_name' | 'middle_name' | 'last_name'>): string {
+export function formatPersonName(
+  person: Pick<PersonSearchResult, "first_name" | "middle_name" | "last_name">,
+): string {
   const parts = [person.first_name]
   if (person.middle_name) parts.push(person.middle_name)
   parts.push(person.last_name)
@@ -76,10 +87,7 @@ export function calculateTotalPages(total: number, pageSize: number): number {
  * Returns true if required fields are present and valid
  */
 export function isValidBasicInfo(data: BasicInfoFormData): boolean {
-  return (
-    data.firstName.trim().length > 0 &&
-    data.lastName.trim().length > 0
-  )
+  return data.firstName.trim().length > 0 && data.lastName.trim().length > 0
 }
 
 /**
@@ -99,10 +107,7 @@ export function isValidAddress(data: AddressFormData): boolean {
  * Returns true if required fields are present
  */
 export function isValidReligion(data: ReligionFormData): boolean {
-  return (
-    data.religionId.length > 0 &&
-    data.religionCategoryId.length > 0
-  )
+  return data.religionId.length > 0 && data.religionCategoryId.length > 0
 }
 
 /**

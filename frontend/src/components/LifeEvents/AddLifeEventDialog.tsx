@@ -66,9 +66,9 @@ export function AddLifeEventDialog({
       // Use person-specific endpoint when activePersonId is provided
       // _Requirements: 5.1, 5.2 (assume-person-role)
       if (activePersonId) {
-        return LifeEventsService.createPersonLifeEvent({ 
-          personId: activePersonId, 
-          requestBody: payload 
+        return LifeEventsService.createPersonLifeEvent({
+          personId: activePersonId,
+          requestBody: payload,
         })
       }
       return LifeEventsService.createLifeEvent({ requestBody: payload })
@@ -77,7 +77,9 @@ export function AddLifeEventDialog({
       showSuccessToast("Life event created successfully!")
       // Invalidate the correct query key based on activePersonId
       if (activePersonId) {
-        queryClient.invalidateQueries({ queryKey: ["life-events", activePersonId] })
+        queryClient.invalidateQueries({
+          queryKey: ["life-events", activePersonId],
+        })
       } else {
         queryClient.invalidateQueries({ queryKey: ["life-events"] })
       }

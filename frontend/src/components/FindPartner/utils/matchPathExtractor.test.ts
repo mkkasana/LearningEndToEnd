@@ -1,7 +1,7 @@
 /**
  * Property-Based Tests for Match Path Extractor
  * Feature: partner-match-visualizer
- * 
+ *
  * Property 1: Path Extraction Correctness
  * Property 2: Match Sorting by Depth
  * Validates: Requirements 3.1, 3.2, 1.4
@@ -10,8 +10,8 @@
 import * as fc from "fast-check"
 import { describe, expect, it } from "vitest"
 import {
-  extractPathToMatch,
   buildMatchItems,
+  extractPathToMatch,
   generateMatchPathSummary,
   type MatchGraphNode,
 } from "./matchPathExtractor"
@@ -30,7 +30,7 @@ const relationshipTypeArbitrary = fc.constantFrom(
   "Daughter",
   "Spouse",
   "Husband",
-  "Wife"
+  "Wife",
 )
 
 /**
@@ -85,10 +85,17 @@ const validPathGraphArbitrary = fc
                   }
                 }
 
-                return { graph, seekerId, matchId, pathLength, personIds, firstNames }
-              })
-          )
-      )
+                return {
+                  graph,
+                  seekerId,
+                  matchId,
+                  pathLength,
+                  personIds,
+                  firstNames,
+                }
+              }),
+          ),
+      ),
   )
 
 /**
@@ -123,7 +130,7 @@ const multipleMatchesArbitrary = fc
                         fc.option(fc.integer({ min: 1900, max: 2024 }), {
                           nil: null,
                         }),
-                        { minLength: numMatches, maxLength: numMatches }
+                        { minLength: numMatches, maxLength: numMatches },
                       )
                       .map((birthYears) => {
                         const graph: Record<string, MatchGraphNode> = {}
@@ -145,11 +152,11 @@ const multipleMatchesArbitrary = fc
                         }
 
                         return { graph, matchIds, depths }
-                      })
-                  )
-              )
-          )
-      )
+                      }),
+                  ),
+              ),
+          ),
+      ),
   )
 
 // ============================================
@@ -179,7 +186,7 @@ describe("matchPathExtractor - Property-Based Tests", () => {
           // Last element should be match
           expect(path[path.length - 1].person_id).toBe(matchId)
         }),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -197,7 +204,7 @@ describe("matchPathExtractor - Property-Based Tests", () => {
             expect(next.from_person?.person_id).toBe(current.person_id)
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -210,9 +217,9 @@ describe("matchPathExtractor - Property-Based Tests", () => {
 
             // Path length should match expected length
             expect(path.length).toBe(pathLength)
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -259,9 +266,9 @@ describe("matchPathExtractor - Property-Based Tests", () => {
             expect(path.length).toBe(2)
             expect(path[0].person_id).toBe(seekerId)
             expect(path[1].person_id).toBe(matchId)
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
   })
@@ -284,7 +291,7 @@ describe("matchPathExtractor - Property-Based Tests", () => {
             expect(result[i].depth).toBeLessThanOrEqual(result[i + 1].depth)
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -302,7 +309,7 @@ describe("matchPathExtractor - Property-Based Tests", () => {
             expect(resultIds).toContain(matchId)
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -319,7 +326,7 @@ describe("matchPathExtractor - Property-Based Tests", () => {
             expect(item.depth).toBe(node.depth)
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -337,11 +344,11 @@ describe("matchPathExtractor - Property-Based Tests", () => {
             // Should only include valid matches
             expect(result.length).toBe(matchIds.length)
             expect(result.map((item) => item.personId)).not.toContain(
-              nonExistentId
+              nonExistentId,
             )
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
   })

@@ -1,19 +1,19 @@
 import {
-  ReactFlow,
   Background,
   BackgroundVariant,
-  useNodesState,
-  useEdgesState,
-  useReactFlow,
-  ReactFlowProvider,
   MarkerType,
+  ReactFlow,
+  ReactFlowProvider,
+  useEdgesState,
+  useNodesState,
+  useReactFlow,
 } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 import { memo, useCallback, useEffect } from "react"
 import { GraphControls } from "./GraphControls"
 import { PersonNode } from "./PersonNode"
 import { RelationshipEdge } from "./RelationshipEdge"
-import type { RishteNode, RishteEdge } from "./types"
+import type { RishteEdge, RishteNode } from "./types"
 
 // Custom node types for React Flow
 const nodeTypes = {
@@ -48,8 +48,10 @@ const RishteGraphInner = memo(function RishteGraphInner({
   edges: initialEdges,
 }: RishteGraphInnerProps) {
   const { fitView } = useReactFlow()
-  const [nodes, setNodes, onNodesChange] = useNodesState<RishteNode>(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState<RishteEdge>(initialEdges)
+  const [nodes, setNodes, onNodesChange] =
+    useNodesState<RishteNode>(initialNodes)
+  const [edges, setEdges, onEdgesChange] =
+    useEdgesState<RishteEdge>(initialEdges)
 
   // Update nodes and edges when props change
   useEffect(() => {
@@ -72,7 +74,7 @@ const RishteGraphInner = memo(function RishteGraphInner({
   const onNodeDragStart = useCallback(() => {}, [])
 
   return (
-    <div className="relative" style={{ width: '100%', height: '500px' }}>
+    <div className="relative" style={{ width: "100%", height: "500px" }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -90,7 +92,7 @@ const RishteGraphInner = memo(function RishteGraphInner({
         minZoom={0.1}
         maxZoom={2}
         className="bg-background"
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: "100%", height: "100%" }}
       >
         <Background
           variant={BackgroundVariant.Dots}
@@ -99,7 +101,7 @@ const RishteGraphInner = memo(function RishteGraphInner({
           className="!bg-muted/30"
         />
       </ReactFlow>
-      
+
       {/* Graph controls positioned at bottom-right */}
       <div className="absolute bottom-4 right-4 z-10">
         <GraphControls />
@@ -115,7 +117,7 @@ interface RishteGraphProps {
 
 /**
  * RishteGraph component - Main React Flow container for relationship visualization
- * 
+ *
  * Requirements:
  * - 6.1: Render persons of the same generation on the same horizontal level
  * - 6.2: Position spouse/husband/wife pairs side-by-side

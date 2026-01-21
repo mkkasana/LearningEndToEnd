@@ -52,7 +52,12 @@ function FamilyTreeView() {
 
   // Get the current user's person from ActivePersonContext
   // _Requirements: 7.1_
-  const { activePerson, activePersonId, isLoading: isPersonLoading, isAssuming } = useActivePersonContext()
+  const {
+    activePerson,
+    activePersonId,
+    isLoading: isPersonLoading,
+    isAssuming,
+  } = useActivePersonContext()
 
   // Initialize selected person - check sessionStorage first, then fall back to active person from context
   useEffect(() => {
@@ -259,7 +264,14 @@ function FamilyTreeView() {
   }
 
   // No data yet (waiting for initial load) or data structure is invalid
-  if (!familyData || !selectedPersonId || !familyData.parents || !familyData.siblings || !familyData.spouses || !familyData.children) {
+  if (
+    !familyData ||
+    !selectedPersonId ||
+    !familyData.parents ||
+    !familyData.siblings ||
+    !familyData.spouses ||
+    !familyData.children
+  ) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -278,7 +290,9 @@ function FamilyTreeView() {
   const children = familyData.children || []
 
   // Check if user is viewing their own family tree (Add Cards only visible for own tree)
-  const isViewingOwnTree = !!(activePerson && selectedPersonId === activePerson.id)
+  const isViewingOwnTree = !!(
+    activePerson && selectedPersonId === activePerson.id
+  )
 
   // Main content - Family Tree View
   return (
@@ -343,9 +357,7 @@ function FamilyTreeView() {
         )}
 
         {/* Connector from parents to center row */}
-        {(parents.length > 0 || isViewingOwnTree) && (
-          <RowConnector />
-        )}
+        {(parents.length > 0 || isViewingOwnTree) && <RowConnector />}
 
         {/* Center Section: Siblings, Selected Person, Spouses - All in one horizontal row */}
         {/* Requirements: 5.1, 5.2, 9.3 - Single horizontally scrollable row with color-coding */}
@@ -388,9 +400,7 @@ function FamilyTreeView() {
         })()}
 
         {/* Connector from center row to children */}
-        {(children.length > 0 || isViewingOwnTree) && (
-          <RowConnector />
-        )}
+        {(children.length > 0 || isViewingOwnTree) && <RowConnector />}
 
         {/* Children Section - Requirements: 1.3, 5.1, 5.2 */}
         {/* Add Card only visible when viewing own family tree */}

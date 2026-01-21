@@ -50,7 +50,9 @@ export function DiscoverFamilyMembersDialog({
     queryKey: ["discoverFamilyMembers", activePersonId],
     queryFn: () =>
       activePersonId
-        ? PersonService.discoverPersonFamilyMembers({ personId: activePersonId })
+        ? PersonService.discoverPersonFamilyMembers({
+            personId: activePersonId,
+          })
         : PersonService.discoverFamilyMembers(),
     enabled: open, // Only fetch when dialog is open
     retry: false, // Don't auto-retry on error
@@ -94,7 +96,10 @@ export function DiscoverFamilyMembersDialog({
   // Mutation for creating relationship
   // When activePersonId is provided, use person-specific endpoint for assumed person context
   const createRelationshipMutation = useMutation({
-    mutationFn: (data: { relatedPersonId: string; relationshipType: string }) =>
+    mutationFn: (data: {
+      relatedPersonId: string
+      relationshipType: string
+    }) =>
       activePersonId
         ? PersonService.createPersonRelationship({
             personId: activePersonId,

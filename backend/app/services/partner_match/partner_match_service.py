@@ -6,7 +6,7 @@ from collections import deque
 from dataclasses import dataclass
 
 from fastapi import HTTPException
-from sqlmodel import Session, select
+from sqlmodel import Session, col, select
 
 from app.core.config import settings
 from app.db_models.address.country import Country
@@ -60,6 +60,18 @@ class PartnerMatchService:
     CHILD_RELATIONSHIP_TYPES = {
         RelationshipType.SON,
         RelationshipType.DAUGHTER,
+    }
+
+    # Relationship types that indicate close family (excluded from matches)
+    # Parents, children, and spouses are too close to be potential partners
+    CLOSE_FAMILY_RELATIONSHIP_TYPES = {
+        RelationshipType.FATHER,
+        RelationshipType.MOTHER,
+        RelationshipType.SON,
+        RelationshipType.DAUGHTER,
+        RelationshipType.WIFE,
+        RelationshipType.HUSBAND,
+        RelationshipType.SPOUSE,
     }
 
     def __init__(self, session: Session):
@@ -170,6 +182,9 @@ class PartnerMatchService:
         depth_map: dict[uuid.UUID, int] = {seeker_id: 0}
         matches: list[uuid.UUID] = []
 
+        # Get seeker's close family members to exclude from matches
+        close_family_ids = self._get_close_family_ids(seeker_id)
+
         queue: deque[uuid.UUID] = deque([seeker_id])
         current_depth = 0
 
@@ -189,13 +204,76 @@ class PartnerMatchService:
                     depth_map[related_id] = current_depth
                     queue.append(related_id)
 
-                    # Check if eligible match (skip seeker)
-                    if related_id != seeker_id and self._is_eligible_match(
-                        related_id, request
+                    # Check if eligible match (skip seeker and close family)
+                    if (
+                        related_id != seeker_id
+                        and related_id not in close_family_ids
+                        and self._is_eligible_match(related_id, request)
                     ):
                         matches.append(related_id)
 
         return parent_map, depth_map, matches
+
+    def _get_close_family_ids(self, person_id: uuid.UUID) -> set[uuid.UUID]:
+        """Get IDs of close family members who should be excluded from matches.
+
+        Close family includes:
+        - Parents (Father, Mother)
+        - Children (Son, Daughter)
+        - Spouses (Wife, Husband, Spouse)
+        - Siblings (share at least one parent)
+
+        Args:
+            person_id: Person whose close family to find
+
+        Returns:
+            Set of person IDs who are close family members
+        """
+        close_family: set[uuid.UUID] = set()
+
+        # Get direct relationships
+        statement = select(PersonRelationship).where(
+            PersonRelationship.person_id == person_id,
+            PersonRelationship.is_active == True,  # noqa: E712
+        )
+        relationships = self.session.exec(statement).all()
+
+        # Collect parents for sibling detection
+        parent_ids: set[uuid.UUID] = set()
+
+        for rel in relationships:
+            # Add all close family relationships
+            if rel.relationship_type in self.CLOSE_FAMILY_RELATIONSHIP_TYPES:
+                close_family.add(rel.related_person_id)
+
+            # Track parents for sibling detection
+            if rel.relationship_type in {
+                RelationshipType.FATHER,
+                RelationshipType.MOTHER,
+            }:
+                parent_ids.add(rel.related_person_id)
+
+        # Find siblings (people who share at least one parent)
+        for parent_id in parent_ids:
+            # Get all children of this parent
+            parent_children_stmt = select(PersonRelationship).where(
+                PersonRelationship.person_id == parent_id,
+                PersonRelationship.is_active == True,  # noqa: E712
+                col(PersonRelationship.relationship_type).in_(
+                    list(self.CHILD_RELATIONSHIP_TYPES)
+                ),
+            )
+            parent_children = self.session.exec(parent_children_stmt).all()
+
+            for child_rel in parent_children:
+                if child_rel.related_person_id != person_id:
+                    close_family.add(child_rel.related_person_id)
+
+        logger.debug(
+            f"Close family for person {person_id}: {len(close_family)} members"
+        )
+
+        return close_family
 
     def _is_eligible_match(
         self, person_id: uuid.UUID, request: PartnerMatchRequest

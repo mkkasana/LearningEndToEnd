@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useState,
-  type ReactNode,
 } from "react"
 
-import { PersonService, type PersonPublic } from "@/client"
+import { type PersonPublic, PersonService } from "@/client"
 
 /**
  * Session storage key for assumed person data
@@ -28,10 +28,10 @@ interface AssumedPersonStorage {
 
 /**
  * Active Person Context State
- * 
+ *
  * Provides the currently active person for API operations.
  * Supports both primary person (user's own) and assumed person (acting on behalf of).
- * 
+ *
  * _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.2, 2.3, 3.5, 7.2_
  */
 type ActivePersonContextState = {
@@ -76,12 +76,12 @@ const initialState: ActivePersonContextState = {
   isAssumeLoading: false,
 }
 
-const ActivePersonContext = createContext<ActivePersonContextState>(initialState)
+const ActivePersonContext =
+  createContext<ActivePersonContextState>(initialState)
 
 type ActivePersonProviderProps = {
   children: ReactNode
 }
-
 
 /**
  * Helper to read assumed person from sessionStorage
@@ -120,26 +120,26 @@ function clearStoredAssumedPerson(): void {
 
 /**
  * ActivePersonProvider
- * 
+ *
  * Provides the active person context to the application.
  * Fetches the user's primary person on mount and supports assuming other persons.
- * 
+ *
  * Usage:
  * ```tsx
  * // In main.tsx or layout
  * <ActivePersonProvider>
  *   <App />
  * </ActivePersonProvider>
- * 
+ *
  * // In components
  * const { activePerson, activePersonId, isAssuming, assumePerson, returnToPrimary } = useActivePersonContext()
  * ```
- * 
+ *
  * _Requirements: 2.2, 2.3, 3.5, 7.2_
  */
 export function ActivePersonProvider({ children }: ActivePersonProviderProps) {
   const queryClient = useQueryClient()
-  
+
   // State for assumed person ID (from sessionStorage)
   const [assumedPersonId, setAssumedPersonId] = useState<string | null>(() => {
     const stored = getStoredAssumedPerson()
@@ -160,7 +160,12 @@ export function ActivePersonProvider({ children }: ActivePersonProviderProps) {
         return person
       } catch (err) {
         // If 404, user doesn't have a person profile yet
-        if (err && typeof err === "object" && "status" in err && err.status === 404) {
+        if (
+          err &&
+          typeof err === "object" &&
+          "status" in err &&
+          err.status === 404
+        ) {
           return null
         }
         throw err
@@ -169,7 +174,12 @@ export function ActivePersonProvider({ children }: ActivePersonProviderProps) {
     enabled: !!localStorage.getItem("access_token"),
     staleTime: 5 * 60 * 1000,
     retry: (failureCount, error) => {
-      if (error && typeof error === "object" && "status" in error && error.status === 404) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "status" in error &&
+        error.status === 404
+      ) {
         return false
       }
       return failureCount < 3
@@ -185,10 +195,12 @@ export function ActivePersonProvider({ children }: ActivePersonProviderProps) {
     queryKey: ["assumedPerson", assumedPersonId],
     queryFn: async () => {
       if (!assumedPersonId) return null
-      
+
       // First validate we can still assume this person
       try {
-        const canAssumeResponse = await PersonService.canAssumePerson({ personId: assumedPersonId })
+        const canAssumeResponse = await PersonService.canAssumePerson({
+          personId: assumedPersonId,
+        })
         if (!canAssumeResponse.can_assume) {
           // Can't assume anymore, clear storage and return null
           clearStoredAssumedPerson()
@@ -201,10 +213,12 @@ export function ActivePersonProvider({ children }: ActivePersonProviderProps) {
         setAssumedPersonId(null)
         return null
       }
-      
+
       // Fetch the person details
       try {
-        const response = await PersonService.getPersonRelationshipsWithDetails({ personId: assumedPersonId })
+        const response = await PersonService.getPersonRelationshipsWithDetails({
+          personId: assumedPersonId,
+        })
         return response.selected_person as PersonPublic
       } catch {
         // Person not found or error, clear and fall back
@@ -216,7 +230,6 @@ export function ActivePersonProvider({ children }: ActivePersonProviderProps) {
     enabled: !!assumedPersonId && !!localStorage.getItem("access_token"),
     staleTime: 5 * 60 * 1000,
   })
-
 
   // Mutation for assuming a person
   const assumeMutation = useMutation({
@@ -230,30 +243,33 @@ export function ActivePersonProvider({ children }: ActivePersonProviderProps) {
    * Assume a person's role
    * _Requirements: 2.2, 2.3_
    */
-  const assumePerson = useCallback(async (personId: string, personName: string): Promise<boolean> => {
-    try {
-      const response = await assumeMutation.mutateAsync({ personId })
-      
-      if (!response.can_assume) {
-        console.warn(`Cannot assume person ${personId}: ${response.reason}`)
+  const assumePerson = useCallback(
+    async (personId: string, personName: string): Promise<boolean> => {
+      try {
+        const response = await assumeMutation.mutateAsync({ personId })
+
+        if (!response.can_assume) {
+          console.warn(`Cannot assume person ${personId}: ${response.reason}`)
+          return false
+        }
+
+        // Store in sessionStorage
+        storeAssumedPerson(personId, personName)
+
+        // Update state
+        setAssumedPersonId(personId)
+
+        // Invalidate assumed person query to refetch
+        queryClient.invalidateQueries({ queryKey: ["assumedPerson", personId] })
+
+        return true
+      } catch (error) {
+        console.error("Failed to assume person:", error)
         return false
       }
-      
-      // Store in sessionStorage
-      storeAssumedPerson(personId, personName)
-      
-      // Update state
-      setAssumedPersonId(personId)
-      
-      // Invalidate assumed person query to refetch
-      queryClient.invalidateQueries({ queryKey: ["assumedPerson", personId] })
-      
-      return true
-    } catch (error) {
-      console.error("Failed to assume person:", error)
-      return false
-    }
-  }, [assumeMutation, queryClient])
+    },
+    [assumeMutation, queryClient],
+  )
 
   /**
    * Return to primary person
@@ -283,11 +299,13 @@ export function ActivePersonProvider({ children }: ActivePersonProviderProps) {
       // Restore from storage
       setAssumedPersonId(stored.assumedPersonId)
     }
-  }, [])
+  }, [assumedPersonId])
 
   // Determine active person
   const isAssuming = !!assumedPersonId && !!assumedPerson
-  const activePerson = isAssuming ? (assumedPerson ?? null) : (primaryPerson ?? null)
+  const activePerson = isAssuming
+    ? (assumedPerson ?? null)
+    : (primaryPerson ?? null)
   const activePersonId = activePerson?.id ?? null
 
   const value: ActivePersonContextState = {
@@ -314,25 +332,25 @@ export function ActivePersonProvider({ children }: ActivePersonProviderProps) {
 
 /**
  * Hook to access the active person context
- * 
+ *
  * @throws Error if used outside of ActivePersonProvider
- * 
+ *
  * @example
  * ```tsx
  * function MyComponent() {
- *   const { 
- *     activePerson, 
- *     activePersonId, 
+ *   const {
+ *     activePerson,
+ *     activePersonId,
  *     isAssuming,
  *     primaryPerson,
  *     assumePerson,
- *     returnToPrimary 
+ *     returnToPrimary
  *   } = useActivePersonContext()
- *   
+ *
  *   if (isLoading) return <Spinner />
  *   if (error) return <Error message={error.message} />
  *   if (!activePerson) return <CreateProfilePrompt />
- *   
+ *
  *   return (
  *     <div>
  *       {isAssuming && <Banner>Acting as {activePerson.first_name}</Banner>}
@@ -347,7 +365,7 @@ export function useActivePersonContext() {
 
   if (context === undefined) {
     throw new Error(
-      "useActivePersonContext must be used within an ActivePersonProvider"
+      "useActivePersonContext must be used within an ActivePersonProvider",
     )
   }
 

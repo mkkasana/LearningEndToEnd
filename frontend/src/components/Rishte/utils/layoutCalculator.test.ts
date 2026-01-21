@@ -2,16 +2,16 @@ import { describe, expect, it } from "vitest"
 import type { GenerationInfo } from "../types"
 import {
   calculatePositions,
-  getGenerationY,
-  isSameGeneration,
-  isParentOf,
-  getSpouseXOffset,
   getEdgeHandles,
-  NODE_WIDTH,
-  NODE_HEIGHT,
+  getGenerationY,
+  getSpouseXOffset,
   HORIZONTAL_GAP,
-  VERTICAL_GAP,
+  isParentOf,
+  isSameGeneration,
+  NODE_HEIGHT,
+  NODE_WIDTH,
   SPOUSE_GAP,
+  VERTICAL_GAP,
 } from "./layoutCalculator"
 
 describe("layoutCalculator - Constants", () => {
@@ -80,11 +80,32 @@ describe("layoutCalculator - calculatePositions", () => {
     // sib1_son: (gen=2, xOffset=0)
     // son: (gen=2, xOffset=2)
     const generations = new Map<string, GenerationInfo>([
-      ["father", { personId: "father", generation: 0, xOffset: 0, isSpouse: false }],
-      ["sib1_self", { personId: "sib1_self", generation: 1, xOffset: 0, isSpouse: false }],
-      ["self", { personId: "self", generation: 1, xOffset: 1, isSpouse: false }],
-      ["spouse", { personId: "spouse", generation: 1, xOffset: 2, isSpouse: true, spouseOfId: "self" }],
-      ["sib1_son", { personId: "sib1_son", generation: 2, xOffset: 0, isSpouse: false }],
+      [
+        "father",
+        { personId: "father", generation: 0, xOffset: 0, isSpouse: false },
+      ],
+      [
+        "sib1_self",
+        { personId: "sib1_self", generation: 1, xOffset: 0, isSpouse: false },
+      ],
+      [
+        "self",
+        { personId: "self", generation: 1, xOffset: 1, isSpouse: false },
+      ],
+      [
+        "spouse",
+        {
+          personId: "spouse",
+          generation: 1,
+          xOffset: 2,
+          isSpouse: true,
+          spouseOfId: "self",
+        },
+      ],
+      [
+        "sib1_son",
+        { personId: "sib1_son", generation: 2, xOffset: 0, isSpouse: false },
+      ],
       ["son", { personId: "son", generation: 2, xOffset: 2, isSpouse: false }],
     ])
 

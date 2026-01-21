@@ -85,28 +85,33 @@ function hasActiveFilters(
   )
 }
 
-
 function SearchPage() {
   const navigate = useNavigate()
-  const { activePersonId, isLoading: isPersonLoading } = useActivePersonContext()
+  const { activePersonId, isLoading: isPersonLoading } =
+    useActivePersonContext()
 
   // Filter panel state
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(0)
 
   // Person details panel state
-  const [detailsPanelPersonId, setDetailsPanelPersonId] = useState<string | null>(null)
+  const [detailsPanelPersonId, setDetailsPanelPersonId] = useState<
+    string | null
+  >(null)
   const [isDetailsPanelOpen, setIsDetailsPanelOpen] = useState(false)
 
   // Default filters state (populated from user's address/religion)
-  const [defaultFilters, setDefaultFilters] = useState<SearchFilters | null>(null)
+  const [defaultFilters, setDefaultFilters] = useState<SearchFilters | null>(
+    null,
+  )
   const [filters, setFilters] = useState<SearchFilters | null>(null)
 
   // Fetch user's address for default filters
   // _Requirements: 2.1, 5.7_
   const { data: myAddresses, isLoading: isAddressLoading } = useQuery({
     queryKey: ["personAddresses", activePersonId],
-    queryFn: () => PersonService.getPersonAddresses({ personId: activePersonId! }),
+    queryFn: () =>
+      PersonService.getPersonAddresses({ personId: activePersonId! }),
     enabled: !!activePersonId,
   })
 
@@ -125,9 +130,10 @@ function SearchPage() {
     // Handle case where user may not have address or religion set up
     if (!isAddressLoading && !isReligionLoading && activePersonId) {
       // Get current address if available
-      const currentAddress = myAddresses && myAddresses.length > 0
-        ? (myAddresses.find((addr: any) => addr.is_current) || myAddresses[0])
-        : null
+      const currentAddress =
+        myAddresses && myAddresses.length > 0
+          ? myAddresses.find((addr: any) => addr.is_current) || myAddresses[0]
+          : null
 
       // Build default filters with safe null handling
       const newDefaultFilters: SearchFilters = {
@@ -138,15 +144,23 @@ function SearchPage() {
         localityId: currentAddress?.locality_id || undefined,
         religionId: myReligion?.religion_id || "",
         religionCategoryId: myReligion?.religion_category_id || "",
-        religionSubCategoryId: myReligion?.religion_sub_category_id || undefined,
+        religionSubCategoryId:
+          myReligion?.religion_sub_category_id || undefined,
       }
-      
+
       setDefaultFilters(newDefaultFilters)
       if (!filters) {
         setFilters(newDefaultFilters)
       }
     }
-  }, [myAddresses, myReligion, isAddressLoading, isReligionLoading, activePersonId])
+  }, [
+    myAddresses,
+    myReligion,
+    isAddressLoading,
+    isReligionLoading,
+    activePersonId,
+    filters,
+  ])
 
   // Search query using the hook
   const searchRequest = filters
@@ -327,17 +341,20 @@ function SearchPage() {
 
       {/* Empty state */}
       {/* _Requirements: 9.4_ */}
-      {!isSearchLoading && !isFetching && !searchError && results.length === 0 && (
-        <div className="flex flex-col items-center justify-center text-center py-12">
-          <div className="rounded-full bg-muted p-4 mb-4">
-            <Search className="h-8 w-8 text-muted-foreground" />
+      {!isSearchLoading &&
+        !isFetching &&
+        !searchError &&
+        results.length === 0 && (
+          <div className="flex flex-col items-center justify-center text-center py-12">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <Search className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold">No results found</h3>
+            <p className="text-muted-foreground max-w-md">
+              Try adjusting your filters to find more persons
+            </p>
           </div>
-          <h3 className="text-lg font-semibold">No results found</h3>
-          <p className="text-muted-foreground max-w-md">
-            Try adjusting your filters to find more persons
-          </p>
-        </div>
-      )}
+        )}
 
       {/* Results grid */}
       {/* _Requirements: 2.5, 9.1_ */}
@@ -362,7 +379,11 @@ function SearchPage() {
             <PaginationItem>
               <PaginationPrevious
                 onClick={() => hasPrevPage && setCurrentPage((p) => p - 1)}
-                className={!hasPrevPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                className={
+                  !hasPrevPage
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-pointer"
+                }
               />
             </PaginationItem>
             <PaginationItem>
@@ -373,7 +394,11 @@ function SearchPage() {
             <PaginationItem>
               <PaginationNext
                 onClick={() => hasNextPage && setCurrentPage((p) => p + 1)}
-                className={!hasNextPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                className={
+                  !hasNextPage
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-pointer"
+                }
               />
             </PaginationItem>
           </PaginationContent>

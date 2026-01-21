@@ -1,15 +1,16 @@
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { AlertCircle, GitBranch, Loader2, Search } from "lucide-react"
-import { useState, useCallback, useMemo } from "react"
-import { LineagePathService, type LineagePathResponse } from "@/client"
+import { useCallback, useMemo, useState } from "react"
+import { type LineagePathResponse, LineagePathService } from "@/client"
+import { ActivePersonIndicator } from "@/components/Family/ActivePersonIndicator"
 import {
-  PathSummary,
-  RishteGraph,
-  transformApiResponse,
   buildPathArray,
   generatePathSummary,
   getPersonCount,
+  PathSummary,
+  RishteGraph,
+  transformApiResponse,
 } from "@/components/Rishte"
 import { RishtePersonButton } from "@/components/Rishte/RishtePersonButton"
 import { RishtePersonSearchDialog } from "@/components/Rishte/RishtePersonSearchDialog"
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/_layout/rishte" as any)({
 
 /**
  * RishtePage - Main page for visualizing relationship paths between two persons
- * 
+ *
  * Requirements:
  * - 2.1: Display two Person_Buttons labeled "Select Person A" and "Select Person B"
  * - 7.1: Find button disabled when Person A not selected
@@ -41,15 +42,21 @@ export const Route = createFileRoute("/_layout/rishte" as any)({
  */
 function RishtePage() {
   // Person selection state (using SelectedPerson objects)
-  const [selectedPersonA, setSelectedPersonA] = useState<SelectedPerson | null>(null)
-  const [selectedPersonB, setSelectedPersonB] = useState<SelectedPerson | null>(null)
+  const [selectedPersonA, setSelectedPersonA] = useState<SelectedPerson | null>(
+    null,
+  )
+  const [selectedPersonB, setSelectedPersonB] = useState<SelectedPerson | null>(
+    null,
+  )
 
   // Wizard dialog state
   const [wizardOpen, setWizardOpen] = useState(false)
   const [wizardTarget, setWizardTarget] = useState<"A" | "B">("A")
 
   // API response state
-  const [apiResponse, setApiResponse] = useState<LineagePathResponse | null>(null)
+  const [apiResponse, setApiResponse] = useState<LineagePathResponse | null>(
+    null,
+  )
 
   // Find relationship mutation
   const findRelationshipMutation = useMutation({
@@ -105,18 +112,22 @@ function RishtePage() {
   }, [])
 
   // Handle person selection from wizard
-  const handlePersonSelect = useCallback((person: SelectedPerson) => {
-    if (wizardTarget === "A") {
-      setSelectedPersonA(person)
-    } else {
-      setSelectedPersonB(person)
-    }
-    setApiResponse(null)
-  }, [wizardTarget])
+  const handlePersonSelect = useCallback(
+    (person: SelectedPerson) => {
+      if (wizardTarget === "A") {
+        setSelectedPersonA(person)
+      } else {
+        setSelectedPersonB(person)
+      }
+      setApiResponse(null)
+    },
+    [wizardTarget],
+  )
 
   // Check if Find button should be enabled
   // Requirements: 7.1, 7.2, 7.3 - Button enabled only when both persons are selected
-  const isFindButtonEnabled = selectedPersonA !== null && selectedPersonB !== null
+  const isFindButtonEnabled =
+    selectedPersonA !== null && selectedPersonB !== null
 
   // Get person IDs for graph transformation
   const personAId = selectedPersonA?.personId ?? null
@@ -149,13 +160,18 @@ function RishtePage() {
 
   return (
     <div className="flex flex-col gap-4 sm:gap-6 h-full">
+      {/* Active Person Indicator - Shows when assuming another person's role */}
+      <ActivePersonIndicator />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
         <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
           <GitBranch className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Rishte</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+            Rishte
+          </h1>
           <p className="text-sm sm:text-base text-muted-foreground">
             Discover how two people are connected through their family lineage
           </p>
@@ -180,7 +196,7 @@ function RishtePage() {
               onClear={handleClearPersonB}
             />
           </div>
-          
+
           <div className="flex justify-center">
             <Button
               onClick={handleFindRelationship}
@@ -227,7 +243,9 @@ function RishtePage() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>
-            {error instanceof Error ? error.message : "Failed to find relationship. Please try again."}
+            {error instanceof Error
+              ? error.message
+              : "Failed to find relationship. Please try again."}
           </AlertDescription>
         </Alert>
       )}
@@ -238,7 +256,8 @@ function RishtePage() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>No Connection Found</AlertTitle>
           <AlertDescription>
-            {apiResponse.message || "These two persons do not appear to be connected through family relationships."}
+            {apiResponse.message ||
+              "These two persons do not appear to be connected through family relationships."}
           </AlertDescription>
         </Alert>
       )}
@@ -267,9 +286,12 @@ function RishtePage() {
           <div className="rounded-full bg-muted p-3 sm:p-4 mb-3 sm:mb-4">
             <GitBranch className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
           </div>
-          <h3 className="text-base sm:text-lg font-semibold">Find Family Connections</h3>
+          <h3 className="text-base sm:text-lg font-semibold">
+            Find Family Connections
+          </h3>
           <p className="text-sm sm:text-base text-muted-foreground max-w-md">
-            Select two persons above and click "Find Relationship" to discover how they are connected through their family lineage.
+            Select two persons above and click "Find Relationship" to discover
+            how they are connected through their family lineage.
           </p>
         </div>
       )}

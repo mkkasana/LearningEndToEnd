@@ -127,14 +127,16 @@ export function AddAddressDialog({
   // _Requirements: 7.2_
   const addAddressMutation = useMutation({
     mutationFn: (data: PersonAddressCreate) =>
-      PersonService.createPersonAddress({ 
-        personId: activePersonId!, 
-        requestBody: data 
+      PersonService.createPersonAddress({
+        personId: activePersonId!,
+        requestBody: data,
       }),
     onSuccess: () => {
       showSuccessToast("Address added successfully!")
       queryClient.invalidateQueries({ queryKey: ["profileCompletion"] })
-      queryClient.invalidateQueries({ queryKey: ["personAddresses", activePersonId] })
+      queryClient.invalidateQueries({
+        queryKey: ["personAddresses", activePersonId],
+      })
       onOpenChange(false)
       form.reset()
       if (onSuccess) onSuccess()

@@ -14,11 +14,11 @@ function formatDisplayName(person: SelectedPerson): string {
 
 /**
  * RishtePersonButton component for selecting Person A or Person B
- * 
+ *
  * Displays either:
  * - A "Select Person X" button with UserPlus icon when no person is selected
  * - A card showing the selected person's name with a clear button when selected
- * 
+ *
  * Requirements:
  * - 2.1: Display two Person_Buttons labeled "Select Person A" and "Select Person B"
  * - 2.2: Display "Select Person A/B" with user-plus icon when no person selected
@@ -59,7 +59,7 @@ export const RishtePersonButton = memo(function RishtePersonButton({
         className={cn(
           "h-auto min-h-[80px] w-full flex flex-col gap-2 py-4",
           "border-2 border-dashed hover:border-solid",
-          getBorderClass()
+          getBorderClass(),
         )}
         onClick={onSelect}
         aria-label={buttonLabel}
@@ -76,7 +76,7 @@ export const RishtePersonButton = memo(function RishtePersonButton({
       className={cn(
         "relative min-h-[80px] w-full p-4",
         "border-2 transition-all duration-200",
-        getBorderClass()
+        getBorderClass(),
       )}
     >
       {/* Clear button */}
@@ -99,7 +99,7 @@ export const RishtePersonButton = memo(function RishtePersonButton({
         <span
           className={cn(
             "text-xs font-medium px-2 py-0.5 rounded-full w-fit",
-            getBadgeClass()
+            getBadgeClass(),
           )}
         >
           Person {label}

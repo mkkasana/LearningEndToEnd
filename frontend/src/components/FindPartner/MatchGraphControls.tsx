@@ -1,7 +1,7 @@
 /**
  * MatchGraphControls Component
  * Provides zoom and fit view controls for the Match Graph
- * 
+ *
  * Requirements:
  * - 8.1: Support zooming in and out
  * - 8.2: Support panning/dragging (handled by React Flow)

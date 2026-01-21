@@ -1,8 +1,5 @@
-import { useQuery, keepPreviousData } from "@tanstack/react-query"
-import type {
-  PersonSearchFilterRequest,
-  PersonSearchResponse,
-} from "@/client"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
+import type { PersonSearchFilterRequest, PersonSearchResponse } from "@/client"
 import { PersonSearchService } from "@/client"
 
 export interface UsePersonSearchParams {
@@ -22,7 +19,10 @@ export interface UsePersonSearchParams {
  * @param params - Search parameters including filters (can be null)
  * @returns Search results with loading and error states
  */
-export function usePersonSearch({ filters, enabled = true }: UsePersonSearchParams) {
+export function usePersonSearch({
+  filters,
+  enabled = true,
+}: UsePersonSearchParams) {
   // Safely access filter properties with null checks
   const query = useQuery<PersonSearchResponse>({
     queryKey: [

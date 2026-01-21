@@ -17,14 +17,14 @@ export interface TagItem {
  * Contains all filter values for the partner search
  */
 export interface PartnerFilters {
-  genderId: string                    // Single select gender ID
-  birthYearFrom: number | undefined   // Minimum birth year
-  birthYearTo: number | undefined     // Maximum birth year
-  includeReligions: TagItem[]         // Multi-select religions to include
-  includeCategories: TagItem[]        // Multi-select categories to include
-  includeSubCategories: TagItem[]     // Multi-select sub-categories to include
-  excludeSubCategories: TagItem[]     // Multi-select sub-categories to exclude (gotras)
-  searchDepth: number                 // BFS traversal depth (1-50)
+  genderId: string // Single select gender ID
+  birthYearFrom: number | undefined // Minimum birth year
+  birthYearTo: number | undefined // Maximum birth year
+  includeReligions: TagItem[] // Multi-select religions to include
+  includeCategories: TagItem[] // Multi-select categories to include
+  includeSubCategories: TagItem[] // Multi-select sub-categories to include
+  excludeSubCategories: TagItem[] // Multi-select sub-categories to exclude (gotras)
+  searchDepth: number // BFS traversal depth (1-50)
 }
 
 /**
@@ -102,7 +102,7 @@ export interface PartnerResultsDisplayProps {
 // Requirements: 1.1, 6.1-6.5, 7.1-7.5
 // ============================================
 
-import type { Node, Edge } from "@xyflow/react"
+import type { Edge, Node } from "@xyflow/react"
 
 /**
  * Match item for dropdown display
@@ -127,8 +127,8 @@ export interface MatchPersonNodeData extends Record<string, unknown> {
   lastName: string
   birthYear: number | null
   deathYear: number | null
-  isSeeker: boolean              // Green border + "Seeker" label
-  isMatch: boolean               // Blue border + "Match" label
+  isSeeker: boolean // Green border + "Seeker" label
+  isMatch: boolean // Blue border + "Match" label
 }
 
 /**
@@ -137,15 +137,15 @@ export interface MatchPersonNodeData extends Record<string, unknown> {
  * Extends Record<string, unknown> for React Flow compatibility
  */
 export interface MatchRelationshipEdgeData extends Record<string, unknown> {
-  relationship: string           // "Son", "Father", "Spouse", etc.
-  isSpouseEdge: boolean         // Horizontal styling
+  relationship: string // "Son", "Father", "Spouse", etc.
+  isSpouseEdge: boolean // Horizontal styling
 }
 
 /**
  * React Flow node for match graph
  * Custom node type for displaying persons in the path
  */
-export type MatchNode = Node<MatchPersonNodeData, 'matchPersonNode'>
+export type MatchNode = Node<MatchPersonNodeData, "matchPersonNode">
 
 /**
  * React Flow edge for match graph

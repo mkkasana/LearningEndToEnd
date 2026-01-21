@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest"
 import type { PersonNode as ApiPersonNode } from "@/client"
 import {
-  buildPathArray,
   assignGenerations,
+  buildPathArray,
+  generatePathSummary,
+  getPersonCount,
   isChildRelationship,
   isParentRelationship,
   isSpouseRelationship,
-  generatePathSummary,
-  getPersonCount,
 } from "./pathTransformer"
 
 // Helper to create a mock PersonNode
@@ -17,7 +17,7 @@ function createMockPerson(
   fromPersonId: string | null,
   fromRelationship: string | null,
   toPersonId: string | null,
-  toRelationship: string | null
+  toRelationship: string | null,
 ): ApiPersonNode {
   return {
     person_id: id,
@@ -139,19 +139,59 @@ describe("pathTransformer - buildPathArray", () => {
   it("should handle the example path: sib1_son → sib1_self → father → self → spouse → son", () => {
     // Create the example graph from the user's test case
     const graph: Record<string, ApiPersonNode> = {
-      "sib1_son": createMockPerson("sib1_son", "sib1_son", null, null, "sib1_self", "Mother"),
-      "sib1_self": createMockPerson("sib1_self", "sib1_self", "sib1_son", "Son", "father", "Father"),
-      "father": createMockPerson("father", "father", "sib1_self", "Daughter", "self", "Son"),
-      "self": createMockPerson("self", "self", "father", "Father", "spouse", "Spouse"),
-      "spouse": createMockPerson("spouse", "spouse", "self", "Spouse", "son", "Son"),
-      "son": createMockPerson("son", "son", "spouse", "Mother", null, null),
+      sib1_son: createMockPerson(
+        "sib1_son",
+        "sib1_son",
+        null,
+        null,
+        "sib1_self",
+        "Mother",
+      ),
+      sib1_self: createMockPerson(
+        "sib1_self",
+        "sib1_self",
+        "sib1_son",
+        "Son",
+        "father",
+        "Father",
+      ),
+      father: createMockPerson(
+        "father",
+        "father",
+        "sib1_self",
+        "Daughter",
+        "self",
+        "Son",
+      ),
+      self: createMockPerson(
+        "self",
+        "self",
+        "father",
+        "Father",
+        "spouse",
+        "Spouse",
+      ),
+      spouse: createMockPerson(
+        "spouse",
+        "spouse",
+        "self",
+        "Spouse",
+        "son",
+        "Son",
+      ),
+      son: createMockPerson("son", "son", "spouse", "Mother", null, null),
     }
 
     const result = buildPathArray(graph, "sib1_son")
 
     expect(result).toHaveLength(6)
-    expect(result.map(p => p.first_name)).toEqual([
-      "sib1_son", "sib1_self", "father", "self", "spouse", "son"
+    expect(result.map((p) => p.first_name)).toEqual([
+      "sib1_son",
+      "sib1_self",
+      "father",
+      "self",
+      "spouse",
+      "son",
     ])
   })
 
@@ -174,7 +214,7 @@ describe("pathTransformer - buildPathArray", () => {
 describe("pathTransformer - assignGenerations", () => {
   it("should assign generation 0 to single person path", () => {
     const path: ApiPersonNode[] = [
-      createMockPerson("p1", "Person1", null, null, null, null)
+      createMockPerson("p1", "Person1", null, null, null, null),
     ]
 
     const result = assignGenerations(path)
@@ -217,16 +257,39 @@ describe("pathTransformer - assignGenerations", () => {
 
     const result = assignGenerations(path)
 
-    expect(result.get("person")?.generation).toBe(result.get("spouse")?.generation)
+    expect(result.get("person")?.generation).toBe(
+      result.get("spouse")?.generation,
+    )
     expect(result.get("spouse")?.isSpouse).toBe(true)
     expect(result.get("spouse")?.spouseOfId).toBe("person")
   })
 
   it("should correctly assign generations for complex path: sib1_son → sib1_self → father → self → spouse → son", () => {
     const path: ApiPersonNode[] = [
-      createMockPerson("sib1_son", "sib1_son", null, null, "sib1_self", "Mother"),
-      createMockPerson("sib1_self", "sib1_self", "sib1_son", "Son", "father", "Father"),
-      createMockPerson("father", "father", "sib1_self", "Daughter", "self", "Son"),
+      createMockPerson(
+        "sib1_son",
+        "sib1_son",
+        null,
+        null,
+        "sib1_self",
+        "Mother",
+      ),
+      createMockPerson(
+        "sib1_self",
+        "sib1_self",
+        "sib1_son",
+        "Son",
+        "father",
+        "Father",
+      ),
+      createMockPerson(
+        "father",
+        "father",
+        "sib1_self",
+        "Daughter",
+        "self",
+        "Son",
+      ),
       createMockPerson("self", "self", "father", "Father", "spouse", "Spouse"),
       createMockPerson("spouse", "spouse", "self", "Spouse", "son", "Son"),
       createMockPerson("son", "son", "spouse", "Mother", null, null),
@@ -248,9 +311,30 @@ describe("pathTransformer - assignGenerations", () => {
 
   it("should correctly assign xOffset to avoid overlaps", () => {
     const path: ApiPersonNode[] = [
-      createMockPerson("sib1_son", "sib1_son", null, null, "sib1_self", "Mother"),
-      createMockPerson("sib1_self", "sib1_self", "sib1_son", "Son", "father", "Father"),
-      createMockPerson("father", "father", "sib1_self", "Daughter", "self", "Son"),
+      createMockPerson(
+        "sib1_son",
+        "sib1_son",
+        null,
+        null,
+        "sib1_self",
+        "Mother",
+      ),
+      createMockPerson(
+        "sib1_self",
+        "sib1_self",
+        "sib1_son",
+        "Son",
+        "father",
+        "Father",
+      ),
+      createMockPerson(
+        "father",
+        "father",
+        "sib1_self",
+        "Daughter",
+        "self",
+        "Son",
+      ),
       createMockPerson("self", "self", "father", "Father", "spouse", "Spouse"),
       createMockPerson("spouse", "spouse", "self", "Spouse", "son", "Son"),
       createMockPerson("son", "son", "spouse", "Mother", null, null),
@@ -276,9 +360,30 @@ describe("pathTransformer - assignGenerations", () => {
       createMockPerson("son", "son", null, null, "spouse", "Mother"),
       createMockPerson("spouse", "spouse", "son", "Son", "self", "Spouse"),
       createMockPerson("self", "self", "spouse", "Spouse", "father", "Father"),
-      createMockPerson("father", "father", "self", "Son", "sib1_self", "Daughter"),
-      createMockPerson("sib1_self", "sib1_self", "father", "Father", "sib1_son", "Son"),
-      createMockPerson("sib1_son", "sib1_son", "sib1_self", "Mother", null, null),
+      createMockPerson(
+        "father",
+        "father",
+        "self",
+        "Son",
+        "sib1_self",
+        "Daughter",
+      ),
+      createMockPerson(
+        "sib1_self",
+        "sib1_self",
+        "father",
+        "Father",
+        "sib1_son",
+        "Son",
+      ),
+      createMockPerson(
+        "sib1_son",
+        "sib1_son",
+        "sib1_self",
+        "Mother",
+        null,
+        null,
+      ),
     ]
 
     const result = assignGenerations(path)
@@ -296,7 +401,9 @@ describe("pathTransformer - assignGenerations", () => {
 
     // Verify spouse updates genToXAxis (the bug fix)
     // self and sib1_self should have different xOffsets
-    expect(result.get("self")?.xOffset).not.toBe(result.get("sib1_self")?.xOffset)
+    expect(result.get("self")?.xOffset).not.toBe(
+      result.get("sib1_self")?.xOffset,
+    )
   })
 })
 
@@ -307,7 +414,7 @@ describe("pathTransformer - generatePathSummary", () => {
 
   it("should return single name for single person path", () => {
     const path: ApiPersonNode[] = [
-      createMockPerson("p1", "John", null, null, null, null)
+      createMockPerson("p1", "John", null, null, null, null),
     ]
     expect(generatePathSummary(path)).toBe("John")
   })

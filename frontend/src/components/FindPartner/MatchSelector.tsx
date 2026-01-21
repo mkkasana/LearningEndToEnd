@@ -10,13 +10,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import type { MatchSelectorProps } from './types'
+} from "@/components/ui/select"
+import type { MatchSelectorProps } from "./types"
 
 /**
  * MatchSelector displays a dropdown to select a match from the list
  * Shows total matches count and allows selection of individual matches
- * 
+ *
  * Requirements:
  * - 1.1: Display Match_Selector dropdown when matches are returned
  * - 1.2: Display total number of matches found
@@ -34,7 +34,7 @@ export function MatchSelector({
   return (
     <div className="flex items-center gap-4">
       <span className="text-sm text-muted-foreground">
-        {totalMatches} {totalMatches === 1 ? 'match' : 'matches'} found
+        {totalMatches} {totalMatches === 1 ? "match" : "matches"} found
       </span>
 
       <Select
@@ -47,7 +47,7 @@ export function MatchSelector({
         <SelectContent>
           {matches.map((match) => (
             <SelectItem key={match.personId} value={match.personId}>
-              {match.firstName} {match.lastName} ({match.birthYear || 'N/A'})
+              {match.firstName} {match.lastName} ({match.birthYear || "N/A"})
             </SelectItem>
           ))}
         </SelectContent>

@@ -1,19 +1,19 @@
+import type { PersonNode as ApiPersonNode, LineagePathResponse } from "@/client"
 import type {
   GenerationInfo,
-  RishteNode,
   RishteEdge,
+  RishteNode,
   TransformedPath,
 } from "../types"
 import { calculatePositions, getEdgeHandles } from "./layoutCalculator"
-import type { LineagePathResponse, PersonNode as ApiPersonNode } from "@/client"
 
 // Re-export layout constants for convenience
 export {
-  NODE_WIDTH,
-  NODE_HEIGHT,
   HORIZONTAL_GAP,
-  VERTICAL_GAP,
+  NODE_HEIGHT,
+  NODE_WIDTH,
   SPOUSE_GAP,
+  VERTICAL_GAP,
 } from "./layoutCalculator"
 
 /**
@@ -43,7 +43,7 @@ export function isSpouseRelationship(rel: string): boolean {
  */
 export function buildPathArray(
   graph: Record<string, ApiPersonNode>,
-  personAId: string
+  personAId: string,
 ): ApiPersonNode[] {
   const startNode = graph[personAId]
 
@@ -58,7 +58,7 @@ export function buildPathArray(
   while (current && !visited.has(current.person_id)) {
     visited.add(current.person_id)
     path.push(current)
-    if (current.to_person && current.to_person.person_id) {
+    if (current.to_person?.person_id) {
       current = graph[current.to_person.person_id]
     } else {
       current = undefined
@@ -68,14 +68,13 @@ export function buildPathArray(
   return path
 }
 
-
 /**
  * Assign generation levels and X-axis positions to each person in the path
  * Generation 0 is the oldest, increases downward
  * xOffset is calculated to keep related nodes close and avoid overlaps
  */
 export function assignGenerations(
-  path: ApiPersonNode[]
+  path: ApiPersonNode[],
 ): Map<string, GenerationInfo> {
   const generations = new Map<string, GenerationInfo>()
   const generationToXAxis = new Map<number, number>() // Track max X per generation
@@ -101,7 +100,10 @@ export function assignGenerations(
 
     // Calculate X-axis position
     if (relationship) {
-      if (isChildRelationship(relationship) || isParentRelationship(relationship)) {
+      if (
+        isChildRelationship(relationship) ||
+        isParentRelationship(relationship)
+      ) {
         // Check if this generation already has nodes at or beyond currentXAxis
         const genXAxis = generationToXAxis.get(currentGen) ?? -1
         if (genXAxis >= currentXAxis) {
@@ -126,7 +128,7 @@ export function assignGenerations(
     }
 
     const isSpouse = isSpouseRelationship(relationship || "")
-    
+
     generations.set(node.person_id, {
       personId: node.person_id,
       generation: currentGen,
@@ -147,7 +149,6 @@ export function assignGenerations(
   return generations
 }
 
-
 /**
  * Create React Flow nodes from path data
  */
@@ -155,7 +156,7 @@ function createNodes(
   path: ApiPersonNode[],
   positions: Map<string, { x: number; y: number }>,
   personAId: string,
-  personBId: string
+  personBId: string,
 ): RishteNode[] {
   return path.map((person) => ({
     id: person.person_id,
@@ -178,7 +179,7 @@ function createNodes(
  */
 function createEdges(
   path: ApiPersonNode[],
-  positions: Map<string, { x: number; y: number }>
+  positions: Map<string, { x: number; y: number }>,
 ): RishteEdge[] {
   const edges: RishteEdge[] = []
 
@@ -218,10 +219,10 @@ function createEdges(
 export function transformApiResponse(
   response: LineagePathResponse,
   personAId: string,
-  personBId: string
+  personBId: string,
 ): TransformedPath {
   const graph = response.graph || {}
-  
+
   if (!response.connection_found || Object.keys(graph).length === 0) {
     return { nodes: [], edges: [] }
   }

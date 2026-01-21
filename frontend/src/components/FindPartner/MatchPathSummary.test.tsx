@@ -1,14 +1,14 @@
 /**
  * Property-Based Tests for MatchPathSummary Component
  * Feature: partner-match-visualizer
- * 
+ *
  * Property 3: Path Summary Correctness
  * Validates: Requirements 4.1, 4.2, 4.3
  */
 
+import { render, screen } from "@testing-library/react"
 import * as fc from "fast-check"
 import { describe, expect, it } from "vitest"
-import { render, screen } from "@testing-library/react"
 import { MatchPathSummary } from "./MatchPathSummary"
 
 // ============================================
@@ -36,7 +36,7 @@ describe("MatchPathSummary - Property-Based Tests", () => {
           }),
           (pathNames) => {
             const { container } = render(
-              <MatchPathSummary pathNames={pathNames} />
+              <MatchPathSummary pathNames={pathNames} />,
             )
 
             const text = container.textContent || ""
@@ -49,9 +49,9 @@ describe("MatchPathSummary - Property-Based Tests", () => {
             // Should have exactly N-1 arrow separators
             const arrowCount = (text.match(/→/g) || []).length
             expect(arrowCount).toBe(pathNames.length - 1)
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -64,7 +64,7 @@ describe("MatchPathSummary - Property-Based Tests", () => {
           }),
           (pathNames) => {
             const { container } = render(
-              <MatchPathSummary pathNames={pathNames} />
+              <MatchPathSummary pathNames={pathNames} />,
             )
 
             const text = container.textContent || ""
@@ -76,9 +76,9 @@ describe("MatchPathSummary - Property-Based Tests", () => {
               expect(currentIndex).toBeGreaterThan(lastIndex)
               lastIndex = currentIndex
             }
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -96,7 +96,7 @@ describe("MatchPathSummary - Property-Based Tests", () => {
             const pathNames = [seekerName, ...middleNames, matchName]
 
             const { container } = render(
-              <MatchPathSummary pathNames={pathNames} />
+              <MatchPathSummary pathNames={pathNames} />,
             )
 
             const text = container.textContent || ""
@@ -107,9 +107,9 @@ describe("MatchPathSummary - Property-Based Tests", () => {
 
             // Last name in path should be match
             expect(pathPart.endsWith(matchName)).toBe(true)
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
   })

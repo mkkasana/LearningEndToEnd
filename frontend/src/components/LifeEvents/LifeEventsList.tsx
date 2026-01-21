@@ -13,7 +13,10 @@ interface LifeEventsListProps {
  * @param events - Array of life events to display
  * @param compact - Whether to use compact styling (for side panels)
  */
-export function LifeEventsList({ events, compact = false }: LifeEventsListProps) {
+export function LifeEventsList({
+  events,
+  compact = false,
+}: LifeEventsListProps) {
   return (
     <div className={compact ? "space-y-3" : "space-y-4"}>
       {events.map((event) => (

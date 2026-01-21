@@ -3155,9 +3155,33 @@ export const PersonReligionCreateSchema = {
 
 export const PersonReligionDetailsSchema = {
     properties: {
+        religion_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Religion Id'
+        },
         religion_name: {
             type: 'string',
             title: 'Religion Name'
+        },
+        category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Id'
         },
         category_name: {
             anyOf: [
@@ -3169,6 +3193,18 @@ export const PersonReligionDetailsSchema = {
                 }
             ],
             title: 'Category Name'
+        },
+        sub_category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub Category Id'
         },
         sub_category_name: {
             anyOf: [
@@ -3185,7 +3221,7 @@ export const PersonReligionDetailsSchema = {
     type: 'object',
     required: ['religion_name'],
     title: 'PersonReligionDetails',
-    description: 'Religion details with resolved names.'
+    description: 'Religion details with resolved names and IDs.'
 } as const;
 
 export const PersonReligionPublicSchema = {

@@ -42,7 +42,7 @@ export function extractBirthYear(dateOfBirth: string): number {
 /**
  * PersonSearchCard component displays a person's summary in search results
  * Requirements: 9.2 - Display full name, birth year, View and Explore buttons
- * 
+ *
  * Accessibility: Supports keyboard navigation and ARIA labels
  * Performance: Memoized to prevent unnecessary re-renders
  */

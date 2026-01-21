@@ -20,18 +20,19 @@ import type {
   GenderMetadata,
   LineageSubCategories,
   PartnerFilters,
-  TagItem,
 } from "../types"
 import { buildDefaultFilters } from "../utils/defaultsCalculator"
 
 /**
  * Extract birth year from date string
  */
-function extractBirthYear(dateOfBirth: string | null | undefined): number | null {
+function extractBirthYear(
+  dateOfBirth: string | null | undefined,
+): number | null {
   if (!dateOfBirth) return null
   try {
     const year = new Date(dateOfBirth).getFullYear()
-    return isNaN(year) ? null : year
+    return Number.isNaN(year) ? null : year
   } catch {
     return null
   }
@@ -49,65 +50,33 @@ export function usePartnerDefaults() {
   const { activePersonId, activePerson } = useActivePersonContext()
 
   // Fetch genders for opposite gender calculation
-  const {
-    data: genders,
-    isLoading: isGendersLoading,
-  } = useQuery({
+  const { data: genders, isLoading: isGendersLoading } = useQuery({
     queryKey: ["genders"],
     queryFn: () => PersonMetadataService.getGenders(),
   })
 
-  // Fetch active person's complete details (includes religion with names)
-  const {
-    data: personDetails,
-    isLoading: isPersonDetailsLoading,
-  } = useQuery({
+  // Fetch active person's complete details (includes religion with names and IDs)
+  const { data: personDetails, isLoading: isPersonDetailsLoading } = useQuery({
     queryKey: ["personCompleteDetails", activePersonId],
     queryFn: () =>
       PersonService.getPersonCompleteDetails({ personId: activePersonId! }),
     enabled: !!activePersonId,
   })
 
-  // Fetch active person's religion (for IDs)
-  const {
-    data: personReligion,
-    isLoading: isReligionLoading,
-  } = useQuery({
-    queryKey: ["personReligion", activePersonId],
-    queryFn: async () => {
-      if (!activePersonId) return null
-      try {
-        // Try to get religion for the active person
-        // Note: This may need adjustment based on actual API
-        return null // Will use personDetails.religion instead
-      } catch {
-        return null
-      }
-    },
-    enabled: !!activePersonId,
-  })
-
   // Fetch parents to find mother (using person_id based endpoint)
-  const {
-    data: parents,
-    isLoading: isParentsLoading,
-  } = useQuery({
+  const { data: parents, isLoading: isParentsLoading } = useQuery({
     queryKey: ["parentsByPersonId", activePersonId],
-    queryFn: () => RelativesService.getParentsByPersonId({ personId: activePersonId! }),
+    queryFn: () =>
+      RelativesService.getParentsByPersonId({ personId: activePersonId! }),
     enabled: !!activePersonId,
   })
 
   // Find mother from parents (relationship_type === "MOTHER")
-  const motherRelation = parents?.find(
-    (p) => p.relationship_type === "MOTHER"
-  )
+  const motherRelation = parents?.find((p) => p.relationship_type === "MOTHER")
   const motherId = motherRelation?.related_person_id
 
   // Fetch mother's complete details
-  const {
-    data: motherDetails,
-    isLoading: isMotherDetailsLoading,
-  } = useQuery({
+  const { data: motherDetails, isLoading: isMotherDetailsLoading } = useQuery({
     queryKey: ["personCompleteDetails", motherId],
     queryFn: () =>
       PersonService.getPersonCompleteDetails({ personId: motherId! }),
@@ -115,37 +84,30 @@ export function usePartnerDefaults() {
   })
 
   // Fetch mother's parents to find maternal grandmother (using person_id based endpoint)
-  const {
-    data: motherParents,
-    isLoading: isMotherParentsLoading,
-  } = useQuery({
+  const { data: motherParents, isLoading: isMotherParentsLoading } = useQuery({
     queryKey: ["parentsByPersonId", motherId],
-    queryFn: () => RelativesService.getParentsByPersonId({ personId: motherId! }),
+    queryFn: () =>
+      RelativesService.getParentsByPersonId({ personId: motherId! }),
     enabled: !!motherId,
   })
 
   // Find maternal grandmother (mother's mother)
   const grandmotherRelation = motherParents?.find(
-    (p) => p.relationship_type === "MOTHER"
+    (p) => p.relationship_type === "MOTHER",
   )
   const grandmotherId = grandmotherRelation?.related_person_id
 
   // Fetch grandmother's complete details
-  const {
-    data: grandmotherDetails,
-    isLoading: isGrandmotherDetailsLoading,
-  } = useQuery({
-    queryKey: ["personCompleteDetails", grandmotherId],
-    queryFn: () =>
-      PersonService.getPersonCompleteDetails({ personId: grandmotherId! }),
-    enabled: !!grandmotherId,
-  })
+  const { data: grandmotherDetails, isLoading: isGrandmotherDetailsLoading } =
+    useQuery({
+      queryKey: ["personCompleteDetails", grandmotherId],
+      queryFn: () =>
+        PersonService.getPersonCompleteDetails({ personId: grandmotherId! }),
+      enabled: !!grandmotherId,
+    })
 
-  // Fetch religion metadata to get IDs from names
-  const {
-    data: religions,
-    isLoading: isReligionsLoading,
-  } = useQuery({
+  // Fetch religion metadata to get IDs from names (fallback)
+  const { data: religions, isLoading: isReligionsLoading } = useQuery({
     queryKey: ["religions"],
     queryFn: () => ReligionMetadataService.getReligions(),
   })
@@ -160,56 +122,45 @@ export function usePartnerDefaults() {
     (!!grandmotherId && isGrandmotherDetailsLoading) ||
     isReligionsLoading
 
-  // Build active person defaults
+  // Build active person defaults - now using IDs directly from API
   const activePersonDefaults: ActivePersonDefaults = {
     genderId: activePerson?.gender_id || null,
     birthYear: extractBirthYear(activePerson?.date_of_birth),
-    religionId: null,
+    religionId: personDetails?.religion?.religion_id || null,
     religionName: personDetails?.religion?.religion_name || null,
-    categoryId: null,
+    categoryId: personDetails?.religion?.category_id || null,
     categoryName: personDetails?.religion?.category_name || null,
-    subCategoryId: null,
+    subCategoryId: personDetails?.religion?.sub_category_id || null,
     subCategoryName: personDetails?.religion?.sub_category_name || null,
   }
 
-  // Find religion ID from name
-  // Note: API returns religionId/religionName, not id/name
-  if (activePersonDefaults.religionName && religions) {
-    const religion = (religions as any[])?.find(
-      (r: any) => r.religionName === activePersonDefaults.religionName
-    )
-    if (religion) {
-      activePersonDefaults.religionId = religion.religionId
-    }
-  }
-
-  // Build lineage sub-categories for exclusion
+  // Build lineage sub-categories for exclusion - now with IDs from API
   const lineageSubCategories: LineageSubCategories = {
     selfSubCategory: null,
     motherSubCategory: null,
     grandmotherSubCategory: null,
   }
 
-  // Self sub-category
+  // Self sub-category (with ID from API)
   if (personDetails?.religion?.sub_category_name) {
     lineageSubCategories.selfSubCategory = {
-      id: "", // Will be resolved later or use name-based matching
+      id: personDetails.religion.sub_category_id || "",
       name: personDetails.religion.sub_category_name,
     }
   }
 
-  // Mother's sub-category
+  // Mother's sub-category (with ID from API)
   if (motherDetails?.religion?.sub_category_name) {
     lineageSubCategories.motherSubCategory = {
-      id: "",
+      id: motherDetails.religion.sub_category_id || "",
       name: motherDetails.religion.sub_category_name,
     }
   }
 
-  // Grandmother's sub-category
+  // Grandmother's sub-category (with ID from API)
   if (grandmotherDetails?.religion?.sub_category_name) {
     lineageSubCategories.grandmotherSubCategory = {
-      id: "",
+      id: grandmotherDetails.religion.sub_category_id || "",
       name: grandmotherDetails.religion.sub_category_name,
     }
   }
@@ -226,7 +177,7 @@ export function usePartnerDefaults() {
   const defaultFilters: PartnerFilters = buildDefaultFilters(
     activePersonDefaults,
     lineageSubCategories,
-    genderMetadata
+    genderMetadata,
   )
 
   return {

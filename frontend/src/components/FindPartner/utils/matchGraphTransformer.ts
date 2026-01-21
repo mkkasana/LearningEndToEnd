@@ -5,12 +5,12 @@
  */
 
 import type {
-  MatchNode,
   MatchEdge,
-  TransformedMatchPath,
   MatchGenerationInfo,
-} from '../types'
-import type { MatchGraphNode } from './matchPathExtractor'
+  MatchNode,
+  TransformedMatchPath,
+} from "../types"
+import type { MatchGraphNode } from "./matchPathExtractor"
 
 // Layout constants
 export const NODE_WIDTH = 180
@@ -24,7 +24,7 @@ export const SPOUSE_GAP = 50
  * When from_person relationship is "Son" or "Daughter", we're going from child to parent
  */
 export function isChildRelationship(rel: string): boolean {
-  return ['Son', 'Daughter'].includes(rel)
+  return ["Son", "Daughter"].includes(rel)
 }
 
 /**
@@ -32,7 +32,7 @@ export function isChildRelationship(rel: string): boolean {
  * When from_person relationship is "Father" or "Mother", we're going from parent to child
  */
 export function isParentRelationship(rel: string): boolean {
-  return ['Father', 'Mother'].includes(rel)
+  return ["Father", "Mother"].includes(rel)
 }
 
 /**
@@ -40,21 +40,21 @@ export function isParentRelationship(rel: string): boolean {
  * Spouse relationships stay at the same generation level
  */
 export function isSpouseRelationship(rel: string): boolean {
-  return ['Spouse', 'Husband', 'Wife'].includes(rel)
+  return ["Spouse", "Husband", "Wife"].includes(rel)
 }
 
 /**
  * Assign generation levels and X-axis positions to each person in the path
  * Generation 0 is the oldest, increases downward
  * xOffset is calculated to keep related nodes close and avoid overlaps
- * 
+ *
  * @param path - Array of MatchGraphNode from seeker to match
  * @returns Map of person_id to MatchGenerationInfo
- * 
+ *
  * Requirements: 5.1, 5.2, 5.3, 5.4
  */
 export function assignGenerations(
-  path: MatchGraphNode[]
+  path: MatchGraphNode[],
 ): Map<string, MatchGenerationInfo> {
   const generations = new Map<string, MatchGenerationInfo>()
   const generationToXAxis = new Map<number, number>() // Track max X per generation
@@ -80,7 +80,10 @@ export function assignGenerations(
 
     // Calculate X-axis position
     if (relationship) {
-      if (isChildRelationship(relationship) || isParentRelationship(relationship)) {
+      if (
+        isChildRelationship(relationship) ||
+        isParentRelationship(relationship)
+      ) {
         // Check if this generation already has nodes at or beyond currentXAxis
         const genXAxis = generationToXAxis.get(currentGen) ?? -1
         if (genXAxis >= currentXAxis) {
@@ -104,7 +107,7 @@ export function assignGenerations(
       generationToXAxis.set(currentGen, currentXAxis)
     }
 
-    const isSpouse = isSpouseRelationship(relationship || '')
+    const isSpouse = isSpouseRelationship(relationship || "")
 
     generations.set(node.person_id, {
       personId: node.person_id,
@@ -130,12 +133,12 @@ export function assignGenerations(
  * Calculate pixel positions for all nodes based on generation levels and xOffset
  * - Y coordinate is determined by generation (row)
  * - X coordinate is determined by xOffset (column)
- * 
+ *
  * @param generations - Map of person_id to MatchGenerationInfo
  * @returns Map of person_id to {x, y} position
  */
 export function calculatePositions(
-  generations: Map<string, MatchGenerationInfo>
+  generations: Map<string, MatchGenerationInfo>,
 ): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>()
 
@@ -151,7 +154,7 @@ export function calculatePositions(
 /**
  * Edge handle positions
  */
-export type HandlePosition = 'top' | 'bottom' | 'left' | 'right'
+export type HandlePosition = "top" | "bottom" | "left" | "right"
 
 export interface EdgeHandles {
   sourceHandle: HandlePosition
@@ -161,14 +164,14 @@ export interface EdgeHandles {
 /**
  * Determine the appropriate source and target handles based on node positions
  * This ensures edges connect from the most logical side of each node
- * 
+ *
  * @param sourcePos - Position of source node
  * @param targetPos - Position of target node
  * @returns Object with sourceHandle and targetHandle positions
  */
 export function getEdgeHandles(
   sourcePos: { x: number; y: number },
-  targetPos: { x: number; y: number }
+  targetPos: { x: number; y: number },
 ): EdgeHandles {
   const { x: sx, y: sy } = sourcePos
   const { x: tx, y: ty } = targetPos
@@ -177,22 +180,20 @@ export function getEdgeHandles(
   if (sx === tx) {
     if (sy < ty) {
       // Target is directly below source
-      return { sourceHandle: 'bottom', targetHandle: 'top' }
-    } else {
-      // Target is directly above source
-      return { sourceHandle: 'top', targetHandle: 'bottom' }
+      return { sourceHandle: "bottom", targetHandle: "top" }
     }
+    // Target is directly above source
+    return { sourceHandle: "top", targetHandle: "bottom" }
   }
 
   // Same row
   if (sy === ty) {
     if (sx < tx) {
       // Target is to the right of source
-      return { sourceHandle: 'right', targetHandle: 'left' }
-    } else {
-      // Target is to the left of source
-      return { sourceHandle: 'left', targetHandle: 'right' }
+      return { sourceHandle: "right", targetHandle: "left" }
     }
+    // Target is to the left of source
+    return { sourceHandle: "left", targetHandle: "right" }
   }
 
   // Diagonal positions
@@ -200,37 +201,34 @@ export function getEdgeHandles(
     // Target is to the right
     if (sy < ty) {
       // Target is south-east (below and right)
-      return { sourceHandle: 'bottom', targetHandle: 'top' }
-    } else {
-      // Target is north-east (above and right)
-      return { sourceHandle: 'top', targetHandle: 'left' }
+      return { sourceHandle: "bottom", targetHandle: "top" }
     }
-  } else {
-    // Target is to the left
-    if (sy < ty) {
-      // Target is south-west (below and left)
-      return { sourceHandle: 'bottom', targetHandle: 'top' }
-    } else {
-      // Target is north-west (above and left)
-      return { sourceHandle: 'top', targetHandle: 'right' }
-    }
+    // Target is north-east (above and right)
+    return { sourceHandle: "top", targetHandle: "left" }
   }
+  // Target is to the left
+  if (sy < ty) {
+    // Target is south-west (below and left)
+    return { sourceHandle: "bottom", targetHandle: "top" }
+  }
+  // Target is north-west (above and left)
+  return { sourceHandle: "top", targetHandle: "right" }
 }
 
 /**
  * Main transformation function: converts path to React Flow nodes and edges
- * 
+ *
  * @param path - Array of MatchGraphNode from seeker to match
  * @param seekerId - The seeker person ID
  * @param matchId - The selected match person ID
  * @returns TransformedMatchPath with nodes and edges for React Flow
- * 
+ *
  * Requirements: 5.1, 5.2, 5.3, 5.4
  */
 export function transformMatchPath(
   path: MatchGraphNode[],
   seekerId: string,
-  matchId: string
+  matchId: string,
 ): TransformedMatchPath {
   if (path.length === 0) {
     return { nodes: [], edges: [] }
@@ -245,7 +243,7 @@ export function transformMatchPath(
   // Step 3: Create nodes
   const nodes: MatchNode[] = path.map((person) => ({
     id: person.person_id,
-    type: 'matchPersonNode' as const,
+    type: "matchPersonNode" as const,
     position: positions.get(person.person_id) || { x: 0, y: 0 },
     data: {
       personId: person.person_id,
@@ -263,8 +261,12 @@ export function transformMatchPath(
   for (let i = 0; i < path.length - 1; i++) {
     const source = path[i]
     const target = path[i + 1]
-    // Use target.from_person.relationship as it describes "what source is to target"
-    const relationship = target.from_person?.relationship || ''
+    // Find relationship from source's to_persons that points to target
+    // This gives us "what target is to source" (e.g., "Father" if target is source's father)
+    const toPersonConnection = source.to_persons?.find(
+      (conn) => conn.person_id === target.person_id,
+    )
+    const relationship = toPersonConnection?.relationship || ""
     const isSpouse = isSpouseRelationship(relationship)
 
     // Get appropriate handles based on node positions
@@ -278,7 +280,7 @@ export function transformMatchPath(
       target: target.person_id,
       sourceHandle,
       targetHandle,
-      type: 'matchRelationshipEdge',
+      type: "matchRelationshipEdge",
       data: {
         relationship,
         isSpouseEdge: isSpouse,

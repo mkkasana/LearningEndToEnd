@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { RishteReligionStepProps, ReligionFormData } from "./types"
+import type { ReligionFormData, RishteReligionStepProps } from "./types"
 
 /**
  * Zod schema for religion form validation
@@ -40,12 +40,12 @@ type FormData = z.infer<typeof religionSchema>
 
 /**
  * RishteReligionStep component - Step 3 of the Person Search Wizard
- * 
+ *
  * Collects religion filters with cascading dropdowns:
  * - Religion (required)
  * - Category (required)
  * - Sub-Category (optional)
- * 
+ *
  * Requirements:
  * - 5.1: Display cascading dropdowns for religion hierarchy
  * - 5.2: Pre-populate with active person's religion as defaults
@@ -63,18 +63,26 @@ export function RishteReligionStep({
 }: RishteReligionStepProps) {
   // Track selected values for cascading queries
   const [selectedReligion, setSelectedReligion] = useState<string>(
-    initialData?.religionId || defaultReligion?.religionId || ""
+    initialData?.religionId || defaultReligion?.religionId || "",
   )
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    initialData?.religionCategoryId || defaultReligion?.religionCategoryId || ""
+    initialData?.religionCategoryId ||
+      defaultReligion?.religionCategoryId ||
+      "",
   )
 
   const form = useForm<FormData>({
     resolver: zodResolver(religionSchema),
     defaultValues: {
       religionId: initialData?.religionId || defaultReligion?.religionId || "",
-      religionCategoryId: initialData?.religionCategoryId || defaultReligion?.religionCategoryId || "",
-      religionSubCategoryId: initialData?.religionSubCategoryId || defaultReligion?.religionSubCategoryId || "",
+      religionCategoryId:
+        initialData?.religionCategoryId ||
+        defaultReligion?.religionCategoryId ||
+        "",
+      religionSubCategoryId:
+        initialData?.religionSubCategoryId ||
+        defaultReligion?.religionSubCategoryId ||
+        "",
     },
   })
 
@@ -90,7 +98,10 @@ export function RishteReligionStep({
         form.setValue("religionCategoryId", defaultReligion.religionCategoryId)
       }
       if (defaultReligion.religionSubCategoryId) {
-        form.setValue("religionSubCategoryId", defaultReligion.religionSubCategoryId)
+        form.setValue(
+          "religionSubCategoryId",
+          defaultReligion.religionSubCategoryId,
+        )
       }
     }
   }, [defaultReligion, initialData?.religionId, form])
@@ -192,7 +203,10 @@ export function RishteReligionStep({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category *</FormLabel>
-                <Select onValueChange={handleCategoryChange} value={field.value}>
+                <Select
+                  onValueChange={handleCategoryChange}
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />

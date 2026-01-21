@@ -36,3 +36,18 @@ The `amazon-builder-steering` rules do not apply to this project. This is a pers
 ## Coding best practises
 * For any new code written in backend should have Unit tests
 * Have proper logging so user can just debug things easily from logs it self.
+
+## Backend Schema to Frontend Type Sync
+
+When modifying backend Pydantic schemas that are used in API responses, follow these steps to make changes available to the frontend:
+
+1. **Modify backend schema** - Edit files in `backend/app/schemas/`
+2. **Update backend service** - Populate new fields in the service layer
+3. **Rebuild & restart backend** - `docker compose build --no-cache backend && docker compose up -d`
+4. **Regenerate OpenAPI client** - Run `npm run generate-client` in the `frontend/` folder
+   - This fetches the OpenAPI spec from the running backend and generates TypeScript types
+   - Generated files: `frontend/src/client/types.gen.ts`, `frontend/src/client/schemas.gen.ts`
+5. **Update frontend code** - Use the new fields from the generated types
+6. **Rebuild frontend** - `docker compose build --no-cache frontend && docker compose up -d`
+
+**Important:** The backend must be running when you run `npm run generate-client` because it fetches the OpenAPI spec from `http://localhost/api/v1/openapi.json`.

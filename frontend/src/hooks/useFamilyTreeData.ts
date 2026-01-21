@@ -47,7 +47,7 @@ export interface FamilyTreeData extends CategorizedRelationships {
  * - Data is cached for 5 minutes (staleTime) to avoid redundant API calls
  * - Cache is kept in memory for 10 minutes (gcTime) for quick navigation
  * - Previously viewed persons are served from cache instantly
- * 
+ *
  * _Requirements: 7.1_
  */
 export function useFamilyTreeData(personId: string | null) {
@@ -65,20 +65,19 @@ export function useFamilyTreeData(personId: string | null) {
       try {
         // Always use person-specific endpoint with explicit personId
         // _Requirements: 7.1_
-        const response = await PersonService.getPersonRelationshipsWithDetails({ 
-          personId 
+        const response = await PersonService.getPersonRelationshipsWithDetails({
+          personId,
         })
 
         // Categorize relationships
-        const categorized = categorizeRelationships(response.relationships || [])
+        const categorized = categorizeRelationships(
+          response.relationships || [],
+        )
 
         // Calculate siblings - handle failures gracefully
         let siblings: PersonDetails[] = []
         try {
-          siblings = await calculateSiblings(
-            personId,
-            categorized.parentIds,
-          )
+          siblings = await calculateSiblings(personId, categorized.parentIds)
         } catch (error) {
           console.error("Failed to calculate siblings:", error)
           // Continue with empty siblings array if calculation fails

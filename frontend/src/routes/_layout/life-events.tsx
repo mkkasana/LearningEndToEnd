@@ -26,11 +26,12 @@ function LifeEventsContent({ activePersonId }: { activePersonId: string }) {
   // _Requirements: 5.1, 5.2 (assume-person-role)
   const { data, isLoading, error } = useQuery({
     queryKey: ["life-events", activePersonId],
-    queryFn: () => LifeEventsService.getPersonLifeEvents({ 
-      personId: activePersonId,
-      skip: 0, 
-      limit: 100 
-    }),
+    queryFn: () =>
+      LifeEventsService.getPersonLifeEvents({
+        personId: activePersonId,
+        skip: 0,
+        limit: 100,
+      }),
     enabled: !!activePersonId,
   })
 
@@ -72,7 +73,8 @@ function LifeEventsContent({ activePersonId }: { activePersonId: string }) {
 function LifeEventsPage() {
   // Get active person from context (assumed or primary)
   // _Requirements: 5.1, 5.2 (assume-person-role)
-  const { activePersonId, isLoading: isPersonLoading } = useActivePersonContext()
+  const { activePersonId, isLoading: isPersonLoading } =
+    useActivePersonContext()
 
   if (isPersonLoading || !activePersonId) {
     return (

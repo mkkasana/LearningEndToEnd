@@ -80,7 +80,7 @@ All new components are created within the `FindPartner/` folder to maintain comp
     - Apply distinct styling for spouse edges (dashed, purple color)
     - Add arrow markers
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
-  - [x]* 8.2 Write property test for edge styling
+  - [x] 8.2 Write property test for edge styling
     - **Property 7: Edge Styling Correctness**
     - **Validates: Requirements 7.1, 7.2, 7.3, 7.5**
 

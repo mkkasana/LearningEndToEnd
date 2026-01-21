@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { RishteBasicInfoStepProps, BasicInfoFormData } from "./types"
+import type { BasicInfoFormData, RishteBasicInfoStepProps } from "./types"
 
 /**
  * Zod schema for basic info form validation
@@ -33,49 +33,63 @@ import type { RishteBasicInfoStepProps, BasicInfoFormData } from "./types"
  * - 3.5: Birth year range optional
  * - 3.7: Validation error when first name is empty
  */
-const basicInfoSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, "First name is required")
-    .refine((val) => val.trim().length > 0, "First name cannot be only whitespace"),
-  lastName: z
-    .string()
-    .min(1, "Last name is required")
-    .refine((val) => val.trim().length > 0, "Last name cannot be only whitespace"),
-  genderId: z.string().optional(),
-  birthYearFrom: z.union([
-    z.literal(""),
-    z.coerce.number().min(1800).max(new Date().getFullYear()),
-  ]).optional().transform(val => val === "" ? undefined : val),
-  birthYearTo: z.union([
-    z.literal(""),
-    z.coerce.number().min(1800).max(new Date().getFullYear()),
-  ]).optional().transform(val => val === "" ? undefined : val),
-}).refine(
-  (data) => {
-    // If both years are provided, birthYearTo must be >= birthYearFrom
-    if (data.birthYearFrom && data.birthYearTo) {
-      return data.birthYearTo >= data.birthYearFrom
-    }
-    return true
-  },
-  {
-    message: "End year must be greater than or equal to start year",
-    path: ["birthYearTo"],
-  }
-)
+const basicInfoSchema = z
+  .object({
+    firstName: z
+      .string()
+      .min(1, "First name is required")
+      .refine(
+        (val) => val.trim().length > 0,
+        "First name cannot be only whitespace",
+      ),
+    lastName: z
+      .string()
+      .min(1, "Last name is required")
+      .refine(
+        (val) => val.trim().length > 0,
+        "Last name cannot be only whitespace",
+      ),
+    genderId: z.string().optional(),
+    birthYearFrom: z
+      .union([
+        z.literal(""),
+        z.coerce.number().min(1800).max(new Date().getFullYear()),
+      ])
+      .optional()
+      .transform((val) => (val === "" ? undefined : val)),
+    birthYearTo: z
+      .union([
+        z.literal(""),
+        z.coerce.number().min(1800).max(new Date().getFullYear()),
+      ])
+      .optional()
+      .transform((val) => (val === "" ? undefined : val)),
+  })
+  .refine(
+    (data) => {
+      // If both years are provided, birthYearTo must be >= birthYearFrom
+      if (data.birthYearFrom && data.birthYearTo) {
+        return data.birthYearTo >= data.birthYearFrom
+      }
+      return true
+    },
+    {
+      message: "End year must be greater than or equal to start year",
+      path: ["birthYearTo"],
+    },
+  )
 
 type FormData = z.infer<typeof basicInfoSchema>
 
 /**
  * RishteBasicInfoStep component - Step 1 of the Person Search Wizard
- * 
+ *
  * Collects basic search criteria:
  * - First name (required)
- * - Last name (required)  
+ * - Last name (required)
  * - Gender (optional dropdown from API)
  * - Birth year range (optional)
- * 
+ *
  * Requirements:
  * - 3.1: Display form with first name, last name, gender, birth year range
  * - 3.2: First name required with min 1 char
@@ -112,8 +126,10 @@ export function RishteBasicInfoStep({
       firstName: data.firstName.trim(),
       lastName: data.lastName.trim(),
       genderId: data.genderId || undefined,
-      birthYearFrom: typeof data.birthYearFrom === "number" ? data.birthYearFrom : undefined,
-      birthYearTo: typeof data.birthYearTo === "number" ? data.birthYearTo : undefined,
+      birthYearFrom:
+        typeof data.birthYearFrom === "number" ? data.birthYearFrom : undefined,
+      birthYearTo:
+        typeof data.birthYearTo === "number" ? data.birthYearTo : undefined,
     }
     onNext(basicInfoData)
   }

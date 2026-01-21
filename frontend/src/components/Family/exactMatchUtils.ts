@@ -33,7 +33,7 @@ function normalizeDateString(dateStr: string): string {
  */
 export function isExactMatch(
   person: PersonMatchResult,
-  searchDateOfBirth: string
+  searchDateOfBirth: string,
 ): boolean {
   const isHighConfidenceMatch = person.match_score >= HIGH_CONFIDENCE_THRESHOLD
   const normalizedPersonDob = normalizeDateString(person.date_of_birth)
@@ -54,7 +54,7 @@ export function isExactMatch(
  */
 export function findExactMatches(
   persons: PersonMatchResult[],
-  searchDateOfBirth: string
+  searchDateOfBirth: string,
 ): PersonMatchResult[] {
   return persons.filter((person) => isExactMatch(person, searchDateOfBirth))
 }

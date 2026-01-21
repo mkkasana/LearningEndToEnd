@@ -1,7 +1,7 @@
 /**
  * MatchPersonNode Component
  * Custom React Flow node for displaying persons in the match path graph
- * 
+ *
  * Requirements:
  * - 6.1: Display circular avatar placeholder with User icon
  * - 6.2: Display first name + last name below the avatar
@@ -31,7 +31,7 @@ interface MatchPersonNodeProps {
  */
 export function formatBirthDeathYears(
   birthYear: number | null,
-  deathYear: number | null
+  deathYear: number | null,
 ): string {
   if (birthYear === null) {
     return ""
@@ -48,15 +48,10 @@ export function formatBirthDeathYears(
  * MatchPersonNode component for React Flow graph
  * Displays a person card with avatar, name, birth/death years, and seeker/match labels
  */
-export const MatchPersonNode = memo(function MatchPersonNode({ data }: MatchPersonNodeProps) {
-  const {
-    firstName,
-    lastName,
-    birthYear,
-    deathYear,
-    isSeeker,
-    isMatch,
-  } = data
+export const MatchPersonNode = memo(function MatchPersonNode({
+  data,
+}: MatchPersonNodeProps) {
+  const { firstName, lastName, birthYear, deathYear, isSeeker, isMatch } = data
 
   const displayName = `${firstName} ${lastName}`
   const yearsDisplay = formatBirthDeathYears(birthYear, deathYear)
@@ -129,7 +124,7 @@ export const MatchPersonNode = memo(function MatchPersonNode({ data }: MatchPers
           "flex flex-col items-center gap-2 p-4 bg-card",
           "w-[160px] min-h-[140px]",
           "transition-all duration-200",
-          getBorderClass()
+          getBorderClass(),
         )}
       >
         {/* Avatar with User icon */}
@@ -160,8 +155,10 @@ export const MatchPersonNode = memo(function MatchPersonNode({ data }: MatchPers
           <div
             className={cn(
               "text-xs font-medium px-2 py-0.5 rounded-full",
-              isSeeker && "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-              isMatch && "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+              isSeeker &&
+                "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+              isMatch &&
+                "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
             )}
           >
             {isSeeker ? "Seeker" : "Match"}

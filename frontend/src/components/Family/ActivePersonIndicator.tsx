@@ -11,22 +11,20 @@ export interface ActivePersonIndicatorProps {
 
 /**
  * ActivePersonIndicator - Shows a banner when assuming another person's role
- * 
+ *
  * Displays:
  * - Visual indicator that user is acting as another person
  * - The assumed person's name
  * - "Return to Primary" button to exit assumed state
  * - Primary person name for reference
- * 
+ *
  * _Requirements: 2.5, 4.1, 4.4_
  */
-export function ActivePersonIndicator({ className }: ActivePersonIndicatorProps) {
-  const { 
-    isAssuming, 
-    assumedPerson, 
-    primaryPerson, 
-    returnToPrimary 
-  } = useActivePersonContext()
+export function ActivePersonIndicator({
+  className,
+}: ActivePersonIndicatorProps) {
+  const { isAssuming, assumedPerson, primaryPerson, returnToPrimary } =
+    useActivePersonContext()
 
   // Only show when assuming another person
   if (!isAssuming || !assumedPerson) {
@@ -34,8 +32,8 @@ export function ActivePersonIndicator({ className }: ActivePersonIndicatorProps)
   }
 
   const assumedName = `${assumedPerson.first_name} ${assumedPerson.last_name}`
-  const primaryName = primaryPerson 
-    ? `${primaryPerson.first_name} ${primaryPerson.last_name}` 
+  const primaryName = primaryPerson
+    ? `${primaryPerson.first_name} ${primaryPerson.last_name}`
     : "your profile"
 
   return (
@@ -44,7 +42,7 @@ export function ActivePersonIndicator({ className }: ActivePersonIndicatorProps)
         "flex items-center justify-between gap-4 px-4 py-2",
         "bg-amber-100 dark:bg-amber-950/50 border-b border-amber-300 dark:border-amber-800",
         "text-amber-900 dark:text-amber-100",
-        className
+        className,
       )}
       role="status"
       aria-live="polite"

@@ -11,7 +11,7 @@ import {
 
 /**
  * GraphControls component provides zoom and fit view controls for the React Flow graph
- * 
+ *
  * Requirements:
  * - 9.1: Support zooming in and out
  * - 9.2: Support panning/dragging (handled by React Flow)

@@ -1,17 +1,17 @@
 /**
  * Property-Based Tests for MatchPersonNode Component
  * Feature: partner-match-visualizer
- * 
+ *
  * Property 5: Node Label Correctness
  * Property 6: Birth-Death Year Formatting
  * Validates: Requirements 6.3, 6.4, 6.5
  */
 
-import * as fc from "fast-check"
-import { describe, expect, it, afterEach } from "vitest"
-import { render, screen, cleanup } from "@testing-library/react"
+import { cleanup, render, screen } from "@testing-library/react"
 import { ReactFlowProvider } from "@xyflow/react"
-import { MatchPersonNode, formatBirthDeathYears } from "./MatchPersonNode"
+import * as fc from "fast-check"
+import { afterEach, describe, expect, it } from "vitest"
+import { formatBirthDeathYears, MatchPersonNode } from "./MatchPersonNode"
 import type { MatchPersonNodeData } from "./types"
 
 // Cleanup after each test to prevent multiple elements
@@ -24,7 +24,7 @@ function renderWithProvider(data: MatchPersonNodeData) {
   return render(
     <ReactFlowProvider>
       <MatchPersonNode data={data} />
-    </ReactFlowProvider>
+    </ReactFlowProvider>,
   )
 }
 
@@ -49,29 +49,33 @@ describe("MatchPersonNode - Property-Based Tests", () => {
             personId: fc.uuid(),
             firstName: fc.string({ minLength: 1, maxLength: 15 }),
             lastName: fc.string({ minLength: 1, maxLength: 15 }),
-            birthYear: fc.option(fc.integer({ min: 1900, max: 2024 }), { nil: null }),
-            deathYear: fc.option(fc.integer({ min: 1900, max: 2024 }), { nil: null }),
+            birthYear: fc.option(fc.integer({ min: 1900, max: 2024 }), {
+              nil: null,
+            }),
+            deathYear: fc.option(fc.integer({ min: 1900, max: 2024 }), {
+              nil: null,
+            }),
             isSeeker: fc.constant(true),
             isMatch: fc.constant(false),
           }),
           (data) => {
             const { unmount } = renderWithProvider(data)
-            
+
             // Should display "Seeker" label
             expect(screen.getByText("Seeker")).toBeInTheDocument()
-            
+
             // Should NOT display "Match" label
             expect(screen.queryByText("Match")).not.toBeInTheDocument()
-            
+
             // Should have green styling (check for green class)
             const label = screen.getByText("Seeker")
             expect(label.className).toContain("green")
-            
+
             // Cleanup for next iteration
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -82,29 +86,33 @@ describe("MatchPersonNode - Property-Based Tests", () => {
             personId: fc.uuid(),
             firstName: fc.string({ minLength: 1, maxLength: 15 }),
             lastName: fc.string({ minLength: 1, maxLength: 15 }),
-            birthYear: fc.option(fc.integer({ min: 1900, max: 2024 }), { nil: null }),
-            deathYear: fc.option(fc.integer({ min: 1900, max: 2024 }), { nil: null }),
+            birthYear: fc.option(fc.integer({ min: 1900, max: 2024 }), {
+              nil: null,
+            }),
+            deathYear: fc.option(fc.integer({ min: 1900, max: 2024 }), {
+              nil: null,
+            }),
             isSeeker: fc.constant(false),
             isMatch: fc.constant(true),
           }),
           (data) => {
             const { unmount } = renderWithProvider(data)
-            
+
             // Should display "Match" label
             expect(screen.getByText("Match")).toBeInTheDocument()
-            
+
             // Should NOT display "Seeker" label
             expect(screen.queryByText("Seeker")).not.toBeInTheDocument()
-            
+
             // Should have blue styling (check for blue class)
             const label = screen.getByText("Match")
             expect(label.className).toContain("blue")
-            
+
             // Cleanup for next iteration
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -115,23 +123,27 @@ describe("MatchPersonNode - Property-Based Tests", () => {
             personId: fc.uuid(),
             firstName: fc.string({ minLength: 1, maxLength: 15 }),
             lastName: fc.string({ minLength: 1, maxLength: 15 }),
-            birthYear: fc.option(fc.integer({ min: 1900, max: 2024 }), { nil: null }),
-            deathYear: fc.option(fc.integer({ min: 1900, max: 2024 }), { nil: null }),
+            birthYear: fc.option(fc.integer({ min: 1900, max: 2024 }), {
+              nil: null,
+            }),
+            deathYear: fc.option(fc.integer({ min: 1900, max: 2024 }), {
+              nil: null,
+            }),
             isSeeker: fc.constant(false),
             isMatch: fc.constant(false),
           }),
           (data) => {
             const { unmount } = renderWithProvider(data)
-            
+
             // Should NOT display "Seeker" or "Match" labels
             expect(screen.queryByText("Seeker")).not.toBeInTheDocument()
             expect(screen.queryByText("Match")).not.toBeInTheDocument()
-            
+
             // Cleanup for next iteration
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
   })
@@ -147,14 +159,11 @@ describe("MatchPersonNode - Property-Based Tests", () => {
   describe("Property 6: Birth-Death Year Formatting", () => {
     it("should format as 'birthYear -' when deathYear is null", () => {
       fc.assert(
-        fc.property(
-          fc.integer({ min: 1900, max: 2024 }),
-          (birthYear) => {
-            const result = formatBirthDeathYears(birthYear, null)
-            expect(result).toBe(`${birthYear} -`)
-          }
-        ),
-        { numRuns: 100 }
+        fc.property(fc.integer({ min: 1900, max: 2024 }), (birthYear) => {
+          const result = formatBirthDeathYears(birthYear, null)
+          expect(result).toBe(`${birthYear} -`)
+        }),
+        { numRuns: 100 },
       )
     })
 
@@ -166,9 +175,9 @@ describe("MatchPersonNode - Property-Based Tests", () => {
           (birthYear, deathYear) => {
             const result = formatBirthDeathYears(birthYear, deathYear)
             expect(result).toBe(`${birthYear} - ${deathYear}`)
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -179,9 +188,9 @@ describe("MatchPersonNode - Property-Based Tests", () => {
           (deathYear) => {
             const result = formatBirthDeathYears(null, deathYear)
             expect(result).toBe("")
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -193,22 +202,27 @@ describe("MatchPersonNode - Property-Based Tests", () => {
             firstName: fc.string({ minLength: 1, maxLength: 15 }),
             lastName: fc.string({ minLength: 1, maxLength: 15 }),
             birthYear: fc.integer({ min: 1900, max: 2024 }),
-            deathYear: fc.option(fc.integer({ min: 1900, max: 2024 }), { nil: null }),
+            deathYear: fc.option(fc.integer({ min: 1900, max: 2024 }), {
+              nil: null,
+            }),
             isSeeker: fc.constant(false),
             isMatch: fc.constant(false),
           }),
           (data) => {
             const { container, unmount } = renderWithProvider(data)
-            const expectedFormat = formatBirthDeathYears(data.birthYear, data.deathYear)
-            
+            const expectedFormat = formatBirthDeathYears(
+              data.birthYear,
+              data.deathYear,
+            )
+
             // The formatted years should appear in the component
             expect(container.textContent).toContain(expectedFormat)
-            
+
             // Cleanup for next iteration
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
   })
@@ -229,7 +243,7 @@ describe("MatchPersonNode - Unit Tests", () => {
       isSeeker: false,
       isMatch: false,
     })
-    
+
     expect(screen.getByText("John Doe")).toBeInTheDocument()
   })
 
@@ -243,7 +257,7 @@ describe("MatchPersonNode - Unit Tests", () => {
       isSeeker: false,
       isMatch: false,
     })
-    
+
     expect(screen.getByText("1990 -")).toBeInTheDocument()
   })
 
@@ -257,7 +271,7 @@ describe("MatchPersonNode - Unit Tests", () => {
       isSeeker: false,
       isMatch: false,
     })
-    
+
     expect(screen.getByText("1950 - 2020")).toBeInTheDocument()
   })
 
@@ -271,7 +285,7 @@ describe("MatchPersonNode - Unit Tests", () => {
       isSeeker: false,
       isMatch: false,
     })
-    
+
     // Should not contain any year format
     expect(container.textContent).not.toMatch(/\d{4}\s*-/)
   })
@@ -286,7 +300,7 @@ describe("MatchPersonNode - Unit Tests", () => {
       isSeeker: true,
       isMatch: false,
     })
-    
+
     // Check for green border class on the Card
     const card = container.querySelector(".border-green-500")
     expect(card).toBeInTheDocument()
@@ -302,7 +316,7 @@ describe("MatchPersonNode - Unit Tests", () => {
       isSeeker: false,
       isMatch: true,
     })
-    
+
     // Check for blue border class on the Card
     const card = container.querySelector(".border-blue-500")
     expect(card).toBeInTheDocument()

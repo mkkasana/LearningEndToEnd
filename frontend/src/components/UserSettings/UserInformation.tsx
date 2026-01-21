@@ -35,7 +35,8 @@ const UserInformation = () => {
   // _Requirements: 7.2_
   const { data: addresses } = useQuery({
     queryKey: ["personAddresses", activePersonId],
-    queryFn: () => PersonService.getPersonAddresses({ personId: activePersonId! }),
+    queryFn: () =>
+      PersonService.getPersonAddresses({ personId: activePersonId! }),
     enabled: !!activePersonId,
   })
 

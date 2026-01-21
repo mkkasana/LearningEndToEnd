@@ -42,18 +42,20 @@ function Family() {
   const [selectedRelationship, setSelectedRelationship] = useState<any>(null)
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
-  
+
   // Get active person from context
   // _Requirements: 7.1_
-  const { activePersonId, isLoading: isPersonLoading } = useActivePersonContext()
+  const { activePersonId, isLoading: isPersonLoading } =
+    useActivePersonContext()
 
   // Fetch family members with full details using person-specific endpoint
   // _Requirements: 7.1_
   const { data: familyMembersResponse, isLoading: isDataLoading } = useQuery({
     queryKey: ["personRelationshipsWithDetails", activePersonId],
-    queryFn: () => PersonService.getPersonRelationshipsWithDetails({ 
-      personId: activePersonId! 
-    }),
+    queryFn: () =>
+      PersonService.getPersonRelationshipsWithDetails({
+        personId: activePersonId!,
+      }),
     enabled: !!activePersonId,
   })
 
@@ -66,9 +68,9 @@ function Family() {
     mutationFn: (relationshipId: string) => {
       if (activePersonId) {
         // Use person-specific endpoint for assumed person context
-        return PersonService.deletePersonRelationship({ 
-          personId: activePersonId, 
-          relationshipId 
+        return PersonService.deletePersonRelationship({
+          personId: activePersonId,
+          relationshipId,
         })
       }
       // Fallback to /me endpoint for primary person

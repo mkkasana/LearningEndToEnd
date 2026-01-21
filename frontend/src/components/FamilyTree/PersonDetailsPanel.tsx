@@ -1,5 +1,6 @@
 import { Calendar, Heart, Loader2, MapPin, RefreshCw, User } from "lucide-react"
 import type { PersonAddressDetails, PersonReligionDetails } from "@/client"
+import { LifeEventsList } from "@/components/LifeEvents/LifeEventsList"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/sheet"
 import { usePersonCompleteDetails } from "@/hooks/usePersonCompleteDetails"
 import { usePersonLifeEvents } from "@/hooks/usePersonLifeEvents"
-import { LifeEventsList } from "@/components/LifeEvents/LifeEventsList"
 
 export interface PersonDetailsPanelProps {
   personId: string | null
@@ -127,7 +127,7 @@ export function PersonDetailsPanel({
   onOpenChange,
 }: PersonDetailsPanelProps) {
   const { data, isLoading, error, refetch } = usePersonCompleteDetails(personId)
-  
+
   // Fetch life events for the person
   const {
     data: lifeEventsData,
@@ -283,19 +283,18 @@ export function PersonDetailsPanel({
               )}
 
               {/* Success State */}
-              {lifeEventsData && !isLoadingEvents && !eventsError && (
-                <>
-                  {lifeEventsData.data.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-4 px-2">
-                      No life events recorded
-                    </p>
-                  ) : (
-                    <div className="px-2">
-                      <LifeEventsList events={lifeEventsData.data} compact />
-                    </div>
-                  )}
-                </>
-              )}
+              {lifeEventsData &&
+                !isLoadingEvents &&
+                !eventsError &&
+                (lifeEventsData.data.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4 px-2">
+                    No life events recorded
+                  </p>
+                ) : (
+                  <div className="px-2">
+                    <LifeEventsList events={lifeEventsData.data} compact />
+                  </div>
+                ))}
             </div>
           </div>
         )}

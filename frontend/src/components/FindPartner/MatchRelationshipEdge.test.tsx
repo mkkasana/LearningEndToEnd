@@ -1,18 +1,18 @@
 /**
  * Property-Based Tests for MatchRelationshipEdge Component
  * Feature: partner-match-visualizer
- * 
+ *
  * Property 7: Edge Styling Correctness
  * Validates: Requirements 7.1, 7.2, 7.3, 7.5
- * 
+ *
  * Note: EdgeLabelRenderer uses a portal that requires a full React Flow setup.
  * These tests focus on the path styling which can be tested in isolation.
  */
 
+import { cleanup, render } from "@testing-library/react"
+import { Position, ReactFlowProvider } from "@xyflow/react"
 import * as fc from "fast-check"
-import { describe, expect, it, afterEach } from "vitest"
-import { render, cleanup } from "@testing-library/react"
-import { ReactFlowProvider, Position } from "@xyflow/react"
+import { afterEach, describe, expect, it } from "vitest"
 import { MatchRelationshipEdge } from "./MatchRelationshipEdge"
 import type { MatchRelationshipEdgeData } from "./types"
 
@@ -42,7 +42,7 @@ function renderEdge(data: MatchRelationshipEdgeData) {
       <svg>
         <MatchRelationshipEdge {...edgeProps} />
       </svg>
-    </ReactFlowProvider>
+    </ReactFlowProvider>,
   )
 }
 
@@ -62,14 +62,14 @@ describe("MatchRelationshipEdge - Property-Based Tests", () => {
     const spouseRelationshipArb = fc.oneof(
       fc.constant("Spouse"),
       fc.constant("Husband"),
-      fc.constant("Wife")
+      fc.constant("Wife"),
     )
-    
+
     const parentChildRelationshipArb = fc.oneof(
       fc.constant("Son"),
       fc.constant("Daughter"),
       fc.constant("Father"),
-      fc.constant("Mother")
+      fc.constant("Mother"),
     )
 
     it("should apply purple stroke class for spouse edges", () => {
@@ -84,9 +84,9 @@ describe("MatchRelationshipEdge - Property-Based Tests", () => {
             const path = container.querySelector("path.react-flow__edge-path")
             expect(getPathClassName(path)).toContain("purple")
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -99,12 +99,14 @@ describe("MatchRelationshipEdge - Property-Based Tests", () => {
           }),
           (data) => {
             const { container, unmount } = renderEdge(data)
-            const path = container.querySelector("path.react-flow__edge-path") as HTMLElement
+            const path = container.querySelector(
+              "path.react-flow__edge-path",
+            ) as HTMLElement
             expect(path?.style.strokeDasharray).toBe("5,5")
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -117,12 +119,14 @@ describe("MatchRelationshipEdge - Property-Based Tests", () => {
           }),
           (data) => {
             const { container, unmount } = renderEdge(data)
-            const path = container.querySelector("path.react-flow__edge-path") as HTMLElement
+            const path = container.querySelector(
+              "path.react-flow__edge-path",
+            ) as HTMLElement
             expect(path?.style.strokeWidth).toBe("3")
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -138,9 +142,9 @@ describe("MatchRelationshipEdge - Property-Based Tests", () => {
             const path = container.querySelector("path.react-flow__edge-path")
             expect(getPathClassName(path)).not.toContain("purple")
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -153,12 +157,14 @@ describe("MatchRelationshipEdge - Property-Based Tests", () => {
           }),
           (data) => {
             const { container, unmount } = renderEdge(data)
-            const path = container.querySelector("path.react-flow__edge-path") as HTMLElement
+            const path = container.querySelector(
+              "path.react-flow__edge-path",
+            ) as HTMLElement
             expect(path?.style.strokeDasharray).toBeFalsy()
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
 
@@ -171,12 +177,14 @@ describe("MatchRelationshipEdge - Property-Based Tests", () => {
           }),
           (data) => {
             const { container, unmount } = renderEdge(data)
-            const path = container.querySelector("path.react-flow__edge-path") as HTMLElement
+            const path = container.querySelector(
+              "path.react-flow__edge-path",
+            ) as HTMLElement
             expect(path?.style.strokeWidth).toBe("2")
             unmount()
-          }
+          },
         ),
-        { numRuns: 100 }
+        { numRuns: 100 },
       )
     })
   })
@@ -192,8 +200,10 @@ describe("MatchRelationshipEdge - Unit Tests", () => {
       relationship: "Spouse",
       isSpouseEdge: true,
     })
-    
-    const path = container.querySelector("path.react-flow__edge-path") as SVGPathElement
+
+    const path = container.querySelector(
+      "path.react-flow__edge-path",
+    ) as SVGPathElement
     expect(getPathClassName(path)).toContain("purple")
     expect(path?.style.strokeDasharray).toBe("5,5")
     expect(path?.style.strokeWidth).toBe("3")
@@ -204,8 +214,10 @@ describe("MatchRelationshipEdge - Unit Tests", () => {
       relationship: "Father",
       isSpouseEdge: false,
     })
-    
-    const path = container.querySelector("path.react-flow__edge-path") as SVGPathElement
+
+    const path = container.querySelector(
+      "path.react-flow__edge-path",
+    ) as SVGPathElement
     expect(getPathClassName(path)).not.toContain("purple")
     expect(path?.style.strokeDasharray).toBeFalsy()
     expect(path?.style.strokeWidth).toBe("2")
@@ -216,8 +228,10 @@ describe("MatchRelationshipEdge - Unit Tests", () => {
       relationship: "Husband",
       isSpouseEdge: true,
     })
-    
-    const path = container.querySelector("path.react-flow__edge-path") as SVGPathElement
+
+    const path = container.querySelector(
+      "path.react-flow__edge-path",
+    ) as SVGPathElement
     expect(getPathClassName(path)).toContain("purple")
     expect(path?.style.strokeDasharray).toBe("5,5")
   })
@@ -227,8 +241,10 @@ describe("MatchRelationshipEdge - Unit Tests", () => {
       relationship: "Wife",
       isSpouseEdge: true,
     })
-    
-    const path = container.querySelector("path.react-flow__edge-path") as SVGPathElement
+
+    const path = container.querySelector(
+      "path.react-flow__edge-path",
+    ) as SVGPathElement
     expect(getPathClassName(path)).toContain("purple")
     expect(path?.style.strokeDasharray).toBe("5,5")
   })
@@ -238,8 +254,10 @@ describe("MatchRelationshipEdge - Unit Tests", () => {
       relationship: "Son",
       isSpouseEdge: false,
     })
-    
-    const path = container.querySelector("path.react-flow__edge-path") as SVGPathElement
+
+    const path = container.querySelector(
+      "path.react-flow__edge-path",
+    ) as SVGPathElement
     expect(getPathClassName(path)).not.toContain("purple")
     expect(path?.style.strokeDasharray).toBeFalsy()
   })
@@ -249,8 +267,10 @@ describe("MatchRelationshipEdge - Unit Tests", () => {
       relationship: "Daughter",
       isSpouseEdge: false,
     })
-    
-    const path = container.querySelector("path.react-flow__edge-path") as SVGPathElement
+
+    const path = container.querySelector(
+      "path.react-flow__edge-path",
+    ) as SVGPathElement
     expect(getPathClassName(path)).not.toContain("purple")
     expect(path?.style.strokeDasharray).toBeFalsy()
   })
@@ -260,8 +280,10 @@ describe("MatchRelationshipEdge - Unit Tests", () => {
       relationship: "Mother",
       isSpouseEdge: false,
     })
-    
-    const path = container.querySelector("path.react-flow__edge-path") as SVGPathElement
+
+    const path = container.querySelector(
+      "path.react-flow__edge-path",
+    ) as SVGPathElement
     expect(getPathClassName(path)).not.toContain("purple")
     expect(path?.style.strokeDasharray).toBeFalsy()
   })
@@ -271,7 +293,7 @@ describe("MatchRelationshipEdge - Unit Tests", () => {
       relationship: "Father",
       isSpouseEdge: false,
     })
-    
+
     const path = container.querySelector("path.react-flow__edge-path")
     expect(path?.getAttribute("marker-end")).toBe("url(#arrow)")
   })

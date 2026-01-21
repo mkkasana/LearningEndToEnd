@@ -10,10 +10,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { RotateCcw, Search } from "lucide-react"
 import { useEffect, useState } from "react"
-import {
-  PersonMetadataService,
-  ReligionMetadataService,
-} from "@/client"
+import { PersonMetadataService, ReligionMetadataService } from "@/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -84,8 +81,8 @@ export function PartnerFilterPanel({
       if (selectedReligionIds.length === 0) return []
       const results = await Promise.all(
         selectedReligionIds.map((religionId) =>
-          ReligionMetadataService.getCategoriesByReligion({ religionId })
-        )
+          ReligionMetadataService.getCategoriesByReligion({ religionId }),
+        ),
       )
       // Flatten categories
       return results.flat()
@@ -103,15 +100,14 @@ export function PartnerFilterPanel({
       if (selectedCategoryIds.length === 0) return []
       const results = await Promise.all(
         selectedCategoryIds.map((categoryId) =>
-          ReligionMetadataService.getSubCategoriesByCategory({ categoryId })
-        )
+          ReligionMetadataService.getSubCategoriesByCategory({ categoryId }),
+        ),
       )
       // Flatten sub-categories
       return results.flat()
     },
     enabled: selectedCategoryIds.length > 0,
   })
-
 
   // Convert API data to TagItem format
   // Note: API returns religionId/religionName, categoryId/categoryName, subCategoryId/subCategoryName
@@ -166,7 +162,9 @@ export function PartnerFilterPanel({
     // when the user interacts with them (invalid ones won't appear in dropdown)
     setLocalFilters((prev) => ({
       ...prev,
-      includeReligions: prev.includeReligions.filter((r) => r.id !== religionId),
+      includeReligions: prev.includeReligions.filter(
+        (r) => r.id !== religionId,
+      ),
     }))
   }
 
@@ -201,7 +199,7 @@ export function PartnerFilterPanel({
     setLocalFilters((prev) => ({
       ...prev,
       includeCategories: prev.includeCategories.filter(
-        (c) => c.id !== categoryId
+        (c) => c.id !== categoryId,
       ),
     }))
   }
@@ -218,7 +216,7 @@ export function PartnerFilterPanel({
     setLocalFilters((prev) => ({
       ...prev,
       includeSubCategories: prev.includeSubCategories.filter(
-        (sc) => sc.id !== subCategoryId
+        (sc) => sc.id !== subCategoryId,
       ),
     }))
   }
@@ -231,11 +229,12 @@ export function PartnerFilterPanel({
     }))
   }
 
-  const handleRemoveExcludeSubCategory = (subCategoryId: string) => {
+  const handleRemoveExcludeSubCategory = (idOrName: string) => {
     setLocalFilters((prev) => ({
       ...prev,
+      // Support removal by ID or by name (for items with empty IDs)
       excludeSubCategories: prev.excludeSubCategories.filter(
-        (sc) => sc.id !== subCategoryId
+        (sc) => sc.id !== idOrName && sc.name !== idOrName,
       ),
     }))
   }
@@ -247,7 +246,9 @@ export function PartnerFilterPanel({
       ...prev,
       birthYearFrom: numValue,
     }))
-    setBirthYearError(validateBirthYearRange(numValue, localFilters.birthYearTo))
+    setBirthYearError(
+      validateBirthYearRange(numValue, localFilters.birthYearTo),
+    )
   }
 
   const handleBirthYearToChange = (value: string) => {
@@ -256,14 +257,16 @@ export function PartnerFilterPanel({
       ...prev,
       birthYearTo: numValue,
     }))
-    setBirthYearError(validateBirthYearRange(localFilters.birthYearFrom, numValue))
+    setBirthYearError(
+      validateBirthYearRange(localFilters.birthYearFrom, numValue),
+    )
   }
 
   // Handle apply filters
   const handleApply = () => {
     const error = validateBirthYearRange(
       localFilters.birthYearFrom,
-      localFilters.birthYearTo
+      localFilters.birthYearTo,
     )
     if (error) {
       setBirthYearError(error)
@@ -280,10 +283,12 @@ export function PartnerFilterPanel({
     onReset()
   }
 
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-[90vw] max-w-[400px] p-0 flex flex-col h-[100dvh] overflow-hidden">
+      <SheetContent
+        side="left"
+        className="w-[90vw] max-w-[400px] p-0 flex flex-col h-[100dvh] overflow-hidden"
+      >
         <SheetHeader className="px-6 pt-6 pb-4 flex-shrink-0">
           <SheetTitle>Partner Search Filters</SheetTitle>
           <SheetDescription>

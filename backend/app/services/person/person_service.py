@@ -314,7 +314,7 @@ class PersonService:
     def _resolve_religion_details(
         self, person_id: uuid.UUID
     ) -> PersonReligionDetails | None:
-        """Resolve religion details with names."""
+        """Resolve religion details with names and IDs."""
         religion_repo = PersonReligionRepository(self.person_repo.session)
         person_religion = religion_repo.get_by_person_id(person_id)
 
@@ -350,7 +350,10 @@ class PersonService:
         )
 
         return PersonReligionDetails(
+            religion_id=person_religion.religion_id,
             religion_name=religion_name,
+            category_id=person_religion.religion_category_id,
             category_name=category_name,
+            sub_category_id=person_religion.religion_sub_category_id,
             sub_category_name=sub_category_name,
         )

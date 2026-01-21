@@ -4,80 +4,75 @@
  * Requirements: 9.1, 12.1
  */
 
-// Types
-export type {
-  TagItem,
-  PartnerFilters,
-  PartnerFilterPanelProps,
-  TagInputProps,
-  ActivePersonDefaults,
-  LineageSubCategories,
-  GenderMetadata,
-  PartnerResultsDisplayProps,
-  // Match Visualization Types
-  MatchItem,
-  MatchPersonNodeData,
-  MatchRelationshipEdgeData,
-  MatchNode,
-  MatchEdge,
-  TransformedMatchPath,
-  MatchGenerationInfo,
-  MatchSelectorProps,
-  MatchPathSummaryProps,
-  MatchGraphProps,
-} from "./types"
-
-// Components
-export { TagInput } from "./TagInput"
-export { PartnerFilterPanel } from "./PartnerFilterPanel"
-export { PartnerResultsDisplay } from "./PartnerResultsDisplay"
-
-// Match Visualization Components
-export { MatchSelector } from "./MatchSelector"
-export { MatchPathSummary } from "./MatchPathSummary"
-export { MatchGraph } from "./MatchGraph"
-export { MatchPersonNode } from "./MatchPersonNode"
-export { MatchRelationshipEdge } from "./MatchRelationshipEdge"
-export { MatchGraphControls } from "./MatchGraphControls"
-
 // Hooks
 export { usePartnerDefaults } from "./hooks/usePartnerDefaults"
+export { MatchGraph } from "./MatchGraph"
+export { MatchGraphControls } from "./MatchGraphControls"
+export { MatchPathSummary } from "./MatchPathSummary"
+export { MatchPersonNode } from "./MatchPersonNode"
+export { MatchRelationshipEdge } from "./MatchRelationshipEdge"
+// Match Visualization Components
+export { MatchSelector } from "./MatchSelector"
+export { PartnerFilterPanel } from "./PartnerFilterPanel"
+export { PartnerResultsDisplay } from "./PartnerResultsDisplay"
+// Components
+export { TagInput } from "./TagInput"
+// Types
+export type {
+  ActivePersonDefaults,
+  GenderMetadata,
+  LineageSubCategories,
+  MatchEdge,
+  MatchGenerationInfo,
+  MatchGraphProps,
+  // Match Visualization Types
+  MatchItem,
+  MatchNode,
+  MatchPathSummaryProps,
+  MatchPersonNodeData,
+  MatchRelationshipEdgeData,
+  MatchSelectorProps,
+  PartnerFilterPanelProps,
+  PartnerFilters,
+  PartnerResultsDisplayProps,
+  TagInputProps,
+  TagItem,
+  TransformedMatchPath,
+} from "./types"
 
 // Utilities
 export {
-  calculateOppositeGender,
-  calculateBirthYearRange,
-  validateBirthYearRange,
   buildDefaultFilters,
+  calculateBirthYearRange,
+  calculateOppositeGender,
+  validateBirthYearRange,
 } from "./utils/defaultsCalculator"
-
-// Match Path Extraction Utilities
+export type {
+  EdgeHandles,
+  HandlePosition,
+} from "./utils/matchGraphTransformer"
+// Match Graph Transformation Utilities
 export {
-  extractPathToMatch,
-  buildMatchItems,
-  generateMatchPathSummary,
-} from "./utils/matchPathExtractor"
+  assignGenerations,
+  calculatePositions,
+  getEdgeHandles,
+  HORIZONTAL_GAP,
+  isChildRelationship,
+  isParentRelationship,
+  isSpouseRelationship,
+  NODE_HEIGHT,
+  NODE_WIDTH,
+  SPOUSE_GAP,
+  transformMatchPath,
+  VERTICAL_GAP,
+} from "./utils/matchGraphTransformer"
 export type {
   MatchConnectionInfo,
   MatchGraphNode,
 } from "./utils/matchPathExtractor"
-
-// Match Graph Transformation Utilities
+// Match Path Extraction Utilities
 export {
-  transformMatchPath,
-  assignGenerations,
-  calculatePositions,
-  getEdgeHandles,
-  isChildRelationship,
-  isParentRelationship,
-  isSpouseRelationship,
-  NODE_WIDTH,
-  NODE_HEIGHT,
-  HORIZONTAL_GAP,
-  VERTICAL_GAP,
-  SPOUSE_GAP,
-} from "./utils/matchGraphTransformer"
-export type {
-  HandlePosition,
-  EdgeHandles,
-} from "./utils/matchGraphTransformer"
+  buildMatchItems,
+  extractPathToMatch,
+  generateMatchPathSummary,
+} from "./utils/matchPathExtractor"

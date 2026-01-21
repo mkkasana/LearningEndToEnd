@@ -23,6 +23,9 @@ import type { TagInputProps } from "./types"
  * Displays selected items as removable badges and provides a dropdown
  * to add new items. The dropdown automatically filters out already
  * selected items.
+ *
+ * Note: The `disabled` prop only affects adding new items, not removing existing ones.
+ * Users can always remove selected items regardless of the disabled state.
  */
 export function TagInput({
   label,
@@ -35,7 +38,7 @@ export function TagInput({
 }: TagInputProps) {
   // Filter available items to exclude already selected ones
   const unselectedItems = availableItems.filter(
-    (item) => !selectedItems.some((selected) => selected.id === item.id)
+    (item) => !selectedItems.some((selected) => selected.id === item.id),
   )
 
   // Handle selection from dropdown
@@ -50,19 +53,18 @@ export function TagInput({
     <div className="space-y-2">
       <Label>{label}</Label>
       <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[42px] bg-background">
-        {/* Selected tags */}
+        {/* Selected tags - always removable regardless of disabled state */}
         {selectedItems.map((item) => (
           <Badge
-            key={item.id}
+            key={item.id || item.name}
             variant="secondary"
             className="flex items-center gap-1 pr-1"
           >
             <span className="max-w-[150px] truncate">{item.name}</span>
             <button
               type="button"
-              onClick={() => onRemove(item.id)}
-              disabled={disabled}
-              className="ml-1 rounded-full hover:bg-muted-foreground/20 p-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => onRemove(item.id || item.name)}
+              className="ml-1 rounded-full hover:bg-muted-foreground/20 p-0.5"
               aria-label={`Remove ${item.name}`}
             >
               <X className="h-3 w-3" />
@@ -70,7 +72,7 @@ export function TagInput({
           </Badge>
         ))}
 
-        {/* Add dropdown - only show if there are unselected items */}
+        {/* Add dropdown - only show if there are unselected items and not disabled */}
         {unselectedItems.length > 0 && !disabled && (
           <Select onValueChange={handleSelect}>
             <SelectTrigger

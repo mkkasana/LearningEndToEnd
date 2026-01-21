@@ -1,7 +1,8 @@
 // @ts-nocheck
-import { useMemo } from "react"
+
 import { useQuery } from "@tanstack/react-query"
 import { AlertTriangle } from "lucide-react"
+import { useMemo } from "react"
 import {
   type PersonMatchResult,
   type PersonSearchRequest,
@@ -94,11 +95,13 @@ export function ConnectExistingPersonStep({
   // Derived state for exact match detection
   const exactMatches = useMemo(
     () => findExactMatches(matchingPersons, searchCriteria.dateOfBirth),
-    [matchingPersons, searchCriteria.dateOfBirth]
+    [matchingPersons, searchCriteria.dateOfBirth],
   )
 
   const hasExactMatch = exactMatches.length > 0
-  const hasBlockingExactMatch = exactMatches.some((p) => !p.is_already_connected)
+  const hasBlockingExactMatch = exactMatches.some(
+    (p) => !p.is_already_connected,
+  )
   const allExactMatchesConnected =
     hasExactMatch && exactMatches.every((p) => p.is_already_connected)
 
@@ -308,9 +311,16 @@ export function ConnectExistingPersonStep({
         <Button
           type="button"
           onClick={onNext}
-          disabled={isLoading || isFetching || hasBlockingExactMatch || allExactMatchesConnected}
+          disabled={
+            isLoading ||
+            isFetching ||
+            hasBlockingExactMatch ||
+            allExactMatchesConnected
+          }
         >
-          {hasExactMatch ? "Cannot Create (Exact Match Found)" : "Next: Create New"}
+          {hasExactMatch
+            ? "Cannot Create (Exact Match Found)"
+            : "Next: Create New"}
         </Button>
       </div>
     </div>

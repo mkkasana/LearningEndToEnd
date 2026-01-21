@@ -21,12 +21,12 @@ export interface AssumeRoleButtonProps {
 
 /**
  * AssumeRoleButton - Allows elevated users to assume a person's role
- * 
+ *
  * Only renders if:
  * - User has elevated role (superuser/admin)
  * - User created the person (createdByUserId matches current user)
  * - Not already assuming this person
- * 
+ *
  * _Requirements: 6.1, 6.2, 6.4_
  */
 export function AssumeRoleButton({
@@ -37,7 +37,8 @@ export function AssumeRoleButton({
   className,
 }: AssumeRoleButtonProps) {
   const { user } = useAuth()
-  const { assumePerson, isAssumeLoading, activePersonId } = useActivePersonContext()
+  const { assumePerson, isAssumeLoading, activePersonId } =
+    useActivePersonContext()
   const [isLoading, setIsLoading] = useState(false)
 
   // Don't render if user can't assume this person

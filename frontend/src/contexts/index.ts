@@ -1,5 +1,5 @@
 export {
+  ActivePersonContext,
   ActivePersonProvider,
   useActivePersonContext,
-  ActivePersonContext,
 } from "./ActivePersonContext"

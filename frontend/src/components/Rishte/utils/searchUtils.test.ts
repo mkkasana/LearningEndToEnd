@@ -1,16 +1,22 @@
 import { describe, expect, it } from "vitest"
 import type { PersonSearchResult } from "@/client"
-import type { BasicInfoFormData, AddressFormData, ReligionFormData, PersonSearchCriteria, SelectedPerson } from "../types"
+import type {
+  AddressFormData,
+  BasicInfoFormData,
+  PersonSearchCriteria,
+  ReligionFormData,
+  SelectedPerson,
+} from "../types"
 import {
   buildSearchRequest,
+  calculateTotalPages,
   extractBirthYear,
   formatPersonName,
-  toSelectedPerson,
-  calculateTotalPages,
-  isValidBasicInfo,
-  isValidAddress,
-  isValidReligion,
   formatSelectedPersonDisplay,
+  isValidAddress,
+  isValidBasicInfo,
+  isValidReligion,
+  toSelectedPerson,
 } from "./searchUtils"
 
 describe("searchUtils - extractBirthYear", () => {
@@ -48,7 +54,11 @@ describe("searchUtils - formatPersonName", () => {
   })
 
   it("should format name with middle name", () => {
-    const person = { first_name: "John", middle_name: "William", last_name: "Doe" }
+    const person = {
+      first_name: "John",
+      middle_name: "William",
+      last_name: "Doe",
+    }
     expect(formatPersonName(person)).toBe("John William Doe")
   })
 
@@ -58,7 +68,11 @@ describe("searchUtils - formatPersonName", () => {
   })
 
   it("should handle undefined middle name", () => {
-    const person = { first_name: "Jane", middle_name: undefined, last_name: "Smith" }
+    const person = {
+      first_name: "Jane",
+      middle_name: undefined,
+      last_name: "Smith",
+    }
     expect(formatPersonName(person)).toBe("Jane Smith")
   })
 })

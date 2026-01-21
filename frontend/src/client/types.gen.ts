@@ -1231,11 +1231,14 @@ export type PersonReligionCreate = {
 };
 
 /**
- * Religion details with resolved names.
+ * Religion details with resolved names and IDs.
  */
 export type PersonReligionDetails = {
+    religion_id?: (string | null);
     religion_name: string;
+    category_id?: (string | null);
     category_name?: (string | null);
+    sub_category_id?: (string | null);
     sub_category_name?: (string | null);
 };
 
