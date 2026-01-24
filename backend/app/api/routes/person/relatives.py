@@ -109,7 +109,9 @@ def get_siblings(session: SessionDep, user_id: uuid.UUID) -> Any:
 # =============================================================================
 
 
-@router.get("/person/{person_id}/parents", response_model=list[PersonRelationshipPublic])
+@router.get(
+    "/person/{person_id}/parents", response_model=list[PersonRelationshipPublic]
+)
 @log_route
 def get_parents_by_person_id(session: SessionDep, person_id: uuid.UUID) -> Any:
     """
@@ -129,7 +131,9 @@ def get_parents_by_person_id(session: SessionDep, person_id: uuid.UUID) -> Any:
     return parents
 
 
-@router.get("/person/{person_id}/children", response_model=list[PersonRelationshipPublic])
+@router.get(
+    "/person/{person_id}/children", response_model=list[PersonRelationshipPublic]
+)
 @log_route
 def get_children_by_person_id(session: SessionDep, person_id: uuid.UUID) -> Any:
     """
@@ -149,7 +153,9 @@ def get_children_by_person_id(session: SessionDep, person_id: uuid.UUID) -> Any:
     return children
 
 
-@router.get("/person/{person_id}/spouses", response_model=list[PersonRelationshipPublic])
+@router.get(
+    "/person/{person_id}/spouses", response_model=list[PersonRelationshipPublic]
+)
 @log_route
 def get_spouses_by_person_id(session: SessionDep, person_id: uuid.UUID) -> Any:
     """
@@ -169,7 +175,9 @@ def get_spouses_by_person_id(session: SessionDep, person_id: uuid.UUID) -> Any:
     return spouses
 
 
-@router.get("/person/{person_id}/siblings", response_model=list[PersonRelationshipPublic])
+@router.get(
+    "/person/{person_id}/siblings", response_model=list[PersonRelationshipPublic]
+)
 @log_route
 def get_siblings_by_person_id(session: SessionDep, person_id: uuid.UUID) -> Any:
     """

@@ -1,7 +1,7 @@
-import { render } from "@testing-library/react"
 import * as fc from "fast-check"
 import { describe, expect, it, vi } from "vitest"
 import type { PersonDetails } from "@/client"
+import { renderWithProviders } from "@/test-utils"
 import { HorizontalScrollRow } from "./HorizontalScrollRow"
 
 /**
@@ -86,7 +86,7 @@ describe("HorizontalScrollRow", () => {
     it("should render nothing when people array is empty and no selectedPersonId", () => {
       const mockOnClick = vi.fn()
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[]}
           onPersonClick={mockOnClick}
@@ -113,7 +113,7 @@ describe("HorizontalScrollRow", () => {
         updated_at: "2024-01-01T00:00:00.000Z",
       }
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[mockPerson]}
           onPersonClick={vi.fn()}
@@ -142,7 +142,7 @@ describe("HorizontalScrollRow", () => {
         updated_at: "2024-01-01T00:00:00.000Z",
       }
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[mockPerson]}
           onPersonClick={vi.fn()}
@@ -173,7 +173,7 @@ describe("HorizontalScrollRow", () => {
         updated_at: "2024-01-01T00:00:00.000Z",
       }
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[mockPerson]}
           onPersonClick={vi.fn()}
@@ -205,7 +205,7 @@ describe("HorizontalScrollRow", () => {
       const colorCoding = new Map<string, "sibling" | "spouse">()
       colorCoding.set("sibling-123", "sibling")
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[sibling]}
           onPersonClick={vi.fn()}
@@ -237,7 +237,7 @@ describe("HorizontalScrollRow", () => {
       const colorCoding = new Map<string, "sibling" | "spouse">()
       colorCoding.set("spouse-123", "spouse")
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[spouse]}
           onPersonClick={vi.fn()}
@@ -269,7 +269,7 @@ describe("HorizontalScrollRow", () => {
       const colorCoding = new Map<string, "sibling" | "spouse">()
       // Don't add selected person to color coding
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[selectedPerson]}
           selectedPersonId="selected-123"
@@ -300,7 +300,7 @@ describe("HorizontalScrollRow", () => {
         updated_at: "2024-01-01T00:00:00.000Z",
       }
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[mockPerson]}
           onPersonClick={vi.fn()}
@@ -357,7 +357,7 @@ describe("HorizontalScrollRow", () => {
         },
       ]
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={people}
           onPersonClick={vi.fn()}
@@ -386,7 +386,7 @@ describe("HorizontalScrollRow", () => {
         updated_at: "2024-01-01T00:00:00.000Z",
       }
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[mockPerson]}
           onPersonClick={vi.fn()}
@@ -414,7 +414,7 @@ describe("HorizontalScrollRow", () => {
         updated_at: "2024-01-01T00:00:00.000Z",
       }
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[mockPerson]}
           onPersonClick={vi.fn()}
@@ -442,7 +442,7 @@ describe("HorizontalScrollRow", () => {
         updated_at: "2024-01-01T00:00:00.000Z",
       }
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={[mockPerson]}
           selectedPersonId="123"
@@ -475,7 +475,7 @@ describe("HorizontalScrollRow", () => {
         }),
       )
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <HorizontalScrollRow
           people={manyPeople}
           onPersonClick={vi.fn()}
@@ -514,7 +514,7 @@ describe("HorizontalScrollRow", () => {
           (parents) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={parents}
                 onPersonClick={mockOnClick}
@@ -561,7 +561,7 @@ describe("HorizontalScrollRow", () => {
             siblings.forEach((s) => colorCoding.set(s.id, "sibling"))
             spouses.forEach((s) => colorCoding.set(s.id, "spouse"))
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={allPeople}
                 selectedPersonId={selectedPerson.id}
@@ -606,7 +606,7 @@ describe("HorizontalScrollRow", () => {
           (children) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={children}
                 onPersonClick={mockOnClick}
@@ -643,7 +643,7 @@ describe("HorizontalScrollRow", () => {
           (people, variant) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={people}
                 onPersonClick={mockOnClick}
@@ -679,7 +679,7 @@ describe("HorizontalScrollRow", () => {
           (people, variant) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={people}
                 onPersonClick={mockOnClick}
@@ -730,7 +730,7 @@ describe("HorizontalScrollRow", () => {
             const scrollIntoViewMock = vi.fn()
             Element.prototype.scrollIntoView = scrollIntoViewMock
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={allPeople}
                 selectedPersonId={selectedPerson.id}
@@ -795,7 +795,7 @@ describe("HorizontalScrollRow", () => {
             siblings1.forEach((s) => colorCoding1.set(s.id, "sibling"))
             spouses1.forEach((s) => colorCoding1.set(s.id, "spouse"))
 
-            const { container: container1, rerender } = render(
+            const { container: container1, rerender } = renderWithProviders(
               <HorizontalScrollRow
                 people={allPeople1}
                 selectedPersonId={person1.id}
@@ -853,7 +853,7 @@ describe("HorizontalScrollRow", () => {
           const allPeople = [selectedPerson]
           const colorCoding = new Map<string, "sibling" | "spouse">()
 
-          const { container } = render(
+          const { container } = renderWithProviders(
             <HorizontalScrollRow
               people={allPeople}
               selectedPersonId={selectedPerson.id}
@@ -907,7 +907,7 @@ describe("HorizontalScrollRow", () => {
 
             // Test parent row color coding
             if (parents.length > 0) {
-              const { container: parentContainer } = render(
+              const { container: parentContainer } = renderWithProviders(
                 <HorizontalScrollRow
                   people={parents}
                   onPersonClick={mockOnClick}
@@ -934,7 +934,7 @@ describe("HorizontalScrollRow", () => {
             siblings.forEach((s) => colorCoding.set(s.id, "sibling"))
             spouses.forEach((s) => colorCoding.set(s.id, "spouse"))
 
-            const { container: centerContainer } = render(
+            const { container: centerContainer } = renderWithProviders(
               <HorizontalScrollRow
                 people={centerPeople}
                 selectedPersonId={selectedPerson.id}
@@ -973,7 +973,7 @@ describe("HorizontalScrollRow", () => {
 
             // Test children row color coding
             if (children.length > 0) {
-              const { container: childContainer } = render(
+              const { container: childContainer } = renderWithProviders(
                 <HorizontalScrollRow
                   people={children}
                   onPersonClick={mockOnClick}
@@ -1013,7 +1013,7 @@ describe("HorizontalScrollRow", () => {
             siblings.forEach((s) => colorCoding.set(s.id, "sibling"))
             spouses.forEach((s) => colorCoding.set(s.id, "spouse"))
 
-            const { container, rerender } = render(
+            const { container, rerender } = renderWithProviders(
               <HorizontalScrollRow
                 people={centerPeople}
                 selectedPersonId={selectedPerson.id}
@@ -1066,7 +1066,7 @@ describe("HorizontalScrollRow", () => {
             spouses.forEach((s) => colorCoding.set(s.id, "spouse"))
             // Intentionally not adding selected person to color coding
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={centerPeople}
                 selectedPersonId={selectedPerson.id}
@@ -1120,7 +1120,7 @@ describe("HorizontalScrollRow", () => {
               people = [...people, selectedPerson]
             }
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={people}
                 selectedPersonId={selectedPersonId}
@@ -1176,7 +1176,7 @@ describe("HorizontalScrollRow", () => {
           (people, variant) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={people}
                 onPersonClick={mockOnClick}
@@ -1223,7 +1223,7 @@ describe("HorizontalScrollRow", () => {
             const mockOnClick = vi.fn()
 
             // Test parent row
-            const { container: parentContainer } = render(
+            const { container: parentContainer } = renderWithProviders(
               <HorizontalScrollRow
                 people={people}
                 onPersonClick={mockOnClick}
@@ -1232,7 +1232,7 @@ describe("HorizontalScrollRow", () => {
             )
 
             // Test child row
-            const { container: childContainer } = render(
+            const { container: childContainer } = renderWithProviders(
               <HorizontalScrollRow
                 people={people}
                 onPersonClick={mockOnClick}
@@ -1271,7 +1271,7 @@ describe("HorizontalScrollRow", () => {
           (person, variant) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={[person]}
                 onPersonClick={mockOnClick}
@@ -1304,7 +1304,7 @@ describe("HorizontalScrollRow", () => {
           (people, variant) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={people}
                 onPersonClick={mockOnClick}
@@ -1354,7 +1354,7 @@ describe("HorizontalScrollRow", () => {
             const mockOnClick = vi.fn()
             const mockAddClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={people}
                 onPersonClick={mockOnClick}
@@ -1400,7 +1400,7 @@ describe("HorizontalScrollRow", () => {
             const mockOnClick = vi.fn()
             const mockAddClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={[]}
                 onPersonClick={mockOnClick}
@@ -1439,7 +1439,7 @@ describe("HorizontalScrollRow", () => {
             const mockOnClick = vi.fn()
             const mockAddClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={people}
                 onPersonClick={mockOnClick}
@@ -1475,7 +1475,7 @@ describe("HorizontalScrollRow", () => {
             const mockOnClick = vi.fn()
             const mockAddClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <HorizontalScrollRow
                 people={[]}
                 onPersonClick={mockOnClick}

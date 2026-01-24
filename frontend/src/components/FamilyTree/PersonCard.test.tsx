@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react"
 import * as fc from "fast-check"
 import { describe, expect, it } from "vitest"
 import type { PersonDetails } from "@/client"
+import { renderWithProviders } from "@/test-utils"
 import {
   formatYearsDisplay,
   PersonCard,
@@ -110,8 +111,8 @@ describe("PersonCard - Property-Based Tests", () => {
         personDetailsArbitrary,
         variantArbitrary,
         (person, variant) => {
-          // Render the PersonCard
-          const { container, unmount } = render(
+          // Render the PersonCard with providers
+          const { container, unmount } = renderWithProviders(
             <PersonCard
               person={person}
               variant={variant}
@@ -204,7 +205,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
   }
 
   it("should show placeholder when photo is missing", () => {
-    render(
+    renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="selected"
@@ -224,7 +225,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
       middle_name: null,
     }
 
-    render(
+    renderWithProviders(
       <PersonCard
         person={personWithoutMiddleName}
         variant="parent"
@@ -242,7 +243,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
       date_of_death: null,
     }
 
-    render(
+    renderWithProviders(
       <PersonCard person={livingPerson} variant="child" onClick={() => {}} />,
     )
 
@@ -259,7 +260,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
   })
 
   it("should render selected variant with correct styling", () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <PersonCard person={mockPerson} variant="selected" onClick={() => {}} />,
     )
 
@@ -270,7 +271,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
   })
 
   it("should render parent variant with correct styling", () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="parent"
@@ -285,7 +286,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
   })
 
   it("should render spouse variant with correct styling", () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="spouse"
@@ -300,7 +301,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
   })
 
   it("should render sibling variant with correct styling", () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="sibling"
@@ -316,7 +317,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
   })
 
   it("should render child variant with correct styling", () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="child"
@@ -336,7 +337,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
       clickedId = id
     }
 
-    render(
+    renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="selected"
@@ -351,7 +352,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
   })
 
   it("should not show relationship label for selected variant", () => {
-    render(
+    renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="selected"
@@ -366,7 +367,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
 
   describe("Spouse Visual Differentiation - Opacity Tests", () => {
     it("should render spouse cards with reduced opacity (0.40)", () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="spouse"
@@ -380,7 +381,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
     })
 
     it("should render selected person with full opacity (no opacity class)", () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="selected"
@@ -397,7 +398,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
     })
 
     it("should render sibling cards with opacity-75 (same as before)", () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="sibling"
@@ -413,7 +414,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
     })
 
     it("should render parent cards with full opacity (no opacity class)", () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="parent"
@@ -429,7 +430,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
     })
 
     it("should render child cards with full opacity (no opacity class)", () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="child"
@@ -445,7 +446,7 @@ describe("PersonCard - Unit Tests for Edge Cases", () => {
     })
 
     it("should increase spouse opacity on hover (0.60)", () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="spouse"

@@ -78,7 +78,9 @@ class ProfileService:
                 logger.debug(f"Person {person.id} missing marital status")
                 missing_fields.append("marital_status")
             else:
-                logger.debug(f"Person {person.id} has marital status: {person.marital_status}")
+                logger.debug(
+                    f"Person {person.id} has marital status: {person.marital_status}"
+                )
         else:
             missing_fields.append("marital_status")
 

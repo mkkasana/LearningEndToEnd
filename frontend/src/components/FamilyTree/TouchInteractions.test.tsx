@@ -1,6 +1,7 @@
-import { fireEvent, render } from "@testing-library/react"
+import { fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import type { PersonDetails } from "@/client"
+import { renderWithProviders } from "@/test-utils"
 import { PersonCard } from "./PersonCard"
 import { SiblingsList } from "./SiblingsList"
 import { SpouseCarousel } from "./SpouseCarousel"
@@ -65,7 +66,7 @@ describe("Touch Interactions", () => {
     it("should handle touch events on PersonCard", () => {
       const handleClick = vi.fn()
 
-      const { getByRole } = render(
+      const { getByRole } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="selected"
@@ -89,7 +90,7 @@ describe("Touch Interactions", () => {
     it("should handle multiple touch events on different person cards", () => {
       const handleClick = vi.fn()
 
-      const { getAllByRole } = render(
+      const { getAllByRole } = renderWithProviders(
         <div>
           <PersonCard
             person={mockPerson}
@@ -127,7 +128,7 @@ describe("Touch Interactions", () => {
     it("should not trigger click on touch cancel", () => {
       const handleClick = vi.fn()
 
-      const { getByRole } = render(
+      const { getByRole } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="selected"
@@ -151,7 +152,7 @@ describe("Touch Interactions", () => {
     it("should handle rapid touch events (tap quickly)", () => {
       const handleClick = vi.fn()
 
-      const { getByRole } = render(
+      const { getByRole } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="selected"
@@ -180,7 +181,7 @@ describe("Touch Interactions", () => {
     it("should allow touch scrolling on SiblingsList", () => {
       const handleClick = vi.fn()
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SiblingsList siblings={mockSiblings} onPersonClick={handleClick} />,
       )
 
@@ -210,7 +211,7 @@ describe("Touch Interactions", () => {
     it("should allow touch scrolling with momentum", () => {
       const handleClick = vi.fn()
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SiblingsList siblings={mockSiblings} onPersonClick={handleClick} />,
       )
 
@@ -244,7 +245,7 @@ describe("Touch Interactions", () => {
     it("should handle touch scrolling on SpouseCarousel navigation", () => {
       const handleClick = vi.fn()
 
-      const { getByLabelText } = render(
+      const { getByLabelText } = renderWithProviders(
         <SpouseCarousel spouses={mockSpouses} onPersonClick={handleClick} />,
       )
 
@@ -269,7 +270,7 @@ describe("Touch Interactions", () => {
     it("should handle touch on carousel indicator dots", () => {
       const handleClick = vi.fn()
 
-      const { getAllByRole } = render(
+      const { getAllByRole } = renderWithProviders(
         <SpouseCarousel spouses={mockSpouses} onPersonClick={handleClick} />,
       )
 
@@ -289,7 +290,7 @@ describe("Touch Interactions", () => {
     it("should prevent default scroll behavior during touch on cards", () => {
       const handleClick = vi.fn()
 
-      const { getByRole } = render(
+      const { getByRole } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="selected"
@@ -326,7 +327,7 @@ describe("Touch Interactions", () => {
     it("should maintain focus after touch interaction", () => {
       const handleClick = vi.fn()
 
-      const { getByRole } = render(
+      const { getByRole } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="selected"
@@ -349,7 +350,7 @@ describe("Touch Interactions", () => {
     it("should support both touch and keyboard navigation", () => {
       const handleClick = vi.fn()
 
-      const { getByRole } = render(
+      const { getByRole } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="selected"
@@ -376,7 +377,7 @@ describe("Touch Interactions", () => {
     it("should have appropriate touch target size", () => {
       const handleClick = vi.fn()
 
-      const { getByRole } = render(
+      const { getByRole } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="selected"
@@ -401,7 +402,7 @@ describe("Touch Interactions", () => {
     it("should handle swipe gesture on siblings list", () => {
       const handleClick = vi.fn()
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SiblingsList siblings={mockSiblings} onPersonClick={handleClick} />,
       )
 
@@ -428,7 +429,7 @@ describe("Touch Interactions", () => {
     it("should distinguish between tap and swipe", () => {
       const handleClick = vi.fn()
 
-      const { getByRole } = render(
+      const { getByRole } = renderWithProviders(
         <PersonCard
           person={mockPerson}
           variant="selected"
@@ -456,7 +457,7 @@ describe("Touch Interactions", () => {
     it("should handle pinch zoom gesture gracefully", () => {
       const handleClick = vi.fn()
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <div>
           <PersonCard
             person={mockPerson}

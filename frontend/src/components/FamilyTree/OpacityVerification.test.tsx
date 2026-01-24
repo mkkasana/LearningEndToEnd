@@ -1,6 +1,6 @@
-import { render } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import type { PersonDetails } from "@/client"
+import { renderWithProviders } from "@/test-utils"
 import { PersonCard } from "./PersonCard"
 
 describe("Spouse Opacity Verification", () => {
@@ -20,7 +20,7 @@ describe("Spouse Opacity Verification", () => {
   }
 
   it("spouse card should have opacity-40 class in className string", () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="spouse"
@@ -41,7 +41,7 @@ describe("Spouse Opacity Verification", () => {
   })
 
   it("selected person should NOT have opacity-75 class", () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="selected"
@@ -60,7 +60,7 @@ describe("Spouse Opacity Verification", () => {
   })
 
   it("sibling card should have opacity-75 class", () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <PersonCard
         person={mockPerson}
         variant="sibling"

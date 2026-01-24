@@ -57,26 +57,43 @@ class TestUpdateUsersMe:
     """Integration tests for PATCH /users/me endpoint."""
 
     def test_update_user_me(
-        self, client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+        self, client: TestClient, db: Session
     ) -> None:
         """Test user can update their own info."""
+        # Create a fresh user for this test to avoid conflicts with other tests
+        username = random_email()
+        password = random_lower_string()
+        user_in = UserCreate(email=username, password=password)
+        user = crud.create_user(session=db, user_create=user_in)
+        user_id = user.id
+        
+        # Login to get auth headers
+        login_data = {"username": username, "password": password}
+        r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+        tokens = r.json()
+        headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+        
+        # Update user info
         full_name = "Updated Name"
-        email = random_email()
-        data = {"full_name": full_name, "email": email}
+        new_email = random_email()
+        data = {"full_name": full_name, "email": new_email}
         r = client.patch(
             f"{settings.API_V1_STR}/users/me",
-            headers=normal_user_token_headers,
+            headers=headers,
             json=data,
         )
         assert r.status_code == 200
         updated_user = r.json()
-        assert updated_user["email"] == email
+        assert updated_user["email"] == new_email
         assert updated_user["full_name"] == full_name
 
-        user_query = select(User).where(User.email == email)
-        user_db = db.exec(user_query).first()
+        # Expire all cached objects to force fresh query
+        db.expire_all()
+        
+        # Query by user ID instead of email to verify the update
+        user_db = db.get(User, user_id)
         assert user_db
-        assert user_db.email == email
+        assert user_db.email == new_email
         assert user_db.full_name == full_name
 
     def test_update_user_me_email_exists(

@@ -1,6 +1,6 @@
-import { render } from "@testing-library/react"
 import * as fc from "fast-check"
 import { describe, expect, it, vi } from "vitest"
+import { renderWithProviders } from "@/test-utils"
 import { ChildrenSection } from "./ChildrenSection"
 import { ParentsSection } from "./ParentsSection"
 import { SiblingsSection } from "./SiblingsSection"
@@ -88,7 +88,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
 
               const mockOnClick = vi.fn()
 
-              const { container } = render(
+              const { container } = renderWithProviders(
                 <ParentsSection
                   parents={uniqueParents}
                   onPersonClick={mockOnClick}
@@ -120,7 +120,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
       it("should render nothing when no parents exist", () => {
         const mockOnClick = vi.fn()
 
-        const { container } = render(
+        const { container } = renderWithProviders(
           <ParentsSection parents={[]} onPersonClick={mockOnClick} />,
         )
 
@@ -134,7 +134,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
           fc.property(personDetailsArbitrary, (parent) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <ParentsSection parents={[parent]} onPersonClick={mockOnClick} />,
             )
 
@@ -169,7 +169,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
 
               const mockOnClick = vi.fn()
 
-              const { container } = render(
+              const { container } = renderWithProviders(
                 <ParentsSection
                   parents={[father, mother]}
                   onPersonClick={mockOnClick}
@@ -229,7 +229,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
 
               const mockOnClick = vi.fn()
 
-              const { container } = render(
+              const { container } = renderWithProviders(
                 <SpouseSection
                   spouses={uniqueSpouses}
                   onPersonClick={mockOnClick}
@@ -277,7 +277,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
           fc.property(personDetailsArbitrary, (spouse) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <SpouseSection spouses={[spouse]} onPersonClick={mockOnClick} />,
             )
 
@@ -292,7 +292,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
       it("should render nothing when no spouses exist", () => {
         const mockOnClick = vi.fn()
 
-        const { container } = render(
+        const { container } = renderWithProviders(
           <SpouseSection spouses={[]} onPersonClick={mockOnClick} />,
         )
 
@@ -317,7 +317,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
             (siblings) => {
               const mockOnClick = vi.fn()
 
-              const { container } = render(
+              const { container } = renderWithProviders(
                 <SiblingsSection
                   siblings={siblings}
                   onPersonClick={mockOnClick}
@@ -345,7 +345,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
           fc.property(personDetailsArbitrary, (sibling) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <SiblingsSection
                 siblings={[sibling]}
                 onPersonClick={mockOnClick}
@@ -363,7 +363,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
       it("should render nothing when no siblings exist", () => {
         const mockOnClick = vi.fn()
 
-        const { container } = render(
+        const { container } = renderWithProviders(
           <SiblingsSection siblings={[]} onPersonClick={mockOnClick} />,
         )
 
@@ -388,7 +388,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
             (children) => {
               const mockOnClick = vi.fn()
 
-              const { container } = render(
+              const { container } = renderWithProviders(
                 <ChildrenSection
                   children={children}
                   onPersonClick={mockOnClick}
@@ -415,7 +415,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
           fc.property(personDetailsArbitrary, (child) => {
             const mockOnClick = vi.fn()
 
-            const { container } = render(
+            const { container } = renderWithProviders(
               <ChildrenSection
                 children={[child]}
                 onPersonClick={mockOnClick}
@@ -433,7 +433,7 @@ describe("FamilyTree Sections - Property-Based Tests", () => {
       it("should render nothing when no children exist", () => {
         const mockOnClick = vi.fn()
 
-        const { container } = render(
+        const { container } = renderWithProviders(
           <ChildrenSection children={[]} onPersonClick={mockOnClick} />,
         )
 

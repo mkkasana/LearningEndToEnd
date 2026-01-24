@@ -483,11 +483,11 @@ class TestProfileCompletionPercentageProperty:
         should be internally consistent.
         
         Invariants:
-        1. If is_complete is True, then has_person, has_address, and has_religion must all be True
-        2. If any of has_person, has_address, has_religion is False, is_complete must be False
+        1. If is_complete is True, then has_person, has_address, has_religion, and has_marital_status must all be True
+        2. If any of has_person, has_address, has_religion, has_marital_status is False, is_complete must be False
         3. missing_fields should contain exactly the fields that are False
         """
-        # Test with user who has person (but may not have address/religion)
+        # Test with user who has person (but may not have address/religion/marital_status)
         headers, person = create_test_user_with_person(client, db)
         
         r = client.get(
@@ -502,13 +502,15 @@ class TestProfileCompletionPercentageProperty:
             assert data["has_person"] is True, "is_complete=True but has_person=False"
             assert data["has_address"] is True, "is_complete=True but has_address=False"
             assert data["has_religion"] is True, "is_complete=True but has_religion=False"
+            assert data["has_marital_status"] is True, "is_complete=True but has_marital_status=False"
             assert len(data["missing_fields"]) == 0, "is_complete=True but missing_fields not empty"
         
         # Property 2: If any field is False, is_complete must be False
-        if not data["has_person"] or not data["has_address"] or not data["has_religion"]:
+        if not data["has_person"] or not data["has_address"] or not data["has_religion"] or not data["has_marital_status"]:
             assert data["is_complete"] is False, (
                 f"is_complete=True but has_person={data['has_person']}, "
-                f"has_address={data['has_address']}, has_religion={data['has_religion']}"
+                f"has_address={data['has_address']}, has_religion={data['has_religion']}, "
+                f"has_marital_status={data['has_marital_status']}"
             )
         
         # Property 3: missing_fields should match False fields
@@ -519,6 +521,8 @@ class TestProfileCompletionPercentageProperty:
             expected_missing.append("address")
         if not data["has_religion"]:
             expected_missing.append("religion")
+        if not data["has_marital_status"]:
+            expected_missing.append("marital_status")
         
         assert set(data["missing_fields"]) == set(expected_missing), (
             f"missing_fields={data['missing_fields']} but expected {expected_missing}"
@@ -544,8 +548,10 @@ class TestProfileCompletionPercentageProperty:
         assert data["has_person"] is False
         assert data["has_address"] is False
         assert data["has_religion"] is False
+        assert data["has_marital_status"] is False
         
         # All fields should be in missing_fields
         assert "person" in data["missing_fields"]
         assert "address" in data["missing_fields"]
         assert "religion" in data["missing_fields"]
+        assert "marital_status" in data["missing_fields"]

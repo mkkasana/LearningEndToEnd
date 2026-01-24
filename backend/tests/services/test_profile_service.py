@@ -13,6 +13,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from app.db_models.person.person import Person
+from app.enums.marital_status import MaritalStatus
 from app.services.profile_service import ProfileService
 
 
@@ -33,6 +34,7 @@ class TestProfileServiceCompletion:
             first_name="John",
             last_name="Doe",
             gender_id=uuid.uuid4(),
+            marital_status=MaritalStatus.SINGLE,  # Set a valid marital status
         )
 
         service = ProfileService(mock_session)
@@ -52,6 +54,7 @@ class TestProfileServiceCompletion:
             assert result.has_person is True
             assert result.has_address is True
             assert result.has_religion is True
+            assert result.has_marital_status is True
             assert result.missing_fields == []
 
     def test_check_profile_completion_missing_person(
@@ -72,9 +75,11 @@ class TestProfileServiceCompletion:
             assert result.has_person is False
             assert result.has_address is False
             assert result.has_religion is False
+            assert result.has_marital_status is False
             assert "person" in result.missing_fields
             assert "address" in result.missing_fields
             assert "religion" in result.missing_fields
+            assert "marital_status" in result.missing_fields
 
     def test_check_profile_completion_missing_address(
         self, mock_session: MagicMock
@@ -89,6 +94,7 @@ class TestProfileServiceCompletion:
             first_name="John",
             last_name="Doe",
             gender_id=uuid.uuid4(),
+            marital_status=MaritalStatus.SINGLE,
         )
 
         service = ProfileService(mock_session)
@@ -108,6 +114,7 @@ class TestProfileServiceCompletion:
             assert result.has_person is True
             assert result.has_address is False
             assert result.has_religion is True
+            assert result.has_marital_status is True
             assert "address" in result.missing_fields
             assert "person" not in result.missing_fields
 
@@ -124,6 +131,7 @@ class TestProfileServiceCompletion:
             first_name="John",
             last_name="Doe",
             gender_id=uuid.uuid4(),
+            marital_status=MaritalStatus.SINGLE,
         )
 
         service = ProfileService(mock_session)
@@ -143,6 +151,7 @@ class TestProfileServiceCompletion:
             assert result.has_person is True
             assert result.has_address is True
             assert result.has_religion is False
+            assert result.has_marital_status is True
             assert "religion" in result.missing_fields
 
     def test_check_profile_completion_missing_address_and_religion(
@@ -158,6 +167,7 @@ class TestProfileServiceCompletion:
             first_name="John",
             last_name="Doe",
             gender_id=uuid.uuid4(),
+            marital_status=MaritalStatus.SINGLE,  # Has marital status
         )
 
         service = ProfileService(mock_session)
@@ -177,6 +187,7 @@ class TestProfileServiceCompletion:
             assert result.has_person is True
             assert result.has_address is False
             assert result.has_religion is False
+            assert result.has_marital_status is True
             assert "address" in result.missing_fields
             assert "religion" in result.missing_fields
             assert len(result.missing_fields) == 2
@@ -194,6 +205,7 @@ class TestProfileServiceCompletion:
             first_name="John",
             last_name="Doe",
             gender_id=uuid.uuid4(),
+            marital_status=MaritalStatus.MARRIED,  # Set a valid marital status
         )
 
         service = ProfileService(mock_session)
@@ -213,3 +225,4 @@ class TestProfileServiceCompletion:
             # Assert
             assert result.is_complete is True
             assert result.has_address is True
+            assert result.has_marital_status is True
