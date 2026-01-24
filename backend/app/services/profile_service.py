@@ -5,6 +5,7 @@ import uuid
 
 from sqlmodel import Session
 
+from app.enums.marital_status import MaritalStatus
 from app.repositories.person.person_address_repository import PersonAddressRepository
 from app.repositories.person.person_religion_repository import PersonReligionRepository
 from app.repositories.person.person_repository import PersonRepository
@@ -68,7 +69,20 @@ class ProfileService:
         else:
             missing_fields.append("religion")
 
-        is_complete = has_person and has_address and has_religion
+        # Check if marital status is set (not UNKNOWN)
+        has_marital_status = False
+        if has_person and person is not None:
+            has_marital_status = person.marital_status != MaritalStatus.UNKNOWN
+
+            if not has_marital_status:
+                logger.debug(f"Person {person.id} missing marital status")
+                missing_fields.append("marital_status")
+            else:
+                logger.debug(f"Person {person.id} has marital status: {person.marital_status}")
+        else:
+            missing_fields.append("marital_status")
+
+        is_complete = has_person and has_address and has_religion and has_marital_status
 
         if is_complete:
             logger.info(f"Profile complete for user {user_id}")
@@ -82,5 +96,6 @@ class ProfileService:
             has_person=has_person,
             has_address=has_address,
             has_religion=has_religion,
+            has_marital_status=has_marital_status,
             missing_fields=missing_fields,
         )

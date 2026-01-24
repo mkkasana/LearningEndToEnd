@@ -18,8 +18,11 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSupportTicketsRouteImport } from './routes/_layout/support-tickets'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
+import { Route as LayoutSearchRouteImport } from './routes/_layout/search'
+import { Route as LayoutRishteRouteImport } from './routes/_layout/rishte'
 import { Route as LayoutLifeEventsRouteImport } from './routes/_layout/life-events'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
+import { Route as LayoutFindPartnerRouteImport } from './routes/_layout/find-partner'
 import { Route as LayoutFamilyTreeRouteImport } from './routes/_layout/family-tree'
 import { Route as LayoutFamilyRouteImport } from './routes/_layout/family'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
@@ -68,6 +71,16 @@ const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutSearchRoute = LayoutSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutRishteRoute = LayoutRishteRouteImport.update({
+  id: '/rishte',
+  path: '/rishte',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutLifeEventsRoute = LayoutLifeEventsRouteImport.update({
   id: '/life-events',
   path: '/life-events',
@@ -76,6 +89,11 @@ const LayoutLifeEventsRoute = LayoutLifeEventsRouteImport.update({
 const LayoutItemsRoute = LayoutItemsRouteImport.update({
   id: '/items',
   path: '/items',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutFindPartnerRoute = LayoutFindPartnerRouteImport.update({
+  id: '/find-partner',
+  path: '/find-partner',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutFamilyTreeRoute = LayoutFamilyTreeRouteImport.update({
@@ -103,8 +121,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof LayoutAdminRoute
   '/family': typeof LayoutFamilyRoute
   '/family-tree': typeof LayoutFamilyTreeRoute
+  '/find-partner': typeof LayoutFindPartnerRoute
   '/items': typeof LayoutItemsRoute
   '/life-events': typeof LayoutLifeEventsRoute
+  '/rishte': typeof LayoutRishteRoute
+  '/search': typeof LayoutSearchRoute
   '/settings': typeof LayoutSettingsRoute
   '/support-tickets': typeof LayoutSupportTicketsRoute
   '/': typeof LayoutIndexRoute
@@ -118,8 +139,11 @@ export interface FileRoutesByTo {
   '/admin': typeof LayoutAdminRoute
   '/family': typeof LayoutFamilyRoute
   '/family-tree': typeof LayoutFamilyTreeRoute
+  '/find-partner': typeof LayoutFindPartnerRoute
   '/items': typeof LayoutItemsRoute
   '/life-events': typeof LayoutLifeEventsRoute
+  '/rishte': typeof LayoutRishteRoute
+  '/search': typeof LayoutSearchRoute
   '/settings': typeof LayoutSettingsRoute
   '/support-tickets': typeof LayoutSupportTicketsRoute
   '/': typeof LayoutIndexRoute
@@ -135,8 +159,11 @@ export interface FileRoutesById {
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/family': typeof LayoutFamilyRoute
   '/_layout/family-tree': typeof LayoutFamilyTreeRoute
+  '/_layout/find-partner': typeof LayoutFindPartnerRoute
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/life-events': typeof LayoutLifeEventsRoute
+  '/_layout/rishte': typeof LayoutRishteRoute
+  '/_layout/search': typeof LayoutSearchRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/support-tickets': typeof LayoutSupportTicketsRoute
   '/_layout/': typeof LayoutIndexRoute
@@ -152,8 +179,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/family'
     | '/family-tree'
+    | '/find-partner'
     | '/items'
     | '/life-events'
+    | '/rishte'
+    | '/search'
     | '/settings'
     | '/support-tickets'
     | '/'
@@ -167,8 +197,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/family'
     | '/family-tree'
+    | '/find-partner'
     | '/items'
     | '/life-events'
+    | '/rishte'
+    | '/search'
     | '/settings'
     | '/support-tickets'
     | '/'
@@ -183,8 +216,11 @@ export interface FileRouteTypes {
     | '/_layout/admin'
     | '/_layout/family'
     | '/_layout/family-tree'
+    | '/_layout/find-partner'
     | '/_layout/items'
     | '/_layout/life-events'
+    | '/_layout/rishte'
+    | '/_layout/search'
     | '/_layout/settings'
     | '/_layout/support-tickets'
     | '/_layout/'
@@ -264,6 +300,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSettingsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/search': {
+      id: '/_layout/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof LayoutSearchRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/rishte': {
+      id: '/_layout/rishte'
+      path: '/rishte'
+      fullPath: '/rishte'
+      preLoaderRoute: typeof LayoutRishteRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/life-events': {
       id: '/_layout/life-events'
       path: '/life-events'
@@ -276,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/items'
       fullPath: '/items'
       preLoaderRoute: typeof LayoutItemsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/find-partner': {
+      id: '/_layout/find-partner'
+      path: '/find-partner'
+      fullPath: '/find-partner'
+      preLoaderRoute: typeof LayoutFindPartnerRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/family-tree': {
@@ -306,8 +363,11 @@ interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutFamilyRoute: typeof LayoutFamilyRoute
   LayoutFamilyTreeRoute: typeof LayoutFamilyTreeRoute
+  LayoutFindPartnerRoute: typeof LayoutFindPartnerRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutLifeEventsRoute: typeof LayoutLifeEventsRoute
+  LayoutRishteRoute: typeof LayoutRishteRoute
+  LayoutSearchRoute: typeof LayoutSearchRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutSupportTicketsRoute: typeof LayoutSupportTicketsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
@@ -317,8 +377,11 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutFamilyRoute: LayoutFamilyRoute,
   LayoutFamilyTreeRoute: LayoutFamilyTreeRoute,
+  LayoutFindPartnerRoute: LayoutFindPartnerRoute,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutLifeEventsRoute: LayoutLifeEventsRoute,
+  LayoutRishteRoute: LayoutRishteRoute,
+  LayoutSearchRoute: LayoutSearchRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutSupportTicketsRoute: LayoutSupportTicketsRoute,
   LayoutIndexRoute: LayoutIndexRoute,

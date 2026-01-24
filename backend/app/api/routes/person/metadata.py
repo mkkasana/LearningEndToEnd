@@ -6,6 +6,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.deps import SessionDep, get_current_active_admin
+from app.enums.marital_status import MaritalStatus
 from app.schemas.person import (
     GenderDetailPublic,
     ProfessionCreate,
@@ -181,3 +182,22 @@ def get_gender_by_id(gender_id: uuid.UUID) -> Any:
         )
 
     return gender
+
+
+# ============================================================================
+# Marital Status Endpoints (Read-only - marital statuses are static/hardcoded)
+# ============================================================================
+
+
+@router.get("/marital-statuses")
+@log_route
+def get_marital_statuses() -> Any:
+    """
+    Get list of marital status options for dropdown selection.
+    Public endpoint - no authentication required.
+    Returns selectable marital status values (excludes UNKNOWN).
+    """
+    return [
+        {"value": status.value, "label": status.label}
+        for status in MaritalStatus.get_selectable_options()
+    ]

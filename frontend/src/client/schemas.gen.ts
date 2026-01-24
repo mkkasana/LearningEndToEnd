@@ -1220,6 +1220,13 @@ export const LocalityUpdateSchema = {
     description: 'Schema for updating a locality (all fields optional)'
 } as const;
 
+export const MaritalStatusSchema = {
+    type: 'string',
+    enum: ['unknown', 'single', 'married', 'divorced', 'widowed', 'separated'],
+    title: 'MaritalStatus',
+    description: 'Marital status options for a person.'
+} as const;
+
 export const MatchConnectionInfoSchema = {
     properties: {
         person_id: {
@@ -2120,6 +2127,11 @@ export const PersonCreateSchema = {
             title: 'Date Of Death',
             description: 'Date of death'
         },
+        marital_status: {
+            '$ref': '#/components/schemas/MaritalStatus',
+            description: "Person's marital status",
+            default: 'unknown'
+        },
         user_id: {
             anyOf: [
                 {
@@ -2841,6 +2853,11 @@ export const PersonPublicSchema = {
             ],
             title: 'Date Of Death',
             description: 'Date of death'
+        },
+        marital_status: {
+            '$ref': '#/components/schemas/MaritalStatus',
+            description: "Person's marital status",
+            default: 'unknown'
         },
         id: {
             type: 'string',
@@ -3844,6 +3861,16 @@ export const PersonUpdateSchema = {
                 }
             ],
             title: 'Religion Sub Category Id'
+        },
+        marital_status: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/MaritalStatus'
+                },
+                {
+                    type: 'null'
+                }
+            ]
         }
     },
     type: 'object',
@@ -4167,6 +4194,10 @@ export const ProfileCompletionStatusSchema = {
             type: 'boolean',
             title: 'Has Religion'
         },
+        has_marital_status: {
+            type: 'boolean',
+            title: 'Has Marital Status'
+        },
         missing_fields: {
             items: {
                 type: 'string'
@@ -4176,7 +4207,7 @@ export const ProfileCompletionStatusSchema = {
         }
     },
     type: 'object',
-    required: ['is_complete', 'has_person', 'has_address', 'has_religion', 'missing_fields'],
+    required: ['is_complete', 'has_person', 'has_address', 'has_religion', 'has_marital_status', 'missing_fields'],
     title: 'ProfileCompletionStatus',
     description: 'Profile completion status response.'
 } as const;

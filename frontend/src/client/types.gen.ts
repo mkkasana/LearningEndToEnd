@@ -450,6 +450,11 @@ export type LocalityUpdate = {
 };
 
 /**
+ * Marital status options for a person.
+ */
+export type MaritalStatus = 'unknown' | 'single' | 'married' | 'divorced' | 'widowed' | 'separated';
+
+/**
  * Represents a connection/edge between two persons in the exploration graph.
  *
  * Note: The full MatchGraphNode details can be looked up from the graph
@@ -802,6 +807,10 @@ export type PersonCreate = {
      */
     date_of_death?: (string | null);
     /**
+     * Person's marital status
+     */
+    marital_status?: MaritalStatus;
+    /**
      * User account reference (optional for family members)
      */
     user_id?: (string | null);
@@ -1117,6 +1126,10 @@ export type PersonPublic = {
      * Date of death
      */
     date_of_death?: (string | null);
+    /**
+     * Person's marital status
+     */
+    marital_status?: MaritalStatus;
     id: string;
     user_id: (string | null);
     created_by_user_id: string;
@@ -1476,6 +1489,7 @@ export type PersonUpdate = {
     religion_id?: (string | null);
     religion_category_id?: (string | null);
     religion_sub_category_id?: (string | null);
+    marital_status?: (MaritalStatus | null);
 };
 
 /**
@@ -1605,6 +1619,7 @@ export type ProfileCompletionStatus = {
     has_person: boolean;
     has_address: boolean;
     has_religion: boolean;
+    has_marital_status: boolean;
     missing_fields: Array<(string)>;
 };
 
@@ -2708,6 +2723,8 @@ export type PersonMetadataGetGenderByIdData = {
 };
 
 export type PersonMetadataGetGenderByIdResponse = (GenderDetailPublic);
+
+export type PersonMetadataGetMaritalStatusesResponse = (unknown);
 
 export type PersonReligionCreateMyReligionData = {
     requestBody: PersonReligionCreate;

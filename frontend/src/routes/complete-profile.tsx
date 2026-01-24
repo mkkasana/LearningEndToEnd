@@ -5,6 +5,7 @@ import { useState } from "react"
 import { ProfileService } from "@/client"
 import { AddAddressDialog } from "@/components/Profile/AddAddressDialog"
 import { AddReligionDialog } from "@/components/Profile/AddReligionDialog"
+import { EditMaritalStatusDialog } from "@/components/Profile/EditMaritalStatusDialog"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/complete-profile" as any)({
 function CompleteProfile() {
   const [showAddressDialog, setShowAddressDialog] = useState(false)
   const [showReligionDialog, setShowReligionDialog] = useState(false)
+  const [showMaritalStatusDialog, setShowMaritalStatusDialog] = useState(false)
 
   const {
     data: profileStatus,
@@ -50,6 +52,10 @@ function CompleteProfile() {
   }
 
   const handleReligionSuccess = () => {
+    refetch()
+  }
+
+  const handleMaritalStatusSuccess = () => {
     refetch()
   }
 
@@ -148,6 +154,37 @@ function CompleteProfile() {
                   </span>
                 )}
               </div>
+
+              {/* Marital Status Step */}
+              <div className="flex items-start gap-4 p-4 border rounded-lg">
+                <div className="mt-1">
+                  {profileStatus?.has_marital_status ? (
+                    <CheckCircle2 className="h-6 w-6 text-green-500" />
+                  ) : (
+                    <Circle className="h-6 w-6 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold">Marital Status</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Select your marital status
+                  </p>
+                </div>
+                {!profileStatus?.has_marital_status && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowMaritalStatusDialog(true)}
+                  >
+                    Edit Marital Status
+                  </Button>
+                )}
+                {profileStatus?.has_marital_status && (
+                  <span className="text-sm text-green-600 font-medium">
+                    Complete
+                  </span>
+                )}
+              </div>
             </div>
 
             {profileStatus?.is_complete && (
@@ -172,6 +209,12 @@ function CompleteProfile() {
         open={showReligionDialog}
         onOpenChange={setShowReligionDialog}
         onSuccess={handleReligionSuccess}
+      />
+
+      <EditMaritalStatusDialog
+        open={showMaritalStatusDialog}
+        onOpenChange={setShowMaritalStatusDialog}
+        onSuccess={handleMaritalStatusSuccess}
       />
     </>
   )

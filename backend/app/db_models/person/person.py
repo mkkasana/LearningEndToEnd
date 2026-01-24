@@ -3,7 +3,10 @@
 import uuid
 from datetime import date, datetime
 
+import sqlalchemy as sa
 from sqlmodel import Field, SQLModel
+
+from app.enums.marital_status import MaritalStatus
 
 
 class Person(SQLModel, table=True):
@@ -48,6 +51,15 @@ class Person(SQLModel, table=True):
     )
     date_of_birth: date = Field(description="Date of birth")
     date_of_death: date | None = Field(default=None, description="Date of death")
+    marital_status: MaritalStatus = Field(
+        default=MaritalStatus.UNKNOWN,
+        sa_column=sa.Column(
+            sa.String(20),
+            nullable=False,
+            default="unknown",
+        ),
+        description="Person's marital status",
+    )
     created_at: datetime = Field(
         default_factory=datetime.utcnow, description="Creation timestamp"
     )

@@ -5,6 +5,8 @@ from datetime import date, datetime
 
 from sqlmodel import Field, SQLModel
 
+from app.enums.marital_status import MaritalStatus
+
 
 class PersonBase(SQLModel):
     """Base person properties."""
@@ -17,6 +19,10 @@ class PersonBase(SQLModel):
     gender_id: uuid.UUID = Field(description="Gender reference")
     date_of_birth: date = Field(description="Date of birth")
     date_of_death: date | None = Field(default=None, description="Date of death")
+    marital_status: MaritalStatus = Field(
+        default=MaritalStatus.UNKNOWN,
+        description="Person's marital status",
+    )
 
 
 class PersonCreate(PersonBase):
@@ -42,6 +48,7 @@ class PersonUpdate(SQLModel):
     religion_id: uuid.UUID | None = None
     religion_category_id: uuid.UUID | None = None
     religion_sub_category_id: uuid.UUID | None = None
+    marital_status: MaritalStatus | None = None
 
 
 class PersonPublic(PersonBase):
