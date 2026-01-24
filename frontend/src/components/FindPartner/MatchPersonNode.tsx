@@ -12,9 +12,10 @@
  */
 
 import { Handle, Position } from "@xyflow/react"
-import { User } from "lucide-react"
+import { Eye, User } from "lucide-react"
 import { memo } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import type { MatchPersonNodeData } from "./types"
@@ -51,7 +52,16 @@ export function formatBirthDeathYears(
 export const MatchPersonNode = memo(function MatchPersonNode({
   data,
 }: MatchPersonNodeProps) {
-  const { firstName, lastName, birthYear, deathYear, isSeeker, isMatch } = data
+  const {
+    personId,
+    firstName,
+    lastName,
+    birthYear,
+    deathYear,
+    isSeeker,
+    isMatch,
+    onViewClick,
+  } = data
 
   const displayName = `${firstName} ${lastName}`
   const yearsDisplay = formatBirthDeathYears(birthYear, deathYear)
@@ -65,6 +75,27 @@ export const MatchPersonNode = memo(function MatchPersonNode({
       return "border-2 border-blue-500 shadow-lg"
     }
     return "border border-border shadow-sm"
+  }
+
+  /**
+   * Handle View button click
+   * Requirements: 1.2, 1.3 - Stop event propagation and call callback
+   */
+  const handleViewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    if (onViewClick) {
+      onViewClick(personId)
+    }
+  }
+
+  /**
+   * Handle View button keyboard events
+   * Requirements: 1.4 - Keyboard accessibility for Enter and Space keys
+   */
+  const handleViewKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.stopPropagation()
+    }
   }
 
   return (
@@ -163,6 +194,21 @@ export const MatchPersonNode = memo(function MatchPersonNode({
           >
             {isSeeker ? "Seeker" : "Match"}
           </div>
+        )}
+
+        {/* View Button - Requirements: 1.1, 1.5, 4.1, 4.2, 4.3, 4.4 */}
+        {onViewClick && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-1 nodrag nopan pointer-events-auto cursor-pointer"
+            onClick={handleViewClick}
+            onKeyDown={handleViewKeyDown}
+            aria-label={`View details for ${firstName} ${lastName}`}
+          >
+            <Eye className="h-4 w-4" />
+            <span>View</span>
+          </Button>
         )}
       </Card>
     </>

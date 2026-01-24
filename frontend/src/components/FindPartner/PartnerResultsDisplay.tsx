@@ -52,6 +52,7 @@ export function PartnerResultsDisplay({
   isLoading,
   error,
   totalMatches,
+  onViewPerson,
 }: PartnerResultsDisplayProps) {
   // State for selected match ID
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null)
@@ -211,7 +212,11 @@ export function PartnerResultsDisplay({
         {/* Match Graph - Requirements: 5.1-5.4, 8.1-8.5 */}
         {selectedMatchId && nodes.length > 0 && (
           <div className="rounded-md border">
-            <MatchGraph nodes={nodes} edges={edges} />
+            <MatchGraph
+              nodes={nodes}
+              edges={edges}
+              onNodeViewClick={onViewPerson}
+            />
           </div>
         )}
       </CardContent>

@@ -21,7 +21,7 @@ import {
   useReactFlow,
 } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
-import { memo, useEffect } from "react"
+import { memo, useEffect, useMemo } from "react"
 import { MatchGraphControls } from "./MatchGraphControls"
 import { MatchPersonNode } from "./MatchPersonNode"
 import { MatchRelationshipEdge } from "./MatchRelationshipEdge"
@@ -93,6 +93,9 @@ const MatchGraphInner = memo(function MatchGraphInner({
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={false}
+        selectNodesOnDrag={false}
+        panOnDrag={true}
+        zoomOnScroll={true}
         fitView
         fitViewOptions={{ padding: 0.2 }}
         minZoom={0.1}
@@ -132,10 +135,25 @@ const MatchGraphInner = memo(function MatchGraphInner({
 export const MatchGraph = memo(function MatchGraph({
   nodes,
   edges,
+  onNodeViewClick,
 }: MatchGraphProps) {
+  // Inject onViewClick callback into each node's data
+  // Requirements: 3.2 - Pass callback to each MatchPersonNode via node data
+  const nodesWithCallback = useMemo(() => {
+    if (!onNodeViewClick) return nodes
+
+    return nodes.map((node) => ({
+      ...node,
+      data: {
+        ...node.data,
+        onViewClick: onNodeViewClick,
+      },
+    }))
+  }, [nodes, onNodeViewClick])
+
   return (
     <ReactFlowProvider>
-      <MatchGraphInner nodes={nodes} edges={edges} />
+      <MatchGraphInner nodes={nodesWithCallback} edges={edges} />
     </ReactFlowProvider>
   )
 })

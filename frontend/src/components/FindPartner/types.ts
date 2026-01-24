@@ -95,6 +95,7 @@ export interface PartnerResultsDisplayProps {
   isLoading: boolean
   error: Error | null
   totalMatches: number | null
+  onViewPerson?: (personId: string) => void // Callback when View button is clicked on a person
 }
 
 // ============================================
@@ -129,6 +130,7 @@ export interface MatchPersonNodeData extends Record<string, unknown> {
   deathYear: number | null
   isSeeker: boolean // Green border + "Seeker" label
   isMatch: boolean // Blue border + "Match" label
+  onViewClick?: (personId: string) => void // Callback for View button click
 }
 
 /**
@@ -200,4 +202,5 @@ export interface MatchPathSummaryProps {
 export interface MatchGraphProps {
   nodes: MatchNode[]
   edges: MatchEdge[]
+  onNodeViewClick?: (personId: string) => void // Callback when View button is clicked on a node
 }

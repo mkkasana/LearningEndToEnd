@@ -18,6 +18,7 @@ import {
   PartnerResultsDisplay,
   usePartnerDefaults,
 } from "@/components/FindPartner"
+import { PersonDetailsPanel } from "@/components/FamilyTree/PersonDetailsPanel"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -66,6 +67,12 @@ function FindPartnerPage() {
   // Search results state
   const [searchResults, setSearchResults] =
     useState<PartnerMatchResponse | null>(null)
+
+  // State for PersonDetailsPanel - Requirements: 2.1
+  const [detailsPanelPersonId, setDetailsPanelPersonId] = useState<
+    string | null
+  >(null)
+  const [isDetailsPanelOpen, setIsDetailsPanelOpen] = useState(false)
 
   // Initialize filters when defaults are loaded
   useEffect(() => {
@@ -155,6 +162,12 @@ function FindPartnerPage() {
     setFilterPanelOpen(true)
   }, [])
 
+  // Handle View button click on person node - Requirements: 2.2
+  const handleViewClick = useCallback((personId: string) => {
+    setDetailsPanelPersonId(personId)
+    setIsDetailsPanelOpen(true)
+  }, [])
+
   // Loading state - context or defaults loading
   if (isContextLoading || isDefaultsLoading) {
     return (
@@ -233,8 +246,16 @@ function FindPartnerPage() {
           isLoading={findMatchesMutation.isPending}
           error={findMatchesMutation.error as Error | null}
           totalMatches={searchResults?.total_matches ?? null}
+          onViewPerson={handleViewClick}
         />
       </div>
+
+      {/* Person Details Panel - Requirements: 2.1, 2.3, 2.4, 2.5 */}
+      <PersonDetailsPanel
+        personId={detailsPanelPersonId}
+        open={isDetailsPanelOpen}
+        onOpenChange={setIsDetailsPanelOpen}
+      />
     </div>
   )
 }
