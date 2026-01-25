@@ -19,6 +19,7 @@ from app.api.routes.person import metadata as person_metadata
 from app.api.routes.person import person as person_routes
 from app.api.routes.person import relatives as relatives_routes
 from app.api.routes.person import search_person as search_person_routes
+from app.api.routes.relatives_network import router as relatives_network_router
 from app.api.routes.religion import metadata as religion_metadata
 from app.core.config import settings
 
@@ -59,6 +60,11 @@ api_router.include_router(
 # Partner match routes
 api_router.include_router(
     partner_match_router, prefix="/partner-match", tags=["partner-match"]
+)
+
+# Relatives network routes
+api_router.include_router(
+    relatives_network_router, prefix="/relatives-network", tags=["relatives-network"]
 )
 
 

@@ -7,6 +7,7 @@ import {
   Home,
   Network,
   Search,
+  Share2,
   Users,
   UsersRound,
 } from "lucide-react"
@@ -28,6 +29,7 @@ const baseItems: Item[] = [
   { icon: Briefcase, title: "Items", path: "/items" },
   { icon: UsersRound, title: "Update Family", path: "/family" },
   { icon: Network, title: "Family View", path: "/family-tree" },
+  { icon: Share2, title: "Relatives Network", path: "/relatives-network" },
   { icon: Calendar, title: "Life Events", path: "/life-events" },
   { icon: Search, title: "Search", path: "/search" },
   { icon: GitBranch, title: "Rishte", path: "/rishte" },

@@ -117,6 +117,9 @@ class Settings(BaseSettings):
     PARTNER_MATCH_DEFAULT_DEPTH: int = 5
     PARTNER_MATCH_MAX_DEPTH: int = 10
 
+    # Relatives Network settings
+    RELATIVES_NETWORK_MAX_DEPTH: int = 20
+
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
             message = (
