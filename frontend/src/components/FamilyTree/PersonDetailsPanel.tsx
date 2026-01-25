@@ -1,4 +1,5 @@
-import { Calendar, Heart, Loader2, MapPin, RefreshCw, User } from "lucide-react"
+import { useNavigate } from "@tanstack/react-router"
+import { Calendar, Heart, Loader2, MapPin, Network, RefreshCw, User } from "lucide-react"
 import type { PersonAddressDetails, PersonReligionDetails } from "@/client"
 import { LifeEventsList } from "@/components/LifeEvents/LifeEventsList"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -103,6 +104,30 @@ function formatReligion(
 }
 
 /**
+ * Navigate to family tree with a specific person selected.
+ * Uses custom event to notify the family tree component, plus sessionStorage as fallback.
+ * Reuses the same pattern as ContributionStatsDialog.
+ */
+function handleExplorePerson(
+  personId: string,
+  navigate: ReturnType<typeof useNavigate>,
+  onClose: () => void,
+): void {
+  // Store in sessionStorage as fallback for fresh page loads
+  sessionStorage.setItem("familyTreeExplorePersonId", personId)
+  // Close the panel
+  onClose()
+  // Navigate to family tree
+  navigate({ to: "/family-tree" })
+  // Dispatch custom event after a small delay to ensure navigation completes
+  setTimeout(() => {
+    window.dispatchEvent(
+      new CustomEvent("familyTreeExplorePerson", { detail: { personId } }),
+    )
+  }, 100)
+}
+
+/**
  * PersonDetailsPanel component displays comprehensive person information in a sliding panel.
  *
  * Requirements covered:
@@ -126,6 +151,7 @@ export function PersonDetailsPanel({
   open,
   onOpenChange,
 }: PersonDetailsPanelProps) {
+  const navigate = useNavigate()
   const { data, isLoading, error, refetch } = usePersonCompleteDetails(personId)
 
   // Fetch life events for the person
@@ -194,6 +220,21 @@ export function PersonDetailsPanel({
                 <User className="h-12 w-12" />
               </AvatarFallback>
             </Avatar>
+
+            {/* Explore in Family Tree Button - Requirements 1.1, 1.2, 2.1-2.5 */}
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={() =>
+                handleExplorePerson(personId!, navigate, () =>
+                  onOpenChange(false),
+                )
+              }
+              aria-label={`Explore ${data.first_name} ${data.last_name} in Family Tree`}
+            >
+              <Network className="h-4 w-4" />
+              Explore in Family Tree
+            </Button>
 
             {/* Name and Years - Requirements 3.2, 3.3 */}
             <div className="text-center">
