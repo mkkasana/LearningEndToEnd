@@ -23,6 +23,7 @@ from fastapi import HTTPException
 from app.db_models.person.person import Person
 from app.db_models.person.person_relationship import PersonRelationship
 from app.enums.gender import GENDER_DATA, GenderEnum
+from app.enums.marital_status import MaritalStatus
 from app.enums.relationship_type import RelationshipType
 from app.schemas.partner_match import PartnerMatchRequest
 from app.services.partner_match.partner_match_service import (
@@ -43,6 +44,7 @@ def create_mock_person(
     gender_id: uuid.UUID | None = None,
     birth_date: date = date(1990, 1, 1),
     death_date: date | None = None,
+    marital_status: MaritalStatus = MaritalStatus.UNKNOWN,
 ) -> Person:
     """Create a mock Person object."""
     if gender_id is None:
@@ -56,6 +58,7 @@ def create_mock_person(
         gender_id=gender_id,
         date_of_birth=birth_date,
         date_of_death=death_date,
+        marital_status=marital_status,
     )
 
 
@@ -447,6 +450,7 @@ class TestLivingPersonFilter:
             person_id,
             gender_id=GENDER_DATA[GenderEnum.FEMALE].id,
             death_date=None,
+            marital_status=MaritalStatus.SINGLE,
         )
 
         service = PartnerMatchService(mock_session)
@@ -454,8 +458,6 @@ class TestLivingPersonFilter:
 
         with patch.object(service, "_get_person", return_value=mock_person), patch.object(
             service, "_passes_religion_filters", return_value=True
-        ), patch.object(
-            service, "_is_married_or_has_children", return_value=False
         ):
             result = service._is_eligible_match(person_id, request)
 
@@ -489,33 +491,116 @@ class TestLivingPersonFilter:
 
 @pytest.mark.unit
 class TestMaritalStatusFilter:
-    """Tests for _is_married_or_has_children method."""
+    """Tests for _is_ineligible_marital_status method."""
 
-    def test_unmarried_no_children_returns_false(
+    def test_single_status_returns_false(self, mock_session: MagicMock) -> None:
+        """Test SINGLE marital status returns false (eligible).
+
+        Requirements: 7.1
+        """
+        person_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.SINGLE
+        )
+
+        service = PartnerMatchService(mock_session)
+        result = service._is_ineligible_marital_status(mock_person)
+
+        assert result is False
+
+    def test_married_status_returns_true(self, mock_session: MagicMock) -> None:
+        """Test MARRIED marital status returns true (ineligible).
+
+        Requirements: 7.1
+        """
+        person_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.MARRIED
+        )
+
+        service = PartnerMatchService(mock_session)
+        result = service._is_ineligible_marital_status(mock_person)
+
+        assert result is True
+
+    def test_divorced_status_returns_false(self, mock_session: MagicMock) -> None:
+        """Test DIVORCED marital status returns false (eligible).
+
+        Requirements: 7.1
+        """
+        person_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.DIVORCED
+        )
+
+        service = PartnerMatchService(mock_session)
+        result = service._is_ineligible_marital_status(mock_person)
+
+        assert result is False
+
+    def test_widowed_status_returns_false(self, mock_session: MagicMock) -> None:
+        """Test WIDOWED marital status returns false (eligible).
+
+        Requirements: 7.1
+        """
+        person_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.WIDOWED
+        )
+
+        service = PartnerMatchService(mock_session)
+        result = service._is_ineligible_marital_status(mock_person)
+
+        assert result is False
+
+    def test_separated_status_returns_false(self, mock_session: MagicMock) -> None:
+        """Test SEPARATED marital status returns false (eligible).
+
+        Requirements: 7.1
+        """
+        person_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.SEPARATED
+        )
+
+        service = PartnerMatchService(mock_session)
+        result = service._is_ineligible_marital_status(mock_person)
+
+        assert result is False
+
+    def test_unknown_status_fallback_no_relationships(
         self, mock_session: MagicMock
     ) -> None:
-        """Test unmarried person without children returns false.
+        """Test UNKNOWN status falls back to relationship check - no relationships.
 
         Requirements: 7.1, 7.2
         """
         person_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.UNKNOWN
+        )
 
         mock_result = MagicMock()
         mock_result.all.return_value = []
         mock_session.exec.return_value = mock_result
 
         service = PartnerMatchService(mock_session)
-        result = service._is_married_or_has_children(person_id)
+        result = service._is_ineligible_marital_status(mock_person)
 
         assert result is False
 
-    def test_married_with_wife_returns_true(self, mock_session: MagicMock) -> None:
-        """Test person with wife relationship returns true.
+    def test_unknown_status_fallback_with_wife_returns_true(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test UNKNOWN status with wife relationship returns true (ineligible).
 
         Requirements: 7.1
         """
         person_id = uuid.uuid4()
         wife_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.UNKNOWN
+        )
 
         wife_rel = create_mock_relationship(
             person_id, wife_id, RelationshipType.WIFE, is_active=True
@@ -526,17 +611,22 @@ class TestMaritalStatusFilter:
         mock_session.exec.return_value = mock_result
 
         service = PartnerMatchService(mock_session)
-        result = service._is_married_or_has_children(person_id)
+        result = service._is_ineligible_marital_status(mock_person)
 
         assert result is True
 
-    def test_married_with_husband_returns_true(self, mock_session: MagicMock) -> None:
-        """Test person with husband relationship returns true.
+    def test_unknown_status_fallback_with_husband_returns_true(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test UNKNOWN status with husband relationship returns true (ineligible).
 
         Requirements: 7.1
         """
         person_id = uuid.uuid4()
         husband_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.UNKNOWN
+        )
 
         husband_rel = create_mock_relationship(
             person_id, husband_id, RelationshipType.HUSBAND, is_active=True
@@ -547,17 +637,22 @@ class TestMaritalStatusFilter:
         mock_session.exec.return_value = mock_result
 
         service = PartnerMatchService(mock_session)
-        result = service._is_married_or_has_children(person_id)
+        result = service._is_ineligible_marital_status(mock_person)
 
         assert result is True
 
-    def test_has_son_returns_true(self, mock_session: MagicMock) -> None:
-        """Test person with son relationship returns true.
+    def test_unknown_status_fallback_with_son_returns_true(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test UNKNOWN status with son relationship returns true (ineligible).
 
         Requirements: 7.2
         """
         person_id = uuid.uuid4()
         son_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.UNKNOWN
+        )
 
         son_rel = create_mock_relationship(
             person_id, son_id, RelationshipType.SON, is_active=True
@@ -568,17 +663,22 @@ class TestMaritalStatusFilter:
         mock_session.exec.return_value = mock_result
 
         service = PartnerMatchService(mock_session)
-        result = service._is_married_or_has_children(person_id)
+        result = service._is_ineligible_marital_status(mock_person)
 
         assert result is True
 
-    def test_has_daughter_returns_true(self, mock_session: MagicMock) -> None:
-        """Test person with daughter relationship returns true.
+    def test_unknown_status_fallback_with_daughter_returns_true(
+        self, mock_session: MagicMock
+    ) -> None:
+        """Test UNKNOWN status with daughter relationship returns true (ineligible).
 
         Requirements: 7.2
         """
         person_id = uuid.uuid4()
         daughter_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.UNKNOWN
+        )
 
         daughter_rel = create_mock_relationship(
             person_id, daughter_id, RelationshipType.DAUGHTER, is_active=True
@@ -589,19 +689,22 @@ class TestMaritalStatusFilter:
         mock_session.exec.return_value = mock_result
 
         service = PartnerMatchService(mock_session)
-        result = service._is_married_or_has_children(person_id)
+        result = service._is_ineligible_marital_status(mock_person)
 
         assert result is True
 
-    def test_parent_relationship_does_not_count(
+    def test_unknown_status_fallback_parent_relationship_does_not_count(
         self, mock_session: MagicMock
     ) -> None:
-        """Test parent relationships (FATHER, MOTHER) don't count as married.
+        """Test UNKNOWN status with parent relationships doesn't count as ineligible.
 
         Requirements: 7.1, 7.2
         """
         person_id = uuid.uuid4()
         father_id = uuid.uuid4()
+        mock_person = create_mock_person(
+            person_id, marital_status=MaritalStatus.UNKNOWN
+        )
 
         father_rel = create_mock_relationship(
             person_id, father_id, RelationshipType.FATHER, is_active=True
@@ -612,7 +715,7 @@ class TestMaritalStatusFilter:
         mock_session.exec.return_value = mock_result
 
         service = PartnerMatchService(mock_session)
-        result = service._is_married_or_has_children(person_id)
+        result = service._is_ineligible_marital_status(mock_person)
 
         assert result is False
 

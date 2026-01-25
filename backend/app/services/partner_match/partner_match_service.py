@@ -22,6 +22,7 @@ from app.db_models.religion.religion import Religion
 from app.db_models.religion.religion_category import ReligionCategory
 from app.db_models.religion.religion_sub_category import ReligionSubCategory
 from app.enums.gender import get_gender_by_code, get_gender_by_id
+from app.enums.marital_status import MaritalStatus
 from app.enums.relationship_type import RelationshipType
 from app.schemas.partner_match import (
     MatchConnectionInfo,
@@ -310,8 +311,8 @@ class PartnerMatchService:
         if not self._passes_religion_filters(person_id, request):
             return False
 
-        # 8. Marital status - must not be married or have children
-        if self._is_married_or_has_children(person_id):
+        # 8. Marital status check - use marital_status field with relationship fallback
+        if self._is_ineligible_marital_status(person):
             return False
 
         return True
@@ -407,17 +408,36 @@ class PartnerMatchService:
 
         return True
 
-    def _is_married_or_has_children(self, person_id: uuid.UUID) -> bool:
-        """Check if person is married or has children.
+    def _is_ineligible_marital_status(self, person: Person) -> bool:
+        """Check if person is ineligible based on marital status.
+
+        Uses the person's marital_status field as the primary check.
+        Falls back to relationship-based check only if marital_status is UNKNOWN.
+
+        Eligible statuses: SINGLE, DIVORCED, WIDOWED, SEPARATED
+        Ineligible statuses: MARRIED
+        Fallback (UNKNOWN): Check for spouse/child relationships
 
         Args:
-            person_id: Person to check
+            person: Person object (already fetched from DB)
 
         Returns:
-            True if person has spouse relationship or children
+            True if person is ineligible (married or has children)
         """
+        # Use marital_status field if it's set (not UNKNOWN)
+        if person.marital_status != MaritalStatus.UNKNOWN:
+            # MARRIED means ineligible
+            # SINGLE, DIVORCED, WIDOWED, SEPARATED are all eligible
+            return person.marital_status == MaritalStatus.MARRIED
+
+        # Fallback: marital_status is UNKNOWN, check relationships
+        logger.debug(
+            f"Person {person.id} has UNKNOWN marital status, "
+            "falling back to relationship-based check"
+        )
+
         statement = select(PersonRelationship).where(
-            PersonRelationship.person_id == person_id,
+            PersonRelationship.person_id == person.id,
             PersonRelationship.is_active == True,  # noqa: E712
         )
         relationships = self.session.exec(statement).all()
