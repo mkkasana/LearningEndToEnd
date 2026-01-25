@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { AlertCircle, GitBranch, Loader2, Search } from "lucide-react"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { type LineagePathResponse, LineagePathService } from "@/client"
 import { ActivePersonIndicator } from "@/components/Family/ActivePersonIndicator"
 import { PersonDetailsPanel } from "@/components/FamilyTree/PersonDetailsPanel"
@@ -19,6 +19,7 @@ import type { SelectedPerson } from "@/components/Rishte/types"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 
 export const Route = createFileRoute("/_layout/rishte" as any)({
   component: RishtePage,
@@ -40,8 +41,12 @@ export const Route = createFileRoute("/_layout/rishte" as any)({
  * - 7.2: Find button disabled when Person B not selected
  * - 7.3: Find button enabled when both selected
  * - 7.4: Call lineage-path API with selected person IDs
+ * - Person A defaults to active person (primary or assumed)
  */
 function RishtePage() {
+  // Get active person from context (primary or assumed)
+  const { activePerson, activePersonId } = useActivePersonContext()
+
   // Person selection state (using SelectedPerson objects)
   const [selectedPersonA, setSelectedPersonA] = useState<SelectedPerson | null>(
     null,
@@ -49,6 +54,41 @@ function RishtePage() {
   const [selectedPersonB, setSelectedPersonB] = useState<SelectedPerson | null>(
     null,
   )
+
+  // Initialize Person A from active person context
+  useEffect(() => {
+    if (activePerson && activePersonId && !selectedPersonA) {
+      const birthYear = activePerson.date_of_birth
+        ? new Date(activePerson.date_of_birth).getFullYear()
+        : null
+      setSelectedPersonA({
+        personId: activePersonId,
+        firstName: activePerson.first_name,
+        lastName: activePerson.last_name,
+        birthYear,
+      })
+    }
+  }, [activePerson, activePersonId, selectedPersonA])
+
+  // Update Person A when active person changes (e.g., assume role)
+  useEffect(() => {
+    if (activePerson && activePersonId) {
+      // Only update if the active person changed
+      if (selectedPersonA?.personId !== activePersonId) {
+        const birthYear = activePerson.date_of_birth
+          ? new Date(activePerson.date_of_birth).getFullYear()
+          : null
+        setSelectedPersonA({
+          personId: activePersonId,
+          firstName: activePerson.first_name,
+          lastName: activePerson.last_name,
+          birthYear,
+        })
+        // Clear API response since Person A changed
+        setApiResponse(null)
+      }
+    }
+  }, [activePerson, activePersonId])
 
   // Wizard dialog state
   const [wizardOpen, setWizardOpen] = useState(false)

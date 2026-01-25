@@ -115,7 +115,7 @@ describe("PersonNode - View Button Tests", () => {
     const mockOnViewClick = vi.fn()
     const mockParentClick = vi.fn()
 
-    const { container } = render(
+    render(
       <div onClick={mockParentClick}>
         <ReactFlowProvider>
           <PersonNode
