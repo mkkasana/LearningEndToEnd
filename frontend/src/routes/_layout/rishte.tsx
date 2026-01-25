@@ -4,6 +4,7 @@ import { AlertCircle, GitBranch, Loader2, Search } from "lucide-react"
 import { useCallback, useMemo, useState } from "react"
 import { type LineagePathResponse, LineagePathService } from "@/client"
 import { ActivePersonIndicator } from "@/components/Family/ActivePersonIndicator"
+import { PersonDetailsPanel } from "@/components/FamilyTree/PersonDetailsPanel"
 import {
   buildPathArray,
   generatePathSummary,
@@ -52,6 +53,10 @@ function RishtePage() {
   // Wizard dialog state
   const [wizardOpen, setWizardOpen] = useState(false)
   const [wizardTarget, setWizardTarget] = useState<"A" | "B">("A")
+
+  // PersonDetailsPanel state
+  const [detailsPanelPersonId, setDetailsPanelPersonId] = useState<string | null>(null)
+  const [isDetailsPanelOpen, setIsDetailsPanelOpen] = useState(false)
 
   // API response state
   const [apiResponse, setApiResponse] = useState<LineagePathResponse | null>(
@@ -123,6 +128,12 @@ function RishtePage() {
     },
     [wizardTarget],
   )
+
+  // Handle View button click on PersonNode - opens PersonDetailsPanel
+  const handleViewClick = useCallback((personId: string) => {
+    setDetailsPanelPersonId(personId)
+    setIsDetailsPanelOpen(true)
+  }, [])
 
   // Check if Find button should be enabled
   // Requirements: 7.1, 7.2, 7.3 - Button enabled only when both persons are selected
@@ -276,6 +287,7 @@ function RishtePage() {
           <RishteGraph
             nodes={transformedPath.nodes}
             edges={transformedPath.edges}
+            onNodeViewClick={handleViewClick}
           />
         </div>
       )}
@@ -295,6 +307,13 @@ function RishtePage() {
           </p>
         </div>
       )}
+
+      {/* Person Details Panel - Slides in from right when View button is clicked */}
+      <PersonDetailsPanel
+        personId={detailsPanelPersonId}
+        open={isDetailsPanelOpen}
+        onOpenChange={setIsDetailsPanelOpen}
+      />
     </div>
   )
 }

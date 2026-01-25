@@ -9,7 +9,7 @@ import {
   useReactFlow,
 } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
-import { memo, useCallback, useEffect } from "react"
+import { memo, useCallback, useEffect, useMemo } from "react"
 import { GraphControls } from "./GraphControls"
 import { PersonNode } from "./PersonNode"
 import { RelationshipEdge } from "./RelationshipEdge"
@@ -113,6 +113,7 @@ const RishteGraphInner = memo(function RishteGraphInner({
 interface RishteGraphProps {
   nodes: RishteNode[]
   edges: RishteEdge[]
+  onNodeViewClick?: (personId: string) => void
 }
 
 /**
@@ -133,10 +134,24 @@ interface RishteGraphProps {
 export const RishteGraph = memo(function RishteGraph({
   nodes,
   edges,
+  onNodeViewClick,
 }: RishteGraphProps) {
+  // Inject onViewClick callback into each node's data
+  const nodesWithCallback = useMemo(() => {
+    if (!onNodeViewClick) return nodes
+
+    return nodes.map((node) => ({
+      ...node,
+      data: {
+        ...node.data,
+        onViewClick: onNodeViewClick,
+      },
+    }))
+  }, [nodes, onNodeViewClick])
+
   return (
     <ReactFlowProvider>
-      <RishteGraphInner nodes={nodes} edges={edges} />
+      <RishteGraphInner nodes={nodesWithCallback} edges={edges} />
     </ReactFlowProvider>
   )
 })

@@ -1,7 +1,8 @@
 import { Handle, Position } from "@xyflow/react"
-import { User } from "lucide-react"
+import { Eye, User } from "lucide-react"
 import { memo } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import type { PersonNodeData } from "./types"
@@ -45,11 +46,26 @@ export function formatBirthDeathYears(
  * - 7.7: No View or Explore buttons (simplified display)
  */
 export const PersonNode = memo(function PersonNode({ data }: PersonNodeProps) {
-  const { firstName, lastName, birthYear, deathYear, isPersonA, isPersonB } =
+  const { firstName, lastName, birthYear, deathYear, isPersonA, isPersonB, personId, onViewClick } =
     data
 
   const displayName = `${firstName} ${lastName}`
   const yearsDisplay = formatBirthDeathYears(birthYear, deathYear)
+
+  // Handler for View button click - stops propagation to prevent parent handlers
+  const handleViewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    if (onViewClick) {
+      onViewClick(personId)
+    }
+  }
+
+  // Handler for keyboard accessibility - Enter and Space keys
+  const handleViewKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.stopPropagation()
+    }
+  }
 
   // Determine border color based on person type
   const getBorderClass = () => {
@@ -158,6 +174,21 @@ export const PersonNode = memo(function PersonNode({ data }: PersonNodeProps) {
           >
             {isPersonA ? "Person A" : "Person B"}
           </div>
+        )}
+
+        {/* View button - only rendered when onViewClick callback is provided */}
+        {onViewClick && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-1 nodrag nopan pointer-events-auto cursor-pointer"
+            onClick={handleViewClick}
+            onKeyDown={handleViewKeyDown}
+            aria-label={`View details for ${firstName} ${lastName}`}
+          >
+            <Eye className="h-4 w-4" />
+            <span>View</span>
+          </Button>
         )}
       </Card>
     </>

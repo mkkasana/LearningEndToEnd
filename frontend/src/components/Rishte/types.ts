@@ -139,6 +139,7 @@ export interface PersonNodeData extends Record<string, unknown> {
   isPersonA: boolean // Green border
   isPersonB: boolean // Blue border
   gender?: "male" | "female" // For avatar icon
+  onViewClick?: (personId: string) => void // Callback for View button click
 }
 
 /**
