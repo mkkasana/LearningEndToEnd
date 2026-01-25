@@ -32,6 +32,14 @@ const RELATIONSHIP_LABELS: Record<string, string> = {
   "rel-6a0ede824d107": "Spouse",
 }
 
+const MARITAL_STATUS_LABELS: Record<string, string> = {
+  single: "Single",
+  married: "Married",
+  divorced: "Divorced",
+  widowed: "Widowed",
+  separated: "Separated",
+}
+
 export function ConfirmationStep({
   familyMemberData,
   addressData,
@@ -74,6 +82,7 @@ export function ConfirmationStep({
           familyMemberData.is_dead && familyMemberData.date_of_death
             ? familyMemberData.date_of_death
             : undefined,
+        marital_status: familyMemberData.marital_status,
         user_id: undefined,
         is_primary: false,
       }
@@ -180,15 +189,22 @@ export function ConfirmationStep({
               {new Date(familyMemberData.date_of_birth).toLocaleDateString()}
             </p>
           </div>
-          {familyMemberData.is_dead && familyMemberData.date_of_death && (
-            <div>
-              <p className="text-sm text-muted-foreground">Date of Death</p>
-              <p className="font-medium">
-                {new Date(familyMemberData.date_of_death).toLocaleDateString()}
-              </p>
-            </div>
-          )}
+          <div>
+            <p className="text-sm text-muted-foreground">Marital Status</p>
+            <p className="font-medium">
+              {MARITAL_STATUS_LABELS[familyMemberData.marital_status] || familyMemberData.marital_status}
+            </p>
+          </div>
         </div>
+
+        {familyMemberData.is_dead && familyMemberData.date_of_death && (
+          <div>
+            <p className="text-sm text-muted-foreground">Date of Death</p>
+            <p className="font-medium">
+              {new Date(familyMemberData.date_of_death).toLocaleDateString()}
+            </p>
+          </div>
+        )}
 
         {familyMemberData.about && (
           <div>

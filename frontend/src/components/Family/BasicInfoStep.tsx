@@ -36,6 +36,14 @@ const RELATIONSHIP_TYPES = [
   { value: "rel-6a0ede824d107", label: "Spouse" },
 ]
 
+const MARITAL_STATUS_OPTIONS = [
+  { value: "single", label: "Single" },
+  { value: "married", label: "Married" },
+  { value: "divorced", label: "Divorced" },
+  { value: "widowed", label: "Widowed" },
+  { value: "separated", label: "Separated" },
+]
+
 const formSchema = z.object({
   relationship_type: z.string().min(1, "Relationship is required"),
   first_name: z.string().min(1, "First name is required").max(100),
@@ -43,6 +51,7 @@ const formSchema = z.object({
   last_name: z.string().min(1, "Last name is required").max(100),
   gender_id: z.string().min(1, "Gender is required"),
   date_of_birth: z.string().min(1, "Date of birth is required"),
+  marital_status: z.string().min(1, "Marital status is required"),
   is_dead: z.boolean().default(false),
   date_of_death: z.string().optional(),
   about: z.string().max(500).optional(),
@@ -67,6 +76,7 @@ export function BasicInfoStep({ onComplete, initialData }: BasicInfoStepProps) {
       last_name: initialData?.last_name || "",
       gender_id: initialData?.gender_id || "",
       date_of_birth: initialData?.date_of_birth || "",
+      marital_status: initialData?.marital_status || "",
       is_dead: initialData?.is_dead || false,
       date_of_death: initialData?.date_of_death || "",
       about: initialData?.about || "",
@@ -224,6 +234,32 @@ export function BasicInfoStep({ onComplete, initialData }: BasicInfoStepProps) {
             )}
           />
         </div>
+
+        {/* Marital Status */}
+        <FormField
+          control={form.control}
+          name="marital_status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Marital Status *</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select marital status" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {MARITAL_STATUS_OPTIONS.map((status) => (
+                    <SelectItem key={status.value} value={status.value}>
+                      {status.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Is Dead Checkbox */}
         <FormField
