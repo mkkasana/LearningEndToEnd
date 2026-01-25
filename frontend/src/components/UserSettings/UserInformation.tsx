@@ -1,5 +1,7 @@
 // @ts-nocheck
 import { useQuery } from "@tanstack/react-query"
+import { Pencil } from "lucide-react"
+import { useState } from "react"
 
 import {
   AddressMetadataService,
@@ -8,6 +10,9 @@ import {
   PersonService,
   ReligionMetadataService,
 } from "@/client"
+import { EditAddressDialog } from "@/components/Profile/EditAddressDialog"
+import { EditReligionDialog } from "@/components/Profile/EditReligionDialog"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 import useAuth from "@/hooks/useAuth"
@@ -17,6 +22,10 @@ const UserInformation = () => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const { user: currentUser } = useAuth()
   const { activePersonId } = useActivePersonContext()
+
+  // Dialog states
+  const [showEditAddressDialog, setShowEditAddressDialog] = useState(false)
+  const [showEditReligionDialog, setShowEditReligionDialog] = useState(false)
 
   // Fetch person details
   const { data: personData } = useQuery({
@@ -253,17 +262,54 @@ const UserInformation = () => {
         </div>
 
         {/* Address */}
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">Address</p>
-          <p className="py-2">{getAddressDisplay()}</p>
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <p className="text-sm font-medium text-muted-foreground">Address</p>
+            <p className="py-2">{getAddressDisplay()}</p>
+          </div>
+          {currentAddress && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowEditAddressDialog(true)}
+              className="ml-2"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          )}
         </div>
 
         {/* Religion */}
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">Religion</p>
-          <p className="py-2">{getReligionDisplay()}</p>
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <p className="text-sm font-medium text-muted-foreground">Religion</p>
+            <p className="py-2">{getReligionDisplay()}</p>
+          </div>
+          {religionData && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowEditReligionDialog(true)}
+              className="ml-2"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
+
+      {/* Edit Dialogs */}
+      <EditAddressDialog
+        open={showEditAddressDialog}
+        onOpenChange={setShowEditAddressDialog}
+        currentAddress={currentAddress || null}
+      />
+
+      <EditReligionDialog
+        open={showEditReligionDialog}
+        onOpenChange={setShowEditReligionDialog}
+        currentReligion={religionData || null}
+      />
     </div>
   )
 }
