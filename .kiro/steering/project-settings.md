@@ -51,3 +51,31 @@ When modifying backend Pydantic schemas that are used in API responses, follow t
 6. **Rebuild frontend** - `docker compose build --no-cache frontend && docker compose up -d`
 
 **Important:** The backend must be running when you run `npm run generate-client` because it fetches the OpenAPI spec from `http://localhost/api/v1/openapi.json`.
+
+## Database Migrations
+
+This project uses two PostgreSQL databases:
+- `app` - Main application database
+- `app_test` - Test database (used by pytest)
+
+### Running Migrations
+
+When creating new Alembic migrations that modify the database schema:
+
+1. **Apply to main database** (usually done automatically by Docker):
+   ```bash
+   cd backend
+   source .venv/bin/activate && alembic upgrade head
+   ```
+
+2. **Apply to test database** (required for backend tests to pass):
+   ```bash
+   cd backend
+   source .venv/bin/activate && POSTGRES_DB=app_test alembic upgrade head
+   ```
+
+### Important Notes
+- After completing a spec that includes database migrations, always apply migrations to BOTH databases
+- The test database (`app_test`) is configured via `POSTGRES_TEST_DB` in `.env`
+- Backend tests will fail if the test database schema is out of sync with the models
+- Migration files are located in `backend/app/alembic/versions/`
