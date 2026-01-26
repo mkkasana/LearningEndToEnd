@@ -306,6 +306,7 @@ class PersonSearchService:
                     middle_name=person.middle_name,
                     last_name=person.last_name,
                     date_of_birth=person.date_of_birth,
+                    gender_id=person.gender_id,
                     name_match_score=score,
                 )
                 for person, score in paginated
@@ -331,6 +332,7 @@ class PersonSearchService:
                     middle_name=person.middle_name,
                     last_name=person.last_name,
                     date_of_birth=person.date_of_birth,
+                    gender_id=person.gender_id,
                     name_match_score=None,
                 )
                 for person in paginated_persons

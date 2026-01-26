@@ -1471,6 +1471,10 @@ export type PersonSearchResult = {
      */
     date_of_birth: string;
     /**
+     * Gender ID for avatar styling
+     */
+    gender_id: string;
+    /**
      * Name similarity score (only present when name filter used)
      */
     name_match_score?: (number | null);
@@ -1627,6 +1631,125 @@ export type ProfileCompletionStatus = {
  * Relationship types between persons with unique identifiers.
  */
 export type RelationshipType = 'rel-6a0ede824d101' | 'rel-6a0ede824d102' | 'rel-6a0ede824d103' | 'rel-6a0ede824d104' | 'rel-6a0ede824d105' | 'rel-6a0ede824d106' | 'rel-6a0ede824d107';
+
+/**
+ * Information about a single relative.
+ */
+export type RelativeInfo = {
+    /**
+     * Person ID
+     */
+    person_id: string;
+    /**
+     * First name
+     */
+    first_name: string;
+    /**
+     * Last name
+     */
+    last_name: string;
+    /**
+     * Gender ID
+     */
+    gender_id: string;
+    /**
+     * Birth year
+     */
+    birth_year?: (number | null);
+    /**
+     * Death year (if deceased)
+     */
+    death_year?: (number | null);
+    /**
+     * District name from address
+     */
+    district_name?: (string | null);
+    /**
+     * Locality/village name from address
+     */
+    locality_name?: (string | null);
+    /**
+     * Number of relationship hops from the requesting person
+     */
+    depth: number;
+};
+
+/**
+ * Request body for relatives network search.
+ */
+export type RelativesNetworkRequest = {
+    /**
+     * The person to find relatives for
+     */
+    person_id: string;
+    /**
+     * Search depth (number of relationship hops)
+     */
+    depth?: number;
+    /**
+     * 'up_to' returns all relatives from depth 1 to N, 'only_at' returns only relatives at exactly depth N
+     */
+    depth_mode?: 'up_to' | 'only_at';
+    /**
+     * If True, exclude deceased relatives (those with date_of_death)
+     */
+    living_only?: boolean;
+    /**
+     * Filter by gender ID
+     */
+    gender_id?: (string | null);
+    /**
+     * Filter by country ID
+     */
+    country_id?: (string | null);
+    /**
+     * Filter by state ID
+     */
+    state_id?: (string | null);
+    /**
+     * Filter by district ID
+     */
+    district_id?: (string | null);
+    /**
+     * Filter by sub-district ID
+     */
+    sub_district_id?: (string | null);
+    /**
+     * Filter by locality ID
+     */
+    locality_id?: (string | null);
+};
+
+/**
+ * 'up_to' returns all relatives from depth 1 to N, 'only_at' returns only relatives at exactly depth N
+ */
+export type depth_mode = 'up_to' | 'only_at';
+
+/**
+ * Response for relatives network search.
+ */
+export type RelativesNetworkResponse = {
+    /**
+     * The person ID from the request
+     */
+    person_id: string;
+    /**
+     * Total number of relatives found
+     */
+    total_count: number;
+    /**
+     * The depth value used in the search
+     */
+    depth: number;
+    /**
+     * The depth mode used ('up_to' or 'only_at')
+     */
+    depth_mode: string;
+    /**
+     * List of relatives found
+     */
+    relatives?: Array<RelativeInfo>;
+};
 
 /**
  * Schema for creating a new religion category.
@@ -2842,6 +2965,12 @@ export type RelativesGetSiblingsByPersonIdData = {
 };
 
 export type RelativesGetSiblingsByPersonIdResponse = (Array<PersonRelationshipPublic>);
+
+export type RelativesNetworkFindRelativesData = {
+    requestBody: RelativesNetworkRequest;
+};
+
+export type RelativesNetworkFindRelativesResponse = (RelativesNetworkResponse);
 
 export type ReligionMetadataGetReligionsResponse = (unknown);
 

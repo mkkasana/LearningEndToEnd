@@ -20,6 +20,7 @@ import { Route as LayoutSupportTicketsRouteImport } from './routes/_layout/suppo
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutSearchRouteImport } from './routes/_layout/search'
 import { Route as LayoutRishteRouteImport } from './routes/_layout/rishte'
+import { Route as LayoutRelativesNetworkRouteImport } from './routes/_layout/relatives-network'
 import { Route as LayoutLifeEventsRouteImport } from './routes/_layout/life-events'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
 import { Route as LayoutFindPartnerRouteImport } from './routes/_layout/find-partner'
@@ -81,6 +82,11 @@ const LayoutRishteRoute = LayoutRishteRouteImport.update({
   path: '/rishte',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutRelativesNetworkRoute = LayoutRelativesNetworkRouteImport.update({
+  id: '/relatives-network',
+  path: '/relatives-network',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutLifeEventsRoute = LayoutLifeEventsRouteImport.update({
   id: '/life-events',
   path: '/life-events',
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/find-partner': typeof LayoutFindPartnerRoute
   '/items': typeof LayoutItemsRoute
   '/life-events': typeof LayoutLifeEventsRoute
+  '/relatives-network': typeof LayoutRelativesNetworkRoute
   '/rishte': typeof LayoutRishteRoute
   '/search': typeof LayoutSearchRoute
   '/settings': typeof LayoutSettingsRoute
@@ -142,6 +149,7 @@ export interface FileRoutesByTo {
   '/find-partner': typeof LayoutFindPartnerRoute
   '/items': typeof LayoutItemsRoute
   '/life-events': typeof LayoutLifeEventsRoute
+  '/relatives-network': typeof LayoutRelativesNetworkRoute
   '/rishte': typeof LayoutRishteRoute
   '/search': typeof LayoutSearchRoute
   '/settings': typeof LayoutSettingsRoute
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/_layout/find-partner': typeof LayoutFindPartnerRoute
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/life-events': typeof LayoutLifeEventsRoute
+  '/_layout/relatives-network': typeof LayoutRelativesNetworkRoute
   '/_layout/rishte': typeof LayoutRishteRoute
   '/_layout/search': typeof LayoutSearchRoute
   '/_layout/settings': typeof LayoutSettingsRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/find-partner'
     | '/items'
     | '/life-events'
+    | '/relatives-network'
     | '/rishte'
     | '/search'
     | '/settings'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/find-partner'
     | '/items'
     | '/life-events'
+    | '/relatives-network'
     | '/rishte'
     | '/search'
     | '/settings'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/_layout/find-partner'
     | '/_layout/items'
     | '/_layout/life-events'
+    | '/_layout/relatives-network'
     | '/_layout/rishte'
     | '/_layout/search'
     | '/_layout/settings'
@@ -314,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRishteRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/relatives-network': {
+      id: '/_layout/relatives-network'
+      path: '/relatives-network'
+      fullPath: '/relatives-network'
+      preLoaderRoute: typeof LayoutRelativesNetworkRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/life-events': {
       id: '/_layout/life-events'
       path: '/life-events'
@@ -366,6 +385,7 @@ interface LayoutRouteChildren {
   LayoutFindPartnerRoute: typeof LayoutFindPartnerRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutLifeEventsRoute: typeof LayoutLifeEventsRoute
+  LayoutRelativesNetworkRoute: typeof LayoutRelativesNetworkRoute
   LayoutRishteRoute: typeof LayoutRishteRoute
   LayoutSearchRoute: typeof LayoutSearchRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
@@ -380,6 +400,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutFindPartnerRoute: LayoutFindPartnerRoute,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutLifeEventsRoute: LayoutLifeEventsRoute,
+  LayoutRelativesNetworkRoute: LayoutRelativesNetworkRoute,
   LayoutRishteRoute: LayoutRishteRoute,
   LayoutSearchRoute: LayoutSearchRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,

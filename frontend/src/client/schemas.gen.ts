@@ -3731,6 +3731,12 @@ export const PersonSearchResultSchema = {
             title: 'Date Of Birth',
             description: 'Date of birth'
         },
+        gender_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Gender Id',
+            description: 'Gender ID for avatar styling'
+        },
         name_match_score: {
             anyOf: [
                 {
@@ -3745,7 +3751,7 @@ export const PersonSearchResultSchema = {
         }
     },
     type: 'object',
-    required: ['person_id', 'first_name', 'last_name', 'date_of_birth'],
+    required: ['person_id', 'first_name', 'last_name', 'date_of_birth', 'gender_id'],
     title: 'PersonSearchResult',
     description: `Individual person result in global search.
 
@@ -4217,6 +4223,241 @@ export const RelationshipTypeSchema = {
     enum: ['rel-6a0ede824d101', 'rel-6a0ede824d102', 'rel-6a0ede824d103', 'rel-6a0ede824d104', 'rel-6a0ede824d105', 'rel-6a0ede824d106', 'rel-6a0ede824d107'],
     title: 'RelationshipType',
     description: 'Relationship types between persons with unique identifiers.'
+} as const;
+
+export const RelativeInfoSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'Person ID'
+        },
+        first_name: {
+            type: 'string',
+            title: 'First Name',
+            description: 'First name'
+        },
+        last_name: {
+            type: 'string',
+            title: 'Last Name',
+            description: 'Last name'
+        },
+        gender_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Gender Id',
+            description: 'Gender ID'
+        },
+        birth_year: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Birth Year',
+            description: 'Birth year'
+        },
+        death_year: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Death Year',
+            description: 'Death year (if deceased)'
+        },
+        district_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'District Name',
+            description: 'District name from address'
+        },
+        locality_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Name',
+            description: 'Locality/village name from address'
+        },
+        depth: {
+            type: 'integer',
+            title: 'Depth',
+            description: 'Number of relationship hops from the requesting person'
+        }
+    },
+    type: 'object',
+    required: ['person_id', 'first_name', 'last_name', 'gender_id', 'depth'],
+    title: 'RelativeInfo',
+    description: 'Information about a single relative.'
+} as const;
+
+export const RelativesNetworkRequestSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'The person to find relatives for'
+        },
+        depth: {
+            type: 'integer',
+            minimum: 1,
+            title: 'Depth',
+            description: 'Search depth (number of relationship hops)',
+            default: 3
+        },
+        depth_mode: {
+            type: 'string',
+            enum: ['up_to', 'only_at'],
+            title: 'Depth Mode',
+            description: "'up_to' returns all relatives from depth 1 to N, 'only_at' returns only relatives at exactly depth N",
+            default: 'up_to'
+        },
+        living_only: {
+            type: 'boolean',
+            title: 'Living Only',
+            description: 'If True, exclude deceased relatives (those with date_of_death)',
+            default: true
+        },
+        gender_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Gender Id',
+            description: 'Filter by gender ID'
+        },
+        country_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Country Id',
+            description: 'Filter by country ID'
+        },
+        state_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State Id',
+            description: 'Filter by state ID'
+        },
+        district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'District Id',
+            description: 'Filter by district ID'
+        },
+        sub_district_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sub District Id',
+            description: 'Filter by sub-district ID'
+        },
+        locality_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locality Id',
+            description: 'Filter by locality ID'
+        }
+    },
+    type: 'object',
+    required: ['person_id'],
+    title: 'RelativesNetworkRequest',
+    description: 'Request body for relatives network search.'
+} as const;
+
+export const RelativesNetworkResponseSchema = {
+    properties: {
+        person_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Person Id',
+            description: 'The person ID from the request'
+        },
+        total_count: {
+            type: 'integer',
+            title: 'Total Count',
+            description: 'Total number of relatives found'
+        },
+        depth: {
+            type: 'integer',
+            title: 'Depth',
+            description: 'The depth value used in the search'
+        },
+        depth_mode: {
+            type: 'string',
+            title: 'Depth Mode',
+            description: "The depth mode used ('up_to' or 'only_at')"
+        },
+        relatives: {
+            items: {
+                '$ref': '#/components/schemas/RelativeInfo'
+            },
+            type: 'array',
+            title: 'Relatives',
+            description: 'List of relatives found'
+        }
+    },
+    type: 'object',
+    required: ['person_id', 'total_count', 'depth', 'depth_mode'],
+    title: 'RelativesNetworkResponse',
+    description: 'Response for relatives network search.'
 } as const;
 
 export const ReligionCategoryCreateSchema = {

@@ -168,6 +168,7 @@ class TestSearchPersonSuccess:
                     middle_name=None,
                     last_name="Doe",
                     date_of_birth="1990-01-15",
+                    gender_id=uuid.uuid4(),
                     name_match_score=85.5,
                 )
             ],

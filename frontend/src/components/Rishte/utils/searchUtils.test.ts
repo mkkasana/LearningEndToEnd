@@ -85,6 +85,7 @@ describe("searchUtils - toSelectedPerson", () => {
       middle_name: null,
       last_name: "Doe",
       date_of_birth: "1990-05-15",
+      gender_id: "4eb743f7-0a50-4da2-a20d-3473b3b3db83",
       name_match_score: 85,
     }
 
@@ -105,6 +106,7 @@ describe("searchUtils - toSelectedPerson", () => {
       middle_name: "Marie",
       last_name: "Smith",
       date_of_birth: "",
+      gender_id: "691fde27-f82c-4a84-832f-4243acef4b95",
       name_match_score: 75,
     }
 

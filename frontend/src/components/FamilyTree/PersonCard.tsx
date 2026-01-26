@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
+// Known gender IDs from the system
+const MALE_GENDER_ID = "4eb743f7-0a50-4da2-a20d-3473b3b3db83"
+const FEMALE_GENDER_ID = "691fde27-f82c-4a84-832f-4243acef4b95"
+
 export type PersonCardVariant =
   | "selected"
   | "parent"
@@ -167,6 +171,20 @@ function getViewButtonSize(variant: PersonCardVariant): "sm" | "default" {
 }
 
 /**
+ * Get avatar background color based on gender
+ * Male: blue tones, Female: pink tones, Unknown: gray
+ */
+function getGenderAvatarClass(genderId: string): string {
+  if (genderId === MALE_GENDER_ID) {
+    return "bg-blue-100 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400"
+  }
+  if (genderId === FEMALE_GENDER_ID) {
+    return "bg-pink-100 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400"
+  }
+  return "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+}
+
+/**
  * PersonCard component displays information about a person in the family tree
  * Accessibility: Supports keyboard navigation, ARIA labels, and focus management
  * Performance: Memoized to prevent unnecessary re-renders
@@ -233,9 +251,12 @@ export const PersonCard = memo(function PersonCard({
       aria-pressed={variant === "selected"}
     >
       {showPhoto && (
-        <Avatar className={getAvatarSize(variant)} aria-hidden="true">
+        <Avatar
+          className={cn(getAvatarSize(variant), getGenderAvatarClass(person.gender_id))}
+          aria-hidden="true"
+        >
           <AvatarImage src={undefined} alt="" />
-          <AvatarFallback>
+          <AvatarFallback className={getGenderAvatarClass(person.gender_id)}>
             <User className="size-1/2" aria-hidden="true" />
           </AvatarFallback>
         </Avatar>
