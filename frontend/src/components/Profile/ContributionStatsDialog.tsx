@@ -121,8 +121,12 @@ export function ContributionStatsDialog({
         {/* Contributions List */}
         {!isLoading && !error && contributions && contributions.length > 0 && (
           <div className="space-y-4">
-            <div className="text-sm text-muted-foreground mb-4">
-              Total contributions: {contributions.length}
+            <div className="flex gap-6 text-sm text-muted-foreground mb-4">
+              <span>Total contributions: {contributions.length}</span>
+              <span className="flex items-center gap-1">
+                <Eye className="h-4 w-4" />
+                Total views: {contributions.reduce((sum, p) => sum + (p.total_views ?? 0), 0)}
+              </span>
             </div>
 
             {contributions.map((person: PersonContributionPublic) => (

@@ -1,5 +1,4 @@
 import {
-  Briefcase,
   Bug,
   Calendar,
   GitBranch,
@@ -26,7 +25,6 @@ import { User } from "./User"
 
 const baseItems: Item[] = [
   { icon: Home, title: "Dashboard", path: "/" },
-  { icon: Briefcase, title: "Items", path: "/items" },
   { icon: UsersRound, title: "Update Family", path: "/family" },
   { icon: Network, title: "Family View", path: "/family-tree" },
   { icon: Share2, title: "Relatives Network", path: "/relatives-network" },
