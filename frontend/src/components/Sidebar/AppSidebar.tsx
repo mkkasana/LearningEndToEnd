@@ -1,4 +1,5 @@
 import {
+  BarChart3,
   Bug,
   Calendar,
   GitBranch,
@@ -23,6 +24,9 @@ import useAuth from "@/hooks/useAuth"
 import { type Item, Main } from "./Main"
 import { User } from "./User"
 
+// Workaround for TS6133: explicitly reference icons used in object literals
+const ContributionsIcon = BarChart3
+
 const baseItems: Item[] = [
   { icon: Home, title: "Dashboard", path: "/" },
   { icon: UsersRound, title: "Update Family", path: "/family" },
@@ -32,6 +36,7 @@ const baseItems: Item[] = [
   { icon: Search, title: "Search", path: "/search" },
   { icon: GitBranch, title: "Rishte", path: "/rishte" },
   { icon: Heart, title: "Find Partner", path: "/find-partner" },
+  { icon: ContributionsIcon, title: "My Contributions", path: "/contributions" },
   { icon: Bug, title: "Report Ticket", path: "/support-tickets" },
 ]
 
