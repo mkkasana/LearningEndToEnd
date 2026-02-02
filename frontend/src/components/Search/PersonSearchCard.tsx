@@ -47,7 +47,7 @@ export function extractBirthYear(dateOfBirth: string): number {
  * Get avatar background color based on gender
  * Male: blue tones, Female: pink tones, Unknown: gray
  */
-function getGenderAvatarClass(genderId: string): string {
+function getGenderAvatarClass(genderId: string | null | undefined): string {
   if (genderId === MALE_GENDER_ID) {
     return "bg-blue-100 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400"
   }

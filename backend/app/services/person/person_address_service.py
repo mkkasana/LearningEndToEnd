@@ -89,3 +89,22 @@ class PersonAddressService:
         )
         self.address_repo.delete(address)
         logger.info(f"Address deleted successfully: ID {address.id}")
+
+    def get_formatted_current_address(self, person_id: uuid.UUID) -> str | None:
+        """Get formatted current address string for display."""
+        logger.debug(f"Getting formatted current address for person: {person_id}")
+        current_address = self.address_repo.get_current_address(person_id)
+        if not current_address:
+            logger.debug(f"No current address found for person {person_id}")
+            return None
+
+        # Build address parts from available fields
+        parts = []
+        if current_address.address_line:
+            parts.append(current_address.address_line)
+
+        # For now, return address_line if available
+        # In the future, this can be enhanced to resolve location names
+        formatted = ", ".join(parts) if parts else None
+        logger.debug(f"Formatted address for person {person_id}: {formatted}")
+        return formatted

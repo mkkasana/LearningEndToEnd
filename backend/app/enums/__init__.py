@@ -1,5 +1,6 @@
 """Application enums."""
 
+from app.enums.attachment_request_status import AttachmentRequestStatus
 from app.enums.gender import (
     GENDER_BY_CODE,
     GENDER_BY_ID,
@@ -20,6 +21,7 @@ from app.enums.relationship_type import (
 from app.enums.user_role import UserRole
 
 __all__ = [
+    "AttachmentRequestStatus",
     "GenderData",
     "GenderEnum",
     "GENDER_BY_CODE",

@@ -11,6 +11,7 @@ from app.main import app
 from app.api.deps import get_db
 from app.models import Item, User
 from app.db_models.person.person import Person
+from app.db_models.person.person_attachment_request import PersonAttachmentRequest
 from app.db_models.person.person_relationship import PersonRelationship
 from app.db_models.person.person_religion import PersonReligion
 from app.db_models.person.person_address import PersonAddress
@@ -42,29 +43,31 @@ def db() -> Generator[Session, None, None]:
         init_db(session)
         yield session
         # Clean up in correct order (respecting foreign key constraints)
-        # 1. Delete profile view tracking (references persons)
+        # 1. Delete attachment requests (references persons and users)
+        session.execute(delete(PersonAttachmentRequest))
+        # 2. Delete profile view tracking (references persons)
         session.execute(delete(ProfileViewTracking))
-        # 2. Delete person relationships (references persons)
+        # 3. Delete person relationships (references persons)
         session.execute(delete(PersonRelationship))
-        # 3. Delete person religion (references persons)
+        # 4. Delete person religion (references persons)
         session.execute(delete(PersonReligion))
-        # 4. Delete person address (references persons)
+        # 5. Delete person address (references persons)
         session.execute(delete(PersonAddress))
-        # 5. Delete person life events (references persons)
+        # 6. Delete person life events (references persons)
         session.execute(delete(PersonLifeEvent))
-        # 6. Delete person metadata (references persons)
+        # 7. Delete person metadata (references persons)
         session.execute(delete(PersonMetadata))
-        # 7. Delete person profession links (references persons)
+        # 8. Delete person profession links (references persons)
         session.execute(delete(PersonProfession))
-        # 8. Delete support tickets (references users)
+        # 9. Delete support tickets (references users)
         session.execute(delete(SupportTicket))
-        # 9. Delete posts (references users)
+        # 10. Delete posts (references users)
         session.execute(delete(Post))
-        # 10. Delete persons (references users)
+        # 11. Delete persons (references users)
         session.execute(delete(Person))
-        # 11. Delete items (references users)
+        # 12. Delete items (references users)
         session.execute(delete(Item))
-        # 12. Finally delete users
+        # 13. Finally delete users
         session.execute(delete(User))
         session.commit()
 

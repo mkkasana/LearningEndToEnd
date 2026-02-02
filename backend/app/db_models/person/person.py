@@ -60,6 +60,10 @@ class Person(SQLModel, table=True):
         ),
         description="Person's marital status",
     )
+    is_active: bool = Field(
+        default=True,
+        description="Whether person is active and visible in searches",
+    )
     created_at: datetime = Field(
         default_factory=datetime.utcnow, description="Creation timestamp"
     )

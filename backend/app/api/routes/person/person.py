@@ -475,7 +475,10 @@ def get_my_relationships_with_details(
     result = []
     for rel in relationships:
         related_person = person_service.person_repo.get_by_id(rel.related_person_id)
-        if related_person:
+        # Skip inactive persons (e.g., temporary persons pending approval)
+        if related_person and (
+            not hasattr(related_person, "is_active") or related_person.is_active
+        ):
             result.append(
                 PersonRelationshipWithDetails(
                     relationship=rel,
@@ -1437,7 +1440,10 @@ def get_person_relationships_with_details(
     result = []
     for rel in relationships:
         related_person = person_service.person_repo.get_by_id(rel.related_person_id)
-        if related_person:
+        # Skip inactive persons (e.g., temporary persons pending approval)
+        if related_person and (
+            not hasattr(related_person, "is_active") or related_person.is_active
+        ):
             result.append(
                 PersonRelationshipWithDetails(
                     relationship=rel,

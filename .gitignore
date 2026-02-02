@@ -18,6 +18,7 @@ backend/.mypy_cache/
 backend/.coverage
 backend/htmlcov/
 backend/.hypothesis/
+.hypothesis/
 
 # Local environment configs
 .mise.toml

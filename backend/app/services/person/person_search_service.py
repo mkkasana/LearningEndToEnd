@@ -234,8 +234,11 @@ class PersonSearchService:
                 limit=request.limit,
             )
 
-        # Step 4: Build query with optional filters
-        query = select(Person).where(col(Person.id).in_(matching_person_ids))
+        # Step 4: Build query with optional filters and exclude inactive persons
+        query = select(Person).where(
+            col(Person.id).in_(matching_person_ids),
+            Person.is_active == True,  # noqa: E712 - Exclude inactive persons from search
+        )
 
         # Apply optional gender filter
         if request.gender_id is not None:

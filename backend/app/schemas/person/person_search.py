@@ -115,7 +115,9 @@ class PersonSearchResult(SQLModel):
     middle_name: str | None = Field(default=None, description="Middle name")
     last_name: str = Field(description="Last name")
     date_of_birth: date = Field(description="Date of birth")
-    gender_id: uuid.UUID = Field(description="Gender ID for avatar styling")
+    gender_id: uuid.UUID | None = Field(
+        default=None, description="Gender ID for avatar styling (optional)"
+    )
     name_match_score: float | None = Field(
         default=None,
         description="Name similarity score (only present when name filter used)",

@@ -2,7 +2,8 @@
 
 import logging
 import uuid
-from datetime import date, datetime
+from datetime import datetime
+from typing import Any
 
 from sqlmodel import Session
 
@@ -121,9 +122,7 @@ class PersonService:
         logger.debug(f"User {user_id} has person: {has_person}")
         return has_person
 
-    def get_my_contributions(
-        self, user_id: uuid.UUID
-    ) -> list[dict[str, str | int | uuid.UUID | date | datetime | None]]:
+    def get_my_contributions(self, user_id: uuid.UUID) -> list[dict[str, Any]]:
         """
         Get all persons created by the user with view statistics.
 
@@ -178,7 +177,12 @@ class PersonService:
             )
 
         # Sort by view count descending (total_views is always int)
-        results.sort(key=lambda x: x.get("total_views", 0) or 0, reverse=True)
+        # Type cast needed for mypy
+        from typing import cast
+
+        results.sort(
+            key=lambda x: cast(int, x.get("total_views", 0) or 0), reverse=True
+        )
 
         logger.info(
             f"Returning {len(results)} contributions for user {user_id}, "

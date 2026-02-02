@@ -40,6 +40,7 @@ function formatDateRange(
   return `${birthYear}`
 }
 
+
 /**
  * Navigate to family tree with a specific person selected.
  * Uses custom event to notify the family tree component, plus sessionStorage as fallback.
@@ -154,6 +155,7 @@ export default function ContributionsPage() {
           </Button>
         </div>
       )}
+
 
       {/* Person Cards Grid - Requirements: 2.5, 6.1, 6.2, 6.3 */}
       {!isLoading && !error && contributions && contributions.length > 0 && (

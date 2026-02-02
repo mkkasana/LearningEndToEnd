@@ -297,9 +297,16 @@ class PersonDiscoveryService:
             relationship_priority: Relationship type priority (1 = children, 2 = parents, 3 = spouses)
 
         Returns:
-            PersonDiscoveryResult or None if person data is invalid
+            PersonDiscoveryResult or None if person data is invalid or person is inactive
         """
         try:
+            # Skip inactive persons (e.g., temporary persons pending approval)
+            if hasattr(person, "is_active") and not person.is_active:
+                logger.debug(
+                    f"Person {person.id} is inactive, skipping from discovery results"
+                )
+                return None
+
             # Validate required fields
             if (
                 not person.first_name

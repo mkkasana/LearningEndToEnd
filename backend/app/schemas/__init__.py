@@ -1,3 +1,10 @@
+from app.schemas.attachment_request import (
+    AttachmentRequestCreate,
+    AttachmentRequestPublic,
+    AttachmentRequestWithDetails,
+    MyPendingRequestResponse,
+    PendingCountResponse,
+)
 from app.schemas.auth import NewPassword, Token, TokenPayload
 from app.schemas.common import Message
 from app.schemas.item import ItemCreate, ItemPublic, ItemsPublic, ItemUpdate
@@ -14,6 +21,12 @@ from app.schemas.user import (
 )
 
 __all__ = [
+    # Attachment Request
+    "AttachmentRequestCreate",
+    "AttachmentRequestPublic",
+    "AttachmentRequestWithDetails",
+    "MyPendingRequestResponse",
+    "PendingCountResponse",
     # Auth
     "Token",
     "TokenPayload",

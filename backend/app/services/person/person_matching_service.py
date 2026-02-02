@@ -306,8 +306,11 @@ class PersonMatchingService:
             logger.info("No persons found matching both criteria, returning empty list")
             return []
 
-        # Step 4: Filter by gender (only if provided)
-        query = select(Person).where(col(Person.id).in_(matching_person_ids))
+        # Step 4: Filter by gender (only if provided) and exclude inactive persons
+        query = select(Person).where(
+            col(Person.id).in_(matching_person_ids),
+            Person.is_active == True,  # noqa: E712 - Exclude inactive persons from search
+        )
 
         # Only apply gender filter if gender_id is provided and not empty
         if search_criteria.gender_id:

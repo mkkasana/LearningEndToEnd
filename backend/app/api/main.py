@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.routes import (
+    attachment_requests,
     auth,
     items,
     life_events,
@@ -31,6 +32,7 @@ api_router.include_router(users.router)
 api_router.include_router(items.router)
 api_router.include_router(posts.router)
 api_router.include_router(support_tickets.router)
+api_router.include_router(attachment_requests.router)
 api_router.include_router(life_events.router)
 api_router.include_router(profile.router)
 api_router.include_router(utils.router)
