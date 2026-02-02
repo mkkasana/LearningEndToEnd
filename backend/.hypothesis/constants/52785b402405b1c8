@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/utils/email.py
-# hypothesis_version: 6.148.8
-
-['build', 'email', 'email-templates', 'host', 'link', 'new_account.html', 'password', 'port', 'project_name', 'reset_password.html', 'ssl', 'test_email.html', 'tls', 'user', 'username', 'valid_hours']

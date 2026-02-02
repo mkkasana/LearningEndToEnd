@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/db_models/person/person_profession.py
-# hypothesis_version: 6.148.8
-
-['Creation timestamp', 'Person reference', 'Profession end date', 'Profession reference', 'person.id', 'person_profession.id']

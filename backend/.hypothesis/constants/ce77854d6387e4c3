@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/api/deps.py
-# hypothesis_version: 6.148.8
-
-[400, 403, 404, 'Inactive user', 'User not found']

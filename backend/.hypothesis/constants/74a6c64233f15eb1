@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/api/routes/person/relatives.py
-# hypothesis_version: 6.148.8
-
-[404, '/{user_id}/children', '/{user_id}/parents', '/{user_id}/siblings', '/{user_id}/spouses', 'Person not found']

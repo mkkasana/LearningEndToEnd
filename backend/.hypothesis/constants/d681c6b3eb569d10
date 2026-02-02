@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/api/routes/person/person.py
-# hypothesis_version: 6.148.8
-
-[400, 403, 404, 422, 500, '/family-member', '/me', '/me/addresses', '/me/metadata', '/me/professions', '/me/relationships', '/search-matches', '/{user_id}', 'Address not found', 'Person not found', 'Profession not found', 'created_by_user_id', 'message']

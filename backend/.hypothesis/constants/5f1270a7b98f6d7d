@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/db_models/person/person_religion.py
-# hypothesis_version: 6.148.8
-
-['Creation timestamp', 'Person reference', 'Religion reference', 'person.id', 'person_religion', 'religion.id', 'religion_category.id']

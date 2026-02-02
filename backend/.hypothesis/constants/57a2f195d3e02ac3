@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/schemas/__init__.py
-# hypothesis_version: 6.148.8
-
-['ItemCreate', 'ItemPublic', 'ItemUpdate', 'ItemsPublic', 'Message', 'NewPassword', 'PostCreate', 'PostPublic', 'PostUpdate', 'PostsPublic', 'Token', 'TokenPayload', 'UpdatePassword', 'UserCreate', 'UserPublic', 'UserRegister', 'UserUpdate', 'UserUpdateMe', 'UsersPublic']

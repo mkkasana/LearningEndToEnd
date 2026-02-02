@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/schemas/person/person_search.py
-# hypothesis_version: 6.148.8
-
-[100, 'Country reference', 'Date of birth', 'Date of death', 'District reference', 'First name', 'First name to search', 'Gender ID', 'Last name', 'Last name to search', 'Locality reference', 'Middle name', 'Person ID', 'Religion reference', 'State reference']

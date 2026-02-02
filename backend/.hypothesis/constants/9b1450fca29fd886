@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/schemas/person/person.py
-# hypothesis_version: 6.148.8
-
-[100, 'Date of birth', 'Date of death', 'First name', 'Gender reference', 'Last name', 'Middle name']

@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/utils/__init__.py
-# hypothesis_version: 6.148.8
-
-['EmailData', 'generate_test_email', 'send_email']

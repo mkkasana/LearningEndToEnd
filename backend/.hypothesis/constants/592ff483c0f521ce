@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/enums/__init__.py
-# hypothesis_version: 6.148.8
-
-['RelationshipType', 'label_id_relation', 'relation_label_id']

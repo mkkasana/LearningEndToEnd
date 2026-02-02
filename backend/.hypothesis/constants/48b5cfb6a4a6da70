@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/schemas/person/gender.py
-# hypothesis_version: 6.148.8
-
-[100, 500, 'Gender code', 'Gender name', 'Optional description']

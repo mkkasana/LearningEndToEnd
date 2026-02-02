@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/api/routes/auth.py
-# hypothesis_version: 6.148.8
-
-[400, 404, '/login/access-token', '/login/test-token', '/reset-password/', 'Invalid token', 'login', 'subject:']

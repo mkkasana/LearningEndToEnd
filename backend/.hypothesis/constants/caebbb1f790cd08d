@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/schemas/person/person_address.py
-# hypothesis_version: 6.148.8
-
-['Address end date', 'Address start date', 'Country reference', 'District reference', 'Locality reference', 'State reference']

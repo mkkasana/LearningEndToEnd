@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/db_models/__init__.py
-# hypothesis_version: 6.148.8
-
-['Gender', 'Item', 'Person', 'PersonAddress', 'PersonMetadata', 'PersonProfession', 'PersonRelationship', 'Profession', 'User']

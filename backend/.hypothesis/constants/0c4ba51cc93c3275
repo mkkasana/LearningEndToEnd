@@ -1,4 +1,0 @@
-# file: /Users/mkasana/kasanaLearning/full-stack-fastapi-template/backend/app/api/routes/users.py
-# hypothesis_version: 6.148.8
-
-[100, 400, 404, '%Y-%m-%d', '/', '/me', '/me/password', '/signup', '/users', '/{user_id}', 'Incorrect password', 'User not found', 'users']
