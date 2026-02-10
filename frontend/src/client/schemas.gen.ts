@@ -2674,6 +2674,18 @@ export const PersonMatchResultSchema = {
             title: 'Date Of Death',
             description: 'Date of death'
         },
+        gender: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Gender',
+            description: 'Gender display name'
+        },
         address_display: {
             type: 'string',
             title: 'Address Display',
@@ -4483,6 +4495,26 @@ export const ProfileCompletionStatusSchema = {
             type: 'boolean',
             title: 'Has Marital Status'
         },
+        has_duplicate_check: {
+            type: 'boolean',
+            title: 'Has Duplicate Check'
+        },
+        has_pending_attachment_request: {
+            type: 'boolean',
+            title: 'Has Pending Attachment Request'
+        },
+        pending_request_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Pending Request Id'
+        },
         missing_fields: {
             items: {
                 type: 'string'
@@ -4492,7 +4524,7 @@ export const ProfileCompletionStatusSchema = {
         }
     },
     type: 'object',
-    required: ['is_complete', 'has_person', 'has_address', 'has_religion', 'has_marital_status', 'missing_fields'],
+    required: ['is_complete', 'has_person', 'has_address', 'has_religion', 'has_marital_status', 'has_duplicate_check', 'has_pending_attachment_request', 'pending_request_id', 'missing_fields'],
     title: 'ProfileCompletionStatus',
     description: 'Profile completion status response.'
 } as const;
@@ -6040,6 +6072,13 @@ export const ValidationErrorSchema = {
         type: {
             type: 'string',
             title: 'Error Type'
+        },
+        input: {
+            title: 'Input'
+        },
+        ctx: {
+            type: 'object',
+            title: 'Context'
         }
     },
     type: 'object',

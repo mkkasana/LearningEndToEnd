@@ -209,9 +209,11 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     )
 
     # Create the person with created_by_user_id set to the user's own ID
+    # Person starts as inactive until profile completion and duplicate check
     person = Person(
         **person_create.model_dump(),
         created_by_user_id=user.id,  # User creates their own person record
+        is_active=False,  # Person starts inactive until duplicate check is complete
     )
     session.add(person)
     session.commit()

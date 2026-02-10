@@ -8,7 +8,8 @@
     "build": "tsc -p tsconfig.build.json && vite build",
     "lint": "biome check --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
     "preview": "vite preview",
-    "generate-client": "openapi-ts",
+    "generate-client": "curl -f http://localhost:8000/api/v1/openapi.json -o openapi.json && openapi-ts",
+    "generate-client:local": "openapi-ts",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run"

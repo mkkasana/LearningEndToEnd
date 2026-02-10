@@ -219,6 +219,14 @@ class PersonMatchingService:
         if not person:
             return None
 
+        # Get gender display name
+        gender_display = None
+        if person.gender_id:
+            from app.enums import get_gender_by_id
+            gender = get_gender_by_id(person.gender_id)
+            if gender:
+                gender_display = gender.name
+
         # Construct PersonMatchResult
         match_result = PersonMatchResult(
             person_id=person.id,
@@ -227,6 +235,7 @@ class PersonMatchingService:
             last_name=person.last_name,
             date_of_birth=person.date_of_birth,
             date_of_death=person.date_of_death,
+            gender=gender_display,
             address_display=address_display,
             religion_display=religion_display,
             match_score=name_score,  # For now, match_score equals name_score
@@ -236,6 +245,36 @@ class PersonMatchingService:
         )
 
         return match_result
+
+    def _get_person_address_display(self, person_id: uuid.UUID) -> str:
+        """Get formatted address display string for a person.
+
+        Args:
+            person_id: The person's ID
+
+        Returns:
+            Formatted address string or empty string if no address
+        """
+        from app.services.person.person_address_service import PersonAddressService
+        
+        address_service = PersonAddressService(self.session)
+        address = address_service.get_formatted_current_address(person_id)
+        return address or ""
+
+    def _get_person_religion_display(self, person_id: uuid.UUID) -> str:
+        """Get formatted religion display string for a person.
+
+        Args:
+            person_id: The person's ID
+
+        Returns:
+            Formatted religion string or empty string if no religion
+        """
+        from app.services.person.person_religion_service import PersonReligionService
+        
+        religion_service = PersonReligionService(self.session)
+        religion = religion_service.get_formatted_religion(person_id)
+        return religion or ""
 
     def search_matching_persons(
         self,
@@ -352,11 +391,15 @@ class PersonMatchingService:
 
             # Filter by minimum score threshold (40%)
             if name_score >= 40:
+                # Build display strings for THIS matched person (not the searcher)
+                person_address_display = self._get_person_address_display(person.id)
+                person_religion_display = self._get_person_religion_display(person.id)
+                
                 match_result = self._build_match_result(
                     person.id,
                     name_score,
-                    address_display,
-                    religion_display,
+                    person_address_display,
+                    person_religion_display,
                     is_current_user=is_current_user,
                     is_already_connected=is_already_connected,
                 )

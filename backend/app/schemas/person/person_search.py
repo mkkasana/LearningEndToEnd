@@ -215,6 +215,7 @@ class PersonMatchResult(SQLModel):
     last_name: str = Field(description="Last name")
     date_of_birth: date = Field(description="Date of birth")
     date_of_death: date | None = Field(default=None, description="Date of death")
+    gender: str | None = Field(default=None, description="Gender display name")
 
     # Display strings
     address_display: str = Field(description="Comma-separated address display")

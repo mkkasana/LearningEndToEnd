@@ -39,18 +39,31 @@ The `amazon-builder-steering` rules do not apply to this project. This is a pers
 
 ## Backend Schema to Frontend Type Sync
 
-When modifying backend Pydantic schemas that are used in API responses, follow these steps to make changes available to the frontend:
+When modifying backend Pydantic schemas or adding new API endpoints, follow these steps to make changes available to the frontend:
 
-1. **Modify backend schema** - Edit files in `backend/app/schemas/`
-2. **Update backend service** - Populate new fields in the service layer
-3. **Rebuild & restart backend** - `docker compose build --no-cache backend && docker compose up -d`
+1. **Modify backend code** - Edit files in `backend/app/schemas/`, `backend/app/api/routes/`, or `backend/app/services/`
+2. **Rebuild & restart backend** - `docker compose build --no-cache backend && docker compose up -d`
+3. **Wait for backend to be ready** - The backend must be running and accessible at `http://localhost:8000`
 4. **Regenerate OpenAPI client** - Run `npm run generate-client` in the `frontend/` folder
-   - This fetches the OpenAPI spec from the running backend and generates TypeScript types
-   - Generated files: `frontend/src/client/types.gen.ts`, `frontend/src/client/schemas.gen.ts`
-5. **Update frontend code** - Use the new fields from the generated types
+   - This command does TWO things:
+     1. Fetches the latest OpenAPI spec from `http://localhost:8000/api/v1/openapi.json`
+     2. Generates TypeScript types and SDK methods
+   - Generated files: `frontend/src/client/types.gen.ts`, `frontend/src/client/sdk.gen.ts`, `frontend/src/client/schemas.gen.ts`
+5. **Update frontend code** - Use the new types/methods from the generated client
 6. **Rebuild frontend** - `docker compose build --no-cache frontend && docker compose up -d`
 
-**Important:** The backend must be running when you run `npm run generate-client` because it fetches the OpenAPI spec from `http://localhost/api/v1/openapi.json`.
+### OpenAPI Client Generation Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run generate-client` | Fetches latest spec from backend AND generates client (recommended) |
+| `npm run generate-client:local` | Only generates client from existing `openapi.json` file (use if backend is down) |
+
+**Important Notes:**
+- The backend MUST be running when you run `npm run generate-client`
+- If you get a connection error, ensure the backend is up: `docker compose ps`
+- The `openapi.json` file in the frontend folder is a cached copy of the spec
+- Always use `generate-client` (not `generate-client:local`) to ensure you have the latest API
 
 ## Database Migrations
 

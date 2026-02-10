@@ -120,3 +120,28 @@ class AttachmentRequestRepository(BaseRepository[PersonAttachmentRequest]):
             f"Found {len(results)} requests for target person {target_person_id}"
         )
         return results
+
+    def get_by_requester_person(
+        self, requester_person_id: uuid.UUID
+    ) -> list[PersonAttachmentRequest]:
+        """Get all requests for a specific requester person.
+
+        Used to clear FK references before deleting a person.
+
+        Args:
+            requester_person_id: The requester person's ID
+
+        Returns:
+            List of attachment requests for the requester person
+        """
+        logger.debug(
+            f"Querying requests for requester person: {requester_person_id}"
+        )
+        statement = select(PersonAttachmentRequest).where(
+            PersonAttachmentRequest.requester_person_id == requester_person_id
+        )
+        results = list(self.session.exec(statement).all())
+        logger.debug(
+            f"Found {len(results)} requests for requester person {requester_person_id}"
+        )
+        return results

@@ -1057,6 +1057,10 @@ export type PersonMatchResult = {
      */
     date_of_death?: (string | null);
     /**
+     * Gender display name
+     */
+    gender?: (string | null);
+    /**
      * Comma-separated address display
      */
     address_display: string;
@@ -1752,6 +1756,9 @@ export type ProfileCompletionStatus = {
     has_address: boolean;
     has_religion: boolean;
     has_marital_status: boolean;
+    has_duplicate_check: boolean;
+    has_pending_attachment_request: boolean;
+    pending_request_id: (string | null);
     missing_fields: Array<(string)>;
 };
 
@@ -2338,6 +2345,10 @@ export type ValidationError = {
     loc: Array<(string | number)>;
     msg: string;
     type: string;
+    input?: unknown;
+    ctx?: {
+        [key: string]: unknown;
+    };
 };
 
 export type AddressMetadataGetCountriesResponse = (unknown);
@@ -3075,6 +3086,10 @@ export type PrivateCreateUserData = {
 export type PrivateCreateUserResponse = (UserPublic);
 
 export type ProfileGetProfileCompletionStatusResponse = (ProfileCompletionStatus);
+
+export type ProfileGetDuplicateCheckResponse = (Array<PersonMatchResult>);
+
+export type ProfileCompleteWithoutAttachmentResponse = (ProfileCompletionStatus);
 
 export type RelativesGetParentsData = {
     userId: string;
