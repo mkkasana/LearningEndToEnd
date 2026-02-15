@@ -13,6 +13,7 @@ export interface AddFamilyMemberCardProps {
 /**
  * Get variant-specific styling classes with responsive sizing
  * Uses same dimensions as PersonCard for visual consistency
+ * Compact sizing to fit all three rows on screen
  */
 function getVariantStyles(variant: AddFamilyMemberCardVariant): string {
   const baseStyles = cn(
@@ -27,20 +28,20 @@ function getVariantStyles(variant: AddFamilyMemberCardVariant): string {
     case "parent":
       return cn(
         baseStyles,
-        "min-w-[140px] md:min-w-[160px] lg:min-w-[180px]",
-        "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]",
+        "min-w-[120px] md:min-w-[140px]",
+        "min-h-[120px] md:min-h-[140px]",
       )
     case "center":
       return cn(
         baseStyles,
-        "min-w-[140px] md:min-w-[160px] lg:min-w-[180px]",
-        "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]",
+        "min-w-[120px] md:min-w-[140px]",
+        "min-h-[120px] md:min-h-[140px]",
       )
     case "child":
       return cn(
         baseStyles,
-        "min-w-[130px] md:min-w-[150px] lg:min-w-[170px]",
-        "min-h-[150px] md:min-h-[170px] lg:min-h-[190px]",
+        "min-w-[110px] md:min-w-[130px]",
+        "min-h-[110px] md:min-h-[130px]",
       )
   }
 }
@@ -52,9 +53,9 @@ function getCircleSize(variant: AddFamilyMemberCardVariant): string {
   switch (variant) {
     case "parent":
     case "center":
-      return "size-14 md:size-16 lg:size-18"
+      return "size-10 md:size-12"
     case "child":
-      return "size-12 md:size-14 lg:size-16"
+      return "size-9 md:size-11"
   }
 }
 
@@ -65,9 +66,9 @@ function getIconSize(variant: AddFamilyMemberCardVariant): string {
   switch (variant) {
     case "parent":
     case "center":
-      return "size-6 md:size-7 lg:size-8"
+      return "size-5 md:size-6"
     case "child":
-      return "size-5 md:size-6 lg:size-7"
+      return "size-4 md:size-5"
   }
 }
 

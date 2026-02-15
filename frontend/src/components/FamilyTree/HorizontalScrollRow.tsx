@@ -3,6 +3,7 @@ import type { PersonDetails } from "@/client"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { AddFamilyMemberCard } from "./AddFamilyMemberCard"
+import { EmptyRowPlaceholder } from "./EmptyRowPlaceholder"
 import { PersonCard } from "./PersonCard"
 
 export interface HorizontalScrollRowProps {
@@ -63,9 +64,9 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
     }
   }, [selectedPersonId, variant])
 
-  if (people.length === 0 && !selectedPersonId && !showAddCard) {
-    return null
-  }
+  // Always render the row for consistent layout
+  // When empty and not showing add card, render an empty row container
+  // This ensures parent/child rows maintain consistent spacing across all trees
 
   // Determine card variant based on row variant and whether it's the selected person
   const getCardVariant = (
@@ -143,9 +144,9 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
   // Container styling based on variant
   const containerClass = cn(
     "w-full",
-    variant === "parent" && "mb-2 md:mb-3",
-    variant === "center" && "my-1 md:my-2",
-    variant === "child" && "mt-2 md:mt-3",
+    variant === "parent" && "mb-1",
+    variant === "center" && "my-0.5",
+    variant === "child" && "mt-1",
   )
 
   const ariaLabel =
@@ -162,12 +163,12 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
   return (
     <div className={containerClass} role="region" aria-label={ariaLabel}>
       <ScrollArea
-        className="w-full whitespace-nowrap rounded-lg border border-border/50 bg-muted/10 p-2 md:p-3 lg:p-4"
+        className="w-full whitespace-nowrap rounded-lg border border-border/50 bg-muted/10 p-1 md:p-2"
         ref={scrollContainerRef}
       >
         <div
           className={cn(
-            "flex gap-3 md:gap-4 lg:gap-6 p-1 md:p-2 items-center",
+            "flex gap-2 md:gap-3 p-1 items-center",
             justifyClass,
           )}
         >
@@ -199,6 +200,12 @@ export const HorizontalScrollRow = memo(function HorizontalScrollRow({
           {showAddCard && onAddClick && (
             <div className="inline-block flex-shrink-0">
               <AddFamilyMemberCard variant={variant} onClick={onAddClick} />
+            </div>
+          )}
+          {/* Empty placeholder when viewing other's tree with no people */}
+          {people.length === 0 && !showAddCard && variant !== "center" && (
+            <div className="inline-block flex-shrink-0">
+              <EmptyRowPlaceholder variant={variant} />
             </div>
           )}
         </div>

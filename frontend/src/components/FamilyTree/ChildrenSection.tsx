@@ -13,6 +13,7 @@ export interface ChildrenSectionProps {
  * ChildrenSection component displays child cards below the selected person
  * with smaller styling compared to the selected person
  * Uses HorizontalScrollRow for consistent horizontal layout without vertical stacking
+ * Always renders the row for consistent layout across own/other trees
  *
  * Note: This component displays ALL children of the selected person,
  * regardless of which spouse they are associated with (Requirement 6.5)
@@ -25,10 +26,9 @@ export function ChildrenSection({
   showAddCard,
   onAddClick,
 }: ChildrenSectionProps) {
-  if (children.length === 0 && !showAddCard) {
-    return null
-  }
-
+  // Always render the row for consistent layout
+  // When viewing own tree (showAddCard=true): show add card if no children
+  // When viewing other's tree (showAddCard=false): show empty row if no children
   return (
     <HorizontalScrollRow
       people={children}

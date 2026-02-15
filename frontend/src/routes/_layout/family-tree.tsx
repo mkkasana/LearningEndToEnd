@@ -296,13 +296,13 @@ function FamilyTreeView() {
 
   // Main content - Family Tree View
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500">
+    <div className="flex flex-col gap-3 animate-in fade-in duration-500">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
             Family Tree View
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground text-sm">
             Explore your family relationships visually
           </p>
         </div>
@@ -329,7 +329,7 @@ function FamilyTreeView() {
 
       <main
         ref={treeContainerRef}
-        className="relative flex flex-col items-center gap-2 md:gap-3 p-4 md:p-6 lg:p-8 border-2 rounded-xl shadow-sm bg-gradient-to-br from-background to-muted/20 transition-all duration-300"
+        className="relative flex flex-col items-center gap-1 p-2 md:p-3 border-2 rounded-xl shadow-sm bg-gradient-to-br from-background to-muted/20 transition-all duration-300"
         role="region"
         aria-label="Family tree visualization"
       >
@@ -344,20 +344,17 @@ function FamilyTreeView() {
             </div>
           </div>
         )}
-        {/* Parents Section - Requirements: 1.1, 5.1, 5.2 */}
-        {/* Add Card only visible when viewing own family tree */}
-        {(parents.length > 0 || isViewingOwnTree) && (
-          <ParentsSection
-            parents={parents}
-            onPersonClick={handlePersonClick}
-            onViewClick={handleViewClick}
-            showAddCard={isViewingOwnTree}
-            onAddClick={handleAddFamilyMember}
-          />
-        )}
+        {/* Parents Section - Always rendered for consistent layout */}
+        <ParentsSection
+          parents={parents}
+          onPersonClick={handlePersonClick}
+          onViewClick={handleViewClick}
+          showAddCard={isViewingOwnTree}
+          onAddClick={handleAddFamilyMember}
+        />
 
         {/* Connector from parents to center row */}
-        {(parents.length > 0 || isViewingOwnTree) && <RowConnector />}
+        <RowConnector />
 
         {/* Center Section: Siblings, Selected Person, Spouses - All in one horizontal row */}
         {/* Requirements: 5.1, 5.2, 9.3 - Single horizontally scrollable row with color-coding */}
@@ -400,19 +397,16 @@ function FamilyTreeView() {
         })()}
 
         {/* Connector from center row to children */}
-        {(children.length > 0 || isViewingOwnTree) && <RowConnector />}
+        <RowConnector />
 
-        {/* Children Section - Requirements: 1.3, 5.1, 5.2 */}
-        {/* Add Card only visible when viewing own family tree */}
-        {(children.length > 0 || isViewingOwnTree) && (
-          <ChildrenSection
-            children={children}
-            onPersonClick={handlePersonClick}
-            onViewClick={handleViewClick}
-            showAddCard={isViewingOwnTree}
-            onAddClick={handleAddFamilyMember}
-          />
-        )}
+        {/* Children Section - Always rendered for consistent layout */}
+        <ChildrenSection
+          children={children}
+          onPersonClick={handlePersonClick}
+          onViewClick={handleViewClick}
+          showAddCard={isViewingOwnTree}
+          onAddClick={handleAddFamilyMember}
+        />
       </main>
 
       {/* Person Details Panel - Requirements: 1.1, 2.1 */}

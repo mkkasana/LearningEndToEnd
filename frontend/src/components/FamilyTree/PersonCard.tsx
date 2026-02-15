@@ -53,6 +53,7 @@ export function formatYearsDisplay(
 /**
  * Get variant-specific styling classes with responsive sizing
  * Requirements: 4.1 - Spouse cards have reduced opacity for visual hierarchy
+ * Compact sizing to fit all three rows on screen
  */
 function getVariantStyles(variant: PersonCardVariant): string {
   const baseStyles = cn(
@@ -68,40 +69,40 @@ function getVariantStyles(variant: PersonCardVariant): string {
         baseStyles,
         "border-2 border-green-500 shadow-lg scale-105 bg-card",
         "hover:shadow-2xl hover:border-green-600 hover:bg-card",
-        "w-[160px] md:w-[180px] lg:w-[200px]",
-        "min-h-[180px] md:min-h-[200px] lg:min-h-[220px]",
+        "w-[140px] md:w-[160px]",
+        "min-h-[140px] md:min-h-[160px]",
       )
     case "parent":
       return cn(
         baseStyles,
         "border border-border shadow-sm bg-card",
         "hover:bg-accent/50",
-        "w-[140px] md:w-[160px] lg:w-[180px]",
-        "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]",
+        "w-[120px] md:w-[140px]",
+        "min-h-[120px] md:min-h-[140px]",
       )
     case "spouse":
       return cn(
         baseStyles,
         "border border-border shadow-sm bg-card opacity-40",
         "hover:bg-accent/50 hover:opacity-60",
-        "w-[140px] md:w-[160px] lg:w-[180px]",
-        "min-h-[160px] md:min-h-[180px] lg:min-h-[200px]",
+        "w-[120px] md:w-[140px]",
+        "min-h-[120px] md:min-h-[140px]",
       )
     case "sibling":
       return cn(
         baseStyles,
         "border border-border opacity-75 scale-90 shadow-sm bg-card",
         "hover:opacity-90 hover:bg-accent/30",
-        "w-[120px] md:w-[140px] lg:w-[160px]",
-        "min-h-[140px] md:min-h-[160px] lg:min-h-[180px]",
+        "w-[100px] md:w-[120px]",
+        "min-h-[100px] md:min-h-[120px]",
       )
     case "child":
       return cn(
         baseStyles,
         "border border-border scale-95 shadow-sm bg-card",
         "hover:bg-accent/50",
-        "w-[130px] md:w-[150px] lg:w-[170px]",
-        "min-h-[150px] md:min-h-[170px] lg:min-h-[190px]",
+        "w-[110px] md:w-[130px]",
+        "min-h-[110px] md:min-h-[130px]",
       )
   }
 }
@@ -144,14 +145,14 @@ function getColorVariantClasses(
 function getAvatarSize(variant: PersonCardVariant): string {
   switch (variant) {
     case "selected":
-      return "size-16 md:size-18 lg:size-20"
+      return "size-12 md:size-14"
     case "parent":
     case "spouse":
-      return "size-12 md:size-14 lg:size-16"
+      return "size-10 md:size-12"
     case "sibling":
-      return "size-10 md:size-11 lg:size-12"
+      return "size-8 md:size-10"
     case "child":
-      return "size-11 md:size-12 lg:size-14"
+      return "size-9 md:size-11"
   }
 }
 
