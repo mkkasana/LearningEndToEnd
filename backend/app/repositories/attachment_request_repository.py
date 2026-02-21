@@ -134,9 +134,7 @@ class AttachmentRequestRepository(BaseRepository[PersonAttachmentRequest]):
         Returns:
             List of attachment requests for the requester person
         """
-        logger.debug(
-            f"Querying requests for requester person: {requester_person_id}"
-        )
+        logger.debug(f"Querying requests for requester person: {requester_person_id}")
         statement = select(PersonAttachmentRequest).where(
             PersonAttachmentRequest.requester_person_id == requester_person_id
         )

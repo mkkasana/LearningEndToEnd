@@ -28,18 +28,16 @@ def get_profile_completion_status(
 
 @router.get("/duplicate-check", response_model=list[PersonMatchResult])
 @log_route
-def get_duplicate_check(
-    session: SessionDep, current_user: CurrentUser
-) -> Any:
+def get_duplicate_check(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Search for potential duplicate persons matching the current user's data.
-    
+
     Returns persons that could be the same person as the current user,
     filtered to exclude:
     - The current user's own person record
     - Persons that already have a linked user account
     - Inactive persons
-    
+
     Only returns persons with a match score >= 40%.
     """
     profile_service = ProfileService(session)
@@ -48,15 +46,13 @@ def get_duplicate_check(
 
 @router.post("/complete-without-attachment", response_model=ProfileCompletionStatus)
 @log_route
-def complete_without_attachment(
-    session: SessionDep, current_user: CurrentUser
-) -> Any:
+def complete_without_attachment(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Complete profile without attaching to an existing person.
-    
+
     Activates the current user's person record, marking the duplicate
     check step as complete.
-    
+
     Returns 400 error if user has a pending attachment request.
     """
     profile_service = ProfileService(session)

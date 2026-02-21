@@ -31,7 +31,7 @@ def upgrade() -> None:
     from app.db_models.religion import religion, religion_category, religion_sub_category
     
     # Create all tables
-    SQLModel.metadata.create_all(engine)
+    SQLModel.metadata.create_all(engine, checkfirst=True)
 
 
 def downgrade() -> None:

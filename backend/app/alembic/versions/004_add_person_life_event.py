@@ -21,6 +21,11 @@ depends_on = None
 
 
 def upgrade() -> None:
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    if 'support_ticket' in inspector.get_table_names():
+        return
+
     # Create person_life_event table
     op.create_table(
         'person_life_event',

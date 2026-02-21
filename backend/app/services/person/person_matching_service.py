@@ -223,6 +223,7 @@ class PersonMatchingService:
         gender_display = None
         if person.gender_id:
             from app.enums import get_gender_by_id
+
             gender = get_gender_by_id(person.gender_id)
             if gender:
                 gender_display = gender.name
@@ -256,7 +257,7 @@ class PersonMatchingService:
             Formatted address string or empty string if no address
         """
         from app.services.person.person_address_service import PersonAddressService
-        
+
         address_service = PersonAddressService(self.session)
         address = address_service.get_formatted_current_address(person_id)
         return address or ""
@@ -271,7 +272,7 @@ class PersonMatchingService:
             Formatted religion string or empty string if no religion
         """
         from app.services.person.person_religion_service import PersonReligionService
-        
+
         religion_service = PersonReligionService(self.session)
         religion = religion_service.get_formatted_religion(person_id)
         return religion or ""
@@ -303,8 +304,8 @@ class PersonMatchingService:
 
         # Use display strings from search criteria (passed from frontend)
         # If not provided, use empty strings as placeholders
-        address_display = search_criteria.address_display or ""
-        religion_display = search_criteria.religion_display or ""
+        # address_display = search_criteria.address_display or ""
+        # religion_display = search_criteria.religion_display or ""
 
         # Step 1: Find persons by address
         logger.debug(
@@ -394,7 +395,7 @@ class PersonMatchingService:
                 # Build display strings for THIS matched person (not the searcher)
                 person_address_display = self._get_person_address_display(person.id)
                 person_religion_display = self._get_person_religion_display(person.id)
-                
+
                 match_result = self._build_match_result(
                     person.id,
                     name_score,

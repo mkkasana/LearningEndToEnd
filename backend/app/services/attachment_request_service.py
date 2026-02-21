@@ -338,7 +338,9 @@ class AttachmentRequestService:
         request.requester_person_id = None  # Clear FK reference before deletion
         self.session.add(request)
         self.session.commit()
-        logger.info(f"Updated request {request_id} status to APPROVED and cleared requester_person_id")
+        logger.info(
+            f"Updated request {request_id} status to APPROVED and cleared requester_person_id"
+        )
 
         # 8. Clear requester_person_id from ALL other attachment requests for this person
         # This handles cases where user cancelled previous requests
@@ -348,7 +350,9 @@ class AttachmentRequestService:
             self.session.add(other_request)
         if other_requests:
             self.session.commit()
-            logger.info(f"Cleared requester_person_id from {len(other_requests)} other attachment requests")
+            logger.info(
+                f"Cleared requester_person_id from {len(other_requests)} other attachment requests"
+            )
 
         # 9. Delete requester's temp person and all metadata
         # This is done after clearing the FK reference
@@ -439,7 +443,9 @@ class AttachmentRequestService:
         request.requester_user_id = None  # Clear FK reference before user deletion
         self.session.add(request)
         self.session.commit()
-        logger.info(f"Updated request {request_id} status to DENIED and cleared FK references")
+        logger.info(
+            f"Updated request {request_id} status to DENIED and cleared FK references"
+        )
 
         # 5. Clear requester_person_id from ALL other attachment requests for this person
         # This handles cases where user cancelled previous requests
@@ -449,7 +455,9 @@ class AttachmentRequestService:
             self.session.add(other_request)
         if other_requests:
             self.session.commit()
-            logger.info(f"Cleared requester_person_id from {len(other_requests)} other attachment requests")
+            logger.info(
+                f"Cleared requester_person_id from {len(other_requests)} other attachment requests"
+            )
 
         # 6. Delete requester's temp person and all metadata
         self._delete_person_with_metadata(requester_person_id)

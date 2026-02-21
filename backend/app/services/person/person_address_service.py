@@ -101,46 +101,48 @@ class PersonAddressService:
 
         # Build address parts from available fields
         parts = []
-        
+
         # Add address line if available
         if current_address.address_line:
             parts.append(current_address.address_line)
 
         # Add location hierarchy names
-        from app.repositories.address.locality_repository import LocalityRepository
-        from app.repositories.address.sub_district_repository import SubDistrictRepository
-        from app.repositories.address.district_repository import DistrictRepository
-        from app.repositories.address.state_repository import StateRepository
         from app.repositories.address.country_repository import CountryRepository
-        
+        from app.repositories.address.district_repository import DistrictRepository
+        from app.repositories.address.locality_repository import LocalityRepository
+        from app.repositories.address.state_repository import StateRepository
+        from app.repositories.address.sub_district_repository import (
+            SubDistrictRepository,
+        )
+
         # Get locality name
         if current_address.locality_id:
             locality_repo = LocalityRepository(self.session)
             locality = locality_repo.get_by_id(current_address.locality_id)
             if locality:
                 parts.append(locality.name)
-        
+
         # Get sub-district name
         if current_address.sub_district_id:
             sub_district_repo = SubDistrictRepository(self.session)
             sub_district = sub_district_repo.get_by_id(current_address.sub_district_id)
             if sub_district:
                 parts.append(sub_district.name)
-        
+
         # Get district name
         if current_address.district_id:
             district_repo = DistrictRepository(self.session)
             district = district_repo.get_by_id(current_address.district_id)
             if district:
                 parts.append(district.name)
-        
+
         # Get state name
         if current_address.state_id:
             state_repo = StateRepository(self.session)
             state = state_repo.get_by_id(current_address.state_id)
             if state:
                 parts.append(state.name)
-        
+
         # Get country name
         if current_address.country_id:
             country_repo = CountryRepository(self.session)

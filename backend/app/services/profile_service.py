@@ -172,11 +172,15 @@ class ProfileService:
         religion = self.religion_repo.get_by_person_id(person.id)
 
         if not addresses:
-            logger.debug(f"Person {person.id} has no address, cannot search for matches")
+            logger.debug(
+                f"Person {person.id} has no address, cannot search for matches"
+            )
             return []
 
         if not religion:
-            logger.debug(f"Person {person.id} has no religion, cannot search for matches")
+            logger.debug(
+                f"Person {person.id} has no religion, cannot search for matches"
+            )
             return []
 
         address = addresses[0]  # Use primary/first address
