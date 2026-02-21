@@ -631,7 +631,9 @@ class TestSearchMatchingPersons:
             with patch.object(service, "_find_persons_by_religion", return_value=[person_id]):
                 with patch.object(service.person_repo, "get_by_user_id", return_value=mock_current_person):
                     with patch.object(service.relationship_repo, "get_by_person_id", return_value=[]):
-                        result = service.search_matching_persons(current_user_id, search_criteria)
+                        with patch.object(service, "_get_person_address_display", return_value="Test Address"):
+                            with patch.object(service, "_get_person_religion_display", return_value="Test Religion"):
+                                result = service.search_matching_persons(current_user_id, search_criteria)
 
         # Should have results (exact name match = 100 score, above 40 threshold)
         assert len(result) == 1
@@ -717,7 +719,9 @@ class TestSearchMatchingPersons:
             with patch.object(service, "_find_persons_by_religion", return_value=[person_id]):
                 with patch.object(service.person_repo, "get_by_user_id", return_value=mock_current_person):
                     with patch.object(service.relationship_repo, "get_by_person_id", return_value=[]):
-                        result = service.search_matching_persons(current_user_id, search_criteria)
+                        with patch.object(service, "_get_person_address_display", return_value="Test Address"):
+                            with patch.object(service, "_get_person_religion_display", return_value="Test Religion"):
+                                result = service.search_matching_persons(current_user_id, search_criteria)
 
         assert len(result) == 1
         assert result[0].is_current_user is True
@@ -763,7 +767,9 @@ class TestSearchMatchingPersons:
             with patch.object(service, "_find_persons_by_religion", return_value=[person_id]):
                 with patch.object(service.person_repo, "get_by_user_id", return_value=mock_current_person):
                     with patch.object(service.relationship_repo, "get_by_person_id", return_value=[mock_relationship]):
-                        result = service.search_matching_persons(current_user_id, search_criteria)
+                        with patch.object(service, "_get_person_address_display", return_value="Test Address"):
+                            with patch.object(service, "_get_person_religion_display", return_value="Test Religion"):
+                                result = service.search_matching_persons(current_user_id, search_criteria)
 
         assert len(result) == 1
         assert result[0].is_already_connected is True
@@ -823,7 +829,9 @@ class TestSearchMatchingPersons:
             with patch.object(service, "_find_persons_by_religion", return_value=[person1_id, person2_id]):
                 with patch.object(service.person_repo, "get_by_user_id", return_value=mock_current_person):
                     with patch.object(service.relationship_repo, "get_by_person_id", return_value=[]):
-                        result = service.search_matching_persons(current_user_id, search_criteria)
+                        with patch.object(service, "_get_person_address_display", return_value="Test Address"):
+                            with patch.object(service, "_get_person_religion_display", return_value="Test Religion"):
+                                result = service.search_matching_persons(current_user_id, search_criteria)
 
         # Results should be sorted by score descending
         assert len(result) == 2
@@ -872,7 +880,9 @@ class TestSearchMatchingPersons:
             with patch.object(service, "_find_persons_by_religion", return_value=person_ids):
                 with patch.object(service.person_repo, "get_by_user_id", return_value=mock_current_person):
                     with patch.object(service.relationship_repo, "get_by_person_id", return_value=[]):
-                        result = service.search_matching_persons(current_user_id, search_criteria)
+                        with patch.object(service, "_get_person_address_display", return_value="Test Address"):
+                            with patch.object(service, "_get_person_religion_display", return_value="Test Religion"):
+                                result = service.search_matching_persons(current_user_id, search_criteria)
 
         # Should be limited to 100
         assert len(result) <= 100
@@ -916,7 +926,9 @@ class TestSearchMatchingPersons:
             with patch.object(service, "_find_persons_by_religion", return_value=[person_id]):
                 with patch.object(service.person_repo, "get_by_user_id", return_value=mock_current_person):
                     with patch.object(service.relationship_repo, "get_by_person_id", return_value=[]):
-                        result = service.search_matching_persons(current_user_id, search_criteria)
+                        with patch.object(service, "_get_person_address_display", return_value="USA, California, Los Angeles"):
+                            with patch.object(service, "_get_person_religion_display", return_value="Christianity, Catholic"):
+                                result = service.search_matching_persons(current_user_id, search_criteria)
 
         assert len(result) == 1
         assert result[0].address_display == "USA, California, Los Angeles"
