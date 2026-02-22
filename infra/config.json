@@ -1,0 +1,22 @@
+{
+  "appName": "fullstack-app",
+  "aws": {
+    "account": "309841440455",
+    "region": "us-east-1"
+  },
+  "database": {
+    "instanceClass": "t3",
+    "instanceSize": "micro",
+    "allocatedStorage": 20,
+    "maxAllocatedStorage": 100
+  },
+  "backend": {
+    "cpu": 2048,
+    "memory": 5120,
+    "desiredCount": 1,
+    "minCapacity": 1,
+    "maxCapacity": 10,
+    "scalingCpuPercent": 70,
+    "scalingMemoryPercent": 70
+  }
+}

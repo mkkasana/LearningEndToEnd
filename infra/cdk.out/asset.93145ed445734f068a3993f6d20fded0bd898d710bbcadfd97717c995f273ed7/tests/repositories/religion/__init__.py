@@ -1,0 +1,1 @@
+"""Religion repository tests."""
