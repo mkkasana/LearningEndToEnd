@@ -1,1 +1,0 @@
-"""Religion service tests."""

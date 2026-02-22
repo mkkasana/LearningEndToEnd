@@ -1,1 +1,0 @@
-"""Person schema tests."""

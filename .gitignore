@@ -23,3 +23,8 @@ backend/.hypothesis/
 # Local environment configs
 .mise.toml
 .tool-versions
+
+# CDK
+infra/cdk.out/
+infra/node_modules/
+infra/dist/

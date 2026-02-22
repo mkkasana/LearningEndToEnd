@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
+import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CompleteProfileRouteImport } from './routes/complete-profile'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutUserApprovalsRouteImport } from './routes/_layout/user-approvals'
 import { Route as LayoutSupportTicketsRouteImport } from './routes/_layout/support-tickets'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutSearchRouteImport } from './routes/_layout/search'
@@ -26,6 +28,7 @@ import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
 import { Route as LayoutFindPartnerRouteImport } from './routes/_layout/find-partner'
 import { Route as LayoutFamilyTreeRouteImport } from './routes/_layout/family-tree'
 import { Route as LayoutFamilyRouteImport } from './routes/_layout/family'
+import { Route as LayoutContributionsRouteImport } from './routes/_layout/contributions'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 
 const SignupRoute = SignupRouteImport.update({
@@ -41,6 +44,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const RecoverPasswordRoute = RecoverPasswordRouteImport.update({
   id: '/recover-password',
   path: '/recover-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -60,6 +68,11 @@ const LayoutRoute = LayoutRouteImport.update({
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutUserApprovalsRoute = LayoutUserApprovalsRouteImport.update({
+  id: '/user-approvals',
+  path: '/user-approvals',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutSupportTicketsRoute = LayoutSupportTicketsRouteImport.update({
@@ -112,6 +125,11 @@ const LayoutFamilyRoute = LayoutFamilyRouteImport.update({
   path: '/family',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutContributionsRoute = LayoutContributionsRouteImport.update({
+  id: '/contributions',
+  path: '/contributions',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -121,10 +139,12 @@ const LayoutAdminRoute = LayoutAdminRouteImport.update({
 export interface FileRoutesByFullPath {
   '/complete-profile': typeof CompleteProfileRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/contributions': typeof LayoutContributionsRoute
   '/family': typeof LayoutFamilyRoute
   '/family-tree': typeof LayoutFamilyTreeRoute
   '/find-partner': typeof LayoutFindPartnerRoute
@@ -135,15 +155,18 @@ export interface FileRoutesByFullPath {
   '/search': typeof LayoutSearchRoute
   '/settings': typeof LayoutSettingsRoute
   '/support-tickets': typeof LayoutSupportTicketsRoute
+  '/user-approvals': typeof LayoutUserApprovalsRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesByTo {
   '/complete-profile': typeof CompleteProfileRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/contributions': typeof LayoutContributionsRoute
   '/family': typeof LayoutFamilyRoute
   '/family-tree': typeof LayoutFamilyTreeRoute
   '/find-partner': typeof LayoutFindPartnerRoute
@@ -154,6 +177,7 @@ export interface FileRoutesByTo {
   '/search': typeof LayoutSearchRoute
   '/settings': typeof LayoutSettingsRoute
   '/support-tickets': typeof LayoutSupportTicketsRoute
+  '/user-approvals': typeof LayoutUserApprovalsRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesById {
@@ -161,10 +185,12 @@ export interface FileRoutesById {
   '/_layout': typeof LayoutRouteWithChildren
   '/complete-profile': typeof CompleteProfileRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
+  '/_layout/contributions': typeof LayoutContributionsRoute
   '/_layout/family': typeof LayoutFamilyRoute
   '/_layout/family-tree': typeof LayoutFamilyTreeRoute
   '/_layout/find-partner': typeof LayoutFindPartnerRoute
@@ -175,6 +201,7 @@ export interface FileRoutesById {
   '/_layout/search': typeof LayoutSearchRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/support-tickets': typeof LayoutSupportTicketsRoute
+  '/_layout/user-approvals': typeof LayoutUserApprovalsRoute
   '/_layout/': typeof LayoutIndexRoute
 }
 export interface FileRouteTypes {
@@ -182,10 +209,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/complete-profile'
     | '/login'
+    | '/logout'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/contributions'
     | '/family'
     | '/family-tree'
     | '/find-partner'
@@ -196,15 +225,18 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/support-tickets'
+    | '/user-approvals'
     | '/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/complete-profile'
     | '/login'
+    | '/logout'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/contributions'
     | '/family'
     | '/family-tree'
     | '/find-partner'
@@ -215,16 +247,19 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/support-tickets'
+    | '/user-approvals'
     | '/'
   id:
     | '__root__'
     | '/_layout'
     | '/complete-profile'
     | '/login'
+    | '/logout'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/_layout/admin'
+    | '/_layout/contributions'
     | '/_layout/family'
     | '/_layout/family-tree'
     | '/_layout/find-partner'
@@ -235,6 +270,7 @@ export interface FileRouteTypes {
     | '/_layout/search'
     | '/_layout/settings'
     | '/_layout/support-tickets'
+    | '/_layout/user-approvals'
     | '/_layout/'
   fileRoutesById: FileRoutesById
 }
@@ -242,6 +278,7 @@ export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
   CompleteProfileRoute: typeof CompleteProfileRoute
   LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
   RecoverPasswordRoute: typeof RecoverPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
@@ -270,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecoverPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -296,6 +340,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/user-approvals': {
+      id: '/_layout/user-approvals'
+      path: '/user-approvals'
+      fullPath: '/user-approvals'
+      preLoaderRoute: typeof LayoutUserApprovalsRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/support-tickets': {
@@ -368,6 +419,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutFamilyRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/contributions': {
+      id: '/_layout/contributions'
+      path: '/contributions'
+      fullPath: '/contributions'
+      preLoaderRoute: typeof LayoutContributionsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/admin': {
       id: '/_layout/admin'
       path: '/admin'
@@ -380,6 +438,7 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutContributionsRoute: typeof LayoutContributionsRoute
   LayoutFamilyRoute: typeof LayoutFamilyRoute
   LayoutFamilyTreeRoute: typeof LayoutFamilyTreeRoute
   LayoutFindPartnerRoute: typeof LayoutFindPartnerRoute
@@ -390,11 +449,13 @@ interface LayoutRouteChildren {
   LayoutSearchRoute: typeof LayoutSearchRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutSupportTicketsRoute: typeof LayoutSupportTicketsRoute
+  LayoutUserApprovalsRoute: typeof LayoutUserApprovalsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
+  LayoutContributionsRoute: LayoutContributionsRoute,
   LayoutFamilyRoute: LayoutFamilyRoute,
   LayoutFamilyTreeRoute: LayoutFamilyTreeRoute,
   LayoutFindPartnerRoute: LayoutFindPartnerRoute,
@@ -405,6 +466,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutSearchRoute: LayoutSearchRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutSupportTicketsRoute: LayoutSupportTicketsRoute,
+  LayoutUserApprovalsRoute: LayoutUserApprovalsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 
@@ -415,6 +477,7 @@ const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   CompleteProfileRoute: CompleteProfileRoute,
   LoginRoute: LoginRoute,
+  LogoutRoute: LogoutRoute,
   RecoverPasswordRoute: RecoverPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
