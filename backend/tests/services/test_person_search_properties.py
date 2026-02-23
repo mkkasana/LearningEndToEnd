@@ -147,6 +147,7 @@ class TestInactivePersonSearchExclusion:
         suppress_health_check=[HealthCheck.function_scoped_fixture],
         phases=[Phase.generate, Phase.target],
         database=None,  # Disable hypothesis database to avoid state issues
+        deadline=500,  # Allow up to 500ms per example (DB tests are slower)
     )
     @given(
         active_count=st.integers(min_value=1, max_value=3),
@@ -254,6 +255,7 @@ class TestInactivePersonSearchExclusion:
         suppress_health_check=[HealthCheck.function_scoped_fixture],
         phases=[Phase.generate, Phase.target],
         database=None,
+        deadline=500,  # Allow up to 500ms per example (DB tests are slower)
     )
     @given(
         active_count=st.integers(min_value=1, max_value=3),

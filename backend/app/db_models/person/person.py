@@ -64,6 +64,11 @@ class Person(SQLModel, table=True):
         default=True,
         description="Whether person is active and visible in searches",
     )
+    profile_image_key: str | None = Field(
+        default=None,
+        max_length=255,
+        description="Storage key for the person's profile image (filename without path)",
+    )
     created_at: datetime = Field(
         default_factory=datetime.utcnow, description="Creation timestamp"
     )

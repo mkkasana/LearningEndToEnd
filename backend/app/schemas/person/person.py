@@ -62,5 +62,9 @@ class PersonPublic(PersonBase):
         default=True,
         description="Whether person is active and visible in searches",
     )
+    profile_image_key: str | None = Field(
+        default=None,
+        description="Storage key for the person's profile image",
+    )
     created_at: datetime
     updated_at: datetime

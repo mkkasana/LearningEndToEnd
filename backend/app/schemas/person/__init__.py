@@ -28,6 +28,10 @@ from app.schemas.person.person_complete_details import (
 )
 from app.schemas.person.person_contribution import PersonContributionPublic
 from app.schemas.person.person_discovery import PersonDiscoveryResult
+from app.schemas.person.person_image import (
+    PersonImageResponse,
+    PersonImageUploadResponse,
+)
 from app.schemas.person.person_metadata import (
     PersonMetadataCreate,
     PersonMetadataPublic,
@@ -84,6 +88,8 @@ __all__ = [
     "PersonCreate",
     "PersonDetails",
     "PersonDiscoveryResult",
+    "PersonImageResponse",
+    "PersonImageUploadResponse",
     "PersonMatchResult",
     "PersonMetadataCreate",
     "PersonMetadataPublic",

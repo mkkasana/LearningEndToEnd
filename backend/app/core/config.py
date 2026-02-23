@@ -120,6 +120,14 @@ class Settings(BaseSettings):
     # Relatives Network settings
     RELATIVES_NETWORK_MAX_DEPTH: int = 20
 
+    # Image upload settings
+    IMAGE_MAX_SIZE_MB: int = 5
+    IMAGE_MAX_DIMENSION: int = 400
+    IMAGE_THUMBNAIL_DIMENSION: int = 100
+    IMAGE_QUALITY: int = 85
+    S3_IMAGES_BUCKET: str = ""
+    CLOUDFRONT_IMAGES_URL: str = ""
+
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
             message = (
@@ -130,6 +138,16 @@ class Settings(BaseSettings):
                 warnings.warn(message, stacklevel=1)
             else:
                 raise ValueError(message)
+
+    @model_validator(mode="after")
+    def _warn_missing_s3_bucket(self) -> Self:
+        if self.ENVIRONMENT in ("staging", "production") and not self.S3_IMAGES_BUCKET:
+            warnings.warn(
+                "S3_IMAGES_BUCKET is not configured for "
+                f"{self.ENVIRONMENT} environment. Image uploads will fail.",
+                stacklevel=1,
+            )
+        return self
 
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:

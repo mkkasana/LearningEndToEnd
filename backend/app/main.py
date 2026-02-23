@@ -43,3 +43,18 @@ if settings.all_cors_origins:
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 logger.info(f"API router mounted at {settings.API_V1_STR}")
+
+# Serve uploaded files locally during development
+if settings.ENVIRONMENT == "local":
+    from pathlib import Path
+
+    from fastapi.staticfiles import StaticFiles
+
+    uploads_dir = Path("uploads")
+    uploads_dir.mkdir(exist_ok=True)
+    app.mount(
+        f"{settings.API_V1_STR}/uploads",
+        StaticFiles(directory="uploads"),
+        name="uploads",
+    )
+    logger.info("Static file serving enabled for uploads/ directory")

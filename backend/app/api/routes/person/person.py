@@ -4,7 +4,7 @@ import logging
 import uuid
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 from app.api.deps import CurrentUser, SessionDep, get_current_active_admin
 from app.db_models.person.person import Person
@@ -17,6 +17,8 @@ from app.schemas.person import (
     PersonContributionPublic,
     PersonCreate,
     PersonDiscoveryResult,
+    PersonImageResponse,
+    PersonImageUploadResponse,
     PersonMatchResult,
     PersonMetadataCreate,
     PersonMetadataPublic,
@@ -34,6 +36,7 @@ from app.schemas.person import (
     PersonSearchRequest,
     PersonUpdate,
 )
+from app.services.image_upload_service import ImageUploadService
 from app.services.person import (
     PersonAddressService,
     PersonDiscoveryService,
@@ -622,6 +625,89 @@ def delete_my_relationship(
 
 
 # ============================================================================
+# /me/profile-image Endpoints
+# ============================================================================
+
+
+@router.post("/me/profile-image", response_model=PersonImageUploadResponse)
+@log_route
+def upload_my_profile_image(
+    session: SessionDep,
+    current_user: CurrentUser,
+    file: UploadFile,
+) -> Any:
+    """Upload profile image for current user's person."""
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+    if not person:
+        raise HTTPException(status_code=404, detail="Person profile not found")
+
+    try:
+        file_data = file.file.read()
+        image_service = ImageUploadService(session)
+        result = image_service.upload_profile_image(person, file_data)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        logger.exception("Failed to upload profile image for person %s", person.id)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to upload image. Please try again.",
+        )
+
+
+@router.get("/me/profile-image", response_model=PersonImageResponse)
+@log_route
+def get_my_profile_image(
+    session: SessionDep,
+    current_user: CurrentUser,
+) -> Any:
+    """Get profile image URLs for current user's person."""
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+    if not person:
+        raise HTTPException(status_code=404, detail="Person profile not found")
+
+    image_service = ImageUploadService(session)
+    urls = image_service.get_image_urls(person)
+    if not urls:
+        raise HTTPException(
+            status_code=404, detail="Person does not have a profile image"
+        )
+    return urls
+
+
+@router.delete("/me/profile-image")
+@log_route
+def delete_my_profile_image(
+    session: SessionDep,
+    current_user: CurrentUser,
+) -> Any:
+    """Delete profile image for current user's person."""
+    person_service = PersonService(session)
+    person = person_service.get_person_by_user_id(current_user.id)
+    if not person:
+        raise HTTPException(status_code=404, detail="Person profile not found")
+
+    if not person.profile_image_key:
+        raise HTTPException(
+            status_code=404, detail="Person does not have a profile image"
+        )
+
+    try:
+        image_service = ImageUploadService(session)
+        image_service.delete_profile_image(person)
+        return {"message": "Profile image deleted successfully"}
+    except Exception:
+        logger.exception("Failed to delete profile image for person %s", person.id)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to delete image. Please try again.",
+        )
+
+
+# ============================================================================
 # /me/metadata Endpoints
 # ============================================================================
 
@@ -868,6 +954,92 @@ def discover_family_members(
 # /{person_id} Endpoints - Person-Specific Operations
 # IMPORTANT: These MUST come AFTER all /me/* routes
 # ============================================================================
+
+
+# ============================================================================
+# /{person_id}/profile-image Endpoints
+# ============================================================================
+
+
+@router.post("/{person_id}/profile-image", response_model=PersonImageUploadResponse)
+@log_route
+def upload_person_profile_image(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+    file: UploadFile,
+) -> Any:
+    """Upload profile image for a specific person (with access check)."""
+    person_service = PersonService(session)
+    person = validate_person_access(
+        person_service.person_repo.get_by_id(person_id), current_user
+    )
+
+    try:
+        file_data = file.file.read()
+        image_service = ImageUploadService(session)
+        result = image_service.upload_profile_image(person, file_data)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        logger.exception("Failed to upload profile image for person %s", person_id)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to upload image. Please try again.",
+        )
+
+
+@router.get("/{person_id}/profile-image", response_model=PersonImageResponse)
+@log_route
+def get_person_profile_image(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+) -> Any:
+    """Get profile image URLs for a specific person."""
+    person_service = PersonService(session)
+    person = validate_person_access(
+        person_service.person_repo.get_by_id(person_id), current_user
+    )
+
+    image_service = ImageUploadService(session)
+    urls = image_service.get_image_urls(person)
+    if not urls:
+        raise HTTPException(
+            status_code=404, detail="Person does not have a profile image"
+        )
+    return urls
+
+
+@router.delete("/{person_id}/profile-image")
+@log_route
+def delete_person_profile_image(
+    session: SessionDep,
+    current_user: CurrentUser,
+    person_id: uuid.UUID,
+) -> Any:
+    """Delete profile image for a specific person (with access check)."""
+    person_service = PersonService(session)
+    person = validate_person_access(
+        person_service.person_repo.get_by_id(person_id), current_user
+    )
+
+    if not person.profile_image_key:
+        raise HTTPException(
+            status_code=404, detail="Person does not have a profile image"
+        )
+
+    try:
+        image_service = ImageUploadService(session)
+        image_service.delete_profile_image(person)
+        return {"message": "Profile image deleted successfully"}
+    except Exception:
+        logger.exception("Failed to delete profile image for person %s", person_id)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to delete image. Please try again.",
+        )
 
 
 # ============================================================================
