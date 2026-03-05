@@ -140,3 +140,27 @@ When adding a new field to the Person DB model, remember to add it to ALL respon
 - `PersonCompleteDetailsResponse` in `backend/app/schemas/person/person_complete_details.py`
 
 Also update any service code that manually constructs these response objects (e.g., `PersonCompleteDetailsResponse(...)` in `person_service.py`).
+
+
+## Image Storage — Production Readiness
+
+The backend has a storage abstraction (`backend/app/services/storage/`) that switches based on `settings.ENVIRONMENT`:
+- `"local"` → `LocalStorage` — saves to `backend/uploads/person-images/`, served via FastAPI static files
+- Any other value → `S3Storage` — uploads to S3, serves via CloudFront
+
+### Backend Config Needed for Prod
+Set these environment variables:
+- `ENVIRONMENT` = `"production"` (or anything other than `"local"`)
+- `S3_IMAGES_BUCKET` = your S3 bucket name
+- `CLOUDFRONT_IMAGES_URL` = your CloudFront distribution URL (e.g., `https://d1234.cloudfront.net`)
+
+### Frontend TODO for Prod
+The `getPersonImageUrl` utility (`frontend/src/utils/personImage.ts`) currently builds URLs as `{VITE_API_URL}/api/v1/uploads/person-images/{key}` which only works locally. For production with S3/CloudFront, update it to support a `VITE_IMAGES_URL` env var:
+- If `VITE_IMAGES_URL` is set, use `{VITE_IMAGES_URL}/person-images/{key}`
+- Otherwise fall back to the local pattern
+
+### How Image Keys Work
+- `profile_image_key` stores just the filename (e.g., `a3f6516cba4e4ed78d9a16d97f6bf883.jpg`)
+- Thumbnail is derived by replacing `.jpg` with `_thumb.jpg`
+- Both main and thumbnail are uploaded to storage on creation
+- The storage backend's `get_url()` builds the full URL (local path or CloudFront URL)

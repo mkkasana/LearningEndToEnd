@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
  */
 export type ProfileStep =
   | "personal-info"
+  | "profile-photo"
   | "address"
   | "religion"
   | "marital-status"
@@ -30,6 +31,7 @@ interface ProfileCompletionStatus {
 interface ProgressIndicatorProps {
   currentStep: ProfileStep
   profileStatus: ProfileCompletionStatus | undefined
+  hasProfileImage?: boolean
 }
 
 /**
@@ -52,12 +54,18 @@ interface ProgressIndicatorProps {
 export function ProgressIndicator({
   currentStep,
   profileStatus,
+  hasProfileImage,
 }: ProgressIndicatorProps) {
   const steps = [
     {
       id: "personal-info" as ProfileStep,
       label: "Personal Info",
       complete: profileStatus?.has_person ?? false,
+    },
+    {
+      id: "profile-photo" as ProfileStep,
+      label: "Photo",
+      complete: hasProfileImage ?? false,
     },
     {
       id: "address" as ProfileStep,

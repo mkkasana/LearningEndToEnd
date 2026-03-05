@@ -11,15 +11,16 @@
  */
 
 import { useQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { CheckCircle2, Circle, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
-import { ProfileService } from "@/client"
+import { PersonService, ProfileService } from "@/client"
 import { AddAddressDialog } from "@/components/Profile/AddAddressDialog"
 import { AddReligionDialog } from "@/components/Profile/AddReligionDialog"
 import { DuplicateCheckStep } from "@/components/Profile/DuplicateCheckStep"
 import { EditMaritalStatusDialog } from "@/components/Profile/EditMaritalStatusDialog"
 import { PendingApprovalStep } from "@/components/Profile/PendingApprovalStep"
+import { ProfilePhotoStep } from "@/components/Profile/ProfilePhotoStep"
 import {
   ProgressIndicator,
   type ProfileStep,
@@ -47,7 +48,7 @@ function determineCurrentStep(profileStatus: {
   has_marital_status: boolean
   has_duplicate_check: boolean
   has_pending_attachment_request: boolean
-}): ProfileStep {
+}, hasProfileImage: boolean): ProfileStep {
   // If user has a pending attachment request, show pending approval step
   if (profileStatus.has_pending_attachment_request) {
     return "pending-approval"
@@ -58,6 +59,9 @@ function determineCurrentStep(profileStatus: {
     return "personal-info"
   }
   if (!profileStatus.has_address) {
+    if (!hasProfileImage) {
+      return "profile-photo"
+    }
     return "address"
   }
   if (!profileStatus.has_religion) {
@@ -79,6 +83,8 @@ function CompleteProfile() {
   const [showReligionDialog, setShowReligionDialog] = useState(false)
   const [showMaritalStatusDialog, setShowMaritalStatusDialog] = useState(false)
   const [currentStep, setCurrentStep] = useState<ProfileStep>("personal-info")
+  const [skippedPhotoStep, setSkippedPhotoStep] = useState(false)
+  const navigate = useNavigate()
 
   const {
     data: profileStatus,
@@ -89,13 +95,21 @@ function CompleteProfile() {
     queryFn: () => ProfileService.getProfileCompletionStatus(),
   })
 
+  const { data: personData, refetch: refetchPerson } = useQuery({
+    queryKey: ["myPerson"],
+    queryFn: () => PersonService.getMyPerson(),
+    enabled: !!profileStatus?.has_person,
+  })
+
+  const hasProfileImage = !!personData?.profile_image_key || skippedPhotoStep
+
   // Update current step when profile status changes
   useEffect(() => {
     if (profileStatus) {
-      const step = determineCurrentStep(profileStatus)
+      const step = determineCurrentStep(profileStatus, hasProfileImage)
       setCurrentStep(step)
     }
-  }, [profileStatus])
+  }, [profileStatus, hasProfileImage])
 
   if (isLoading) {
     return (
@@ -110,12 +124,13 @@ function CompleteProfile() {
 
   // If profile is complete, redirect to dashboard
   if (profileStatus?.is_complete) {
-    window.location.href = "/"
+    navigate({ to: "/" })
     return null
   }
 
   const handleStepComplete = () => {
     refetch()
+    refetchPerson()
   }
 
   // Check if basic profile steps (1-4) are complete
@@ -133,8 +148,25 @@ function CompleteProfile() {
           <ProgressIndicator
             currentStep={currentStep}
             profileStatus={profileStatus}
+            hasProfileImage={hasProfileImage}
           />
           <PendingApprovalStep onCancel={handleStepComplete} />
+        </div>
+      </div>
+    )
+  }
+
+  // Render profile photo step
+  if (currentStep === "profile-photo") {
+    return (
+      <div className="container flex flex-col items-center justify-center min-h-screen py-8">
+        <div className="w-full max-w-2xl">
+          <ProgressIndicator
+            currentStep={currentStep}
+            profileStatus={profileStatus}
+            hasProfileImage={hasProfileImage}
+          />
+          <ProfilePhotoStep onComplete={handleStepComplete} onSkip={() => setSkippedPhotoStep(true)} />
         </div>
       </div>
     )
@@ -148,6 +180,7 @@ function CompleteProfile() {
           <ProgressIndicator
             currentStep={currentStep}
             profileStatus={profileStatus}
+            hasProfileImage={hasProfileImage}
           />
           <DuplicateCheckStep onComplete={handleStepComplete} />
         </div>
@@ -163,6 +196,7 @@ function CompleteProfile() {
           <ProgressIndicator
             currentStep={currentStep}
             profileStatus={profileStatus}
+            hasProfileImage={hasProfileImage}
           />
           <Card>
             <CardHeader>
