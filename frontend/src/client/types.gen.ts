@@ -94,6 +94,14 @@ export type Body_login_login_access_token = {
     client_secret?: (string | null);
 };
 
+export type Body_person_upload_my_profile_image = {
+    file: string;
+};
+
+export type Body_person_upload_person_profile_image = {
+    file: string;
+};
+
 /**
  * Response for can-assume permission check.
  *
@@ -604,6 +612,10 @@ export type MatchGraphNode = {
      * Child nodes explored from this node
      */
     to_persons?: Array<MatchConnectionInfo>;
+    /**
+     * Storage key for the person's profile image
+     */
+    profile_image_key?: (string | null);
 };
 
 /**
@@ -856,6 +868,7 @@ export type PersonCompleteDetailsResponse = {
     date_of_birth: string;
     date_of_death?: (string | null);
     gender_name: string;
+    profile_image_key?: (string | null);
     address?: (PersonAddressDetails | null);
     religion?: (PersonReligionDetails | null);
 };
@@ -958,6 +971,7 @@ export type PersonDetails = {
     user_id?: (string | null);
     created_by_user_id: string;
     is_primary: boolean;
+    profile_image_key?: (string | null);
     created_at: string;
     updated_at: string;
 };
@@ -1026,6 +1040,23 @@ export type PersonDiscoveryResult = {
      * Relationship type priority (1 = children, 2 = parents, 3 = spouses)
      */
     relationship_priority: number;
+};
+
+/**
+ * Response with image URLs.
+ */
+export type PersonImageResponse = {
+    main_url: string;
+    thumbnail_url: string;
+};
+
+/**
+ * Response after successful image upload.
+ */
+export type PersonImageUploadResponse = {
+    message: string;
+    main_url: string;
+    thumbnail_url: string;
 };
 
 /**
@@ -1166,6 +1197,10 @@ export type PersonNode = {
      * Person reached via me.
      */
     to_person?: (ConnectionInfo | null);
+    /**
+     * Storage key for the person's profile image
+     */
+    profile_image_key?: (string | null);
 };
 
 /**
@@ -1266,12 +1301,12 @@ export type PersonPublic = {
      * Whether person is active and visible in searches
      */
     is_active?: boolean;
-    created_at: string;
-    updated_at: string;
     /**
      * Storage key for the person's profile image
      */
     profile_image_key?: (string | null);
+    created_at: string;
+    updated_at: string;
 };
 
 /**
@@ -1614,6 +1649,10 @@ export type PersonSearchResult = {
      * Name similarity score (only present when name filter used)
      */
     name_match_score?: (number | null);
+    /**
+     * Storage key for the person's profile image
+     */
+    profile_image_key?: (string | null);
 };
 
 /**
@@ -1811,6 +1850,10 @@ export type RelativeInfo = {
      * Number of relationship hops from the requesting person
      */
     depth: number;
+    /**
+     * Storage key for the person's profile image
+     */
+    profile_image_key?: (string | null);
 };
 
 /**
@@ -2806,6 +2849,16 @@ export type PersonDeleteMyRelationshipData = {
 
 export type PersonDeleteMyRelationshipResponse = (unknown);
 
+export type PersonGetMyProfileImageResponse = (PersonImageResponse);
+
+export type PersonUploadMyProfileImageData = {
+    formData: Body_person_upload_my_profile_image;
+};
+
+export type PersonUploadMyProfileImageResponse = (PersonImageUploadResponse);
+
+export type PersonDeleteMyProfileImageResponse = (unknown);
+
 export type PersonGetMyMetadataResponse = (PersonMetadataPublic);
 
 export type PersonCreateMyMetadataData = {
@@ -2837,6 +2890,25 @@ export type PersonSearchMatchingPersonsData = {
 export type PersonSearchMatchingPersonsResponse = (Array<PersonMatchResult>);
 
 export type PersonDiscoverFamilyMembersResponse = (Array<PersonDiscoveryResult>);
+
+export type PersonUploadPersonProfileImageData = {
+    formData: Body_person_upload_person_profile_image;
+    personId: string;
+};
+
+export type PersonUploadPersonProfileImageResponse = (PersonImageUploadResponse);
+
+export type PersonGetPersonProfileImageData = {
+    personId: string;
+};
+
+export type PersonGetPersonProfileImageResponse = (PersonImageResponse);
+
+export type PersonDeletePersonProfileImageData = {
+    personId: string;
+};
+
+export type PersonDeletePersonProfileImageResponse = (unknown);
 
 export type PersonGetPersonAddressesData = {
     personId: string;

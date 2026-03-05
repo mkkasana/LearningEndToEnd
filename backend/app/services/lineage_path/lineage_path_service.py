@@ -375,6 +375,7 @@ class LineagePathService:
                 religion="",
                 from_person=None,
                 to_person=None,
+                profile_image_key=None,
             )
 
         # Extract birth and death years
@@ -397,6 +398,7 @@ class LineagePathService:
             religion=religion,
             from_person=None,
             to_person=None,
+            profile_image_key=person.profile_image_key,
         )
 
     def _get_address_string(self, person_id: uuid.UUID) -> str:

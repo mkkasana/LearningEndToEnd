@@ -30,6 +30,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import useAuth from "@/hooks/useAuth"
+import { useActivePersonContext } from "@/contexts/ActivePersonContext"
 import { type Item, Main } from "./Main"
 import { User } from "./User"
 import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
@@ -61,6 +62,7 @@ const supportItems: Item[] = [
 
 export function AppSidebar() {
   const { user: currentUser } = useAuth()
+  const { activePerson } = useActivePersonContext()
   const { isMobile, setOpenMobile } = useSidebar()
   const router = useRouterState()
   const currentPath = router.location.pathname
@@ -143,7 +145,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarAppearance />
-        <User user={currentUser} />
+        <User user={currentUser} profileImageKey={activePerson?.profile_image_key} />
       </SidebarFooter>
     </Sidebar>
   )

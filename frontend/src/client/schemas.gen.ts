@@ -254,6 +254,32 @@ export const Body_login_login_access_tokenSchema = {
     title: 'Body_login-login_access_token'
 } as const;
 
+export const Body_person_upload_my_profile_imageSchema = {
+    properties: {
+        file: {
+            type: 'string',
+            contentMediaType: 'application/octet-stream',
+            title: 'File'
+        }
+    },
+    type: 'object',
+    required: ['file'],
+    title: 'Body_person-upload_my_profile_image'
+} as const;
+
+export const Body_person_upload_person_profile_imageSchema = {
+    properties: {
+        file: {
+            type: 'string',
+            contentMediaType: 'application/octet-stream',
+            title: 'File'
+        }
+    },
+    type: 'object',
+    required: ['file'],
+    title: 'Body_person-upload_person_profile_image'
+} as const;
+
 export const CanAssumeResponseSchema = {
     properties: {
         can_assume: {
@@ -1530,6 +1556,18 @@ export const MatchGraphNodeSchema = {
             type: 'array',
             title: 'To Persons',
             description: 'Child nodes explored from this node'
+        },
+        profile_image_key: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Key',
+            description: "Storage key for the person's profile image"
         }
     },
     type: 'object',
@@ -2249,6 +2287,17 @@ export const PersonCompleteDetailsResponseSchema = {
             type: 'string',
             title: 'Gender Name'
         },
+        profile_image_key: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Key'
+        },
         address: {
             anyOf: [
                 {
@@ -2493,6 +2542,17 @@ export const PersonDetailsSchema = {
             type: 'boolean',
             title: 'Is Primary'
         },
+        profile_image_key: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Key'
+        },
         created_at: {
             type: 'string',
             format: 'date-time',
@@ -2623,6 +2683,44 @@ export const PersonDiscoveryResultSchema = {
 Represents a person who is connected to the user's family members
 but not yet directly connected to the user, along with metadata
 about the inferred relationship and connection path.`
+} as const;
+
+export const PersonImageResponseSchema = {
+    properties: {
+        main_url: {
+            type: 'string',
+            title: 'Main Url'
+        },
+        thumbnail_url: {
+            type: 'string',
+            title: 'Thumbnail Url'
+        }
+    },
+    type: 'object',
+    required: ['main_url', 'thumbnail_url'],
+    title: 'PersonImageResponse',
+    description: 'Response with image URLs.'
+} as const;
+
+export const PersonImageUploadResponseSchema = {
+    properties: {
+        message: {
+            type: 'string',
+            title: 'Message'
+        },
+        main_url: {
+            type: 'string',
+            title: 'Main Url'
+        },
+        thumbnail_url: {
+            type: 'string',
+            title: 'Thumbnail Url'
+        }
+    },
+    type: 'object',
+    required: ['message', 'main_url', 'thumbnail_url'],
+    title: 'PersonImageUploadResponse',
+    description: 'Response after successful image upload.'
 } as const;
 
 export const PersonMatchResultSchema = {
@@ -2917,6 +3015,18 @@ export const PersonNodeSchema = {
                 }
             ],
             description: 'Person reached via me.'
+        },
+        profile_image_key: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Key',
+            description: "Storage key for the person's profile image"
         }
     },
     type: 'object',
@@ -3169,16 +3279,6 @@ export const PersonPublicSchema = {
             description: 'Whether person is active and visible in searches',
             default: true
         },
-        created_at: {
-            type: 'string',
-            format: 'date-time',
-            title: 'Created At'
-        },
-        updated_at: {
-            type: 'string',
-            format: 'date-time',
-            title: 'Updated At'
-        },
         profile_image_key: {
             anyOf: [
                 {
@@ -3190,6 +3290,16 @@ export const PersonPublicSchema = {
             ],
             title: 'Profile Image Key',
             description: "Storage key for the person's profile image"
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
         }
     },
     type: 'object',
@@ -4051,6 +4161,18 @@ export const PersonSearchResultSchema = {
             ],
             title: 'Name Match Score',
             description: 'Name similarity score (only present when name filter used)'
+        },
+        profile_image_key: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Key',
+            description: "Storage key for the person's profile image"
         }
     },
     type: 'object',
@@ -4624,6 +4746,18 @@ export const RelativeInfoSchema = {
             type: 'integer',
             title: 'Depth',
             description: 'Number of relationship hops from the requesting person'
+        },
+        profile_image_key: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Key',
+            description: "Storage key for the person's profile image"
         }
     },
     type: 'object',

@@ -130,6 +130,7 @@ export interface MatchPersonNodeData extends Record<string, unknown> {
   deathYear: number | null
   isSeeker: boolean // Green border + "Seeker" label
   isMatch: boolean // Blue border + "Match" label
+  profileImageKey?: string | null
   onViewClick?: (personId: string) => void // Callback for View button click
 }
 

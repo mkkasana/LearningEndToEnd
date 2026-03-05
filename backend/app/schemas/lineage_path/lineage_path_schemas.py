@@ -51,6 +51,10 @@ class PersonNode(BaseModel):
     to_person: ConnectionInfo | None = Field(
         default=None, description="Person reached via me."
     )
+    profile_image_key: str | None = Field(
+        default=None,
+        description="Storage key for the person's profile image",
+    )
 
     def set_from_person(self, from_person: ConnectionInfo | None) -> None:
         self.from_person = from_person

@@ -86,6 +86,10 @@ class RelativeInfo(BaseModel):
     depth: int = Field(
         description="Number of relationship hops from the requesting person",
     )
+    profile_image_key: str | None = Field(
+        default=None,
+        description="Storage key for the person's profile image",
+    )
 
 
 class RelativesNetworkResponse(BaseModel):

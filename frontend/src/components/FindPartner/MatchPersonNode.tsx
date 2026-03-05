@@ -14,10 +14,11 @@
 import { Handle, Position } from "@xyflow/react"
 import { Eye, User } from "lucide-react"
 import { memo } from "react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { getPersonImageUrl } from "@/utils/personImage"
 import type { MatchPersonNodeData } from "./types"
 
 interface MatchPersonNodeProps {
@@ -60,6 +61,7 @@ export const MatchPersonNode = memo(function MatchPersonNode({
     deathYear,
     isSeeker,
     isMatch,
+    profileImageKey,
     onViewClick,
   } = data
 
@@ -160,6 +162,7 @@ export const MatchPersonNode = memo(function MatchPersonNode({
       >
         {/* Avatar with User icon */}
         <Avatar className="size-14" aria-hidden="true">
+          <AvatarImage src={getPersonImageUrl(profileImageKey, 'thumbnail')} alt={displayName} />
           <AvatarFallback className="bg-muted">
             <User className="size-7 text-muted-foreground" aria-hidden="true" />
           </AvatarFallback>

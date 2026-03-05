@@ -507,6 +507,7 @@ class TestSearchPersonsAddressAndReligionIntersection:
         mock_person.last_name = "Doe"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = None
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -558,6 +559,7 @@ class TestSearchPersonsDemographicFilters:
         mock_person.last_name = "Doe"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = gender_id
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -596,6 +598,7 @@ class TestSearchPersonsDemographicFilters:
         mock_person.last_name = "Doe"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = None
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -633,6 +636,7 @@ class TestSearchPersonsDemographicFilters:
         mock_person.last_name = "Doe"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = None
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -671,6 +675,7 @@ class TestSearchPersonsDemographicFilters:
         mock_person.last_name = "Doe"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = None
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -718,6 +723,7 @@ class TestSearchPersonsNameMatching:
         mock_person.last_name = "Doe"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = None
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -757,6 +763,7 @@ class TestSearchPersonsNameMatching:
         mock_person.last_name = "Doe"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = None
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -798,6 +805,7 @@ class TestSearchPersonsNameMatching:
         mock_person.last_name = "Smith"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = None
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -840,6 +848,7 @@ class TestSearchPersonsNameMatching:
         mock_person_1.last_name = "Smith"
         mock_person_1.date_of_birth = date(1990, 1, 1)
         mock_person_1.gender_id = None
+        mock_person_1.profile_image_key = None
 
         # Person with partial match
         mock_person_2 = MagicMock(spec=Person)
@@ -849,6 +858,7 @@ class TestSearchPersonsNameMatching:
         mock_person_2.last_name = "Smith"
         mock_person_2.date_of_birth = date(1985, 1, 1)
         mock_person_2.gender_id = None
+        mock_person_2.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [
             mock_person_2,
@@ -894,6 +904,7 @@ class TestSearchPersonsNameMatching:
         mock_person.last_name = "Doe"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = None
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -943,6 +954,7 @@ class TestSearchPersonsPagination:
             mock_person.last_name = f"Last{i}"
             mock_person.date_of_birth = date(1990, 1, 1)
             mock_person.gender_id = None
+            mock_person.profile_image_key = None
             mock_persons.append(mock_person)
 
         mock_session.exec.return_value.all.return_value = mock_persons
@@ -986,6 +998,7 @@ class TestSearchPersonsPagination:
             mock_person.last_name = f"Last{i}"
             mock_person.date_of_birth = date(1990, 1, 1)
             mock_person.gender_id = None
+            mock_person.profile_image_key = None
             mock_persons.append(mock_person)
 
         mock_session.exec.return_value.all.return_value = mock_persons
@@ -1050,6 +1063,7 @@ class TestSearchPersonsPagination:
         mock_person.last_name = "Doe"
         mock_person.date_of_birth = date(1990, 1, 1)
         mock_person.gender_id = None
+        mock_person.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [mock_person]
 
@@ -1093,6 +1107,7 @@ class TestSearchPersonsPagination:
         mock_person_1.last_name = "Zebra"  # Should be last
         mock_person_1.date_of_birth = date(1990, 1, 1)
         mock_person_1.gender_id = None
+        mock_person_1.profile_image_key = None
 
         mock_person_2 = MagicMock(spec=Person)
         mock_person_2.id = person_id_2
@@ -1101,6 +1116,7 @@ class TestSearchPersonsPagination:
         mock_person_2.last_name = "Apple"  # Should be first
         mock_person_2.date_of_birth = date(1985, 1, 1)
         mock_person_2.gender_id = None
+        mock_person_2.profile_image_key = None
 
         mock_person_3 = MagicMock(spec=Person)
         mock_person_3.id = person_id_3
@@ -1109,6 +1125,7 @@ class TestSearchPersonsPagination:
         mock_person_3.last_name = "Middle"  # Should be second
         mock_person_3.date_of_birth = date(1995, 1, 1)
         mock_person_3.gender_id = None
+        mock_person_3.profile_image_key = None
 
         mock_session.exec.return_value.all.return_value = [
             mock_person_1,

@@ -7,11 +7,12 @@
 import { Eye, User } from "lucide-react"
 import { memo } from "react"
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { getPersonImageUrl } from "@/utils/personImage"
 
 // Known gender IDs from the system
 const MALE_GENDER_ID = "4eb743f7-0a50-4da2-a20d-3473b3b3db83"
@@ -27,6 +28,7 @@ export interface RelativeCardProps {
   districtName: string | null
   localityName: string | null
   depth: number
+  profileImageKey?: string | null
   onView: (personId: string) => void
 }
 
@@ -99,6 +101,7 @@ export const RelativeCard = memo(function RelativeCard({
   districtName,
   localityName,
   depth,
+  profileImageKey,
   onView,
 }: RelativeCardProps) {
   const displayName = `${firstName} ${lastName}`
@@ -132,6 +135,7 @@ export const RelativeCard = memo(function RelativeCard({
 
       {/* Gender-based Avatar - Requirements: 4.1 */}
       <Avatar className={cn("size-14", getGenderAvatarClass(genderId))}>
+        <AvatarImage src={getPersonImageUrl(profileImageKey, 'thumbnail')} alt={displayName} />
         <AvatarFallback className={getGenderAvatarClass(genderId)}>
           <User className="size-7" aria-hidden="true" />
         </AvatarFallback>

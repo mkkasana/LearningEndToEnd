@@ -550,6 +550,7 @@ class PartnerMatchService:
                 depth=seeker_node.depth,
                 from_person=seeker_node.from_person,
                 to_persons=[],
+                profile_image_key=seeker_node.profile_image_key,
             )
             return {seeker_id: pruned_seeker}
 
@@ -593,6 +594,7 @@ class PartnerMatchService:
                 depth=original_node.depth,
                 from_person=original_node.from_person,
                 to_persons=filtered_to_persons,
+                profile_image_key=original_node.profile_image_key,
             )
             pruned_graph[person_id] = pruned_node
 
@@ -703,6 +705,7 @@ class PartnerMatchService:
                 depth=0,
                 from_person=None,
                 to_persons=[],
+                profile_image_key=None,
             )
 
         # Extract birth and death years
@@ -727,6 +730,7 @@ class PartnerMatchService:
             depth=0,
             from_person=None,
             to_persons=[],
+            profile_image_key=person.profile_image_key,
         )
 
     def _get_address_string(self, person_id: uuid.UUID) -> str:

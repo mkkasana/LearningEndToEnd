@@ -311,6 +311,7 @@ class PersonSearchService:
                     date_of_birth=person.date_of_birth,
                     gender_id=person.gender_id,
                     name_match_score=score,
+                    profile_image_key=person.profile_image_key,
                 )
                 for person, score in paginated
             ]
@@ -337,6 +338,7 @@ class PersonSearchService:
                     date_of_birth=person.date_of_birth,
                     gender_id=person.gender_id,
                     name_match_score=None,
+                    profile_image_key=person.profile_image_key,
                 )
                 for person in paginated_persons
             ]

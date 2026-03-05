@@ -2,7 +2,7 @@ import { Link as RouterLink } from "@tanstack/react-router"
 import { BarChart3, ChevronsUpDown, LogOut, Settings } from "lucide-react"
 import { useState } from "react"
 import { ContributionStatsDialog } from "@/components/Profile/ContributionStatsDialog"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,16 +19,19 @@ import {
 } from "@/components/ui/sidebar"
 import useAuth from "@/hooks/useAuth"
 import { getInitials } from "@/utils"
+import { getPersonImageUrl } from "@/utils/personImage"
 
 interface UserInfoProps {
   fullName?: string
   email?: string
+  profileImageKey?: string | null
 }
 
-function UserInfo({ fullName, email }: UserInfoProps) {
+function UserInfo({ fullName, email, profileImageKey }: UserInfoProps) {
   return (
     <div className="flex items-center gap-2.5 w-full min-w-0">
       <Avatar className="size-8">
+        <AvatarImage src={getPersonImageUrl(profileImageKey, 'thumbnail')} alt={fullName || "User"} />
         <AvatarFallback className="bg-zinc-600 text-white">
           {getInitials(fullName || "User")}
         </AvatarFallback>
@@ -41,7 +44,7 @@ function UserInfo({ fullName, email }: UserInfoProps) {
   )
 }
 
-export function User({ user }: { user: any }) {
+export function User({ user, profileImageKey }: { user: any; profileImageKey?: string | null }) {
   const { logout } = useAuth()
   const { isMobile, setOpenMobile } = useSidebar()
   const [contributionStatsOpen, setContributionStatsOpen] = useState(false)
@@ -72,7 +75,7 @@ export function User({ user }: { user: any }) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               data-testid="user-menu"
             >
-              <UserInfo fullName={user?.full_name} email={user?.email} />
+              <UserInfo fullName={user?.full_name} email={user?.email} profileImageKey={profileImageKey} />
               <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -83,7 +86,7 @@ export function User({ user }: { user: any }) {
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <UserInfo fullName={user?.full_name} email={user?.email} />
+              <UserInfo fullName={user?.full_name} email={user?.email} profileImageKey={profileImageKey} />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleContributionStatsClick}>

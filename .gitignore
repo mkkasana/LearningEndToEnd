@@ -9,6 +9,9 @@ node_modules/
 backend/dist/
 frontend/dist/
 
+# Uploaded files
+backend/uploads/
+
 # Python
 backend/.venv/
 backend/__pycache__/

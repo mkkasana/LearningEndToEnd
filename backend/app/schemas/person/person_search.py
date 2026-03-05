@@ -122,6 +122,10 @@ class PersonSearchResult(SQLModel):
         default=None,
         description="Name similarity score (only present when name filter used)",
     )
+    profile_image_key: str | None = Field(
+        default=None,
+        description="Storage key for the person's profile image",
+    )
 
 
 class PersonSearchResponse(SQLModel):

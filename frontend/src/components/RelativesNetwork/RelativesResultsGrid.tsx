@@ -22,6 +22,7 @@ export interface RelativeData {
   district_name: string | null
   locality_name: string | null
   depth: number
+  profile_image_key: string | null
 }
 
 export interface RelativesResultsGridProps {
@@ -85,6 +86,7 @@ export const RelativesResultsGrid = memo(function RelativesResultsGrid({
           districtName={relative.district_name}
           localityName={relative.locality_name}
           depth={relative.depth}
+          profileImageKey={relative.profile_image_key}
           onView={onViewRelative}
         />
       ))}

@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { getPersonImageUrl } from "@/utils/personImage"
 
 // Known gender IDs from the system
 const MALE_GENDER_ID = "4eb743f7-0a50-4da2-a20d-3473b3b3db83"
@@ -119,7 +120,7 @@ export const PersonSearchCard = memo(function PersonSearchCard({
         className={cn("size-14", getGenderAvatarClass(person.gender_id))}
         aria-hidden="true"
       >
-        <AvatarImage src={undefined} alt="" />
+        <AvatarImage src={getPersonImageUrl(person.profile_image_key, 'thumbnail')} alt={fullName} />
         <AvatarFallback className={getGenderAvatarClass(person.gender_id)}>
           <User className="size-1/2" aria-hidden="true" />
         </AvatarFallback>

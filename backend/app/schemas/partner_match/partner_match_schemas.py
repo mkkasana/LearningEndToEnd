@@ -106,6 +106,10 @@ class MatchGraphNode(BaseModel):
         default_factory=list,
         description="Child nodes explored from this node",
     )
+    profile_image_key: str | None = Field(
+        default=None,
+        description="Storage key for the person's profile image",
+    )
 
     def set_from_person(self, from_person: MatchConnectionInfo | None) -> None:
         """Set the parent connection info."""

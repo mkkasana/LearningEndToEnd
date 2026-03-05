@@ -30,6 +30,7 @@ export interface MatchGraphNode {
   depth: number
   from_person?: MatchConnectionInfo | null
   to_persons?: MatchConnectionInfo[]
+  profile_image_key?: string | null
 }
 
 /**

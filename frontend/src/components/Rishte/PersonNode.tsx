@@ -1,10 +1,11 @@
 import { Handle, Position } from "@xyflow/react"
 import { Eye, User } from "lucide-react"
 import { memo } from "react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { getPersonImageUrl } from "@/utils/personImage"
 import type { PersonNodeData } from "./types"
 
 interface PersonNodeProps {
@@ -46,7 +47,7 @@ export function formatBirthDeathYears(
  * - 7.7: No View or Explore buttons (simplified display)
  */
 export const PersonNode = memo(function PersonNode({ data }: PersonNodeProps) {
-  const { firstName, lastName, birthYear, deathYear, isPersonA, isPersonB, personId, onViewClick } =
+  const { firstName, lastName, birthYear, deathYear, isPersonA, isPersonB, personId, profileImageKey, onViewClick } =
     data
 
   const displayName = `${firstName} ${lastName}`
@@ -140,6 +141,7 @@ export const PersonNode = memo(function PersonNode({ data }: PersonNodeProps) {
       >
         {/* Avatar with User icon */}
         <Avatar className="size-14" aria-hidden="true">
+          <AvatarImage src={getPersonImageUrl(profileImageKey, 'thumbnail')} alt={displayName} />
           <AvatarFallback className="bg-muted">
             <User className="size-7 text-muted-foreground" aria-hidden="true" />
           </AvatarFallback>

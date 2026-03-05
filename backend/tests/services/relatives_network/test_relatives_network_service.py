@@ -50,6 +50,7 @@ def create_mock_person(
     mock_person.gender_id = gender_id or uuid.uuid4()
     mock_person.date_of_birth = date_of_birth or date(1990, 1, 1)
     mock_person.date_of_death = date_of_death
+    mock_person.profile_image_key = None
     return mock_person
 
 

@@ -281,6 +281,7 @@ class RelativesNetworkService:
                 district_name=None,
                 locality_name=None,
                 depth=depth,
+                profile_image_key=None,
             )
 
         # Extract birth and death years
@@ -300,6 +301,7 @@ class RelativesNetworkService:
             district_name=district_name,
             locality_name=locality_name,
             depth=depth,
+            profile_image_key=person.profile_image_key,
         )
 
     def _get_address_names(self, person_id: uuid.UUID) -> tuple[str | None, str | None]:

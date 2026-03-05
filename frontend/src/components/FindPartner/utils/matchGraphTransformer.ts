@@ -253,6 +253,7 @@ export function transformMatchPath(
       deathYear: person.death_year ?? null,
       isSeeker: person.person_id === seekerId,
       isMatch: person.person_id === matchId,
+      profileImageKey: person.profile_image_key ?? null,
     },
   }))
 

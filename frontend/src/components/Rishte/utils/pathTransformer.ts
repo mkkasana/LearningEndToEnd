@@ -170,6 +170,7 @@ function createNodes(
       deathYear: person.death_year ?? null,
       isPersonA: person.person_id === personAId,
       isPersonB: person.person_id === personBId,
+      profileImageKey: person.profile_image_key ?? null,
     },
   }))
 }
