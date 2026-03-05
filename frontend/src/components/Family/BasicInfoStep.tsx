@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import useCustomToast from "@/hooks/useCustomToast"
+import { ImageUpload } from "@/components/Common/ImageUpload"
 
 const RELATIONSHIP_TYPES = [
   { value: "rel-6a0ede824d101", label: "Father" },
@@ -62,9 +63,11 @@ type FormData = z.infer<typeof formSchema>
 interface BasicInfoStepProps {
   onComplete: (data: any) => void
   initialData?: any
+  imageFile?: File | null
+  onImageChange?: (file: File | null) => void
 }
 
-export function BasicInfoStep({ onComplete, initialData }: BasicInfoStepProps) {
+export function BasicInfoStep({ onComplete, initialData, imageFile, onImageChange }: BasicInfoStepProps) {
   const { showErrorToast } = useCustomToast()
 
   const form = useForm<FormData>({
@@ -143,6 +146,13 @@ export function BasicInfoStep({ onComplete, initialData }: BasicInfoStepProps) {
               <FormMessage />
             </FormItem>
           )}
+        />
+
+        {/* Profile Photo */}
+        <ImageUpload
+          value={imageFile}
+          onChange={onImageChange ?? (() => {})}
+          label="Profile Photo (Optional)"
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

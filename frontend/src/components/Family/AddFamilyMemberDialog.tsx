@@ -43,6 +43,7 @@ export function AddFamilyMemberDialog({
   const [familyMemberData, setFamilyMemberData] = useState<any>(null)
   const [addressData, setAddressData] = useState<any>(null)
   const [religionData, setReligionData] = useState<any>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
   const [_matchingPersons, setMatchingPersons] = useState<any[]>([])
   const [showMatchingStep, setShowMatchingStep] = useState(false)
   const [showConnectDialog, setShowConnectDialog] = useState(false)
@@ -176,6 +177,7 @@ export function AddFamilyMemberDialog({
     setFamilyMemberData(null)
     setAddressData(null)
     setReligionData(null)
+    setImageFile(null)
     setMatchingPersons([])
     setShowMatchingStep(false)
     setShowConnectDialog(false)
@@ -233,6 +235,8 @@ export function AddFamilyMemberDialog({
             <BasicInfoStep
               onComplete={handleBasicInfoComplete}
               initialData={familyMemberData}
+              imageFile={imageFile}
+              onImageChange={setImageFile}
             />
           )}
 
@@ -305,6 +309,7 @@ export function AddFamilyMemberDialog({
               familyMemberData={familyMemberData}
               addressData={addressData}
               religionData={religionData}
+              imageFile={imageFile}
               onFinish={handleFinish}
               onBack={
                 showMatchingStep ? handleBackToMatching : handleBackToReligion

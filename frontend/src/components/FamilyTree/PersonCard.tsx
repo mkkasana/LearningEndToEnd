@@ -1,6 +1,7 @@
 import { Eye, User } from "lucide-react"
 import { memo } from "react"
 import type { PersonDetails } from "@/client"
+import { getPersonImageUrl } from "@/utils/personImage"
 import { AssumeRoleButton } from "@/components/Family/AssumeRoleButton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -256,7 +257,10 @@ export const PersonCard = memo(function PersonCard({
           className={cn(getAvatarSize(variant), getGenderAvatarClass(person.gender_id))}
           aria-hidden="true"
         >
-          <AvatarImage src={undefined} alt="" />
+          <AvatarImage
+            src={getPersonImageUrl((person as any).profile_image_key, 'thumbnail')}
+            alt={displayName}
+          />
           <AvatarFallback className={getGenderAvatarClass(person.gender_id)}>
             <User className="size-1/2" aria-hidden="true" />
           </AvatarFallback>

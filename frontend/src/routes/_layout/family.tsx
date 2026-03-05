@@ -1,9 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { Trash2, UserPlus, Users } from "lucide-react"
+import { Trash2, User, UserPlus, Users } from "lucide-react"
 import { useState } from "react"
 import { PersonService } from "@/client"
 import { ActivePersonIndicator } from "@/components/Family/ActivePersonIndicator"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+import { getPersonImageUrl } from "@/utils/personImage"
 import { AddFamilyMemberDialog } from "@/components/Family/AddFamilyMemberDialog"
 import { DiscoverFamilyMembersDialog } from "@/components/Family/DiscoverFamilyMembersDialog"
 import {
@@ -150,16 +156,31 @@ function Family() {
             const relationshipLabel =
               RELATIONSHIP_LABELS[relationship.relationship_type] ||
               "Family Member"
+            const thumbnailUrl = getPersonImageUrl(
+              person.profile_image_key,
+              "thumbnail",
+            )
 
             return (
               <Card key={relationship.id}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    <span>
-                      {person.first_name}{" "}
-                      {person.middle_name && `${person.middle_name} `}
-                      {person.last_name}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage
+                          src={thumbnailUrl}
+                          alt={`${person.first_name} ${person.last_name}`}
+                        />
+                        <AvatarFallback>
+                          <User className="h-5 w-5" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>
+                        {person.first_name}{" "}
+                        {person.middle_name && `${person.middle_name} `}
+                        {person.last_name}
+                      </span>
+                    </div>
                     <Button
                       variant="ghost"
                       size="icon"

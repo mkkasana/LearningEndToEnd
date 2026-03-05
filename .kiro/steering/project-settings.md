@@ -92,3 +92,51 @@ When creating new Alembic migrations that modify the database schema:
 - The test database (`app_test`) is configured via `POSTGRES_TEST_DB` in `.env`
 - Backend tests will fail if the test database schema is out of sync with the models
 - Migration files are located in `backend/app/alembic/versions/`
+
+
+## Colima (Docker Runtime)
+
+This project uses Colima as the Docker runtime on macOS instead of Docker Desktop.
+
+### DNS Issues
+Colima's VM can lose DNS resolution, causing `npm install` and `uv sync` to time out during Docker builds. Fix by restarting with explicit DNS:
+```bash
+colima stop
+colima start --dns 8.8.8.8 --dns 1.1.1.1
+```
+
+### I/O Errors / Corrupted Storage
+If you see `input/output error` during builds or `docker system prune`, the Colima VM disk is corrupted. Fix:
+```bash
+colima stop
+colima delete
+colima start --dns 8.8.8.8 --dns 1.1.1.1
+```
+
+### BuildKit Cache Issues
+If builds fail with corrupted wheel/package errors (e.g., "Metadata field not found"), clear the BuildKit cache:
+```bash
+docker builder prune -f
+```
+
+## Frontend API Calls
+
+The frontend runs on nginx at `localhost:5173` which does NOT proxy `/api` requests to the backend. The backend runs separately at `localhost:8000`.
+
+- The generated OpenAPI client uses `VITE_API_URL` (set to `http://localhost:8000` at build time) so its calls reach the backend correctly.
+- Any raw `fetch()` calls in frontend code MUST use `import.meta.env.VITE_API_URL` as the base URL, not relative paths. Relative paths like `/api/v1/...` will hit nginx and silently fail.
+
+Example:
+```typescript
+const apiBase = import.meta.env.VITE_API_URL || ""
+const response = await fetch(`${apiBase}/api/v1/some-endpoint`, { ... })
+```
+
+## Backend Response Schemas
+
+When adding a new field to the Person DB model, remember to add it to ALL response schemas that return person data, not just `PersonPublic`. Key schemas to check:
+- `PersonPublic` in `backend/app/schemas/person/person.py`
+- `PersonDetails` in `backend/app/schemas/person/person_relationship.py`
+- `PersonCompleteDetailsResponse` in `backend/app/schemas/person/person_complete_details.py`
+
+Also update any service code that manually constructs these response objects (e.g., `PersonCompleteDetailsResponse(...)` in `person_service.py`).

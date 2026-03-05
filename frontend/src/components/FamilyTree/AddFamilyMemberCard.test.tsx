@@ -66,8 +66,8 @@ describe("AddFamilyMemberCard - Unit Tests", () => {
       )
 
       const card = container.querySelector('[data-slot="card"]')
-      expect(card?.className).toContain("min-w-[140px]")
-      expect(card?.className).toContain("min-h-[160px]")
+      expect(card?.className).toContain("md:min-w-[140px]")
+      expect(card?.className).toContain("md:min-h-[140px]")
     })
 
     it("should render center variant with correct dimensions", () => {
@@ -76,8 +76,8 @@ describe("AddFamilyMemberCard - Unit Tests", () => {
       )
 
       const card = container.querySelector('[data-slot="card"]')
-      expect(card?.className).toContain("min-w-[140px]")
-      expect(card?.className).toContain("min-h-[160px]")
+      expect(card?.className).toContain("md:min-w-[140px]")
+      expect(card?.className).toContain("md:min-h-[140px]")
     })
 
     it("should render child variant with correct dimensions", () => {
@@ -86,8 +86,8 @@ describe("AddFamilyMemberCard - Unit Tests", () => {
       )
 
       const card = container.querySelector('[data-slot="card"]')
-      expect(card?.className).toContain("min-w-[130px]")
-      expect(card?.className).toContain("min-h-[150px]")
+      expect(card?.className).toContain("md:min-w-[130px]")
+      expect(card?.className).toContain("md:min-h-[130px]")
     })
 
     it.each(

@@ -40,8 +40,8 @@ describe("RowConnector - Unit Tests", () => {
     const connector = container.querySelector("div")
     const className = connector?.className || ""
 
-    // Should have h-[30px] class
-    expect(className).toContain("h-[30px]")
+    // Should have h-[20px] class
+    expect(className).toContain("h-[20px]")
   })
 
   it("should have muted styling", () => {

@@ -38,5 +38,6 @@ class PersonCompleteDetailsResponse(SQLModel):
     date_of_birth: date
     date_of_death: date | None = None
     gender_name: str
+    profile_image_key: str | None = None
     address: PersonAddressDetails | None = None
     religion: PersonReligionDetails | None = None

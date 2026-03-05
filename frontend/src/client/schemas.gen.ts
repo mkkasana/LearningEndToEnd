@@ -3178,6 +3178,18 @@ export const PersonPublicSchema = {
             type: 'string',
             format: 'date-time',
             title: 'Updated At'
+        },
+        profile_image_key: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Profile Image Key',
+            description: "Storage key for the person's profile image"
         }
     },
     type: 'object',

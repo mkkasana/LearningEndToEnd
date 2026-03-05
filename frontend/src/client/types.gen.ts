@@ -1268,6 +1268,10 @@ export type PersonPublic = {
     is_active?: boolean;
     created_at: string;
     updated_at: string;
+    /**
+     * Storage key for the person's profile image
+     */
+    profile_image_key?: (string | null);
 };
 
 /**

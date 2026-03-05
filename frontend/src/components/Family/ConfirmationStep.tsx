@@ -2,7 +2,8 @@
 
 import { useMutation } from "@tanstack/react-query"
 import { CheckCircle2, Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
+import { toast } from "sonner"
 import {
   type PersonAddressCreate,
   type PersonCreate,
@@ -18,6 +19,7 @@ interface ConfirmationStepProps {
   familyMemberData: any
   addressData: any
   religionData: any
+  imageFile?: File | null
   onFinish: () => void
   onBack: () => void
 }
@@ -44,6 +46,7 @@ export function ConfirmationStep({
   familyMemberData,
   addressData,
   religionData,
+  imageFile,
   onFinish,
   onBack,
 }: ConfirmationStepProps) {
@@ -67,6 +70,12 @@ export function ConfirmationStep({
     religionData._displayNames?.subCategory,
   ].filter(Boolean)
   const religionString = religionParts.join(", ")
+
+  // Generate preview URL for the image file
+  const imagePreviewUrl = useMemo(() => {
+    if (!imageFile) return null
+    return URL.createObjectURL(imageFile)
+  }, [imageFile])
 
   const createFamilyMemberMutation = useMutation({
     mutationFn: async () => {
@@ -135,6 +144,36 @@ export function ConfirmationStep({
         requestBody: relationshipData,
       })
 
+      // Step 5: Upload profile image if provided
+      if (imageFile) {
+        setCreationStatus("Uploading profile photo...")
+        try {
+          const token = localStorage.getItem("access_token")
+          const formData = new FormData()
+          formData.append("file", imageFile)
+
+          const apiBase = import.meta.env.VITE_API_URL || ""
+          const response = await fetch(
+            `${apiBase}/api/v1/person/${person.id}/profile-image`,
+            {
+              method: "POST",
+              headers: { Authorization: `Bearer ${token}` },
+              body: formData,
+            },
+          )
+
+          if (!response.ok) {
+            throw new Error("Image upload failed")
+          }
+        } catch (_error) {
+          // Image upload failure is non-critical — warn but don't fail
+          toast.warning("Profile photo could not be uploaded", {
+            description:
+              "The family member was added successfully. You can add a photo later.",
+          })
+        }
+      }
+
       return person
     },
     onSuccess: () => {
@@ -166,6 +205,17 @@ export function ConfirmationStep({
       </div>
 
       <div className="border rounded-lg p-6 space-y-4">
+        {/* Image preview */}
+        {imagePreviewUrl && (
+          <div className="flex justify-center pb-4 border-b">
+            <img
+              src={imagePreviewUrl}
+              alt="Profile photo preview"
+              className="h-24 w-24 rounded-full object-cover border-2 border-muted"
+            />
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-muted-foreground">Relationship</p>

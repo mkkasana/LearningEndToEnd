@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet"
 import { usePersonCompleteDetails } from "@/hooks/usePersonCompleteDetails"
 import { usePersonLifeEvents } from "@/hooks/usePersonLifeEvents"
+import { getPersonImageUrl } from "@/utils/personImage"
 
 export interface PersonDetailsPanelProps {
   personId: string | null
@@ -206,10 +207,10 @@ export function PersonDetailsPanel({
         {/* Person Details Content */}
         {data && !isLoading && !error && (
           <div className="flex flex-col items-center gap-6 py-6">
-            {/* Photo - Requirement 3.1 */}
+            {/* Photo - Requirements 5.1, 5.2, 5.3 */}
             <Avatar className="h-24 w-24">
               <AvatarImage
-                src={undefined}
+                src={getPersonImageUrl((data as any).profile_image_key, 'main')}
                 alt={formatFullName(
                   data.first_name,
                   data.middle_name,

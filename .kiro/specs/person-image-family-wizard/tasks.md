@@ -6,11 +6,11 @@ Frontend implementation for profile image upload in the Add Family Member wizard
 
 ## Tasks
 
-- [ ] 1. Set up dependencies and utility functions
-  - [ ] 1.1 Install `browser-image-compression` npm package
+- [x] 1. Set up dependencies and utility functions
+  - [x] 1.1 Install `browser-image-compression` npm package
     - Run `npm install browser-image-compression` in the frontend directory
     - _Requirements: 1.4_
-  - [ ] 1.2 Create `getPersonImageUrl` utility function
+  - [x] 1.2 Create `getPersonImageUrl` utility function
     - Create `frontend/src/utils/personImage.ts`
     - Implement URL resolution for main and thumbnail variants
     - Handle null/undefined keys returning undefined
@@ -21,8 +21,8 @@ Frontend implementation for profile image upload in the Add Family Member wizard
     - **Property 7: Thumbnail key derivation**
     - **Validates: Requirements 6.1, 6.2, 6.3, 6.4, 6.5**
 
-- [ ] 2. Create reusable ImageUpload component
-  - [ ] 2.1 Implement `ImageUpload` component
+- [x] 2. Create reusable ImageUpload component
+  - [x] 2.1 Implement `ImageUpload` component
     - Create `frontend/src/components/Common/ImageUpload.tsx`
     - Implement click-to-select with hidden file input
     - Implement drag-and-drop with visual feedback
@@ -42,21 +42,21 @@ Frontend implementation for profile image upload in the Add Family Member wizard
     - **Property 1: Invalid file type rejection**
     - **Validates: Requirements 1.1, 1.2, 1.3, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10**
 
-- [ ] 3. Checkpoint - Ensure all tests pass
+- [x] 3. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 4. Integrate ImageUpload into Add Family Member wizard
-  - [ ] 4.1 Update `AddFamilyMemberDialog` to manage image state
+- [x] 4. Integrate ImageUpload into Add Family Member wizard
+  - [x] 4.1 Update `AddFamilyMemberDialog` to manage image state
     - Add `imageFile` state (`File | null`) to the dialog
     - Pass `imageFile` and `onImageChange` to BasicInfoStep
     - Pass `imageFile` to ConfirmationStep
     - Reset `imageFile` on dialog close
     - _Requirements: 2.2, 2.6_
-  - [ ] 4.2 Update `BasicInfoStep` to include ImageUpload
+  - [x] 4.2 Update `BasicInfoStep` to include ImageUpload
     - Add `imageFile` and `onImageChange` props
     - Render ImageUpload component above name fields with label "Profile Photo (Optional)"
     - _Requirements: 2.1, 2.7_
-  - [ ] 4.3 Update `ConfirmationStep` to handle image upload
+  - [x] 4.3 Update `ConfirmationStep` to handle image upload
     - Add `imageFile` prop
     - Display image preview in the review summary when image is present
     - After person creation (Step 4), add Step 5: upload image via `POST /persons/{personId}/profile-image`
@@ -69,21 +69,21 @@ Frontend implementation for profile image upload in the Add Family Member wizard
     - **Property 2: Wizard image state preservation**
     - **Validates: Requirements 2.2, 2.3, 2.4, 2.5, 2.6**
 
-- [ ] 5. Checkpoint - Ensure all tests pass
+- [x] 5. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Display profile images in existing components
-  - [ ] 6.1 Update `PersonCard` to show profile images
+- [x] 6. Display profile images in existing components
+  - [x] 6.1 Update `PersonCard` to show profile images
     - Import `getPersonImageUrl` utility
     - Set `AvatarImage src` to thumbnail URL from `person.profile_image_key`
     - Keep existing `AvatarFallback` with gender-based icon as fallback
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
-  - [ ] 6.2 Update family list in `family.tsx` to show profile images
+  - [x] 6.2 Update family list in `family.tsx` to show profile images
     - Add Avatar component to each family member card
     - Use thumbnail URL from `person.profile_image_key`
     - Show fallback icon when no image
     - _Requirements: 4.1, 4.2, 4.3_
-  - [ ] 6.3 Update `PersonDetailsPanel` to show profile images
+  - [x] 6.3 Update `PersonDetailsPanel` to show profile images
     - Display main image (400x400) at the top of the panel
     - Use `getPersonImageUrl` with `main` variant
     - Show large placeholder icon as fallback
@@ -97,13 +97,13 @@ Frontend implementation for profile image upload in the Add Family Member wizard
     - **Property 5: PersonDetailsPanel conditional image display**
     - **Validates: Requirements 3.1, 3.2, 4.1, 4.2, 5.1, 5.2**
 
-- [ ] 7. Regenerate OpenAPI client and verify integration
-  - [ ] 7.1 Regenerate frontend OpenAPI client
+- [x] 7. Regenerate OpenAPI client and verify integration
+  - [x] 7.1 Regenerate frontend OpenAPI client
     - Run `npm run generate-client` to pick up `profile_image_key` in PersonPublic type
     - Verify the generated types include the new field
     - _Requirements: 3.1, 4.1, 5.1_
 
-- [ ] 8. Final checkpoint - Ensure all tests pass
+- [x] 8. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

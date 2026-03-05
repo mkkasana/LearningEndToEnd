@@ -249,6 +249,7 @@ class PersonService:
             date_of_birth=person.date_of_birth,
             date_of_death=person.date_of_death,
             gender_name=gender_name,
+            profile_image_key=person.profile_image_key,
             address=address_details,
             religion=religion_details,
         )

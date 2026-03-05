@@ -64,6 +64,7 @@ class PersonDetails(SQLModel):
     user_id: uuid.UUID | None = None
     created_by_user_id: uuid.UUID
     is_primary: bool
+    profile_image_key: str | None = None
     created_at: datetime
     updated_at: datetime
 

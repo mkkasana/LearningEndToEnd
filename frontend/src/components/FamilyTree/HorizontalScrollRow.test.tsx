@@ -83,7 +83,7 @@ const personDetailsArbitrary = fc.record({
 
 describe("HorizontalScrollRow", () => {
   describe("Unit Tests", () => {
-    it("should render nothing when people array is empty and no selectedPersonId", () => {
+    it("should render empty row placeholder when people array is empty and no selectedPersonId", () => {
       const mockOnClick = vi.fn()
 
       const { container } = renderWithProviders(
@@ -94,7 +94,10 @@ describe("HorizontalScrollRow", () => {
         />,
       )
 
-      expect(container.firstChild).toBeNull()
+      // Component now renders an EmptyRowPlaceholder for empty non-center rows
+      const region = container.querySelector('[role="region"]')
+      expect(region).toBeTruthy()
+      expect(region?.getAttribute("aria-label")).toBe("Parents row")
     })
 
     it("should render horizontal scroll container with correct aria-label for parent variant", () => {
@@ -452,7 +455,7 @@ describe("HorizontalScrollRow", () => {
       )
 
       // Center row should also use justify-center for better visual balance
-      const flexContainer = container.querySelector(".flex.gap-3")
+      const flexContainer = container.querySelector(".flex")
       expect(flexContainer?.className).toContain("justify-center")
     })
 
@@ -523,8 +526,10 @@ describe("HorizontalScrollRow", () => {
             )
 
             if (parents.length === 0) {
-              // Should render nothing for empty array
-              expect(container.firstChild).toBeNull()
+              // Component renders EmptyRowPlaceholder for empty non-center rows
+              const region = container.querySelector('[role="region"]')
+              expect(region).toBeTruthy()
+              expect(region?.getAttribute("aria-label")).toBe("Parents row")
             } else {
               // Should render all parents
               const personCards = container.querySelectorAll('[role="button"]')
@@ -615,8 +620,10 @@ describe("HorizontalScrollRow", () => {
             )
 
             if (children.length === 0) {
-              // Should render nothing for empty array
-              expect(container.firstChild).toBeNull()
+              // Component renders EmptyRowPlaceholder for empty non-center rows
+              const region = container.querySelector('[role="region"]')
+              expect(region).toBeTruthy()
+              expect(region?.getAttribute("aria-label")).toBe("Children row")
             } else {
               // Should render all children
               const personCards = container.querySelectorAll('[role="button"]')
@@ -1494,11 +1501,11 @@ describe("HorizontalScrollRow", () => {
             // Check that the Add Card has appropriate sizing based on variant
             // Parent and center variants have larger dimensions than child
             if (variant === "child") {
-              expect(addCard?.className).toContain("min-w-[130px]")
-              expect(addCard?.className).toContain("min-h-[150px]")
+              expect(addCard?.className).toContain("md:min-w-[130px]")
+              expect(addCard?.className).toContain("md:min-h-[130px]")
             } else {
-              expect(addCard?.className).toContain("min-w-[140px]")
-              expect(addCard?.className).toContain("min-h-[160px]")
+              expect(addCard?.className).toContain("md:min-w-[140px]")
+              expect(addCard?.className).toContain("md:min-h-[140px]")
             }
           },
         ),
