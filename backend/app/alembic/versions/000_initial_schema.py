@@ -30,7 +30,7 @@ def upgrade() -> None:
     from app.db_models.address import country, state, district, sub_district, locality
     from app.db_models.religion import religion, religion_category, religion_sub_category
     
-    # Create all tables
+    # Create all tables (checkfirst=True avoids errors if later migrations also create these tables)
     SQLModel.metadata.create_all(engine, checkfirst=True)
 
 

@@ -12,6 +12,7 @@ def test_init_successful_connection() -> None:
     exec_mock = MagicMock(return_value=True)
     session_mock.configure_mock(**{"exec.return_value": exec_mock})
 
+    # Session is used as context manager: with Session(engine) as session
     session_context = MagicMock()
     session_context.__enter__ = MagicMock(return_value=session_mock)
     session_context.__exit__ = MagicMock(return_value=False)

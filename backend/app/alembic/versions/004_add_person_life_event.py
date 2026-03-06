@@ -21,9 +21,10 @@ depends_on = None
 
 
 def upgrade() -> None:
+    # Check if table already exists (may be created by SQLModel.metadata.create_all in initial migration)
     conn = op.get_bind()
     inspector = sa.inspect(conn)
-    if 'support_ticket' in inspector.get_table_names():
+    if 'person_life_event' in inspector.get_table_names():
         return
 
     # Create person_life_event table
