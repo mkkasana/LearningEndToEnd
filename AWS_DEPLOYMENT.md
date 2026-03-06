@@ -610,6 +610,22 @@ Note: The Images S3 bucket has a RETAIN removal policy and will NOT be deleted b
 **Cause:** Alembic migrations not applied.
 **Fix:** ECS Exec → `cd /app && alembic upgrade head`
 
+### "DuplicateColumn" Error During Migration
+**Cause:** RDS database persists across stack teardown/recreate. The column already exists from a previous deployment, but Alembic's tracking table (`alembic_version`) was reset.
+**Fix:** Stamp the migration to mark it as applied without running it:
+```bash
+cd /app && alembic stamp <migration_name>
+cd /app && alembic upgrade head   # Continue with remaining migrations
+```
+Example: `alembic stamp 008_profile_image_key`
+
+### SECRET_KEY Validation Error on Startup
+**Cause:** Backend rejects `SECRET_KEY=changethis` in production (Pydantic validation).
+**Fix:** Update `fullstack-app-app-secrets` in AWS Secrets Manager before the first ECS task starts:
+- `SECRET_KEY`: Generate with `python3 -c "import secrets; print(secrets.token_urlsafe(32))"`
+- `FIRST_SUPERUSER_PASSWORD`: Any non-default value
+- Do this **immediately after CDK deploy**, before ECS tasks stabilize
+
 ### CDK Says "No Changes" But Code Changed
 **Cause:** Docker image hash unchanged.
 **Fix:** Touch a file to change the hash:
@@ -624,9 +640,43 @@ echo "# $(date)" >> backend/pyproject.toml
 aws ecs update-service --cluster <cluster> --service <service> --force-new-deployment --enable-execute-command
 ```
 
+### ECS Exec "Connect" Opens Wrong Shell
+**Cause:** AWS Console may show a terminal icon with "Connect" instead of "Execute command".
+**Fix:** Both work. Click "Connect", select the `web` container, and you'll get a shell. Run `cd /app && ls` to verify you're in the right place.
+
+### `/app` Directory Not Found in ECS Container
+**Cause:** Docker image wasn't rebuilt after adding new files (CDK cached the old image hash).
+**Fix:** Force image rebuild by modifying a tracked file:
+```bash
+echo "# $(date)" >> backend/pyproject.toml
+cd infra && DOCKER_HOST=unix://$HOME/.colima/docker.sock npx cdk deploy --require-approval never
+```
+
 ### AWS Credentials Expired During Deployment
 **Cause:** Temporary credentials (e.g., SSO/assumed role) expired mid-deploy.
 **Fix:** Refresh credentials and re-run `npx cdk deploy`. CDK is idempotent — it will pick up where it left off.
+
+### Wrong AWS Account in Credentials
+**Cause:** `~/.aws/credentials` `[default]` profile points to a different account than `config.json`.
+**Fix:** Verify with `aws sts get-caller-identity`. If wrong account, refresh credentials for `309841440455`:
+```bash
+ada credentials update --account 309841440455 --role IibsAdminAccess-DO-NOT-DELETE --provider isengard
+```
+Or use `isengardcli credentials`.
+
+### CloudFormation Stack Stuck in DELETE/CREATE
+**Cause:** ECS service can't stabilize (bad image, missing env vars, OOM).
+**Fix:** Delete the stack from AWS Console (CloudFormation → Stack → Delete), wait for completion, fix the issue, then redeploy. Check ECS task logs in CloudWatch for the root cause.
+
+### Docker Desktop Sign-In Required
+**Cause:** Docker Desktop requires organization sign-in on Mac.
+**Fix:** Use Colima instead (free Docker alternative):
+```bash
+brew install colima docker
+colima start
+export DOCKER_HOST=unix://$HOME/.colima/docker.sock
+```
+Always prefix CDK deploy with `DOCKER_HOST=unix://$HOME/.colima/docker.sock`.
 
 ---
 

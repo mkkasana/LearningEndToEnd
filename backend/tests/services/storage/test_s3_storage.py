@@ -42,17 +42,17 @@ class TestS3StorageGetUrl:
 
     def test_url_uses_cloudfront_when_configured(self, s3_with_cloudfront: S3Storage) -> None:
         url = s3_with_cloudfront.get_url("abc123.jpg")
-        assert url == "https://cdn.example.com/person-images/abc123.jpg"
+        assert url == "https://cdn.example.com/images/person-images/abc123.jpg"
 
     def test_url_falls_back_to_s3_when_no_cloudfront(self, s3_without_cloudfront: S3Storage) -> None:
         url = s3_without_cloudfront.get_url("abc123.jpg")
-        assert url == "https://my-bucket.s3.amazonaws.com/person-images/abc123.jpg"
+        assert url == "https://my-bucket.s3.amazonaws.com/images/person-images/abc123.jpg"
 
     def test_url_strips_trailing_slash_from_cloudfront(self) -> None:
         with patch("app.services.storage.s3_storage.boto3"):
             storage = S3Storage(bucket="b", cloudfront_url="https://cdn.example.com/")
         url = storage.get_url("file.jpg")
-        assert url == "https://cdn.example.com/person-images/file.jpg"
+        assert url == "https://cdn.example.com/images/person-images/file.jpg"
 
     def test_url_includes_person_images_prefix(self, s3_with_cloudfront: S3Storage) -> None:
         url = s3_with_cloudfront.get_url("test.jpg")
@@ -69,7 +69,7 @@ class TestS3StorageUpload:
         assert result == "test.jpg"
         s3_with_cloudfront.s3_client.put_object.assert_called_once_with(
             Bucket="my-bucket",
-            Key="person-images/test.jpg",
+            Key="images/person-images/test.jpg",
             Body=b"image data",
             ContentType="image/jpeg",
         )
@@ -84,5 +84,5 @@ class TestS3StorageDelete:
 
         s3_with_cloudfront.s3_client.delete_object.assert_called_once_with(
             Bucket="my-bucket",
-            Key="person-images/test.jpg",
+            Key="images/person-images/test.jpg",
         )

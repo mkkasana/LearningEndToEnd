@@ -9,7 +9,7 @@ from app.services.storage.base import StorageBackend
 
 logger = logging.getLogger(__name__)
 
-PERSON_IMAGES_PREFIX = "person-images"
+PERSON_IMAGES_PREFIX = "images/person-images"
 
 
 class S3Storage(StorageBackend):
