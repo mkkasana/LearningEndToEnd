@@ -150,6 +150,14 @@ export class FullStackApp extends cdk.Stack {
       targetUtilizationPercent: config.backend.scalingMemoryPercent,
     });
 
+    // === IMAGES BUCKET ===
+    const imagesBucket = new s3.Bucket(this, 'ImagesBucket', {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+
+    imagesBucket.grantReadWrite(backendService.taskDefinition.taskRole);
+
     // === FRONTEND (S3 + CloudFront with API proxy) ===
     const websiteBucket = new s3.Bucket(this, 'WebsiteBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
@@ -159,6 +167,7 @@ export class FullStackApp extends cdk.Stack {
 
     const originAccessIdentity = new cloudfront.OriginAccessIdentity(this, 'OAI');
     websiteBucket.grantRead(originAccessIdentity);
+    imagesBucket.grantRead(originAccessIdentity);
 
     // API origin (ALB) - no caching, forward all headers
     const apiOrigin = new origins.HttpOrigin(
@@ -193,6 +202,11 @@ export class FullStackApp extends cdk.Stack {
           cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
           originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER,
         },
+        '/images/*': {
+          origin: new origins.S3Origin(imagesBucket, { originAccessIdentity }),
+          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        },
       },
       defaultRootObject: 'index.html',
       errorResponses: [
@@ -206,6 +220,14 @@ export class FullStackApp extends cdk.Stack {
       'FRONTEND_HOST', `https://${distribution.distributionDomainName}`
     );
 
+    // Add image infrastructure env vars (after distribution to avoid circular deps)
+    backendService.taskDefinition.defaultContainer!.addEnvironment(
+      'S3_IMAGES_BUCKET', imagesBucket.bucketName
+    );
+    backendService.taskDefinition.defaultContainer!.addEnvironment(
+      'CLOUDFRONT_IMAGES_URL', `https://${distribution.distributionDomainName}/images`
+    );
+
     // === OUTPUTS ===
     new cdk.CfnOutput(this, 'AppUrl', { value: `https://${distribution.distributionDomainName}` });
     new cdk.CfnOutput(this, 'ApiUrl', { value: `https://${distribution.distributionDomainName}/api/v1` });
@@ -213,5 +235,7 @@ export class FullStackApp extends cdk.Stack {
     new cdk.CfnOutput(this, 'DistributionId', { value: distribution.distributionId });
     new cdk.CfnOutput(this, 'DbEndpoint', { value: database.dbInstanceEndpointAddress });
     new cdk.CfnOutput(this, 'AppSecretArn', { value: appSecret.secretArn });
+    new cdk.CfnOutput(this, 'ImagesBucketName', { value: imagesBucket.bucketName });
+    new cdk.CfnOutput(this, 'ImagesUrl', { value: `https://${distribution.distributionDomainName}/images` });
   }
 }

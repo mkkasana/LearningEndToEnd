@@ -65,6 +65,7 @@
 All traffic enters through a single CloudFront URL over HTTPS. CloudFront routes:
 - Static frontend files from S3 (cached at edge)
 - API requests to the ALB → ECS Fargate (no caching, all headers forwarded)
+- Profile images from the Images S3 bucket (cached at edge with `CACHING_OPTIMIZED`)
 
 This eliminates mixed-content (HTTP/HTTPS) issues since everything is served over HTTPS.
 
@@ -83,12 +84,20 @@ This eliminates mixed-content (HTTP/HTTPS) issues since everything is served ove
 - Global CDN with automatic HTTPS
 - Routes `/*` to S3 (frontend) with optimized caching
 - Routes `/api/*`, `/docs`, `/openapi.json` to ALB with caching disabled
+- Routes `/images/*` to S3 Images Bucket with optimized caching (profile images served via CDN)
 - SPA error handling: 404/403 → `/index.html` (for client-side routing)
 
-### S3 Bucket
+### S3 Bucket (Frontend)
 - Stores built React frontend static files
 - Block all public access (only accessible via CloudFront OAI)
 - Auto-delete on stack teardown
+
+### S3 Bucket (Images)
+- Stores person profile images (main 400x400 and thumbnail 100x100 variants)
+- Block all public access (only accessible via CloudFront OAI)
+- Removal policy: RETAIN (images persist even if stack is torn down)
+- Key pattern: `person-images/{uuid}.jpg` and `person-images/{uuid}_thumb.jpg`
+- Backend uploads via boto3 using ECS task role (grantReadWrite)
 
 ### ECS Fargate (Backend)
 - Serverless containers — no EC2 instances to manage
@@ -208,6 +217,8 @@ fullstack-app.AppUrl = https://d3low8lxbb1cbt.cloudfront.net
 fullstack-app.ApiUrl = https://d3low8lxbb1cbt.cloudfront.net/api/v1
 fullstack-app.BucketName = fullstack-app-websitebucket75c24d94-vtbs4uyw6n2h
 fullstack-app.DistributionId = EMD9I3USQMOI9
+fullstack-app.ImagesBucketName = fullstack-app-imagesbucket-xxxxxxxxx
+fullstack-app.ImagesUrl = https://d3low8lxbb1cbt.cloudfront.net/images
 ```
 
 ### Step 3: Update Application Secrets
@@ -239,10 +250,14 @@ cd /app && python init_seed/seed_database.py
 ### Step 6: Build & Deploy Frontend
 ```bash
 cd frontend
-VITE_API_URL=https://d3low8lxbb1cbt.cloudfront.net npm run build
+VITE_API_URL=https://d3low8lxbb1cbt.cloudfront.net \
+VITE_IMAGES_URL=https://d3low8lxbb1cbt.cloudfront.net/images \
+npm run build
 aws s3 sync dist/ s3://fullstack-app-websitebucket75c24d94-vtbs4uyw6n2h --delete
 aws cloudfront create-invalidation --distribution-id EMD9I3USQMOI9 --paths "/*"
 ```
+
+> `VITE_IMAGES_URL` tells the frontend to load profile images from CloudFront instead of the backend API. Set it to the `ImagesUrl` CDK output value.
 
 ---
 
@@ -270,7 +285,9 @@ When you modify files in `frontend/src/`:
 ```bash
 # 1. Build
 cd frontend
-VITE_API_URL=https://d3low8lxbb1cbt.cloudfront.net npm run build
+VITE_API_URL=https://d3low8lxbb1cbt.cloudfront.net \
+VITE_IMAGES_URL=https://d3low8lxbb1cbt.cloudfront.net/images \
+npm run build
 
 # 2. Upload to S3
 aws s3 sync dist/ s3://fullstack-app-websitebucket75c24d94-vtbs4uyw6n2h --delete
@@ -318,7 +335,9 @@ npm run generate-client
 # 3. Update frontend code to use new types/methods
 
 # 4. Build and deploy frontend
-VITE_API_URL=https://d3low8lxbb1cbt.cloudfront.net npm run build
+VITE_API_URL=https://d3low8lxbb1cbt.cloudfront.net \
+VITE_IMAGES_URL=https://d3low8lxbb1cbt.cloudfront.net/images \
+npm run build
 aws s3 sync dist/ s3://fullstack-app-websitebucket75c24d94-vtbs4uyw6n2h --delete
 aws cloudfront create-invalidation --distribution-id EMD9I3USQMOI9 --paths "/*"
 ```
@@ -346,7 +365,9 @@ DOCKER_HOST=unix://$HOME/.colima/docker.sock npx cdk deploy --require-approval n
 
 # 2. Frontend
 cd ../frontend
-VITE_API_URL=https://d3low8lxbb1cbt.cloudfront.net npm run build
+VITE_API_URL=https://d3low8lxbb1cbt.cloudfront.net \
+VITE_IMAGES_URL=https://d3low8lxbb1cbt.cloudfront.net/images \
+npm run build
 aws s3 sync dist/ s3://fullstack-app-websitebucket75c24d94-vtbs4uyw6n2h --delete
 aws cloudfront create-invalidation --distribution-id EMD9I3USQMOI9 --paths "/*"
 ```
@@ -472,6 +493,20 @@ env | grep POSTGRES                 # Check env vars
 curl https://d3low8lxbb1cbt.cloudfront.net/api/v1/utils/health-check/
 ```
 
+### Verify Image Serving
+
+After deployment, verify profile images are served correctly through CloudFront:
+
+```bash
+# Check CloudFront returns proper headers for the images path
+curl -I https://d3low8lxbb1cbt.cloudfront.net/images/person-images/test.jpg
+# Should return CloudFront headers (x-cache, x-amz-cf-pop) even if the file doesn't exist (403/404 is fine)
+
+# Upload a test image via the API, then verify it's accessible via CloudFront
+# The backend automatically uploads to S3 with the person-images/ prefix
+# CloudFront serves from /images/person-images/{uuid}.jpg
+```
+
 ### ECS Service Status
 
 ```bash
@@ -533,6 +568,7 @@ Then redeploy. Note: RDS resize causes a few minutes of downtime.
 | ALB | ~$16 |
 | CloudFront | ~$1-5 (depends on traffic) |
 | S3 | < $1 |
+| S3 (Images) | < $1 (scales with storage) |
 | Secrets Manager | ~$1 |
 | **Total** | **~$135-140/month** |
 
@@ -551,6 +587,8 @@ npx cdk destroy
 ```
 
 Note: RDS creates a final snapshot by default. Delete manually from AWS Console → RDS → Snapshots if not needed.
+
+Note: The Images S3 bucket has a RETAIN removal policy and will NOT be deleted by `cdk destroy`. Delete it manually from AWS Console → S3 if you want to remove all image data.
 
 ---
 

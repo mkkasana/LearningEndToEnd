@@ -64,7 +64,18 @@ This feature adds the AWS infrastructure needed to support person profile image 
 1. THE CDK_Stack SHALL output the Images_Bucket name as `ImagesBucketName`
 2. THE CDK_Stack SHALL output the CloudFront images URL as `ImagesUrl`
 
-### Requirement 6: Deployment Runbook Update
+### Requirement 6: Frontend Image URL Production Support
+
+**User Story:** As a developer, I want the frontend image URL utility to support CloudFront URLs in production, so that profile images load from the CDN instead of the backend API.
+
+#### Acceptance Criteria
+
+1. THE `getPersonImageUrl` utility SHALL check for a `VITE_IMAGES_URL` environment variable
+2. WHEN `VITE_IMAGES_URL` is set, THE utility SHALL return URLs in the format `{VITE_IMAGES_URL}/person-images/{key}`
+3. WHEN `VITE_IMAGES_URL` is not set, THE utility SHALL fall back to the existing local pattern `{VITE_API_URL}/api/v1/uploads/person-images/{key}`
+4. THE thumbnail key derivation logic SHALL remain unchanged regardless of the URL base
+
+### Requirement 7: Deployment Runbook Update
 
 **User Story:** As a developer, I want the AWS deployment documentation updated, so that the image infrastructure is documented for future reference.
 
@@ -74,3 +85,4 @@ This feature adds the AWS infrastructure needed to support person profile image 
 2. THE AWS_DEPLOYMENT.md SHALL document the new CloudFront `/images/*` behavior
 3. THE AWS_DEPLOYMENT.md SHALL include the new CDK outputs in the deployment outputs section
 4. THE AWS_DEPLOYMENT.md SHALL document how to verify image serving is working after deployment
+5. THE AWS_DEPLOYMENT.md SHALL document the `VITE_IMAGES_URL` frontend environment variable and how to set it for production builds

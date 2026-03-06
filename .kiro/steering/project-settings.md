@@ -154,10 +154,10 @@ Set these environment variables:
 - `S3_IMAGES_BUCKET` = your S3 bucket name
 - `CLOUDFRONT_IMAGES_URL` = your CloudFront distribution URL (e.g., `https://d1234.cloudfront.net`)
 
-### Frontend TODO for Prod
-The `getPersonImageUrl` utility (`frontend/src/utils/personImage.ts`) currently builds URLs as `{VITE_API_URL}/api/v1/uploads/person-images/{key}` which only works locally. For production with S3/CloudFront, update it to support a `VITE_IMAGES_URL` env var:
-- If `VITE_IMAGES_URL` is set, use `{VITE_IMAGES_URL}/person-images/{key}`
-- Otherwise fall back to the local pattern
+### Frontend Config for Prod
+The `getPersonImageUrl` utility (`frontend/src/utils/personImage.ts`) supports both local and production URLs:
+- If `VITE_IMAGES_URL` is set, uses `{VITE_IMAGES_URL}/person-images/{key}` (CloudFront)
+- Otherwise falls back to `{VITE_API_URL}/api/v1/uploads/person-images/{key}` (local dev)
 
 ### How Image Keys Work
 - `profile_image_key` stores just the filename (e.g., `a3f6516cba4e4ed78d9a16d97f6bf883.jpg`)
