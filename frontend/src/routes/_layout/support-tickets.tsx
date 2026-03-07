@@ -30,7 +30,7 @@ export const Route = createFileRoute("/_layout/support-tickets" as any)({
   head: () => ({
     meta: [
       {
-        title: "Support Tickets - FastAPI Cloud",
+        title: "Support Tickets - Manusya",
       },
     ],
   }),

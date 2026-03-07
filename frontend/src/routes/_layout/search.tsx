@@ -32,7 +32,7 @@ export const Route = createFileRoute("/_layout/search" as any)({
   head: () => ({
     meta: [
       {
-        title: "Search - FastAPI Cloud",
+        title: "Search - Manusya",
       },
     ],
   }),

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_layout/life-events" as any)({
   head: () => ({
     meta: [
       {
-        title: "Life Events - FastAPI Cloud",
+        title: "Life Events - Manusya",
       },
     ],
   }),

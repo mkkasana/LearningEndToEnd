@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_layout/family-tree")({
   head: () => ({
     meta: [
       {
-        title: "Family Tree View - FastAPI Cloud",
+        title: "Family Tree View - Manusya",
       },
     ],
   }),

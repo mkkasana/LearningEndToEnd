@@ -1,11 +1,8 @@
 import { Link } from "@tanstack/react-router"
 
-import { useTheme } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
-import icon from "/assets/images/fastapi-icon.svg"
-import iconLight from "/assets/images/fastapi-icon-light.svg"
-import logo from "/assets/images/fastapi-logo.svg"
-import logoLight from "/assets/images/fastapi-logo-light.svg"
+
+const logoSrc = "/assets/images/manusya-logo.png"
 
 interface LogoProps {
   variant?: "full" | "icon" | "responsive"
@@ -18,38 +15,19 @@ export function Logo({
   className,
   asLink = true,
 }: LogoProps) {
-  const { resolvedTheme } = useTheme()
-  const isDark = resolvedTheme === "dark"
-
-  const fullLogo = isDark ? logoLight : logo
-  const iconLogo = isDark ? iconLight : icon
-
   const content =
     variant === "responsive" ? (
-      <>
-        <img
-          src={fullLogo}
-          alt="FastAPI"
-          className={cn(
-            "h-6 w-auto group-data-[collapsible=icon]:hidden",
-            className,
-          )}
-        />
-        <img
-          src={iconLogo}
-          alt="FastAPI"
-          className={cn(
-            "size-5 hidden group-data-[collapsible=icon]:block",
-            className,
-          )}
-        />
-      </>
+      <span className="flex items-center gap-2">
+        <img src={logoSrc} alt="Manusya" className={cn("h-6 w-auto", className)} />
+        <span className="font-semibold group-data-[collapsible=icon]:hidden">Manusya</span>
+      </span>
+    ) : variant === "full" ? (
+      <span className="flex items-center gap-2">
+        <img src={logoSrc} alt="Manusya" className={cn("h-6 w-auto", className)} />
+        <span className="font-semibold">Manusya</span>
+      </span>
     ) : (
-      <img
-        src={variant === "full" ? fullLogo : iconLogo}
-        alt="FastAPI"
-        className={cn(variant === "full" ? "h-6 w-auto" : "size-5", className)}
-      />
+      <img src={logoSrc} alt="Manusya" className={cn("size-5", className)} />
     )
 
   if (!asLink) {
